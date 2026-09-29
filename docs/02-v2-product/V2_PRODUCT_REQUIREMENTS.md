@@ -200,6 +200,36 @@ Potential actions:
 
 User approval must be required before AI-generated content replaces existing user content.
 
+
+## 10A. Explainable career intelligence
+V2 intelligence must expose actionable findings rather than only opaque scores.
+
+The product should distinguish:
+- Resume Health / ATS Readiness;
+- Job Match;
+- keyword and skill gaps;
+- consistency/chronology issues;
+- supporting evidence for important skills or claims.
+
+Findings should communicate the issue, why it matters, supporting evidence where available, and a concrete user-controlled fix.
+
+## 10B. Controlled AI and anti-fabrication
+AI suggestions should be presented as suggestions before authoritative user data is changed. The system should distinguish AI Suggested from User Approved content where practical.
+
+AI must not invent facts, metrics, qualifications, employment history, skills or achievements. If a metric is needed but unknown, ask the user or provide an explicit placeholder. The AI layer must remain replaceable and must never become a rendering dependency.
+
+## 10C. Specialized CV modes
+The same canonical model should support student/fresh-graduate and academic CV experiences through configuration, guidance and compatible presentation variants rather than separate incompatible data models.
+
+## 10D. Import review and confidence
+PDF/DOCX imports must remain non-authoritative until user review. Parsed fields should expose confidence or verification status where useful so uncertain extraction is easy to identify and correct.
+
+## 10E. Online CV privacy
+Future online CV publishing should support public, link-only and private visibility, with independent search-engine visibility controls where applicable. Portfolio linking and future view/download analytics must respect explicit privacy controls.
+
+## 10F. Career continuity
+Future application workflows should connect job descriptions, targeted CV versions, cover letters, match analysis, application status, interview records and follow-up history without making the Document Core responsible for the entire career workflow.
+
 ## 11. Multiple CV versions
 
 A master profile should support multiple targeted CV documents.
