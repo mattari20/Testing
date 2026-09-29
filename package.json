@@ -25,6 +25,8 @@
     "test:templates-native": "node --test tests/m3/template-engine.test.js tests/m10/template-compatibility-variants.test.js tests/m14/native-v2-template-contract.test.js",
     "test:native-v2": "npm run test:m14",
     "test:m15": "node tests/m15/native-v2-template-catalog.test.js",
-    "test:native-v2-catalog": "npm run test:m15"
+    "test:native-v2-catalog": "npm run test:m15",
+    "test:m16": "node tests/m16/native-v2-render-fixture.test.js",
+    "test:render-native": "npm run test:m16"
   }
 }
