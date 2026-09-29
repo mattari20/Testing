@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {renderEditorPage} from '../../src/ui/editor-page-renderer.js';test('page renderer records bounded current page',()=>{const root={dataset:{}};const r=renderEditorPage(root,[{id:1},{id:2}],9);assert.equal(r.currentPage,2);assert.equal(root.dataset.v2CurrentPage,'2');});
