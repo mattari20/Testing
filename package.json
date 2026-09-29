@@ -105,6 +105,11 @@
     "test:m73": "node --test tests/m73/section-editor-controller.test.js",
     "test:m74": "node --test tests/m74/template-preview-controller.test.js",
     "test:m75": "node --test tests/m75/editor-browser-contract.test.js",
-    "test:m72-m75": "npm run test:m72 && npm run test:m73 && npm run test:m74 && npm run test:m75"
+    "test:m72-m75": "npm run test:m72 && npm run test:m73 && npm run test:m74 && npm run test:m75",
+    "test:m76": "node --test tests/m76/editor-runtime.test.js",
+    "test:m77": "node --test tests/m77/editor-state-view.test.js",
+    "test:m78": "node --test tests/m78/editor-template-controller.test.js",
+    "test:m79": "node --test tests/m79/editor-runtime-contract.test.js",
+    "test:m76-m79": "npm run test:m76 && npm run test:m77 && npm run test:m78 && npm run test:m79"
   }
 }
