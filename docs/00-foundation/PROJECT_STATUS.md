@@ -119,3 +119,20 @@ A dedicated current-market research pass has now been completed and documented i
 The research was reconciled into the Master Capability Register, Feature Matrix and Product Requirements. The resulting baseline now explicitly covers explainable career intelligence, skill evidence, achievement discovery, controlled AI approval/anti-fabrication, import confidence, specialized student/academic modes, online CV privacy, career continuity and presentation variants.
 
 The project should not freeze documentation until the remaining V1-to-V2 capability reconciliation and architecture review gates are completed.
+
+
+## Template Library documentation completed
+
+The Template Library / Distribution System has now been documented in:
+
+- docs/02-v2-product/V2_TEMPLATE_LIBRARY_AND_DISTRIBUTION_SYSTEM.md
+
+The specification defines the Template Library, full template preview, Demo Profile, Try with My Data, Build Online flow, blank Word templates, user-data DOCX export, template metadata/lifecycle, compatibility, presentation variants, comparison, recommendation, premium entitlement boundaries, SEO, privacy, analytics and testing.
+
+The following governing product documents were reconciled with this work:
+
+- docs/02-v2-product/V2_MASTER_CAPABILITY_REGISTER.md
+- docs/02-v2-product/V2_FEATURE_MATRIX.md
+- docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md
+
+The project remains in documentation/architecture preparation. No V2 application code has been authorized by this documentation batch.
