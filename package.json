@@ -75,6 +75,11 @@
     "test:m45": "node --test tests/m45/document-extraction-contract.test.js",
     "test:m46": "node --test tests/m46/intelligence-safety.test.js",
     "test:m47": "node --test tests/m47/release-readiness.test.js",
-    "test:m44-m47": "npm run test:m44 && npm run test:m45 && npm run test:m46 && npm run test:m47"
+    "test:m44-m47": "npm run test:m44 && npm run test:m45 && npm run test:m46 && npm run test:m47",
+    "test:m48": "node --test tests/m48/cv-application.test.js",
+    "test:m49": "node --test tests/m49/local-first-session.test.js",
+    "test:m50": "node --test tests/m50/online-cv-boundary.test.js",
+    "test:m51": "node --test tests/m51/end-to-end-contract.test.js",
+    "test:m48-m51": "npm run test:m48 && npm run test:m49 && npm run test:m50 && npm run test:m51"
   }
 }
