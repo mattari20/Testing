@@ -1,16 +1,23 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '1.0.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.0.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 
+const IDENTITY_ALIASES = Object.freeze({
+  fullName: ['fullName', 'name'],
+  jobTitle: ['jobTitle', 'job'],
+  dateOfBirth: ['dateOfBirth', 'dob']
+});
+
 function readPath(source, path) {
   if (!path) return undefined;
-  return String(path).split('.').reduce((value, key) => value == null ? undefined : value[key], source);
-}
-
-function visibleById(configuration, collection, id, type) {
-  const hidden = Array.isArray(configuration?.[collection]) ? configuration[collection].map(String) : [];
-  return !hidden.includes(String(id)) && !hidden.includes(String(type));
+  const parts = String(path).split('.');
+  let value = source;
+  for (const key of parts) {
+    if (value == null) return undefined;
+    value = value[key];
+  }
+  return value;
 }
 
 export function findCanonicalSection(snapshot, sectionType) {
@@ -20,96 +27,175 @@ export function findCanonicalSection(snapshot, sectionType) {
 
 export function isCanonicalSectionVisible(snapshot, section) {
   if (!section || section.visibility === false) return false;
-  return visibleById(snapshot?.configuration, 'hiddenSections', section.id, section.type);
+  const hidden = Array.isArray(snapshot?.configuration?.hiddenSections)
+    ? snapshot.configuration.hiddenSections.map(String)
+    : [];
+  return !hidden.includes(String(section.id)) && !hidden.includes(String(section.type));
 }
 
 export function getVisibleEntries(snapshot, section) {
   if (!section || !isCanonicalSectionVisible(snapshot, section)) return [];
-  const hiddenEntries = Array.isArray(snapshot?.configuration?.hiddenEntries)
+  const hidden = Array.isArray(snapshot?.configuration?.hiddenEntries)
     ? snapshot.configuration.hiddenEntries.map(String)
     : [];
   return (Array.isArray(section.entries) ? section.entries : [])
     .filter(entry => entry?.visibility !== false)
-    .filter(entry => !hiddenEntries.includes(String(entry.id)));
+    .filter(entry => !hidden.includes(String(entry.id)));
 }
 
-export function resolveNativeBinding(snapshot, binding, context = null) {
-  const path = String(binding || '');
-  if (!path) return undefined;
+function resolveIdentity(snapshot, key) {
+  const identity = isObject(snapshot?.careerData?.identity) ? snapshot.careerData.identity : {};
+  const candidates = IDENTITY_ALIASES[key] || [key];
+  for (const candidate of candidates) {
+    if (identity[candidate] !== undefined && identity[candidate] !== null) return identity[candidate];
+  }
+  return undefined;
+}
 
-  if (context && !path.startsWith('identity.') && !path.startsWith('section:')) {
-    return readPath(context.values || context, path);
+export function resolveNativeValue(snapshot, binding, context = {}) {
+  const path = String(binding || '');
+
+  if (path.startsWith('identity.')) {
+    return resolveIdentity(snapshot, path.slice('identity.'.length));
+  }
+
+  if (path.startsWith('asset:')) {
+    const assetKey = path.slice('asset:'.length);
+    const assets = Array.isArray(snapshot?.careerData?.assets) ? snapshot.careerData.assets : [];
+    const asset = assets.find(item => String(item?.key || item?.id || '') === assetKey);
+    return asset?.url || asset?.src || undefined;
   }
 
   if (path.startsWith('section:')) {
     const [, sectionType, fieldKey] = path.split(':');
     const section = findCanonicalSection(snapshot, sectionType);
     if (!section || !isCanonicalSectionVisible(snapshot, section)) return undefined;
-    const field = (section.fields || []).find(item => String(item.id) === String(fieldKey) || String(item.metadata?.semanticKey || '') === String(fieldKey));
-    if (field) return field.value;
-    const firstMatch = (section.fields || []).find(item => String(item.label || '').toLowerCase() === String(fieldKey).toLowerCase());
-    return firstMatch ? firstMatch.value : undefined;
+    const field = (section.fields || []).find(item =>
+      String(item.id) === String(fieldKey) ||
+      String(item.metadata?.semanticKey || '') === String(fieldKey) ||
+      String(item.label || '').toLowerCase() === String(fieldKey).toLowerCase()
+    );
+    return field?.value;
   }
 
+  if (context.entry && path) return context.entry.values?.[path];
+  if (context.item && path) return context.item[path];
   return readPath(snapshot, path);
 }
 
-function setAttributeSafely(element, attribute, value) {
-  if (!element || !attribute) return;
-  const stringValue = value == null ? '' : String(value);
-  if ((attribute === 'src' || attribute === 'href') && /^(javascript:|data:text\/html)/i.test(stringValue.trim())) return;
-  element.setAttribute(attribute, stringValue);
-}
-
-function hasMeaningfulValue(value) {
+function meaningful(value) {
   if (Array.isArray(value)) return value.length > 0;
   return value !== undefined && value !== null && String(value).trim() !== '';
 }
 
-function applyFields(root, snapshot, context) {
-  for (const element of root.querySelectorAll('[data-v2-field]')) {
-    const binding = element.getAttribute('data-v2-field');
-    const value = resolveNativeBinding(snapshot, binding, context);
+function setSafeAttribute(element, attribute, value) {
+  if (!element || !attribute || !meaningful(value)) return;
+  const text = String(value);
+  if ((attribute === 'src' || attribute === 'href') && /^(javascript:|data:text\/html)/i.test(text.trim())) return;
+  element.setAttribute(attribute, text);
+}
+
+function removeUndefinedTextNodes(root) {
+  const walker = root.ownerDocument?.createTreeWalker
+    ? root.ownerDocument.createTreeWalker(root, 4)
+    : null;
+  if (!walker) return;
+  const nodes = [];
+  let node;
+  while ((node = walker.nextNode())) nodes.push(node);
+  for (const textNode of nodes) {
+    if (textNode.nodeValue.trim() === 'undefined') textNode.remove();
+  }
+}
+
+function applyVisibility(root, snapshot, context = {}) {
+  for (const element of [...root.querySelectorAll('[data-v2-visible-when]')]) {
+    const binding = element.getAttribute('data-v2-visible-when') || '';
+    let value;
+    if (binding.startsWith('section:')) {
+      const [, sectionType] = binding.split(':');
+      value = isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, sectionType));
+    } else {
+      value = resolveNativeValue(snapshot, binding, context);
+    }
+    if (!meaningful(value)) element.remove();
+  }
+}
+
+function applyValues(root, snapshot, context = {}) {
+  for (const element of root.querySelectorAll('[data-v2-value]')) {
+    const value = resolveNativeValue(snapshot, element.getAttribute('data-v2-value'), context);
     element.textContent = value == null ? '' : String(value);
   }
-  for (const element of root.querySelectorAll('[data-v2-attr-src]')) {
-    const binding = element.getAttribute('data-v2-attr-src');
-    setAttributeSafely(element, 'src', resolveNativeBinding(snapshot, binding, context));
+
+  for (const element of root.querySelectorAll('[data-v2-entry-value]')) {
+    const key = element.getAttribute('data-v2-entry-value');
+    const value = context.entry?.values?.[key];
+    element.textContent = value == null ? '' : String(value);
   }
-  for (const element of root.querySelectorAll('[data-v2-if]')) {
-    const binding = element.getAttribute('data-v2-if');
-    const value = resolveNativeBinding(snapshot, binding, context);
-    if (!hasMeaningfulValue(value)) element.remove();
+
+  for (const element of root.querySelectorAll('[data-v2-item-value]')) {
+    const key = element.getAttribute('data-v2-item-value');
+    const value = context.item?.[key];
+    element.textContent = value == null ? '' : String(value);
+  }
+
+  for (const element of root.querySelectorAll('[data-v2-bind-src]')) {
+    const value = resolveNativeValue(snapshot, element.getAttribute('data-v2-bind-src'), context);
+    setSafeAttribute(element, 'src', value);
   }
 }
 
 function applyRepeats(root, snapshot) {
-  const repeats = [...root.querySelectorAll('[data-v2-repeat]')];
-  for (const container of repeats) {
-    const sectionType = container.getAttribute('data-v2-repeat');
+  for (const container of [...root.querySelectorAll('[data-v2-repeat]')]) {
+    const binding = container.getAttribute('data-v2-repeat') || '';
+    const parts = binding.split(':');
+    const sectionType = parts[0];
+    const mode = parts[1] || 'entries';
     const section = findCanonicalSection(snapshot, sectionType);
-    const entries = getVisibleEntries(snapshot, section);
-    const prototype = container.querySelector(':scope > [data-v2-repeat-item]');
-    if (!prototype) continue;
-    container.innerHTML = '';
-    for (const entry of entries) {
-      const item = prototype.cloneNode(true);
-      item.removeAttribute('data-v2-repeat-item');
-      applyRepeats(item, snapshot);
-      applyFields(item, snapshot, entry);
-      container.appendChild(item);
+    const entries = mode === 'values'
+      ? ((Array.isArray(section?.entries) ? section.entries : [])
+        .filter(entry => entry?.visibility !== false)
+        .map(entry => entry.values || entry)
+        .filter(Boolean))
+      : getVisibleEntries(snapshot, section);
+
+    if (!section || !isCanonicalSectionVisible(snapshot, section)) {
+      container.remove();
+      continue;
     }
-    if (!entries.length && container.parentElement?.hasAttribute('data-v2-section')) {
-      container.parentElement.remove();
+
+    const prototype = container.cloneNode(true);
+    const repeatAttribute = prototype.getAttribute('data-v2-repeat');
+    prototype.removeAttribute('data-v2-repeat');
+    prototype.removeAttribute('data-v2-item');
+    const repeatItem = prototype.getAttribute('data-v2-repeat-item');
+    prototype.removeAttribute('data-v2-repeat-item');
+
+    // This native T01 form uses the repeated element itself as the prototype.
+    const parent = container.parentNode;
+    if (!parent) continue;
+    const fragment = container.ownerDocument.createDocumentFragment();
+
+    for (const item of entries) {
+      const cloneNode = prototype.cloneNode(true);
+      const context = mode === 'values' ? { item } : { entry: item };
+      applyValues(cloneNode, snapshot, context);
+      applyVisibility(cloneNode, snapshot, context);
+      fragment.appendChild(cloneNode);
     }
+
+    parent.replaceChild(fragment, container);
   }
 }
 
 function applySectionVisibility(root, snapshot) {
-  for (const sectionElement of [...root.querySelectorAll('[data-v2-section]')]) {
-    const sectionType = sectionElement.getAttribute('data-v2-section');
-    const section = findCanonicalSection(snapshot, sectionType);
-    if (!isCanonicalSectionVisible(snapshot, section)) sectionElement.remove();
+  for (const element of [...root.querySelectorAll('[data-v2-section][data-v2-visible-when]')]) {
+    const binding = element.getAttribute('data-v2-visible-when') || '';
+    if (binding.startsWith('section:')) {
+      const [, type] = binding.split(':');
+      if (!isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, type))) element.remove();
+    }
   }
 }
 
@@ -119,7 +205,7 @@ export function createNativeRenderDefinition(input = {}) {
   return Object.freeze({
     version: NATIVE_TEMPLATE_RENDERER_VERSION,
     id: String(input.id),
-    templateVersion: String(input.templateVersion || '1.0.0'),
+    templateVersion: String(input.templateVersion || '2.0.0'),
     sourceHtml: String(input.sourceHtml),
     metadata: isObject(input.metadata) ? clone(input.metadata) : {}
   });
@@ -130,12 +216,17 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   if (!documentRef || typeof documentRef.createElement !== 'function') {
     throw new Error('A browser document reference is required.');
   }
+
   const host = documentRef.createElement('div');
   host.innerHTML = definition.sourceHtml;
-  const root = host.querySelector('[data-v2-template-root]') || host.firstElementChild || host;
+  const root = host.querySelector('[data-v2-template-id]') || host.firstElementChild || host;
+
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
-  applyFields(root, snapshot, null);
+  applyVisibility(root, snapshot);
+  applyValues(root, snapshot);
+  removeUndefinedTextNodes(root);
+
   return {
     version: NATIVE_TEMPLATE_RENDERER_VERSION,
     state: 'ready',
