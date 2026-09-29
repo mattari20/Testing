@@ -6,7 +6,7 @@ export function createPlaywrightPageAdapter(page, options = {}) {
   if (!page || typeof page.setContent !== 'function') throw new Error('A Playwright page is required.');
   const rendererSource = options.rendererSource || fs.readFileSync(path.resolve('src/render/native-v2-template-renderer.js'), 'utf8');
   return {
-    async renderAndMeasure({ template, sourceHtml, snapshot }) {
+    async renderAndMeasure({ template, sourceHtml, snapshot, screenshotPath }) {
       await page.setContent('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>', { waitUntil:'domcontentloaded' });
       await page.addScriptTag({ content: rendererSource.replaceAll('export ', '') + '\nwindow.__nativeRender = renderNativeTemplateSource;' });
       const result = await page.evaluate(async ({ sourceHtml, template, snapshot }) => {
@@ -37,6 +37,11 @@ export function createPlaywrightPageAdapter(page, options = {}) {
           visibleTextLength:document.body.innerText.length
         };
       }, { sourceHtml, template, snapshot });
+      if (screenshotPath) {
+        fs.mkdirSync(path.dirname(screenshotPath), { recursive: true });
+        await page.screenshot({ path: screenshotPath, fullPage: true });
+        result.screenshotArtifact = screenshotPath;
+      }
       return result;
     },
     async close(){ await page.close(); }
