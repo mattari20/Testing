@@ -31,6 +31,8 @@
     "test:m18": "node tests/m18/native-measurement-harness.test.js",
     "test:measurement": "npm run test:m18",
     "test:m19": "node --test tests/m19/native-v2-validation-harness.test.js",
-    "test:browser-validation": "npm run test:m19"
+    "test:browser-validation": "npm run test:m19",
+    "test:m21": "node --test tests/m21/golden-baseline-comparison.test.js",
+    "test:golden": "npm run test:m21"
   }
 }
