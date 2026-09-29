@@ -90,6 +90,11 @@
     "test:m57": "node --test tests/m57/browser-evidence-integration.test.js",
     "test:m58": "node --test tests/m58/export-import-evidence.test.js",
     "test:m59": "node --test tests/m59/final-acceptance-package.test.js",
-    "test:m56-m59": "npm run test:m56 && npm run test:m57 && npm run test:m58 && npm run test:m59"
+    "test:m56-m59": "npm run test:m56 && npm run test:m57 && npm run test:m58 && npm run test:m59",
+    "test:m60": "node --test tests/m60/validation-runner.test.js",
+    "test:m62": "node --test tests/m62/m0-closure-gate.test.js",
+    "test:m63": "node --test tests/m63/ui-modernization-contract.test.js",
+    "validate:v2": "node scripts/run-v2-validation.mjs",
+    "test:m60-m63": "npm run test:m60 && npm run test:m62 && npm run test:m63"
   }
 }
