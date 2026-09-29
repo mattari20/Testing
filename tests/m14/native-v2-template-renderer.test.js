@@ -3,7 +3,7 @@ import {
   findCanonicalSection,
   isCanonicalSectionVisible,
   getVisibleEntries,
-  resolveNativeBinding,
+  resolveNativeValue,
   createNativeRenderDefinition
 } from '../../src/render/native-v2-template-renderer.js';
 
@@ -24,9 +24,10 @@ const snapshot = {
 assert.equal(findCanonicalSection(snapshot, 'experience').id, 'exp1');
 assert.equal(isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, 'summary')), true);
 assert.equal(getVisibleEntries(snapshot, findCanonicalSection(snapshot, 'experience')).length, 1);
-assert.equal(resolveNativeBinding(snapshot, 'identity.name'), 'Ali');
-assert.equal(resolveNativeBinding(snapshot, 'section:summary:text'), 'Summary text');
-assert.equal(resolveNativeBinding(snapshot, 'company', { values: { company: 'Company A' } }), 'Company A');
+assert.equal(resolveNativeValue(snapshot, 'identity.name'), 'Ali');
+assert.equal(resolveNativeValue(snapshot, 'section:summary:text'), 'Summary text');
+assert.equal(resolveNativeValue({ careerData: { identity: { name: 'Legacy Name' } } }, 'identity.fullName'), 'Legacy Name');
+assert.equal(resolveNativeValue(snapshot, 'company', { values: { company: 'Company A' } }), 'Company A');
 
 const definition = createNativeRenderDefinition({ id: 't01-modern-minimalist-cv-design_modern', sourceHtml: '<div data-v2-template-root></div>' });
 assert.equal(definition.id, 't01-modern-minimalist-cv-design_modern');
