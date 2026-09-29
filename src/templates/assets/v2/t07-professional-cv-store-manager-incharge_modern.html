@@ -1,0 +1,445 @@
+<style>
+
+    :root {
+        --primary: #1e3a68; 
+    }
+    .t07-professional-cv-store-manager-incharge_modern {
+        
+        --text-dark: #333333;
+        --text-light: #ffffff;
+        --border-color: var(--dark-bg);
+        --main-padding: 30px;
+
+        width: 210mm;
+        height: 297mm;
+        margin: 0 auto;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-sizing: border-box;
+        overflow: hidden;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern header {
+        background-color: var(--primary);
+        height: 120px; /* Increased slightly for the large photo */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 var(--main-padding);
+        color: var(--text-light);
+        position: relative;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .profile-photo-container {
+        width: 120px; /* Adjusted size for better balance */
+        height: 160px;
+        border-radius: 50%; /* Oval/Circle shape */
+        border: 0px solid #ffffff; /* White border looks cleaner on dark headers */
+        overflow: hidden;
+        position: absolute;
+        top: 20px;
+        left: var(--main-padding);
+        background: #eee;
+        z-index: 10;
+        /*box-shadow: 0 4px 10px rgba(0,0,0,0.1);*/
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .profile-photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .header-content {
+        margin-left: 210px; /* Increased to push text past the 180px photo */
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .header-content h1 {
+        font-size: 26pt;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .header-content p {
+        font-size: 13pt;
+        text-transform: uppercase;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+    .t07-professional-cv-store-manager-incharge_modern .name-text {
+        font-size: 34px;
+        font-weight: 800;
+        color: #ffffff;
+        text-transform: uppercase;
+        margin: 0;
+        letter-spacing: 3px;
+    }
+    .t07-professional-cv-store-manager-incharge_modern .title-text {
+        font-size: 20px;
+        color: #ffffff;
+        
+        margin: 3px 0 15px 0;
+    }
+    
+    
+    .t07-professional-cv-store-manager-incharge_modern .contact-bar {
+        padding: 15px var(--main-padding) 15px 240px; /* Increased padding to clear photo */
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 25px;
+        font-size: 11pt;
+        color: #000000;
+        border-bottom: 1px solid var(--border-color);
+        min-height: 50px;
+    }
+    
+    .t07-professional-cv-store-manager-incharge_modern .contact-item-header {
+        display: flex;
+        align-items: center;
+        font-size: 9pt;
+        margin-bottom: 3px;
+        color: #000000;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .contact-item-header i {
+        margin-right: 12px;
+        font-size: 11pt;
+        color: var(--primary);
+        width: 20px;
+        text-align: center;
+    }
+    
+
+    .t07-professional-cv-store-manager-incharge_modern .cv-grid {
+        display: flex;
+        flex: 1;
+        padding: 0 var(--main-padding);
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern main {
+        width: 60%;
+        padding-right: 20px;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern aside {
+        width: 40%;
+        padding-left: 20px;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern h2 {
+        color: var(--primary);
+        font-size: 16pt;
+        font-weight: 700;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .list-container {
+        font-size: 9.5pt;
+        line-height: 1.5;
+        color: var(--text-dark);
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .objective-block {
+        margin-top: 10px;
+        font-size: 12pt;
+        line-height: 1.4;
+        text-align: justify;
+    }
+    
+/* 1. This styles the text & colorful background box tightly around the content */
+    .t07-professional-cv-store-manager-incharge_modern .section-label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #ffffff !important;
+        background-color: var(--primary) !important;
+        text-transform: uppercase;
+        padding: 6px 12px;
+        margin: 15px 0 15px 0;
+        border-radius: 5px 5px 0 5px;
+        display: inline-flex;       /* Snugly wraps text and icon */
+        align-items: center;
+        gap: 8px;
+        position: relative;         /* Allows the line to anchor to this area */
+    }
+
+    
+    
+    /* Left side (Main content area) line length */
+    .t07-professional-cv-store-manager-incharge_modern main .section-label::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 10%; /* Changed to 100% so it starts cleanly right at the end of the colored text label box */
+        border-bottom: 3px solid var(--primary);
+        width: 400px;
+    }
+    
+    /* Right side (Sidebar area) line length */
+    .t07-professional-cv-store-manager-incharge_modern aside .section-label::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 10%; /* Changed to 100% so it starts cleanly right at the end of the colored text label box */
+        border-bottom: 3px solid var(--primary);
+        width: 270px;
+    }
+
+
+
+
+
+
+
+    /* --- Enhanced Experience & Education Section Styles --- */
+    .t07-professional-cv-store-manager-incharge_modern .timeline-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .experience-item,
+    .t07-professional-cv-store-manager-incharge_modern .education-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .exp-header-row,
+    .t07-professional-cv-store-manager-incharge_modern .edu-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .exp-company,
+    .t07-professional-cv-store-manager-incharge_modern .edu-institute {
+        font-size: 11pt;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .exp-date {
+        font-size: 9.5pt;
+        font-weight: 600;
+        color: #555555;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .exp-role {
+        font-size: 10pt;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-style: italic;
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .exp-description {
+        font-size: 9.5pt;
+        line-height: 1.4;
+        color: #666666;
+        margin-top: 2px;
+        text-align: justify;
+    }
+    
+    .t07-professional-cv-store-manager-incharge_modern .list-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;         /* Adds a clean 8px space between each personal detail line */
+        margin-top: 8px;  /* Pushes the entire block down slightly away from the section header */
+    }
+    
+    .t07-professional-cv-store-manager-incharge_modern .item-description {
+        font-size: 9.5pt;          /* Matches your skills and timeline details */
+        color: #444444;            /* Soft dark charcoal for premium readability */
+        line-height: 1.4;
+        display: grid;
+        grid-template-columns: 95px 1fr; /* Label takes exactly 110px, values align perfectly after */
+        align-items: start;
+        border-bottom: 1px dashed var(--border-color); /* Subtle modern divider */
+        padding-bottom: 4px;
+    }
+    
+    .t07-professional-cv-store-manager-incharge_modern .item-description b {
+       color: var(--primary);      /* Softens the bold label to a professional charcoal grey */
+        font-weight: 700;    /* Clean semi-bold weight */
+        margin-right: 4px;   /* Ensures there is a tiny space before the value displays */
+    }
+    
+    .t07-professional-cv-store-manager-incharge_modern .skills-container {
+        display: flex;
+        flex-wrap: wrap;    /* Keeps items flowing naturally onto new lines if crowded */
+        gap: 12px 10px;     /* Adds 12px vertical spacing and 10px horizontal spacing */
+        margin-top: 10px;   /* Pushes the skills down away from the section header */
+    }
+
+
+    .t07-professional-cv-store-manager-incharge_modern .skill-tag {
+        font-size: 10pt;
+        font-weight: 600;
+        color: var(--primary);
+        display: inline-block;
+    }
+    
+    .t07-professional-cv-store-manager-incharge_modern .lang-item {
+        margin-top: 8px;     /* Gives each language row breathing room */
+    }
+
+    .t07-professional-cv-store-manager-incharge_modern .lang-name {
+        font-size: 10.5pt;
+        font-weight: 600;    /* Gives the language a crisp, professional weight */
+        color: var(--text-dark);
+    }
+    
+</style>
+
+<div class="t07-professional-cv-store-manager-incharge_modern" data-v2-template-root data-v2-template-id="t07-professional-cv-store-manager-incharge_modern" data-v2-template-version="2.0.0">
+    <header>
+        
+        <div  data-v2-section="photo" data-v2-visible-when="section:photo" class="profile-photo-container shape-rounded">
+            <a href="https://estudent.pk/cv-builder/" target="_blank" style="text-decoration: none; display: block; line-height: 0;">
+                    <img data-v2-bind-src="asset:profile-photo" alt="Profile Photo"></a>
+        </div>
+        
+        
+        
+        <div class="header-content">
+            
+            
+            <h1  data-v2-visible-when="identity.fullName" class="name-text"><span data-v2-value="identity.fullName"></span></h1>
+            
+
+            
+            <p  data-v2-visible-when="identity.jobTitle" class="title-text"><span data-v2-value="identity.jobTitle"></span></p>
+            
+        </div>
+    </header>
+
+    <div class="contact-bar">
+                
+                <div  data-v2-visible-when="identity.phone" class="contact-item-header">
+                    <b><i class="fas fa-phone"></i></b>
+                    <span data-v2-value="identity.phone"></span>
+                </div>
+                
+                
+                <div  data-v2-visible-when="identity.whatsapp" class="contact-item-header">
+                    <b><i class="fab fa-whatsapp"></i></b>
+                    <span data-v2-value="identity.whatsapp"></span>
+                </div>
+                
+                
+                <div  data-v2-visible-when="identity.email" class="contact-item-header">
+                    <b><i class="fas fa-envelope"></i></b>
+                    <span data-v2-value="identity.email"></span>
+                </div>
+                
+                
+                
+                <div  data-v2-visible-when="identity.address" class="contact-item-header">
+                    <b><i class="fas fa-map-marker-alt"></i></b>
+                    <span data-v2-value="identity.address"></span>
+                </div>
+                
+    </div>
+
+    <div class="cv-grid">
+        <main>
+            
+            
+            <div  data-v2-section="summary" data-v2-visible-when="section:summary" class="section-label"><i class="fas fa-user"></i>Objective</div>
+            <div class="objective-block">
+                <span data-v2-value="section:summary:text"></span>
+            </div>
+            
+            
+            
+            <div  data-v2-section="experience" data-v2-visible-when="section:experience" class="section-label"><i class="fas fa-briefcase"></i>Experience</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:experience:entries" class="experience-item">
+                    <div class="exp-header-row">
+                        <span class="exp-company"><span data-v2-entry-value="company"></span></span>
+                        <span class="exp-date"><span data-v2-entry-value="duration"></span></span>
+                    </div>
+                    <span class="exp-role"><span data-v2-entry-value="title"></span></span>
+                    <div class="exp-description"><span data-v2-entry-value="desc"></span></div>
+                </div>
+                
+            </div>
+            
+            
+            
+            
+            <div  data-v2-section="education" data-v2-visible-when="section:education" class="section-label"><i class="fas fa-graduation-cap"></i>Education</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:education:entries" class="education-item">
+                    <div class="edu-header-row">
+                        <span class="edu-institute"><span data-v2-entry-value="institute"></span></span>
+                        <span class="exp-date"><span data-v2-entry-value="year"></span></span>
+                    </div>
+                    <span class="exp-role"><span data-v2-entry-value="degree"></span></span>
+                    <div class="exp-description"><span data-v2-entry-value="grade"></span></div>
+                </div>
+                
+            </div>
+            
+            
+            
+            
+        </main>
+
+        <aside>
+            <div class="section-label"><i class="fas fa-info-circle"></i>Personal Info</div>
+            <div class="list-item">
+                <div  data-v2-visible-when="identity.dateOfBirth" class="item-description"><b>Date of Birth:</b> <span data-v2-value="identity.dateOfBirth"></span></div>
+                <div  data-v2-visible-when="identity.cnic" class="item-description"><b>CNIC:</b> <span data-v2-value="identity.cnic"></span></div>
+                <div  data-v2-visible-when="identity.religion" class="item-description"><b>Religion:</b> <span data-v2-value="identity.religion"></span></div>
+                <div  data-v2-visible-when="identity.linkedin" class="item-description"><b>LinkedIn</b> <span data-v2-value="identity.linkedin"></span></div>
+                <div  data-v2-visible-when="identity.website" class="item-description"><b>Website:</b> <span data-v2-value="identity.website"></span></div>
+            </div>
+            
+            
+            
+            
+            <div  data-v2-section="skills" data-v2-visible-when="section:skills" class="section-label"><i class="fas fa-tools"></i>Skills</div>
+            <div class="skills-container">
+                
+                <span  data-v2-repeat="section:skills:values" class="skill-tag"><span data-v2-item-value="skill"></span></span>
+                
+            </div>
+            
+
+            
+
+            
+            <div  data-v2-section="languages" data-v2-visible-when="section:languages" class="section-label"><i class="fas fa-language"></i>Languages</div>
+            
+            <div  data-v2-repeat="section:languages:values" class="lang-item">
+                <div class="lang-name"><span data-v2-item-value="language"></span></div>
+            </div>
+            
+            
+            
+            <div style="display:none;" data-v2-preserve="section:achievements"><div data-v2-preserve-content="section:achievements"></div></div>
+                
+                
+                
+            </div>
+        </aside>
+    </div>
+</div>
