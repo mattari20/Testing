@@ -85,6 +85,21 @@ Template lifecycle: draft, testing, published, deprecated.
 
 Adding a template must not require rewriting the core document engine.
 
+
+## 4A. Template Library and Distribution System
+The Template Engine is complemented by a dedicated Template Library/product-distribution layer. The library is responsible for template discovery, filtering, full preview, template metadata, Build Online entry, Try with My Data, Sample PDF, blank Word-template availability, DOCX export availability, free/premium presentation, entitlement checks, SEO landing pages, comparison and future template recommendation.
+
+The separation is:
+**Master Profile → Targeted CV → Selected Sections/Fields → Presentation Variants → Template → Preview → PDF/DOCX/Online CV.**
+
+A template controls presentation and never owns canonical career data. Template metadata must include identity/version, career level, industry, style, supported sections/field types/variants, photo support, columns, page model, themes, ATS/accessibility profile, lifecycle status, Web/PDF/DOCX/blank-DOCX capabilities, preview/demo assets and commercial references where applicable.
+
+The library must distinguish **Blank Word Template** from **User-data DOCX Export**. A blank Word file is a reusable editable product asset; DOCX export is generated from the user's structured document. A PDF screenshot must never be treated as an editable Word template.
+
+Template compatibility must prevent silent data loss. Unsupported content remains in the Master Profile and the user receives an explicit choice to hide it for that CV, choose another template, or use a compatible presentation variant. Template switching must preserve canonical content and document configuration.
+
+Template lifecycle: Draft → Testing → Published → Deprecated → Retired. Free/premium access is controlled through the entitlement layer rather than payment logic embedded in rendering.
+
 ## 5. Theme and presentation
 V1 has theme colors and template-controlled presentation.
 V2 upgrades theme tokens, typography, spacing, template-specific themes and accessibility contrast checks.
