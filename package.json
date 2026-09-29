@@ -125,6 +125,11 @@
     "test:m89": "node --test tests/m89/template-switching.test.js",
     "test:m90": "node --test tests/m90/real-editor-preview-browser.test.js",
     "test:m91": "node --test tests/m91/editor-browser-evidence.test.js",
-    "test:m88-m91": "npm run test:m88 && npm run test:m89 && npm run test:m90 && npm run test:m91"
+    "test:m88-m91": "npm run test:m88 && npm run test:m89 && npm run test:m90 && npm run test:m91",
+    "test:m92": "node --test tests/m92/browser-layout-measurer.test.js",
+    "test:m93": "node --test tests/m93/editor-preview-layout.test.js",
+    "test:m94": "node --test tests/m94/editor-layout-evidence.test.js",
+    "test:m95": "node --test tests/m95/editor-layout-flow.test.js",
+    "test:m92-m95": "npm run test:m92 && npm run test:m93 && npm run test:m94 && npm run test:m95"
   }
 }
