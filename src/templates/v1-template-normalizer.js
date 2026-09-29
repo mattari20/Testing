@@ -70,6 +70,12 @@ export function analyzeV1TemplateSource(sourceHtml) {
 function resolvePath(source, path) {
   if (!path) return undefined;
   const text = String(path);
+  if (text.startsWith('asset:')) {
+    const key = text.slice('asset:'.length);
+    const assets = Array.isArray(source?.careerData?.assets) ? source.careerData.assets : [];
+    const asset = assets.find(item => String(item?.key || item?.id || '') === key);
+    return asset?.url || asset?.src;
+  }
   if (text.startsWith('section:')) {
     const [, sectionType, field] = text.split(':');
     const section = findSection(source, sectionType);
