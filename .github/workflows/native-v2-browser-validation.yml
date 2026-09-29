@@ -25,13 +25,13 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run M20 browser validation
-        run: node --test tests/m20/native-v2-browser-validation.test.js
+      - name: Run M26 real browser evidence validation
+        run: npm run test:m26
 
-      - name: Upload validation evidence
+      - name: Upload M26 browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: m20-native-browser-validation
-          path: artifacts/m20-native-browser-validation.json
+          name: m26-native-browser-evidence
+          path: artifacts/m26/
           if-no-files-found: ignore
