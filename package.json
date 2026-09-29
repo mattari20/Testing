@@ -21,7 +21,8 @@
     "test:render": "node --test tests/m12/template-render.test.js tests/m11/document-assembly.test.js",
     "test:m13": "node --test tests/m13/v1-asset-manifest.test.js tests/m13/v1-template-normalizer.test.js",
     "test:v1-assets": "node --test tests/m13/v1-asset-manifest.test.js tests/m13/v1-template-normalizer.test.js tests/m10/template-compatibility-variants.test.js",
-    "test:m14": "node --test tests/m14/native-v2-template-contract.test.js",
-    "test:templates-native": "node --test tests/m3/template-engine.test.js tests/m10/template-compatibility-variants.test.js tests/m14/native-v2-template-contract.test.js"
+    "test:m14": "node tests/m14/native-v2-template-renderer.test.js",
+    "test:templates-native": "node --test tests/m3/template-engine.test.js tests/m10/template-compatibility-variants.test.js tests/m14/native-v2-template-contract.test.js",
+    "test:native-v2": "npm run test:m14"
   }
 }
