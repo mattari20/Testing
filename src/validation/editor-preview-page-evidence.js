@@ -1,0 +1,16 @@
+export const EDITOR_PREVIEW_PAGE_EVIDENCE_VERSION='1.0.0';
+
+export function createEditorPreviewPageEvidence(input={}){
+  const checks={
+    pageDom:input.pageDom==='passed',
+    selection:input.selection==='passed',
+    navigation:input.navigation==='passed'
+  };
+  return Object.freeze({
+    version:EDITOR_PREVIEW_PAGE_EVIDENCE_VERSION,
+    status:Object.values(checks).every(Boolean)?'passed':'incomplete',
+    checks,
+    pageCount:Number(input.pageCount)||0,
+    currentPage:Number(input.currentPage)||0
+  });
+}
