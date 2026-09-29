@@ -56,6 +56,8 @@
     "test:m32": "node --test tests/m32/build-online.test.js",
     "test:distribution": "npm run test:m30 && npm run test:m31 && npm run test:m32",
     "test:m33": "node --test tests/m33/production-export.test.js",
-    "test:export-boundary": "npm run test:m33"
+    "test:export-boundary": "npm run test:m33",
+    "test:m34": "node --test tests/m34/pdf-print-generator.test.js",
+    "test:pdf-print": "npm run test:m34"
   }
 }
