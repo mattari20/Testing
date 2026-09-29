@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createEditorPaginationState,setEditorPaginationPage} from '../../src/preview/editor-pagination-state.js';
+test('pagination state tracks page count and clamps current page',()=>{const s=createEditorPaginationState({pages:[{id:1},{id:2}]});assert.equal(s.pageCount,2);assert.equal(setEditorPaginationPage(s,9).currentPage,2);});
