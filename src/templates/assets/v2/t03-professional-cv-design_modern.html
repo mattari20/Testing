@@ -1,0 +1,661 @@
+
+<style>
+    :root{
+        --primary:#30364F;
+        --primary-dark:#0f121a;
+        --dark-bg:#d7dae3;
+        --primary-light:#8f96ac;
+        --theme-color:#30364F;
+    }
+    
+    .t03-professional-cv-design_modern {
+        --sidebar-bg: var(--dark-bg);
+        --light-sidebar: #f4f4f4;
+        --text-dark: #333333;
+        --text-light: #ffffff;
+        --timeline-line: var(--primary);
+        
+        width: 210mm;
+        min-height: 297mm;
+        background: #ffffff;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-sizing: border-box;
+        padding-top: 5px;
+        overflow: hidden;
+        margin: 0 auto;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    .t03-professional-cv-design_modern p, .t03-professional-cv-design_modern h1 { 
+        margin: 0; padding: 0;
+    }
+
+    /* SYSTEM REQUIRED ICON & SVG GUARDRAILS */
+    .t03-professional-cv-design_modern svg, 
+    .t03-professional-cv-design_modern .cv-icon,
+    .t03-professional-cv-design_modern i,
+    .t03-professional-cv-design_modern .fa,
+    .t03-professional-cv-design_modern .fas,
+    .t03-professional-cv-design_modern [class^="fa-"] {
+        display: inline-block !important;
+        visibility: visible !important;
+        fill: var(--primary) !important;
+        stroke: var(--primary) !important;
+        color: var(--primary) !important;
+        width: 18px !important;
+        height: 18px !important;
+        line-height: 1 !important;
+        vertical-align: middle !important;
+        margin-right: 5px !important;
+        opacity: 1 !important;
+    }
+    .t03-professional-cv-design_modern .section-label i,
+    .t03-professional-cv-design_modern .section-label svg,
+    .t03-professional-cv-design_modern .section-label .cv-icon,
+    .t03-professional-cv-design_modern .sidebar-label i,
+    .t03-professional-cv-design_modern .sidebar-label svg,
+    .t03-professional-cv-design_modern .sidebar-label .cv-icon {
+        
+        color: #ffffff !important;
+        fill: #ffffff !important;
+        stroke: #ffffff !important;
+    }
+    /* NAMESPACING COMPONENT SELECTORS TO PREVENT WORKSPACE UI BLEEDING */
+    .t03-professional-cv-design_modern .block-header {
+        display: flex;
+        align-items: flex-start;
+        height: 175px; 
+        background-color: var(--dark-bg) !important;
+        position: relative;
+    }
+
+    .t03-professional-cv-design_modern .photo-ribbon {
+        width: 200px;
+        height: 197px; 
+        background-color: var(--primary) !important;
+        position: absolute;
+        top: 0px; 
+        left: 45px;
+        z-index: 10;
+        border-bottom-left-radius: 100px; 
+        border-bottom-right-radius: 100px; 
+        display: flex;
+        justify-content: center;
+        padding-top: 50px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .t03-professional-cv-design_modern .block-photo {
+        width: 180px;
+        height: 180px;
+        border: 4px solid #ffffff; 
+        border-radius: 50%;
+        overflow: hidden;
+        background: #eee;
+        outline: none; 
+    }
+    
+    
+    .t03-professional-cv-design_modern .summary-text {
+        margin-bottom: 20px;
+        padding-left: 10px;
+        margin-left: -30px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #000000;
+        text-align: justify;
+    }    
+    
+    .t03-professional-cv-design_modern .block-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 20%;
+        background-color: #fff; 
+    }
+
+    .t03-professional-cv-design_modern .block-identity {
+        margin-left: 300px;
+        padding-top: 25px; 
+        padding-bottom: 30px;
+        color: var(--text-light);
+    }
+
+    .t03-professional-cv-design_modern .name-text {
+        font-size: 26pt; 
+        font-weight: 900; 
+        text-transform: uppercase;
+        letter-spacing: 0.1px; 
+        margin-top: -5px; 
+        line-height: 0.85;
+        color: #ffffff;
+        text-shadow: 
+        -1px -1px 0 var(--primary), 1px -1px 0 var(--primary), -1px  1px 0 var(--primary), 1px  1px 0 var(--primary);
+    }
+        .t03-professional-cv-design_modern .title-text {
+        font-size: 15pt; 
+        font-weight: 900;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        color: #ffffff !important; 
+        text-transform: uppercase;
+        letter-spacing: 4px; 
+        text-shadow: 
+        -1px -1px 0 var(--primary), 1px -1px 0 var(--primary), -1px  1px 0 var(--primary), 1px  1px 0 var(--primary);
+    }
+    
+    
+    
+    .t03-professional-cv-design_modern .header-contact-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 20px !important;
+        margin-top: 8px;
+        align-items: center;
+        width: 100%;
+    }
+    
+    
+    .t03-professional-cv-design_modern .contact-item-header {
+        display: flex !important;
+        flex-direction: row !important;
+        font-size: 12px;
+        color: #000000;
+        flex: 0 0 auto !important; 
+        max-width: 205px;
+    }
+    
+    /* Allow the address element to expand completely across the available space */
+    .t03-professional-cv-design_modern .header-contact-row:last-of-type .contact-item-header {
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+        white-space: normal !important;
+    }
+    .t03-professional-cv-design_modern .cv-body-wrapper {
+        display: flex;
+        flex: 1;
+        margin-top: 10px;
+    }
+
+    .t03-professional-cv-design_modern .cv-main {
+        width: 62%;
+        padding: 70px 30px 20px 50px; 
+    }
+
+    .t03-professional-cv-design_modern .cv-sidebar {
+        width: 38%;
+        background-color: var(--dark-bg) !important;
+        color: #fff;
+        padding: 25px 25px 40px 25px; 
+        position: relative;
+        margin-left: 8px; 
+    }
+
+    .t03-professional-cv-design_modern .section-label {
+        background-color: var(--primary) !important;
+        color: #ffffff !important; 
+        font-size: 14px; 
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        height: 40px; 
+        width: 40%; 
+        padding: 0 25px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: flex-start; 
+        border-radius: 0 20px 20px 0;
+        margin: 25px 0 20px -40px;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .t03-professional-cv-design_modern .section-label::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: 0;
+        border-left: 10px solid transparent;
+        border-bottom: 10px solid var(--primary-dark) !important; 
+    }
+
+    .t03-professional-cv-design_modern .sidebar-label {
+        background-color: var(--primary) !important;
+        color: var(--primary-contrast) !important; 
+        font-size: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        height: 40px; 
+        padding: 0 25px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: flex-start; 
+        border-radius: 0 20px 20px 0;
+        margin: 20px 40px 20px -34px;
+        position: relative;
+        box-sizing: border-box;
+    }
+    
+    .t03-professional-cv-design_modern .sidebar-label::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: 0;
+        border-left: 10px solid transparent;
+        border-bottom: 10px solid var(--primary-dark) !important;
+    }
+    
+    .t03-professional-cv-design_modern .timeline-section {
+        position: relative;
+        padding-left: 25px; 
+        margin-left: -15px; 
+    }
+
+    .t03-professional-cv-design_modern .timeline-section::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 5px;
+        bottom: 10px;
+        width: 2px;
+        background: var(--primary) !important;
+    }
+
+    .t03-professional-cv-design_modern .timeline-section > div {
+        margin-bottom: 15px; 
+    }
+
+    .t03-professional-cv-design_modern .timeline-section > div > div:first-child
+    {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important; /* Forces items left next to each other */
+        align-items: center !important;          /* Perfectly aligns items vertically */
+        gap: 6px;                               /* Clean physical gap between elements */
+        width: 100% !important;
+        margin-bottom: 4px;
+    }
+
+
+    .t03-professional-cv-design_modern .exp-company,
+    .t03-professional-cv-design_modern .edu-institute,
+    .t03-professional-cv-design_modern .pro-name {
+        font-size: 15px;
+        font-weight: 800;
+        color: #000000;
+        
+    }
+
+    .t03-professional-cv-design_modern .exp-date,
+    .t03-professional-cv-design_modern .edu-date,
+    .t03-professional-cv-design_modern .pro-date {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--primary) !important;
+        background: #ffffff !important;
+        padding: 2px 8px;
+        border: 1px solid var(--primary);
+        border-radius: 12px;
+        text-transform: uppercase;
+    }
+
+    /* ATOMIC ROLES, DEGREES & PROJECT ROLES (Blue & Italic) */
+    .t03-professional-cv-design_modern .exp-role,
+    .t03-professional-cv-design_modern .edu-degree,
+    .t03-professional-cv-design_modern .pro-role {
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: var(--primary) !important; 
+        font-style: italic !important;
+        display: inline;
+        display: inline-block; /* Changed from block to inline-block */
+        margin: 2px 0;
+        margin-top: 4px;
+    }
+    
+    /* ATOMIC DESCRIPTION */
+    .t03-professional-cv-design_modern .exp-description,
+    .t03-professional-cv-design_modern .pro-description {
+        
+        font-size: 13px !important;
+        color: #333 !important;
+        line-height: 1.5 !important;
+        margin-top: 4px;
+        display: inline; /* Changed to inline to bring it up to the same line */
+        padding-left: 6px; /* Adds space right after the job title */
+    }
+    
+    .t03-professional-cv-design_modern .edu-grade {
+        
+        font-size: 13px !important;
+        color: #333 !important;
+        line-height: 1.5 !important;
+        margin-top: 4px;
+        display: inline-block; /* Added to keep it on the same line */
+        margin-left: 10px;     /* Space between the degree and the grade */
+    }
+    
+    .t03-professional-cv-design_modern .timeline-section strong, 
+    .t03-professional-cv-design_modern .timeline-section b {
+        display: inline !important;
+        font-size: 13pt; 
+        color: #000;
+        font-weight: 900;
+        margin-bottom: 4px;
+        letter-spacing: -0.2px;
+        flex: 1;
+        text-decoration: underline !important;
+        text-decoration-color: var(--primary) !important;
+        text-underline-offset: 2px;
+    }
+
+    .t03-professional-cv-design_modern .timeline-section span:not(.edu-institute):not(.exp-company):not(.pro-name):not(.edu-grade):not(.exp-description):not(.pro-description):not(.edu-separator):not(.exp-separator):not(.pro-separator),
+    .t03-professional-cv-design_modern .company-row .job-date {
+        display: inline-block !important;
+        font-style: normal;
+        font-size: 9.5pt; 
+        color: var(--primary) !important; 
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: left;
+        white-space: nowrap;
+        margin-left: 0px; 
+    }
+
+    .t03-professional-cv-design_modern .company-row .job-date::before {
+        content: "[" !important;
+        margin-right: 2px;
+    }
+    .t03-professional-cv-design_modern .company-row .job-date::after {
+        content: "]" !important;
+        margin-left: 2px;
+    }
+
+    .t03-professional-cv-design_modern .timeline-section span:not(.job-date)::before,
+    .t03-professional-cv-design_modern .timeline-section span:not(.job-date)::after {
+        content: none !important;
+    }
+
+    .t03-professional-cv-design_modern .item-desc, .t03-professional-cv-design_modern .timeline-section p {
+        font-size: 9.5pt; 
+        color: #333333; 
+        line-height: 1.65; 
+        text-align: justify;
+        margin-bottom: 15px;
+        margin-top: 5px;
+        text-decoration: none !important; 
+    }
+
+    .t03-professional-cv-design_modern .contact-row {
+        margin-bottom: 10px;
+        padding-top: 5px;
+        font-size: 12px;
+        display: flex; 
+        align-items: center; 
+        justify-content: flex-start; /* Keeps items moving left-to-right */
+        gap: 1  5px; /* Ensures a fallback uniform gap */
+    }
+
+    .t03-professional-cv-design_modern .contact-row b { 
+        color: var(--primary) !important; 
+        display: inline-block; /* Changed from block to maintain layout */
+        font-size: 12px; 
+        text-transform: uppercase; 
+        margin-bottom: 0px; /* Reset margin for precise centering */
+        letter-spacing: 1.8px; 
+        width: 90px; /* Fixed width anchors labels so data starts on an identical vertical line */
+        flex-shrink: 0; /* Prevents text formatting squishing */
+    }
+
+    .t03-professional-cv-design_modern .contact-row a { color: #000000; text-decoration: none; word-break: break-all; }
+    
+    .t03-professional-cv-design_modern .contact-row span {
+        font-variant-numeric: tabular-nums; 
+        font-weight: 500;
+        color: #000000;
+        flex: 1; /* Automatically wraps or handles space safely */
+    }
+
+    .t03-professional-cv-design_modern .lang-item {
+        margin-bottom: 12px;
+        font-weight: 500;
+        }
+
+
+    /* 1. SEPARATORS (Black) */
+    .t03-professional-cv-design_modern .timeline-section .edu-separator,
+    .t03-professional-cv-design_modern .timeline-section .exp-separator,
+    .t03-professional-cv-design_modern .timeline-section .pro-separator {
+        color: #000000 !important;
+        font-weight: normal !important;
+        font-size: 14px !important;
+        text-transform: none !important;
+    }
+
+    /* 2. INSTITUTES, COMPANIES & PROJECTS (Black & Bold) */
+    .t03-professional-cv-design_modern .timeline-section .edu-institute, 
+    .t03-professional-cv-design_modern .timeline-section .exp-company,
+    .t03-professional-cv-design_modern .timeline-section .pro-name {
+        font-size: 15px !important;
+        font-weight: 800 !important;
+        color: #000000 !important; 
+        text-transform: none !important; 
+        letter-spacing: normal !important;
+        white-space: normal !important;
+    }
+
+    /* 3. GRADES & DESCRIPTIONS (Black & Normal Weight) */
+    .t03-professional-cv-design_modern .timeline-section .edu-grade,
+    .t03-professional-cv-design_modern .timeline-section .exp-description,
+    .t03-professional-cv-design_modern .timeline-section .pro-description {
+        font-size: 13px !important;
+        color: #333333 !important;
+        font-weight: normal !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+    }
+
+    /* 4. DATES (Keep as is - Colored badge) */
+    .t03-professional-cv-design_modern .timeline-section .edu-date,
+    .t03-professional-cv-design_modern .timeline-section .exp-date,
+    .t03-professional-cv-design_modern .timeline-section .pro-date {
+        font-size: 11px !important;
+        margin: 0 !important;
+        text-transform: uppercase !important;
+    }
+    
+</style>
+
+<div class="t03-professional-cv-design_modern" id="cvContainer">
+    <header class="block-header">
+        
+        <div  data-v2-section="photo" data-v2-visible-when="section:photo"class="photo-ribbon">
+            <div class="block-photo">
+                <a href="https://estudent.pk/cv-builder/" target="_blank" style="text-decoration: none; display: block; line-height: 0;">
+                    <img data-v2-bind-src="asset:profile-photo" alt="Profile Photo"></a>
+            </div>
+        </div>
+        
+        <div class="block-identity">
+            <h1  data-v2-visible-when="identity.fullName"class="name-text"><span data-v2-value="identity.fullName"></span></h1>
+            <p  data-v2-visible-when="identity.jobTitle"class="title-text"><span data-v2-value="identity.jobTitle"></span></p>
+            
+        <div class="header-contact-row">
+            
+            <div  data-v2-visible-when="identity.phone"class="contact-item-header">
+            <b><span class="cv-icon" data-icon="phone"></span></b>
+                    <span data-v2-value="identity.phone"></span>
+            </div>
+            
+
+            
+            <div  data-v2-visible-when="identity.whatsapp"class="contact-item-header">
+                <b><i class="fab fa-whatsapp"></i></b>
+                    <span data-v2-value="identity.whatsapp"></span>
+            </div>
+            
+
+            
+            <div  data-v2-visible-when="identity.email"class="contact-item-header">
+                <i class="fas fa-envelope"></i>
+                    <span data-v2-value="identity.email"></span>
+            </div>
+            
+            
+        </div>
+            <div class="header-contact-row">
+                
+                <div  data-v2-visible-when="identity.address"class="contact-item-header">
+                <i class="fas fa-map-marker-alt"></i>
+                <span data-v2-value="identity.address"></span>
+                </div>
+                
+            </div>
+        </div>
+    </header>
+
+    <div class="cv-body-wrapper">
+        <main class="cv-main">
+            
+            <div  data-v2-section="summary" data-v2-visible-when="section:summary"class="summary-text"><span data-v2-value="section:summary:text"></span></div>
+            
+            
+            
+            <div  data-v2-section="education" data-v2-visible-when="section:education"class="section-label"><i class="fas fa-graduation-cap"></i>Education</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:education:entries"class="education-item">
+                    <div class="edu-header-row">
+                        <span class="edu-date"><span data-v2-entry-value="year"></span></span>
+                        <span class="edu-separator"> - </span>
+                        <span class="edu-institute"><span data-v2-entry-value="institute"></span></span>
+                        
+                    </div>
+                    <span class="edu-degree"><span data-v2-entry-value="degree"></span></span> -
+                    <span class="edu-grade"><span data-v2-entry-value="grade"></span></span>
+                </div>
+                
+            </div>
+            
+            
+            
+            
+            
+            <div  data-v2-section="experience" data-v2-visible-when="section:experience"class="section-label"><i class="fas fa-briefcase"></i>Experience</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:experience:entries"class="experience-item">
+                    <div class="exp-header-row">
+                        <span class="exp-date"><span data-v2-entry-value="duration"></span></span>
+                        <span class="exp-separator"> - </span>
+                        <span class="exp-company"><span data-v2-entry-value="company"></span></span>
+            
+                    </div>
+                    <span class="exp-role"><span data-v2-entry-value="title"></span></span> : 
+                    <div class="exp-description"><span data-v2-entry-value="desc"></span></div>
+                </div>
+                
+            </div>
+            
+            
+            
+            <div  data-v2-section="projects" data-v2-visible-when="section:projects"class="section-label"><i class="fas fa-project-diagram"></i>Projects</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:projects:entries"class="project-item" style="margin-bottom: 15px;">
+                    <div class="pro-header-row" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 6px; margin-bottom: 4px; width: 100% !important;">
+                        <span class="pro-date"><span data-v2-entry-value="year"></span></span>
+                        <span class="pro-separator"> - </span>
+                        <span class="pro-name"><span data-v2-entry-value="name"></span></span>
+                    </div>
+                    <span class="pro-role"><span data-v2-entry-value="role"></span></span> : 
+                    <div class="pro-description"><span data-v2-entry-value="desc"></span></div>
+                </div>
+                
+            </div>
+            
+            
+
+        </main>
+        
+        <aside class="cv-sidebar">
+
+            <div class="sidebar-label"><i class="fas fa-info-circle"></i>Personal Information</div>
+            
+            <div  data-v2-visible-when="identity.dateOfBirth"class="contact-row">
+                <b>Date of Birth :</b> 
+                <span><span data-v2-value="identity.dateOfBirth"></span></span>
+            </div>
+            
+            
+            
+            <div  data-v2-visible-when="identity.cnic"class="contact-row">
+                <b>CNIC :</b> 
+                <span><span data-v2-value="identity.cnic"></span></span>
+            </div>
+            
+            
+            
+            <div  data-v2-visible-when="identity.religion"class="contact-row">
+                <b>Religion :</b> 
+                <span><span data-v2-value="identity.religion"></span></span>
+            </div>
+            
+            
+            
+            <div  data-v2-visible-when="identity.linkedin"class="contact-row">
+                <b>LinkedIn :</b>
+                <span><span data-v2-value="identity.linkedin"></span></span>
+                
+            </div>
+            
+
+            
+            <div  data-v2-visible-when="identity.website"class="contact-row">
+                <b>Website :</b> 
+                <span><span data-v2-value="identity.website"></span></span>
+                
+            </div>
+            
+            
+            
+            
+            <div  data-v2-section="skills" data-v2-visible-when="section:skills"class="sidebar-label"><i class="fas fa-tools"></i>Skills</div>
+            <div class="skills-container">
+                
+                <span  data-v2-repeat="section:skills:values"class="skill-tag"><span data-v2-item-value="skill"></span></span>
+                
+            </div>
+            
+            
+        
+            
+            <div  data-v2-section="languages" data-v2-visible-when="section:languages"class="sidebar-label"><i class="fas fa-language"></i>Languages</div>
+            
+            <div  data-v2-repeat="section:languages:values"class="lang-item">
+                <div class="lang-name"><span data-v2-item-value="language"></span></div>
+            </div>
+            
+            
+                        
+            
+            <div  data-v2-section="achievements" data-v2-visible-when="section:achievements"class="sidebar-label"><i class="fas fa-trophy"></i>Achievements</div>
+            
+            <div  data-v2-repeat="section:achievements:entries"class="ach-item"><span data-v2-entry-value="achievement"></span></div>
+            
+            
+
+
+        </aside>
+    </div>
+</div>
+
