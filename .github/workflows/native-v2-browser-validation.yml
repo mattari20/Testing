@@ -50,6 +50,17 @@ jobs:
           path: artifacts/m87/
           if-no-files-found: ignore
 
+      - name: Run M90 real editor preview validation
+        run: npm run test:m90
+
+      - name: Upload M90 editor preview evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m90-editor-preview-evidence
+          path: artifacts/m90/
+          if-no-files-found: ignore
+
       - name: Run M28 paired V1 V2 browser comparison
         run: npm run test:m28
 
