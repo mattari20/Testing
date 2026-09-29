@@ -1,162 +1,65 @@
-# V2 Native Template Contract
+# Native V2 Template Contract
 
 ## Purpose
 
-Native V2 templates are presentation assets authored for the V2 document model. They are not required to use the legacy V1 token language.
+Native V2 templates are the active presentation contract for the V2 architecture. Recovered V1 HTML remains an immutable Golden Baseline and compatibility/migration source.
 
-The V1 template source remains immutable as the Golden Baseline. V1 adapters remain available for migration and regression compatibility, but new V2 template work must target this native contract.
+The project will adopt a newer method when it provides a materially better architectural result. Legacy syntax is not preserved merely for historical reasons.
 
-## Governing rule
+## Native semantic vocabulary
 
-When a newer, cleaner, safer, or more extensible V2 mechanism supersedes a legacy mechanism, new implementation must use the V2 mechanism. Legacy mechanisms are retained only where required for compatibility, migration, or regression evidence.
+- `data-v2-template-root` — identifies the native template root.
+- `data-v2-template-id` / `data-v2-template-version` — immutable template identity/version metadata.
+- `data-v2-value="path"` — safe text binding.
+- `data-v2-visible-when="path"` — conditional element visibility.
+- `data-v2-section="type"` — semantic section identity.
+- `data-v2-bind-src="asset:key"` — safe image/asset source binding.
+- `data-v2-repeat="section:entries"` — repeat canonical section entries.
+- `data-v2-repeat="section:values"` — repeat primitive/value-style entries.
+- `data-v2-entry-value="key"` — current repeat-entry value.
+- `data-v2-item-value="key"` — current primitive/value-item property.
 
-## Separation of concerns
+## Data binding
 
-1. Career data is authoritative.
-2. Document configuration controls document-specific visibility/order/presentation.
-3. A native V2 template declares presentation structure and semantic bindings.
-4. Layout/pagination determines physical page flow.
-5. Preview/export consume the same assembled document and layout result.
+Absolute bindings resolve against the V2 document snapshot.
 
-A template must not become a second source of truth for career data.
+Identity aliases are allowed at the renderer boundary where the canonical model evolves:
+- `identity.fullName` may fall back to `identity.name`.
+- `identity.jobTitle` may fall back to `identity.job`.
+- `identity.dateOfBirth` may fall back to `identity.dob`.
 
-## Native binding vocabulary
+This is a compatibility boundary, not permission to duplicate canonical data.
 
-Native V2 templates use declarative `data-v2-*` attributes rather than V1 `{{...}}` tokens.
+## Section and visibility semantics
 
-### Scalar value
+A semantic section is visible only when:
+1. the canonical section exists;
+2. its canonical visibility is true;
+3. its ID/type is not hidden by the targeted-CV configuration.
 
-`data-v2-value="PATH"`
+Entries additionally respect entry visibility and targeted-CV hidden-entry configuration.
 
-The renderer resolves PATH and writes the value through DOM APIs.
+## Repeat semantics
 
-Examples:
+`section:entries` repeats canonical section entries and provides `data-v2-entry-value` context.
 
-- `identity.fullName`
-- `identity.jobTitle`
-- `identity.email`
-- `section:summary:text`
+`section:values` repeats entry values for value-oriented sections such as skills/languages and provides `data-v2-item-value` context.
 
-### Attribute binding
-
-`data-v2-bind-src="PATH"`
-
-Binds a resolved value to the element's `src` attribute.
-
-Equivalent attribute forms may be introduced by the renderer contract without changing the canonical data model.
-
-### Conditional visibility
-
-`data-v2-visible-when="PATH"`
-
-The element is visible only when the resolved semantic value/visibility state is eligible for presentation.
-
-Visibility is presentation behavior; it must not delete or mutate canonical data.
-
-### Semantic section
-
-`data-v2-section="SECTION_TYPE"`
-
-Declares the semantic section represented by the template block.
-
-Examples:
-
-- `summary`
-- `experience`
-- `education`
-- `skills`
-- `languages`
-
-### Repeatable content
-
-`data-v2-repeat="SOURCE"`
-
-Declares a repeatable presentation region. The renderer will materialize one presentation item per eligible canonical entry/value.
-
-The repeated prototype must remain semantically identifiable through `data-v2-item`.
-
-### Repeated-entry value
-
-Inside a repeat prototype:
-
-`data-v2-entry-value="FIELD"`
-
-Examples:
-
-- `company`
-- `duration`
-- `title`
-- `desc`
-- `institute`
-- `year`
-- `degree`
-- `grade`
-
-### Repeated primitive value
-
-Inside a primitive repeat prototype:
-
-`data-v2-item-value="value"`
-
-This is used for skills, languages, and similar primitive collections.
-
-## Visibility and ordering
-
-Templates must never hard-code assumptions that canonical data is always present.
-
-The renderer resolves:
-
-- section visibility
-- field visibility
-- entry visibility
-- targeted-CV hidden sections/fields/entries
-- configured section/field/entry order
-
-The template supplies presentation; the document configuration supplies user-specific document choices.
+Templates must not silently discard unsupported content.
 
 ## Security
 
-User values must be inserted through DOM APIs or an equivalent safe rendering boundary.
+User data is inserted through DOM-safe text/attribute operations. URL/image bindings reject executable schemes. Native templates are trusted presentation assets and require source/asset reconciliation before publication.
 
-Native templates must not require string concatenation of user data into HTML.
+## Layout
 
-URLs and other executable-capable attributes require explicit attribute allowlisting and validation.
+Templates may mark semantic regions for measurement using the existing `data-v2-layout-*` contract. Rendering does not implement pagination; M4 remains authoritative for layout/pagination.
 
-## V1 relationship
+## Compatibility gate
 
-V1 source files under `src/templates/assets/v1/` are immutable source/baseline assets.
+Native source conversion alone does not equal compatibility. A template becomes V2-compatible only after browser rendering, real DOM measurement, M4 pagination, Golden Baseline visual/output comparison, accessibility/security checks, and supported export validation.
 
-Native V2 templates are derived from those sources where visual preservation is required:
+## V1 preservation
 
-V1 source → V2 semantic conversion → browser render/measurement → Golden Baseline comparison → compatibility evidence.
+The seven recovered V1 HTML sources under `src/templates/assets/v1/` remain unchanged. Native V2 templates are derived assets.
 
-Do not modify the V1 source to make it V2-compatible.
-
-## Compatibility status
-
-Creating a native V2 template does not automatically make it compatible.
-
-A template remains pending until:
-
-1. binding contract validation succeeds;
-2. browser rendering succeeds;
-3. real DOM measurement is available;
-4. M4 pagination consumes measured semantic blocks;
-5. visual comparison against the V1 Golden Baseline is performed;
-6. preview/export parity is verified;
-7. regression evidence is recorded.
-
-## Future evolution
-
-The native contract is intentionally semantic. Additional capabilities may be introduced without returning to V1 token syntax, including:
-
-- reusable semantic components
-- presentation variants
-- accessibility metadata
-- internationalization
-- template-level constraints
-- richer repeatable layouts
-- page headers/footers
-- controlled conditional regions
-
-Any future contract revision must preserve the separation between authoritative career data, document configuration, presentation, and layout.
