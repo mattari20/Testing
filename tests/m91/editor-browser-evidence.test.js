@@ -1,0 +1,1 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import { createEditorBrowserEvidence } from '../../src/validation/editor-browser-evidence.js'; test('complete evidence requires all checks',()=>{const r=createEditorBrowserEvidence({mount:'passed',fields:'passed',mutation:'passed',preview:'passed',templateSwitch:'passed'});assert.equal(r.status,'passed');});
