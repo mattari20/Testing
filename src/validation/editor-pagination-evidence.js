@@ -1,5 +1,2 @@
 export const EDITOR_PAGINATION_EVIDENCE_VERSION='1.0.0';
-export function createEditorPaginationEvidence(input={}){
- const checks={layout:input.layout==='passed',pages:input.pages>0,navigation:input.navigation==='passed'};
- return Object.freeze({version:EDITOR_PAGINATION_EVIDENCE_VERSION,status:Object.values(checks).every(Boolean)?'passed':'incomplete',checks,pageCount:Number(input.pages)||0,currentPage:Number(input.currentPage)||0});
-}
+export function createEditorPaginationEvidence(input={}){const checks={layout:input.layout==='passed',pages:Number(input.pages)>0,navigation:input.navigation==='passed'};return Object.freeze({version:EDITOR_PAGINATION_EVIDENCE_VERSION,status:Object.values(checks).every(Boolean)?'passed':'incomplete',checks,pageCount:Number(input.pages)||0,currentPage:Number(input.currentPage)||0});}
