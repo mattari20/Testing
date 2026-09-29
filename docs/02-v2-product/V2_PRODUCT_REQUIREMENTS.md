@@ -274,3 +274,34 @@ The product must document:
 The V2 core must remain independent from any single AI provider, authentication provider, cloud storage provider, job provider or ATS vendor.
 
 Implementation technologies will be selected only after architecture and requirements are approved.
+
+
+## 16. Monetization and advertising
+
+Monetization is a first-class product concern, but remains architecturally separate from the CV document engine.
+
+### Advertising
+
+V2 must reserve an advertising layer capable of supporting Google Ads/AdSense or another approved advertising provider. Requirements include controlled desktop/mobile placements, explicit ad inventory, privacy/consent handling where required, no sensitive CV content in advertising payloads, no advertising inside the generated professional CV document, ad-free behavior for eligible paid users, and no material obstruction of CV editing.
+
+### Premium products
+
+The future paid system should support premium CV templates, premium profile designs, template packs, advanced ATS/job intelligence, AI usage packages or subscriptions, premium cover-letter capabilities, online CV/profile customization, additional CV versions/storage, and ad-free access. The commercial model may support one-time purchases, subscriptions and credit/package models. Payment-provider selection is deferred.
+
+### Entitlement architecture
+
+Feature access must be controlled through an entitlement layer rather than payment logic embedded inside individual features. Conceptually: User → Entitlement → Capability/Product. The entitlement model should support activation, cancellation, refund, revocation, expiry, promotional grants and administrative grants.
+
+## 17. Student Career Wallet and ecosystem
+
+V2 must reserve a clean boundary for a future Student Career Wallet containing profile, education, skills, certifications, projects, experience, achievements, CVs, cover letters, portfolio, applications and career documents.
+
+The CV Builder should consume authorized wallet/profile data without becoming the owner of the entire future career platform. Future integrations may include ATS Checker, Job Matcher, Cover Letter Builder, Online CV, Job Application Tracker, Interview Coach, education/student tools, certificates/credentials, cloud backup and external job services. Each integration requires a documented boundary and explicit user authorization.
+
+## 18. Commercial and ecosystem privacy
+
+The product must document advertising data flow, purchase and entitlement data, AI data flow, analytics, retention, export/delete, account deletion and premium access lifecycle. The commercial layer must not weaken the user's control over career data.
+
+## 19. Updated architecture principle
+
+The V2 platform should remain separable into Document Core, Career Data, Intelligence, Presentation, Monetization and Platform/Integrations. The document renderer must not depend directly on ads, payments, AI or a specific cloud provider.
