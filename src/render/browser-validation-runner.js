@@ -25,7 +25,8 @@ export async function runBrowserValidation(input = {}) {
     const page = await input.pageFactory(plan.viewport);
     try {
       const sourceHtml = input.sourceLoader ? await input.sourceLoader(template.sourcePath) : fs.readFileSync(path.resolve(template.sourcePath), 'utf8');
-      const measurement = await page.renderAndMeasure({ template, sourceHtml, snapshot, pageModel: plan.pageModel });
+      const screenshotPath = input.artifactDir ? path.join(input.artifactDir, `${template.id}.png`) : null;
+      const measurement = await page.renderAndMeasure({ template, sourceHtml, snapshot, pageModel: plan.pageModel, screenshotPath });
       const blocks = Array.isArray(measurement.blocks) ? measurement.blocks : [];
       const pagination = paginateBlocks(blocks.map((block,index) => ({ ...block, order:index, minHeight:Number(block.measuredHeight || 0), preferredHeight:Number(block.measuredHeight || 0), keepTogether:true })), plan.pageModel);
       recordBrowserMeasurement(capture, template.id, {
