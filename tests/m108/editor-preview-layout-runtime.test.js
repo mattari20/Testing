@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createEditorPreviewLayoutRuntime} from '../../src/ui/editor-preview-layout-runtime.js';test('M108 requires a preview root',()=>{assert.throws(()=>createEditorPreviewLayoutRuntime(null),/Preview root is required/);});
