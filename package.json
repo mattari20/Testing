@@ -33,6 +33,8 @@
     "test:m19": "node --test tests/m19/native-v2-validation-harness.test.js",
     "test:browser-validation": "npm run test:m19",
     "test:m21": "node --test tests/m21/golden-baseline-comparison.test.js",
-    "test:golden": "npm run test:m21"
+    "test:golden": "npm run test:m21",
+    "test:m22": "node --test tests/m22/golden-comparison-fixtures.test.js tests/m22/golden-evidence.test.js",
+    "test:comparison": "npm run test:m22"
   }
 }
