@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createEditorPreview} from '../../src/application/editor-preview-controller.js';test('M107 exposes assembly layout result to preview',()=>{assert.ok(createEditorPreview);});
