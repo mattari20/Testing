@@ -2,7 +2,7 @@
 
 ## Current status
 
-**Stage:** Production V1 code audit and architecture recovery
+**Stage:** V2 core/editor implementation with browser validation and Golden Baseline migration evidence
 
 **Production V1:** Frozen in principle. No production changes are authorized during the audit/documentation stage.
 
@@ -135,4 +135,4 @@ The following governing product documents were reconciled with this work:
 - docs/02-v2-product/V2_FEATURE_MATRIX.md
 - docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md
 
-The project remains in documentation/architecture preparation. No V2 application code has been authorized by this documentation batch.
+The V2 implementation is actively committed to the repository through M109. V1 remains the Golden Baseline/reference while final production is intended to run V2 only. Browser runtime and M0 security/asset gates remain evidence-controlled.
