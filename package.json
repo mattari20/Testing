@@ -130,6 +130,11 @@
     "test:m93": "node --test tests/m93/editor-preview-layout.test.js",
     "test:m94": "node --test tests/m94/editor-layout-evidence.test.js",
     "test:m95": "node --test tests/m95/editor-layout-flow.test.js",
-    "test:m92-m95": "npm run test:m92 && npm run test:m93 && npm run test:m94 && npm run test:m95"
+    "test:m92-m95": "npm run test:m92 && npm run test:m93 && npm run test:m94 && npm run test:m95",
+    "test:m96": "node --test tests/m96/editor-preview-layout-controller.test.js",
+    "test:m97": "node --test tests/m97/editor-overflow-diagnostics.test.js",
+    "test:m98": "node --test tests/m98/editor-layout-evidence.test.js",
+    "test:m99": "node --test tests/m99/real-editor-layout-browser.test.js",
+    "test:m96-m99": "npm run test:m96 && npm run test:m97 && npm run test:m98 && npm run test:m99"
   }
 }
