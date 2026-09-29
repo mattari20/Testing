@@ -39,10 +39,21 @@ jobs:
           path: artifacts/m26/
           if-no-files-found: ignore
 
+      - name: Run M28 paired V1 V2 browser comparison
+        run: npm run test:m28
+
       - name: Upload M27 V1 browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: m27-v1-browser-evidence
           path: artifacts/m27/
+          if-no-files-found: ignore
+
+      - name: Upload M28 paired browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m28-paired-v1-v2-browser-evidence
+          path: artifacts/m28/
           if-no-files-found: ignore
