@@ -10,7 +10,7 @@ import {
 const manifest = listV1AssetManifest();
 assert.equal(manifest.length, 7);
 assert.ok(manifest.every(item => item.sourceHtml.endsWith('.html')));
-assert.ok(manifest.every(item => item.state === V1_ASSET_STATE.EXTRACTION_PENDING));
+assert.ok(manifest.every(item => item.state === V1_ASSET_STATE.RECONCILIATION_REQUIRED));
 
 const t01 = getV1AssetManifestEntry('t01-modern-minimalist-cv-design_modern');
 assert.equal(t01.sourceHtml, 'cv-template/t01-modern-minimalist-cv-design_modern.html');
