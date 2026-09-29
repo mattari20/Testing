@@ -120,6 +120,11 @@
     "test:m85": "node --test tests/m85/editor-entry-commands.test.js",
     "test:m86": "node --test tests/m86/section-editor-controller.test.js",
     "test:m87": "node --test tests/m87/real-editor-browser.test.js",
-    "test:m84-m87": "npm run test:m84 && npm run test:m85 && npm run test:m86 && npm run test:m87"
+    "test:m84-m87": "npm run test:m84 && npm run test:m85 && npm run test:m86 && npm run test:m87",
+    "test:m88": "node --test tests/m88/native-template-source-loader.test.js",
+    "test:m89": "node --test tests/m89/template-switching.test.js",
+    "test:m90": "node --test tests/m90/real-editor-preview-browser.test.js",
+    "test:m91": "node --test tests/m91/editor-browser-evidence.test.js",
+    "test:m88-m91": "npm run test:m88 && npm run test:m89 && npm run test:m90 && npm run test:m91"
   }
 }
