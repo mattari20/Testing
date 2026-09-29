@@ -298,6 +298,110 @@ Minimum conceptual metadata:
 
 Only Published templates may be generally selectable.
 
+
+
+## 9A. Existing V1 Template Reuse and Compatibility
+
+The existing V1 templates **must be reusable with the new V2 system** wherever their assets and behavior can be reconciled.
+
+This is a core migration requirement, not a temporary convenience.
+
+### Reuse principle
+
+> **Existing V1 templates are presentation assets to be adapted to the V2 Template Engine, not templates that must be discarded and recreated from zero.**
+
+The V2 system should therefore support this migration path:
+
+**Existing V1 Template → Compatibility Adapter / Normalization → V2 Template Contract → V2 Document Model → V2 Layout/Pagination → Preview / PDF / DOCX where supported**
+
+### What must be preserved
+
+For each reusable V1 template, V2 should preserve, subject to technical compatibility validation:
+
+- visual structure;
+- typography;
+- colors;
+- spacing;
+- section hierarchy;
+- one-column/two-column layout;
+- photo treatment;
+- icons;
+- theme behavior;
+- A4 assumptions;
+- supported V1 fields;
+- supported repeatable sections;
+- visibility behavior;
+- existing template-specific presentation characteristics.
+
+### What may change internally
+
+The V2 system may replace the internal rendering mechanism.
+
+For example:
+- V1 token replacement may be translated into V2 field bindings;
+- V1 loop syntax may be translated into V2 repeatable-section bindings;
+- V1 visibility blocks may be mapped to V2 document configuration;
+- V1 theme variables may be mapped to V2 presentation tokens;
+- V1 page/print behavior may be mapped to the V2 Layout/Pagination Engine.
+
+These internal changes must not require redesigning the template's visual identity.
+
+### Template conversion status
+
+Each V1 template must receive an explicit compatibility status:
+
+| Status | Meaning |
+|---|---|
+| V2-Compatible | Can run through the V2 Template Engine with validated behavior. |
+| Adapter Required | Existing template can be reused after a documented compatibility translation. |
+| Asset Reconciliation Required | Template is referenced by V1 but required source/preview assets are missing or incomplete. |
+| Not Yet Compatible | Evidence shows the template needs additional work before V2 use. |
+| Retired by Explicit Decision | Only allowed after a deliberate documented product decision; absence from an archive is not sufficient reason. |
+
+### No automatic recreation rule
+
+The team must **not recreate the existing V1 templates from screenshots or approximate them unnecessarily**.
+
+The preferred order is:
+
+1. recover the original template source/assets;
+2. normalize the source into the V2 Template contract;
+3. add a compatibility adapter where required;
+4. validate visual output against the V1 Golden Baseline;
+5. validate fields, sections, visibility, themes and pagination;
+6. only then consider a replacement implementation if the original cannot be safely adapted.
+
+### Template-by-template acceptance
+
+A reused V1 template is considered V2-compatible only after:
+
+- canonical V2 data renders correctly;
+- all supported V1 sections render;
+- supported V1 fields render;
+- visibility behavior is verified;
+- theme behavior is verified;
+- responsive preview is verified;
+- A4 pagination is verified;
+- PDF output is verified;
+- unsupported content produces an explicit compatibility result;
+- no user data is silently lost;
+- visual comparison against the V1 Golden Baseline passes the defined tolerance.
+
+### Important distinction
+
+Reusing V1 templates does **not** mean carrying the V1 architecture into V2.
+
+The template assets may be reused while:
+- V1 builder logic is replaced;
+- V1 fixed schema assumptions are replaced;
+- V1 rendering helpers are replaced;
+- V1 pagination mechanism is replaced;
+- V2 canonical data remains independent from templates.
+
+This gives the project the desired result:
+
+**V1 visual/template investment is preserved while V2 receives a clean architecture.**
+
 ## 10. Presentation Variant contract
 
 Presentation variants define approved ways of displaying the same semantic data.
