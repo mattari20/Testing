@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import { buildPreviewLayout } from '../../src/ui/editor-preview-layout.js';const doc={createElement(){}};test('preview layout requires rendered root',()=>{assert.throws(()=>buildPreviewLayout(null),/Preview root/);});
