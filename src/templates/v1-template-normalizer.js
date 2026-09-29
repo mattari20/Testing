@@ -69,7 +69,17 @@ export function analyzeV1TemplateSource(sourceHtml) {
 
 function resolvePath(source, path) {
   if (!path) return undefined;
-  return String(path).split('.').reduce((value, key) => value == null ? undefined : value[key], source);
+  const text = String(path);
+  if (text.startsWith('section:')) {
+    const [, sectionType, field] = text.split(':');
+    const section = findSection(source, sectionType);
+    if (!section) return undefined;
+    if (!field) return section;
+    const direct = section[field];
+    if (direct !== undefined) return direct;
+    return section.fields?.find(item => item.id === field || item.label === field)?.value;
+  }
+  return text.split('.').reduce((value, key) => value == null ? undefined : value[key], source);
 }
 
 function findSection(snapshot, sectionType) {
@@ -170,7 +180,7 @@ export function createT01ModernAdapter() {
     RELIGION: 'identity.religion',
     LINKEDIN: 'identity.linkedin',
     WEBSITE: 'identity.website',
-    SUMMARY: 'identity.summary'
+    SUMMARY: 'section:summary:text'
   };
 
   return {
