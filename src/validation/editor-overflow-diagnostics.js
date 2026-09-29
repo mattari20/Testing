@@ -1,0 +1,2 @@
+export const EDITOR_OVERFLOW_DIAGNOSTICS_VERSION='1.0.0';
+export function analyzeEditorLayout(layoutResult={}){const diagnostics=Array.isArray(layoutResult.diagnostics)?layoutResult.diagnostics:[];const overflow=diagnostics.filter(item=>item?.state==='overflow');return Object.freeze({version:EDITOR_OVERFLOW_DIAGNOSTICS_VERSION,hasOverflow:Boolean(layoutResult.hasOverflow),overflowCount:overflow.length,diagnostics,status:overflow.length?'overflow':'clear'});}
