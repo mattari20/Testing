@@ -1,0 +1,537 @@
+<div class="t04-modern-blue-corporate_modern" data-v2-template-root data-v2-template-id="t04-modern-blue-corporate_modern" data-v2-template-version="2.0.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    /* 1. BUILDER ENGINE HOOKS */
+    :root {
+        --theme-color: #1e3a68;
+        --primary: var(--theme-color);
+        --primary-rgb: 30,58,104;
+
+    }
+
+    /* 2. THEME MAPPING */
+    .t04-modern-blue-corporate_modern {
+        --main-color: var(--theme-color);
+        --timeline-line: var(--theme-color);
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* 3. EXPERT ICON & SVG OVERRIDE */
+    .t04-modern-blue-corporate_modern svg, 
+    .t04-modern-blue-corporate_modern i,
+    .t04-modern-blue-corporate_modern .fa,
+    .t04-modern-blue-corporate_modern .fas,
+    .t04-modern-blue-corporate_modern [class^="fa-"] {
+        display: inline-block !important;
+        visibility: visible !important;
+        fill: var(--primary) !important;
+        stroke: var(--primary) !important;
+        color: var(--primary) !important;
+        width: 14px !important;
+        height: 14px !important;
+        line-height: 1 !important;
+        vertical-align: middle !important;
+        margin-right: 5px !important;
+        opacity: 1 !important;
+    }
+
+    /* 4. DESIGN STRUCTURE */
+    .t04-modern-blue-corporate_modern .cv-shell {
+        --classic-bg-light: #f2f2f2;
+        --font-family: Arial, Helvetica, sans-serif;
+        width: 210mm;
+        min-height: 297mm;
+        background: #ffffff;
+        font-family: var(--font-family);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        margin: 0 auto;
+        border-top: 8px solid var(--primary) !important;
+    }
+
+    .t04-modern-blue-corporate_modern .block-header {
+        /* Creates a sharp split: 50% white mixture on top, 75% white mixture below the border line */
+        background: linear-gradient(
+            to bottom, 
+            var(--dark-bg) 0%, 
+            var(--dark-bg) 160px, 
+            var(--primary-light80) 160px, 
+            var(--primary-light80) 100%
+        ) !important;
+        padding: 25px 45px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        min-height: 180px;
+        box-sizing: border-box; /* Ensures padding behaves nicely with the gradient */
+    }
+
+    .t04-modern-blue-corporate_modern .name-text {
+        font-size: 34px;
+        font-weight: 800;
+        color: var(--primary);
+        text-transform: uppercase;
+        margin: 0;
+        letter-spacing: 3px;
+    }
+
+    .t04-modern-blue-corporate_modern .title-text {
+        font-size: 20px;
+        color: #333;
+        margin: 3px 0 15px 0;
+    }
+
+    .t04-modern-blue-corporate_modern .summary-text {
+        font-size: 13px;
+        line-height: 1.4;
+        color: #444;
+        max-width: 90%;
+    }
+
+    /* Container for shape detection and clipping */
+    .t04-modern-blue-corporate_modern .block-photo {
+        width: 120px !important;
+        height: 150px !important;
+        flex-shrink: 0 !important; /* Prevents the container from squeezing */
+        overflow: hidden; 
+        border: 0.25px solid var(--primary) !important;
+        box-shadow: 0 0 15px var(--primary) !important; 
+        border-radius: 10px; 
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Target the link wrapper inside the photo container */
+    .t04-modern-blue-corporate_modern .block-photo a {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Image inside the container */
+    .t04-modern-blue-corporate_modern .block-photo img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important; /* Forces the image to fill the 120x150 frame naturally */
+        display: block !important;
+        position: relative; 
+        z-index: 11;        
+    }
+
+    /* CONTACT AREA */
+    .t04-modern-blue-corporate_modern .block-contact-header {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important; /* Forces all items to stay on a single line */
+        justify-content: space-between !important; /* Distributes the items cleanly across the width */
+        gap: 0 15px !important; /* Reduces horizontal gap to maximize text space */
+        width: 100% !important;
+        border-top: 1px solid var(--primary-light70);
+        padding-top: 12px;
+        margin-top: 12px;
+    }
+
+    .t04-modern-blue-corporate_modern .contact-item-header {
+        display: flex !important;
+        flex-direction: column !important;
+        font-size: 11px; 
+        color: #000;
+        word-break: normal !important;        /* Stops breaking words in half */
+        overflow-wrap: break-word !important; /* Moves complete words to the next line naturally */
+    }
+
+    /* Allocate smaller size for Phone (1st item) and WhatsApp (2nd item) */
+    .t04-modern-blue-corporate_modern .contact-item-header:nth-child(1),
+    .t04-modern-blue-corporate_modern .contact-item-header:nth-child(2) {
+        flex: 0 0 15% !important; 
+        max-width: 15%;
+    }
+
+    /* Allocate more size for Email (3rd item) and Address (4th item) */
+    .t04-modern-blue-corporate_modern .contact-item-header:nth-child(3) {
+        flex: 0 0 25% !important;
+        max-width: 25%;
+    }
+    .t04-modern-blue-corporate_modern .contact-item-header:nth-child(4) {
+        flex: 0 0 35% !important;
+        max-width: 35%;
+    }
+
+    .t04-modern-blue-corporate_modern .contact-item-header b {
+        display: flex !important;
+        align-items: center !important;
+        font-size: 11px;
+        color: var(--primary) !important;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .t04-modern-blue-corporate_modern .contact-item-header b {
+        display: flex !important;
+        align-items: center !important;
+        font-size: 11px;
+        color: var(--primary) !important;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .t04-modern-blue-corporate_modern .cv-body-wrapper {
+        display: flex;
+        flex: 1;
+        padding: 20px 45px;
+    }
+
+    .t04-modern-blue-corporate_modern .cv-main { 
+        width: 70%; 
+        padding-right: 15px; 
+    }
+
+    .t04-modern-blue-corporate_modern .cv-sidebar { 
+        width: 30%; 
+        border-left: 1px solid #ddd; 
+        padding-left: 25px; 
+    }
+
+    .t04-modern-blue-corporate_modern .section-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary) !important;
+        text-transform: uppercase;
+        border-bottom: 2px solid var(--primary) !important;
+        padding-bottom: 5px;
+        margin: 25px 0 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .t04-modern-blue-corporate_modern .item-description {
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #333;
+    }
+
+    .t04-modern-blue-corporate_modern .item-description b {
+        margin-right: 5px;
+        color: var(--primary);
+    }
+
+    /* ATOMIC SKILLS STYLE */
+    .t04-modern-blue-corporate_modern .skill-tag {
+        background: var(--primary) !important;
+        color: #fff !important;
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 3px;
+        font-weight: 600;
+        display: inline-block;
+        margin: 2px;
+    }
+
+    /* ATOMIC LANGUAGE BAR STYLE */
+    .t04-modern-blue-corporate_modern .lang-item { margin-bottom: 12px; }
+    .t04-modern-blue-corporate_modern .lang-name { font-weight: 700; font-size: 13px; color: #333; }
+    .t04-modern-blue-corporate_modern .lang-level-text { font-size: 11px; color: #666; float: right; }
+    .t04-modern-blue-corporate_modern .lang-bar-bg { height: 8px; background: #eee; border-radius: 3px; margin-top: 4px; overflow: hidden; }
+    .t04-modern-blue-corporate_modern .lang-bar-fill { 
+        background: var(--primary) !important; 
+        height: 100%; 
+        border-radius: 3px; 
+    }
+
+    /* TIMELINE & ATOMIC LISTS */
+    .t04-modern-blue-corporate_modern .timeline-section {
+        position: relative;
+        padding-left: 20px;
+        border-left: 2px solid #e0e0e0;
+        margin-left: 10px;
+    }
+
+    .t04-modern-blue-corporate_modern .experience-item, 
+    .t04-modern-blue-corporate_modern .education-item {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .t04-modern-blue-corporate_modern .experience-item::before,
+    .t04-modern-blue-corporate_modern .education-item::before {
+        content: "";
+        position: absolute;
+        left: -27px;
+        top: 6px;
+        width: 12px;
+        height: 12px;
+        background-color: var(--primary) !important;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        z-index: 2;
+    }
+
+    /* ATOMIC HEADER ROWS (Company + Date) */
+    .t04-modern-blue-corporate_modern .exp-header-row,
+    .t04-modern-blue-corporate_modern .edu-header-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    .t04-modern-blue-corporate_modern .exp-company,
+    .t04-modern-blue-corporate_modern .edu-institute {
+        font-size: 15px;
+        font-weight: 800;
+        color: #1a1a1a;
+    }
+
+    .t04-modern-blue-corporate_modern .exp-date,
+    .t04-modern-blue-corporate_modern .edu-date {
+        font-size: 11px;
+        font-weight: 700;
+        color: #ffffff !important;
+        background: var(--primary) !important;
+        padding: 2px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+    }
+
+    /* ATOMIC ROLES & DEGREES (Blue & Italic) */
+    .t04-modern-blue-corporate_modern .exp-role,
+    .t04-modern-blue-corporate_modern .edu-degree {
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: var(--primary) !important; 
+        font-style: italic !important;
+        display: block;
+        margin: 2px 0;
+    }
+    
+    /*------------------------------------------------------*/
+    /* ---------- PROJECT TIMELINE ALIGNMENT -------------- */
+    /*------------------------------------------------------*/
+    
+    .t04-modern-blue-corporate_modern .project-item {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    /* Adds the matching timeline node dot */
+    .t04-modern-blue-corporate_modern .project-item::before {
+        content: "";
+        position: absolute;
+        left: -27px;
+        top: 6px;
+        width: 12px;
+        height: 12px;
+        background-color: var(--primary) !important;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        z-index: 2;
+    }
+
+    /* Matches header typography styles */
+    .t04-modern-blue-corporate_modern .pro-header-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    .t04-modern-blue-corporate_modern .pro-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #1a1a1a;
+    }
+
+    /* Matches the blue and italic style of roles/degrees */
+    .t04-modern-blue-corporate_modern .pro-role {
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: var(--primary) !important; 
+        font-style: italic !important;
+        display: block;
+        margin: 2px 0;
+    }
+    
+    
+
+    /* ATOMIC DESCRIPTION */
+    .t04-modern-blue-corporate_modern .exp-description {
+        font-size: 13px !important;
+        color: #333 !important;
+        line-height: 1.5 !important;
+        margin-top: 4px;
+    }
+
+    /* ATOMIC ACHIEVEMENTS */
+    .t04-modern-blue-corporate_modern .ach-item {
+        font-size: 13px;
+        margin-bottom: 5px;
+        padding-left: 12px;
+        position: relative;
+        color: #333;
+    }
+    .t04-modern-blue-corporate_modern .ach-item::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+    }
+
+    .t04-modern-blue-corporate_modern footer {
+        background: var(--primary) !important;
+        color: #fff;
+        text-align: center;
+        font-size: 10px;
+        padding: 10px;
+        margin-top: auto;
+    }
+</style>
+
+<div class="cv-shell">
+    <div class="block-header">
+        <div class="block-identity">
+            
+            <h1  data-v2-visible-when="identity.fullName" class="name-text"><span data-v2-value="identity.fullName"></span></h1>
+            
+
+            
+            <p  data-v2-visible-when="identity.jobTitle" class="title-text"><span data-v2-value="identity.jobTitle"></span></p>
+            
+
+            <div  data-v2-section="summary" data-v2-visible-when="section:summary" class="summary-text"><span data-v2-value="section:summary:text"></span></div>
+            <div class="block-contact-header">
+                
+                <div  data-v2-visible-when="identity.phone" class="contact-item-header">
+                    <b><i class="fas fa-phone"></i>Phone</b>
+                    <span data-v2-value="identity.phone"></span>
+                </div>
+                
+
+                
+                <div  data-v2-visible-when="identity.whatsapp" class="contact-item-header">
+                    <b><i class="fab fa-whatsapp"></i>WhatsApp</b>
+                    <span data-v2-value="identity.whatsapp"></span>
+                </div>
+                
+
+                
+                <div  data-v2-visible-when="identity.email" class="contact-item-header">
+                    <b><i class="fas fa-envelope"></i>Email</b>
+                    <span data-v2-value="identity.email"></span>
+                </div>
+                
+
+                
+                <div  data-v2-visible-when="identity.address" class="contact-item-header">
+                    <b><i class="fas fa-map-marker-alt"></i>Address</b>
+                    <span data-v2-value="identity.address"></span>
+                </div>
+                
+            </div>
+        </div>
+
+        
+        <div  data-v2-section="photo" data-v2-visible-when="section:photo" class="block-photo profile-photo-container shape-rounded">
+            <a href="https://estudent.pk/cv-builder/" target="_blank" style="text-decoration: none; display: block; line-height: 0;">
+                    <img data-v2-bind-src="asset:profile-photo" alt="Profile Photo"></a>
+        </div>
+        
+    </div>
+
+    <div class="cv-body-wrapper">
+        <div class="cv-main">
+            
+            <div  data-v2-section="experience" data-v2-visible-when="section:experience" class="section-label"><i class="fas fa-briefcase"></i>Experience</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:experience:entries" class="experience-item">
+                    <div class="exp-header-row">
+                        <span class="exp-company"><span data-v2-entry-value="company"></span></span>
+                        <span class="exp-date"><span data-v2-entry-value="duration"></span></span>
+                    </div>
+                    <span class="exp-role"><span data-v2-entry-value="title"></span></span>
+                    <div class="exp-description"><span data-v2-entry-value="desc"></span></div>
+                </div>
+                
+            </div>
+            
+
+            
+            <div  data-v2-section="education" data-v2-visible-when="section:education" class="section-label"><i class="fas fa-graduation-cap"></i>Education</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:education:entries" class="education-item">
+                    <div class="edu-header-row">
+                        <span class="edu-institute"><span data-v2-entry-value="institute"></span></span>
+                        <span class="exp-date"><span data-v2-entry-value="year"></span></span>
+                    </div>
+                    <span class="exp-role"><span data-v2-entry-value="degree"></span></span>
+                    <div class="exp-description"><span data-v2-entry-value="grade"></span></div>
+                </div>
+                
+            </div>
+            
+
+            
+            <div  data-v2-section="projects" data-v2-visible-when="section:projects" class="section-label"><i class="fas fa-project-diagram"></i>Projects</div>
+            <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:projects:entries" class="project-item">
+                    <div class="pro-header-row">
+                        <span class="pro-title"><span data-v2-entry-value="name"></span></span>
+                        <span class="exp-date"><span data-v2-entry-value="year"></span></span>
+                    </div>
+                    <span class="pro-role"><span data-v2-entry-value="role"></span></span>
+                    <div class="exp-description"><span data-v2-entry-value="desc"></span></div>
+                </div>
+                
+            </div>
+            
+        </div>
+
+        <div class="cv-sidebar">
+            <div class="section-label"><i class="fas fa-info-circle"></i>Personal Info</div>
+            <div class="list-item">
+                <div  data-v2-visible-when="identity.dateOfBirth" class="item-description"><b>Date of Birth:</b> <span data-v2-value="identity.dateOfBirth"></span></div>
+                <div  data-v2-visible-when="identity.cnic" class="item-description"><b>CNIC:</b> <span data-v2-value="identity.cnic"></span></div>
+                <div  data-v2-visible-when="identity.religion" class="item-description"><b>Religion:</b> <span data-v2-value="identity.religion"></span></div>
+                <div  data-v2-visible-when="identity.linkedin" class="item-description"><b>LinkedIn:</b> <span data-v2-value="identity.linkedin"></span></div>
+                <div  data-v2-visible-when="identity.website" class="item-description"><b>Website:</b> <span data-v2-value="identity.website"></span></div>
+            </div>
+
+            
+            <div  data-v2-section="skills" data-v2-visible-when="section:skills" class="section-label"><i class="fas fa-tools"></i>Skills</div>
+            <div class="skills-container">
+                
+                <span  data-v2-repeat="section:skills:values" class="skill-tag"><span data-v2-item-value="skill"></span></span>
+                
+            </div>
+            
+
+            
+            <div  data-v2-section="languages" data-v2-visible-when="section:languages" class="section-label"><i class="fas fa-language"></i>Languages</div>
+            
+            <div  data-v2-repeat="section:languages:values" class="lang-item">
+                <div class="lang-name"><span data-v2-item-value="language"></span></div>
+            </div>
+            
+            
+
+            
+            <div  data-v2-section="achievements" data-v2-visible-when="section:achievements" class="section-label"><i class="fas fa-trophy"></i>Achievements</div>
+            
+            <div  data-v2-repeat="section:achievements:entries" class="ach-item"><span data-v2-entry-value="achievement"></span></div>
+            
+            
+        </div>
+    </div>
+    <footer>I hereby give consent for my personal data included in my application to be processed for recruitment purposes.</footer>
+</div>
+</div>
