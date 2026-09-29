@@ -12,7 +12,7 @@ function clone(value) { return value == null ? value : JSON.parse(JSON.stringify
 export function createProductionExportRequest(input = {}) {
   const request = {
     ...input,
-    exportType: input.exportType || EXPORT_TYPE.PDF,
+    outputType: input.outputType || input.exportType || EXPORT_TYPE.PDF,
     documentSnapshot: clone(input.documentSnapshot),
     layoutResult: clone(input.layoutResult),
     template: clone(input.template),
@@ -42,7 +42,7 @@ export function createExportArtifactPlan(input) {
     status: EXPORT_STATUS.READY,
     artifact: {
       artifactId: String(input.artifactId || 'artifact-pending'),
-      exportType: input.exportType,
+      outputType: input.outputType || input.exportType || EXPORT_TYPE.PDF,
       documentSnapshot: clone(input.documentSnapshot),
       templateId: input.template?.id || null,
       templateVersion: input.template?.version || null,
