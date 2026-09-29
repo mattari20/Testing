@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.0.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.1.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -219,7 +219,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
 
   const host = documentRef.createElement('div');
   host.innerHTML = definition.sourceHtml;
-  const root = host.querySelector('[data-v2-template-id]') || host.firstElementChild || host;
+  const root = host.querySelector('[data-v2-template-root]') || host.querySelector('[data-v2-template-id]') || host.firstElementChild || host;
 
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
