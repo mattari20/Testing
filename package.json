@@ -60,6 +60,11 @@
     "test:m34": "node --test tests/m34/pdf-print-generator.test.js",
     "test:pdf-print": "npm run test:m34",
     "test:m35": "node --test tests/m35/docx-generator.test.js",
-    "test:docx-generator": "npm run test:m35"
+    "test:docx-generator": "npm run test:m35",
+    "test:m36": "node --test tests/m36/pdf-print-runtime.test.js",
+    "test:m37": "node --test tests/m37/docx-runtime.test.js",
+    "test:m38": "node --test tests/m38/production-intelligence.test.js",
+    "test:m39": "node --test tests/m39/production-security.test.js",
+    "test:m36-m39": "npm run test:m36 && npm run test:m37 && npm run test:m38 && npm run test:m39"
   }
 }
