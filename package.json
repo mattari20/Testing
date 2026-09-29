@@ -29,6 +29,8 @@
     "test:m16": "node tests/m16/native-v2-render-fixture.test.js",
     "test:render-native": "npm run test:m16",
     "test:m18": "node tests/m18/native-measurement-harness.test.js",
-    "test:measurement": "npm run test:m18"
+    "test:measurement": "npm run test:m18",
+    "test:m19": "node --test tests/m19/native-v2-validation-harness.test.js",
+    "test:browser-validation": "npm run test:m19"
   }
 }
