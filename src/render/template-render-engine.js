@@ -1,3 +1,4 @@
+import { compileV1TemplateSource } from '../templates/v1-template-normalizer.js';
 export const TEMPLATE_RENDER_ENGINE_VERSION = '1.0.0';
 
 export const RENDER_STATE = Object.freeze({
@@ -160,4 +161,30 @@ export function createRenderResult(rendered, measurement = null) {
     measurement: measurement ? clone(measurement) : null,
     layoutBlocks: measurement ? buildSemanticLayoutBlocks(measurement) : []
   };
+}
+
+
+export function renderV1TemplateSource(sourceHtml, snapshot, adapter, documentRef, options = {}) {
+  const compiled = compileV1TemplateSource(sourceHtml, snapshot, adapter, options);
+  const definition = createRenderDefinition({
+    id: adapter?.templateId || 'v1-template',
+    templateVersion: 'v1-baseline',
+    sourceHtml: compiled.html,
+    bindingPlan: {},
+    rootSelector: options.rootSelector || 'body'
+  });
+  const rendered = renderTemplateSource(definition, snapshot, documentRef);
+  return {
+    ...rendered,
+    diagnostics: [...compiled.diagnostics, ...rendered.diagnostics],
+    sourceAnalysis: compiled.analysis
+  };
+}
+
+export function mountRenderedTemplate(rendered, documentRef = globalThis.document, mountTarget = null) {
+  if (!rendered?.root || !documentRef) throw new Error('Rendered template and document are required.');
+  const target = mountTarget || documentRef.body;
+  if (!target || typeof target.appendChild !== 'function') throw new Error('A valid mount target is required.');
+  target.appendChild(rendered.root);
+  return rendered.root;
 }
