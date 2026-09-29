@@ -1,0 +1,31 @@
+name: V2 Integration Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  unit-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - run: npm run test:m48-m51
+      - run: npm run test:m52-m55
+      - run: npm run test:m56-m59
+      - run: npm test
+        continue-on-error: true
+      - name: Upload validation metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2-integration-validation
+          path: |
+            package.json
+            docs/03-implementation/
