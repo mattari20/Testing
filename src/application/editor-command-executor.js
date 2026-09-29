@@ -30,8 +30,6 @@ export function executeEditorCommand(editorSession, command) {
       else throw new Error('Visibility target kind is required.');
       break;
     case COMMAND_TYPE.ADD_ENTRY: addEntry(masterProfile,target.sectionId,p); break;
-    case COMMAND_TYPE.ADD_ENTRY:
-      break;
     case COMMAND_TYPE.REORDER:
       if(target.kind==='section') setSectionOrder(targetedCV,p.order);
       else if(target.kind==='field') setFieldOrder(targetedCV,target.sectionId,p.order);
