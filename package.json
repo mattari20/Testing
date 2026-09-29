@@ -80,6 +80,11 @@
     "test:m49": "node --test tests/m49/local-first-session.test.js",
     "test:m50": "node --test tests/m50/online-cv-boundary.test.js",
     "test:m51": "node --test tests/m51/end-to-end-contract.test.js",
-    "test:m48-m51": "npm run test:m48 && npm run test:m49 && npm run test:m50 && npm run test:m51"
+    "test:m48-m51": "npm run test:m48 && npm run test:m49 && npm run test:m50 && npm run test:m51",
+    "test:m52": "node --test tests/m52/editor-session.test.js",
+    "test:m53": "node --test tests/m53/editor-command-contract.test.js",
+    "test:m54": "node --test tests/m54/artifact-lifecycle.test.js",
+    "test:m55": "node --test tests/m55/system-validation-matrix.test.js",
+    "test:m52-m55": "npm run test:m52 && npm run test:m53 && npm run test:m54 && npm run test:m55"
   }
 }
