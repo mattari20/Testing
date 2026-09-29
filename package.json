@@ -49,6 +49,8 @@
     "test:m28": "node --test tests/m28/paired-browser-comparison.test.js tests/m28/real-paired-browser-comparison.test.js",
     "test:paired-browser": "npm run test:m28",
     "test:m29": "node --test tests/m29/template-onboarding.test.js",
-    "test:template-onboarding": "npm run test:m29"
+    "test:template-onboarding": "npm run test:m29",
+    "test:m30": "node --test tests/m30/template-library.test.js",
+    "test:template-library": "npm run test:m30"
   }
 }
