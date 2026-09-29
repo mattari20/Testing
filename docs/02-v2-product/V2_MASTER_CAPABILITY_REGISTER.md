@@ -90,6 +90,50 @@ V1 has theme colors and template-controlled presentation.
 V2 upgrades theme tokens, typography, spacing, template-specific themes and accessibility contrast checks.
 The current V1 UI/CSS remains the Golden Baseline during core migration. Visual modernization is a later controlled phase.
 
+
+## 5A. Presentation Variants and Component View Engine
+A single canonical data set must be renderable through multiple visual representations without duplicating or corrupting the underlying data. This is a core V2 requirement, not a template-only feature.
+
+Examples include Languages rendered as:
+- name only;
+- proficiency text such as Beginner, Intermediate, Advanced or Native;
+- percentage/proficiency bar;
+- star/rating representation;
+- compact percentage or label treatment;
+- another template-supported representation appropriate to the same underlying language record.
+
+The same principle applies broadly to sections and fields such as education, experience, skills, certifications, achievements, projects and other repeatable content. For example, education may be shown as a timeline, compact list, two-column block, card-like entries or another approved presentation variant while retaining the same canonical education data.
+
+### Required behavior
+- Separate **content/data** from **presentation variant**.
+- Each supported field/section may expose a set of approved presentation variants.
+- A CV may select a presentation variant independently from the underlying Master Profile data.
+- Different targeted CVs may use different variants for the same source data without duplicating the source data.
+- The preview must expose an understandable way to switch between compatible variants.
+- Where appropriate, preview-side controls may offer actions such as **Change Style / View / Variant**, followed by available alternatives.
+- A user should be able to preview multiple variants before selecting one.
+- The selected variant must persist as part of the relevant CV/document presentation configuration.
+- Variant selection must not mutate the canonical content values.
+- Variants must respect template capabilities, page model, supported field types, accessibility requirements and export behavior.
+- Unsupported combinations must be blocked or replaced by an explicit compatible fallback with a clear notice; silent visual degradation is not acceptable.
+- Variants must work with hide/show, reorder, duplicate, custom fields, custom sections and preview-side editing.
+- The system should support default variants, template-recommended variants and user-selected variants.
+- If a user changes template, the system should preserve the selected variant where compatible and otherwise recommend a compatible alternative.
+- Variant changes should be undoable and included in change history where change history is enabled.
+
+### Architectural principle
+**One data model → many presentation variants.**
+The document engine owns canonical content; the presentation/variant layer decides how that content is visually represented. Templates consume compatible variants rather than redefining the underlying data model.
+
+### Scope
+Presentation variants can exist at multiple levels:
+1. Field level — e.g. language proficiency as text, bar, stars or percentage.
+2. Entry level — e.g. one education/experience entry rendered in different approved structures.
+3. Section level — e.g. education timeline versus compact list.
+4. Document level — coordinated presentation rules across a CV.
+
+This capability must be designed alongside Dynamic Document Customization so custom fields can use suitable presentation types without requiring core-code changes for every new visual treatment.
+
 ## 6. Layout, A4 and pagination
 V1 supports A4, desktop print, mobile PDF and multi-page output.
 V2 must introduce a semantic layout model with dynamic page count, semantic blocks, keep-together rules, orphan prevention, controlled/manual page breaks, configurable margins and spacing, overflow detection and preview/export consistency.
