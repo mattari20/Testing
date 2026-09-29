@@ -124,3 +124,21 @@ Legend:
 | Job application integration | Not present | Future |
 | Interview Coach integration | Not present | Future |
 | Career document ecosystem | Not present | Future |
+
+| Template Library | Not a standalone V1 product layer | V2 Core |
+| Template discovery/filtering | Partial via template selection | V2 Core |
+| Template full preview page | Partial | V2 Release |
+| Demo Profile for template previews | Not formal | V2 Core |
+| Try with My Data | Not present | V2 Release |
+| Build Online from template | Existing builder entry | V2 Core |
+| Blank Word template download | Existing DOCX-related assets | V2 Release |
+| User-data DOCX export | Limited/related capability | V2 Release |
+| Word capability metadata | Not formal | V2 Core |
+| Template lifecycle metadata | Not formal | V2 Core |
+| Template compatibility rules | Not formal | V2 Core |
+| Template-compatible presentation variants | Not present | V2 Core |
+| Template comparison | Not present | V2 Release |
+| Template recommendation | Not present | V2 Release |
+| Free/premium template classification | Not formal | V2 Core |
+| Premium template entitlement | Not present | V2 Core |
+| Template SEO landing pages | Partial public positioning | V2 SEO architecture |
