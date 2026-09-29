@@ -60,3 +60,33 @@ These may exist on production but were not present in the supplied archive and t
 ## Next controlled step
 
 Complete the V1 code audit, then create the V1 architecture recovery and V1-to-V2 requirements documents before implementing V2 code.
+
+
+## New preservation control
+
+The project owner has explicitly approved the following migration rule:
+
+> Keep the current V1 front-end visual presentation stable during the core V2 migration. Update required information/functionality and rebuild the underlying architecture first. Defer CSS/visual changes to the final dedicated UI/CSS phase.
+
+Two control documents now enforce this:
+
+- `docs/01-current-system/V1_FUNCTIONALITY_PRESERVATION_INVENTORY.md`
+- `docs/01-current-system/V1_UI_CSS_PRESERVATION_CONTRACT.md`
+
+These documents establish a no-silent-loss rule: every V1 function, data field, visibility state, template behavior, export path, integration, and important DOM/CSS hook must have a V2 owner, migration mapping, compatibility adapter, or explicit replacement decision before V1 is retired.
+
+The V1 source audit has also been expanded to an explicit function/DOM/template preservation inventory. The migration process must not remove undocumented-looking functionality merely because a new architecture exists.
+
+## Migration sequencing rule
+
+The approved sequence is:
+
+1. Complete V1 source/functionality reconciliation.
+2. Complete V1 security and asset reconciliation.
+3. Freeze the preservation contract.
+4. Design/freeze V2 architecture.
+5. Build the V2 core behind the compatibility boundary.
+6. Run functional and visual regression against V1.
+7. Only then perform the dedicated UI/CSS modernization pass.
+
+No broad front-end redesign should be introduced as a side effect of backend/core migration.
