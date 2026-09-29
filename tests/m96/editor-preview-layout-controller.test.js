@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import { measureAndPaginatePreview } from '../../src/ui/editor-preview-layout-controller.js';test('layout controller requires preview root',()=>{assert.throws(()=>measureAndPaginatePreview(null),/Preview root is required/);});
