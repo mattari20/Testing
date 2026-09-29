@@ -74,6 +74,21 @@ Legend:
 | Analytics/tracking | Existing | Preserve with privacy review |
 | Privacy/data controls | Limited | V2 Core |
 
+| Presentation variant engine | Not present as general capability | V2 Core |
+| Field-level visual variants | Not present | V2 Core |
+| Section-level visual variants | Not present | V2 Core |
+| Entry-level visual variants | Not present | V2 Release |
+| Language display variants (text/bar/stars/percentage) | Fixed presentation | V2 Core |
+| Education display variants | Fixed template presentation | V2 Core |
+| Experience display variants | Fixed template presentation | V2 Core |
+| Skills display variants | Fixed/Template dependent | V2 Core |
+| Preview variant switcher | Not present | V2 Release |
+| Preview variant comparison | Not present | V2 Release |
+| Per-CV variant selection | Not present | V2 Core |
+| Master Profile data independent of presentation | Not present | V2 Core |
+| Template-compatible variant filtering | Not present | V2 Core |
+| Variant fallback/recommendation | Not present | V2 Release |
+| Variant persistence and undo | Not present | V2 Release |
 
 | Google Ads/AdSense capability | Not present as V2 architecture | V2 Core / Monetization Layer |
 | Advertising placement controls | Limited/legacy | V2 Release |
