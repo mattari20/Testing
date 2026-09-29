@@ -103,6 +103,46 @@ Each template should have metadata describing:
 
 Adding a template should be a repeatable documented process rather than a core-code rewrite.
 
+
+## 6A. Template Library and distribution requirements
+
+The Template Library is a dedicated product/distribution layer around the Template Engine. It must support template discovery, filtering, full preview, Demo Profile rendering, Build Online, Try with My Data, Sample PDF, blank Word-template download, user-data DOCX export, compatibility information, free/premium presentation and future comparison/recommendation.
+
+### Template data separation
+
+The architecture must preserve this separation:
+
+**Master Profile → Targeted CV → Selected Sections/Fields → Presentation Variants → Template → Preview → PDF/DOCX/Online CV**
+
+Templates control presentation and must not own canonical career data.
+
+### Template metadata
+
+Template definitions must be versioned and include identity, career level, industry, style, supported sections, field types and presentation variants, photo support, columns, page model, theme options, ATS/accessibility profile, lifecycle status, Web/PDF/DOCX/blank-DOCX capabilities, demo/preview assets and commercial references where applicable.
+
+### Word requirements
+
+The product must explicitly distinguish:
+
+1. **Blank Word Template** — a reusable editable DOCX asset containing template structure, styles and placeholders.
+2. **User-data Word Export** — an editable DOCX generated from the user's structured CV data.
+
+A PDF screenshot must never be treated as an editable Word template. Not every web template is required to support every Word capability; availability must be explicit in metadata and UI.
+
+### Compatibility and switching
+
+Unsupported sections, fields or presentation variants must never be silently deleted. The system must preserve source data and offer an explicit compatibility path such as hiding content for the targeted CV, selecting another template or selecting a compatible variant.
+
+Changing templates must preserve canonical data and document configuration, recalculate layout/page count and communicate meaningful compatibility changes.
+
+### Lifecycle and commercial boundary
+
+Template lifecycle should be Draft, Testing, Published, Deprecated and Retired. Free/premium access must be governed through the entitlement layer rather than payment logic embedded in template rendering.
+
+### SEO
+
+Publishable template pages may be indexable when they provide genuine utility: full preview, suitability, supported sections, variants, ATS information, Word availability, Online Builder availability, sample PDF, FAQs and related templates. Thin template-ID pages are not acceptable.
+
 ## 7. Pagination and page setup
 
 V2 must support documents longer than one page.
