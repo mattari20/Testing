@@ -140,6 +140,11 @@
     "test:m107": "node --test tests/m107/editor-preview-controller-layout.test.js",
     "test:m108": "node --test tests/m108/editor-preview-layout-runtime.test.js",
     "test:m109": "node --test tests/m109/editor-preview-layout-flow-evidence.test.js",
-    "test:m106-m109": "npm run test:m106 && npm run test:m107 && npm run test:m108 && npm run test:m109"
+    "test:m106-m109": "npm run test:m106 && npm run test:m107 && npm run test:m108 && npm run test:m109",
+    "test:m110": "node --test tests/m110/editor-preview-page-dom.test.js",
+    "test:m111": "node --test tests/m111/editor-preview-page-controller.test.js",
+    "test:m112": "node --test tests/m112/editor-preview-page-runtime.test.js",
+    "test:m113": "node --test tests/m113/editor-preview-page-evidence.test.js",
+    "test:m110-m113": "npm run test:m110 && npm run test:m111 && npm run test:m112 && npm run test:m113"
   }
 }
