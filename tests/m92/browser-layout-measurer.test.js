@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import { createBrowserLayoutMeasurer } from '../../src/ui/browser-layout-measurer.js';test('measurer exposes root and block measurement',()=>{const d={createElement(){}};const m=createBrowserLayoutMeasurer(d);assert.equal(typeof m.measureRoot,'function');assert.equal(typeof m.measureBlocks,'function');});
