@@ -1,0 +1,471 @@
+    
+    
+    <style>
+    :root {
+        --primary: #1e3a68; 
+    }
+    .t02-professional-cv-design_modern {
+        --sidebar-bg: #2c3e50; 
+        --sidebar-text: #ffffff;
+        --accent-color: #3498db;
+        --main-text: #333333;
+        
+        width: 210mm;
+        min-height: 297mm;
+        background: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex !important;
+        flex-direction: row !important;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        margin: 0 auto;
+        color: var(--main-text);
+    }
+
+    /* LEFT SIDEBAR */
+    .t02-professional-cv-design_modern aside {
+        width: 35%;
+        background-color: var(--primary);
+        color: var(--sidebar-text);
+        display: flex;
+        flex-direction: column;
+        padding: 35px 20px;
+        flex-shrink: 0;
+    }
+
+    /* RIGHT MAIN CONTENT */
+    .t02-professional-cv-design_modern main {
+        width: 65%;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        flex-grow: 1;
+        overflow: hidden !important; /* Forces trailing lines to clip beautifully at page edge */
+    }
+
+    .t02-professional-cv-design_modern .profile-photo-container {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .t02-professional-cv-design_modern .profile-photo-container img {
+        width: 150px !important;
+        height: 180px !important;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.1);
+        object-fit: cover;
+    }
+
+    .t02-professional-cv-design_modern .name-text {
+        font-size: 22pt;
+        font-weight: 800;
+        margin: 0;
+        color: #fff;
+        text-transform: uppercase;
+        line-height: 1.1;
+        text-align: center;
+    }
+    .t02-professional-cv-design_modern .title-text {
+        font-size: 14pt;
+        color: rgba(255, 255, 255, 0.85)
+        margin: 8px 0 25px 0;
+        font-weight: 900;
+        text-transform: uppercase;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+
+    /* SIDEBAR LABELS (Contact, Personal Info, etc.) */
+    .t02-professional-cv-design_modern aside .sidebar-label {
+        font-size: 11pt;
+        font-weight: bold;
+        color: var(--primary);
+        background-color: #ffffff !important; 
+        text-transform: uppercase;
+        padding: 6px 16px;
+        margin: 10px 0 10px 0;
+        
+        border-radius: 8px 8px 0px 8px; 
+        
+        display: inline-flex !important;  
+        width: max-content;
+        align-items: center;
+        gap: 8px;
+        position: relative;             
+        z-index: 2;
+    }
+    .t02-professional-cv-design_modern .sidebar-label::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 5%;                     
+        width: 270px;                  
+        border-bottom: 3px solid #ffffff !important;
+        z-index: 1;
+    }
+
+    /* 1. MAIN SECTION LABEL (Shrinks snugly to text length) */
+    .t02-professional-cv-design_modern .section-label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #ffffff !important;
+        background-color: var(--primary) !important; 
+        text-transform: uppercase;
+        padding: 6px 16px;
+        margin: 30px 0 20px 0;
+        border-radius: 8px 8px 0px 8px; 
+        display: inline-flex !important;  
+        letter-spacing: 1.2px;
+        width: max-content;
+        align-items: center;
+        gap: 8px;
+        position: relative;             
+        z-index: 2;
+        
+    }
+
+    /* 2. MAIN SECTION LABEL TRAILING LINE (Stops perfectly at page limit) */
+    .t02-professional-cv-design_modern .section-label::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 10%;                     
+        width: 400px;                  
+        border-bottom: 3px solid var(--primary) !important;
+        z-index: 1;
+    }    
+    
+    /* Link Styling for Sidebar */
+    .t02-professional-cv-design_modern .contact-item {
+        font-size: 9.5pt;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .t02-professional-cv-design_modern .contact-section {
+        display: flex;
+        flex-direction: column;
+        gap: 14px; /* Creates clean breathing room between elements */
+        margin: 15px 0 25px 0;
+        padding-left: 5px;
+    }
+    
+    .t02-professional-cv-design_modern .contact-item-header {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        margin-bottom: 10px;
+        gap: 15px;
+    }
+    
+    .t02-professional-cv-design_modern .contact-item-header b {
+    font-size: 11pt;
+    color: #ffffff; /* Uses your vibrant theme blue for labels */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns contents neatly to the left edge of its width */
+    
+    /* MODIFIED & NEW RULES */
+    width: 25px;         /* Reduced from 50px to bring the contact text values closer to the icons */
+    padding-left: 8px;   /* Shifts the icons slightly to the right side */
+    flex-shrink: 0;      /* Prevents the block from compressing */
+    }
+
+    /* ADD THIS NEW RULE right under it to make the icons slightly bigger */
+    .t02-professional-cv-design_modern .contact-item-header b i {
+    font-size: 13pt;    /* Increases the icon size from default */
+    padding-left: 8px !important;
+    }
+
+
+
+    .t02-professional-cv-design_modern .persnoal-info-header {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        margin-bottom: 10px;
+        gap: 15px;
+    }
+    
+    .t02-professional-cv-design_modern .persnoal-info-header b {
+    font-size: 11pt;
+    color: #ffffff; /* Uses your vibrant theme blue for labels */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns contents neatly to the left edge of its width */
+    width: 70px;         /* Reduced from 50px to bring the contact text values closer to the icons */
+    padding-left: 8px;   /* Shifts the icons slightly to the right side */
+    flex-shrink: 0;      /* Prevents the block from compressing */
+    }
+
+    
+
+
+
+
+    .t02-professional-cv-design_modern .contact-item a {
+        color: #fff;
+        text-decoration: none;
+        word-break: break-all;
+    }
+    .t02-professional-cv-design_modern .contact-item .label {
+        font-size: 8pt;
+        color: var(--accent-color);
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .t02-professional-cv-design_modern .item-desc { 
+        font-size: 10pt; 
+        line-height: 1.5; 
+        color: #444; 
+    }
+
+        /*--------------------------------------------------------------------------------------*/
+        /* -----------------skill & Language related Classes & Code --------------------------- */
+        /*--------------------------------------------------------------------------------------*/    
+
+    .t02-professional-cv-design_modern .skills-container {
+        display: flex;
+        flex-wrap: wrap;    /* Keeps items flowing naturally onto new lines if crowded */
+        gap: 12px 10px;     /* Adds 12px vertical spacing and 10px horizontal spacing */
+        margin-top: 10px;   /* Pushes the skills down away from the section header */
+        color: #ffffff;
+    }
+
+
+    .t02-professional-cv-design_modern .skill-tag {
+        font-size: 10pt;
+        font-weight: 600;
+        color: #ffffff !important;            /* White text color */
+        background-color: rgba(255, 255, 255, 0.15); /* Translucent overlay instead of solid block */
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: inline-block;
+        padding: 5px 8px;                    /* Internal spacing inside the box */
+        border-radius: 8px;                   /* Slightly rounded corners for the box */
+    }
+
+    .t02-professional-cv-design_modern .lang-name {
+        font-size: 10.5pt;
+        font-weight: 600;    /* Gives the language a crisp, professional weight */
+        color: #ffffff;
+    }
+
+    .t02-professional-cv-design_modern .lang-item {
+        margin-top: 4px;     /* Gives each language row breathing room */
+    }
+    
+        /*--------------------------------------------------------------------------------------*/
+        /* ----------------Education & Experience related Classes & Code ---------------------- */
+        /*--------------------------------------------------------------------------------------*/
+
+
+    .t02-professional-cv-design_modern .exp-header-row,
+    .t02-professional-cv-design_modern .edu-header-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 2px;
+    }
+
+    .t02-professional-cv-design_modern .exp-company,
+    .t02-professional-cv-design_modern .edu-institute {
+        font-size: 11pt;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .t02-professional-cv-design_modern .exp-date,
+    .t02-professional-cv-design_modern .edu-date {
+        font-size: 10pt;
+        font-weight: 700;
+        color: var(--primary);
+        align-content: right;
+    }
+
+    .t02-professional-cv-design_modern .exp-role,
+    .t02-professional-cv-design_modern .edu-role {
+        font-size: 10pt;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-style: italic;
+    }
+
+    .t02-professional-cv-design_modern .exp-description,
+    .t02-professional-cv-design_modern .exp-description {
+        font-size: 9.5pt;
+        line-height: 1.4;
+        color: #666666;
+        margin-top: 2px;
+    }
+
+
+
+
+    .t02-professional-cv-design_modern footer {
+        position: absolute;
+        bottom: 15px;
+        right: 40px;
+        width: 55%;
+        font-size: 8pt;
+        color: #999;
+        text-align: justify;
+    }
+
+    @media print {
+        .t02-professional-cv-design_modern { margin: 0; border: none; }
+    }
+</style>
+    
+    <div class="t02-professional-cv-design_modern">
+        <aside>
+            
+            <div  data-v2-section="photo" data-v2-visible-when="section:photo"class="profile-photo-container shape-rounded">
+                <a href="https://estudent.pk/cv-builder/" target="_blank" style="text-decoration: none; display: block; line-height: 0;">
+                    <img data-v2-bind-src="asset:profile-photo" alt="Profile Photo"></a>
+            </div>
+            
+    
+                
+                <h1  data-v2-visible-when="identity.fullName"class="name-text"><span data-v2-value="identity.fullName"></span></h1>
+                
+    
+                
+                <p  data-v2-visible-when="identity.jobTitle"class="title-text"><span data-v2-value="identity.jobTitle"></span></p>
+                
+    
+            <div class="sidebar-label">Contact</div>
+            
+                    
+                    <div  data-v2-visible-when="identity.phone"class="contact-item-header">
+                        <b><i class="fas fa-phone"></i></b>
+                        <span data-v2-value="identity.phone"></span>
+                    </div>
+                    
+    
+                    
+                    <div  data-v2-visible-when="identity.whatsapp"class="contact-item-header">
+                        <b><i class="fab fa-whatsapp"></i></b>
+                        <span data-v2-value="identity.whatsapp"></span>
+                    </div>
+                    
+    
+                    
+                    <div  data-v2-visible-when="identity.email"class="contact-item-header">
+                        <b><i class="fas fa-envelope"></i></b>
+                        <span data-v2-value="identity.email"></span>
+                    </div>
+                    
+    
+                    
+                    <div  data-v2-visible-when="identity.address"class="contact-item-header">
+                        <b><i class="fas fa-map-marker-alt"></i></b>
+                        <span data-v2-value="identity.address"></span>
+                    </div>
+                    
+            
+    
+            <div class="sidebar-label">Personal Info</div>
+            
+                    <div  data-v2-visible-when="identity.dateOfBirth"class="persnoal-info-header"><b>DOB:</b> <span data-v2-value="identity.dateOfBirth"></span></div>
+                    <div  data-v2-visible-when="identity.cnic"class="persnoal-info-header"><b>CNIC:</b> <span data-v2-value="identity.cnic"></span></div>
+                    <div  data-v2-visible-when="identity.religion"class="persnoal-info-header"><b>Religion:</b> <span data-v2-value="identity.religion"></span></div>
+                    <div  data-v2-visible-when="identity.linkedin"class="persnoal-info-header"><b>LinkedIn:</b> <span data-v2-value="identity.linkedin"></span></div>
+                    <div  data-v2-visible-when="identity.website"class="persnoal-info-header"><b>Website:</b> <span data-v2-value="identity.website"></span></div>
+                    
+                    
+            
+                <div  data-v2-section="skills" data-v2-visible-when="section:skills"class="sidebar-label"><i class="fas fa-tools"></i>Skills</div>
+                <div class="skills-container">
+                    
+                    <span  data-v2-repeat="section:skills:values"class="skill-tag"><span data-v2-item-value="skill"></span></span>
+                    
+                </div>
+            
+    
+            
+                <div  data-v2-section="languages" data-v2-visible-when="section:languages"class="sidebar-label">Languages</div>
+                
+                <div  data-v2-repeat="section:languages:values"class="lang-item">
+                    <div class="lang-name"><span data-v2-item-value="language"></span></div>
+                </div>
+                
+                    
+        </aside>
+    
+        <main>
+            
+    
+            
+            <div  data-v2-section="summary" data-v2-visible-when="section:summary"class="section-label">Profile</div>
+            <div class="summary-text"><span data-v2-value="section:summary:text"></span></div>
+            
+            
+            
+                <div  data-v2-section="experience" data-v2-visible-when="section:experience"class="section-label"><i class="fas fa-briefcase"></i>Experience</div>
+                <div class="timeline-section">
+                    
+                    <div  data-v2-repeat="section:experience:entries"class="experience-item">
+                        <div class="exp-header-row">
+                            <span class="exp-company"><span data-v2-entry-value="company"></span></span>
+                            <span class="exp-date"><span data-v2-entry-value="duration"></span></span>
+                        </div>
+                        <span class="exp-role"><span data-v2-entry-value="title"></span></span>
+                        <div class="exp-description"><span data-v2-entry-value="desc"></span></div>
+                    </div>
+                    
+                </div>
+            
+            
+    
+            
+                <div  data-v2-section="education" data-v2-visible-when="section:education"class="section-label"><i class="fas fa-graduation-cap"></i>Education</div>
+                <div class="timeline-section">
+                    
+                    <div  data-v2-repeat="section:education:entries"class="education-item">
+                        <div class="edu-header-row">
+                            <span class="edu-institute"><span data-v2-entry-value="institute"></span></span>
+                            <span class="edu-date"><span data-v2-entry-value="year"></span></span>
+                        </div>
+                        <span class="edu-role"><span data-v2-entry-value="degree"></span></span>
+                        <div class="edu-description"><span data-v2-entry-value="grade"></span></div>
+                    </div>
+                    
+                </div>
+            
+            
+            
+            
+                <div  data-v2-section="achievements" data-v2-visible-when="section:achievements"class="section-label"><i class="fas fa-trophy"></i>Achievements</div>
+                <div class="timeline-section">
+                
+                <div  data-v2-repeat="section:achievements:entries"class="ach-item"><span data-v2-entry-value="achievement"></span></div>
+                
+                </div>
+            
+            
+            
+            
+                <div  data-v2-section="projects" data-v2-visible-when="section:projects"class="section-label"><i class="fas fa-project-diagram"></i>Projects</div>
+                
+                <div  data-v2-repeat="section:projects:entries"class="item-description">
+                    <b><span data-v2-entry-value="name"></span></b> (<span data-v2-entry-value="year"></span>) - <span data-v2-entry-value="role"></span><br/>
+                    <span data-v2-entry-value="desc"></span>
+                </div>
+                
+            
+        </main>
+    
+        <footer>
+        
+        </footer>
+    </div>
