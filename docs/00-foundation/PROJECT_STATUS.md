@@ -90,3 +90,21 @@ The approved sequence is:
 7. Only then perform the dedicated UI/CSS modernization pass.
 
 No broad front-end redesign should be introduced as a side effect of backend/core migration.
+
+
+## Product capability and ecosystem baseline added
+
+The project now has a Master Capability Register covering V1 preservation, V2 core upgrades, new international CV capabilities, ATS and job intelligence, AI assistance, monetization and advertising, premium templates/profile products, entitlement architecture, Student Career Wallet, future career/application integrations, privacy, security and testing boundaries.
+
+New governing documents:
+
+- docs/02-v2-product/V2_MASTER_CAPABILITY_REGISTER.md
+- docs/02-v2-product/V2_MONETIZATION_AND_CAREER_ECOSYSTEM.md
+
+These documents are now the working source of truth for capability planning before implementation begins.
+
+## Approved strategic additions
+
+The project owner has explicitly added advertising/revenue generation, future premium CV/profile sales, entitlement-based paid features, the Student Career Wallet, and future connections between the wallet and CV Builder, ATS, Job Matcher, Cover Letter, Online CV, Interview Coach and other eStudent career/student tools.
+
+The implementation must keep these concerns modular and must not turn the V2 document engine into a payment, advertising or career-platform monolith.
