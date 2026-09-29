@@ -1,0 +1,2 @@
+export const EDITOR_PAGE_RENDERER_VERSION='1.0.0';
+export function renderEditorPage(root,pages,currentPage){if(!root)throw new Error('Editor preview root is required.');const list=Array.isArray(pages)?pages:[];const index=Math.max(0,Math.min((Number(currentPage)||1)-1,list.length-1));root.dataset.v2CurrentPage=list.length?String(index+1):'0';return Object.freeze({version:EDITOR_PAGE_RENDERER_VERSION,pageCount:list.length,currentPage:list.length?index+1:0});}
