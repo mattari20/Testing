@@ -151,7 +151,7 @@ function applyRepeats(root, snapshot) {
     const binding = container.getAttribute('data-v2-repeat') || '';
     const parts = binding.split(':');
     const sectionType = parts[0];
-    const mode = parts[1] || 'entries';
+    const mode = parts[2] || parts[1] || 'entries';
     const section = findCanonicalSection(snapshot, sectionType);
     const entries = mode === 'values'
       ? ((Array.isArray(section?.entries) ? section.entries : [])
