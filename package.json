@@ -1,0 +1,8 @@
+{
+  "name": "cv-builder-v2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:m1": "node --test tests/m1/career-document-core.test.js"
+  }
+}
