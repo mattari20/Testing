@@ -17,8 +17,8 @@ const entries = [
     sourceHtml: 'cv-template/t01-modern-minimalist-cv-design_modern.html',
     docx: 'cv-template/t01-modern-minimalist-cv-design_modern.docx',
     preview: 'cv-template/t01-modern-minimalist-cv-design_modern_by_eStudent.pk.webp',
-    state: V1_ASSET_STATE.EXTRACTION_PENDING,
-    note: 'Source filename confirmed in supplied V1 archive; binary/source extraction still requires a RAR-capable runtime.'
+    state: V1_ASSET_STATE.RECONCILIATION_REQUIRED,
+    note: 'Original HTML source recovered from the user-supplied V1 template attachments and preserved under src/templates/assets/v1/.'
   },
   {
     templateId: 't02-professional-cv-design_modern',
