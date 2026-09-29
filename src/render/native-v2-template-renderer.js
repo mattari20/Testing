@@ -86,7 +86,6 @@ function applyFields(root, snapshot, context) {
 function applyRepeats(root, snapshot) {
   const repeats = [...root.querySelectorAll('[data-v2-repeat]')];
   for (const container of repeats) {
-    if (!container.isConnected && container !== root) continue;
     const sectionType = container.getAttribute('data-v2-repeat');
     const section = findCanonicalSection(snapshot, sectionType);
     const entries = getVisibleEntries(snapshot, section);
