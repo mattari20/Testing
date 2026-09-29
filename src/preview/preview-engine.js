@@ -78,7 +78,7 @@ export function createPreviewResult(request, paginationResult, renderData = {}) 
     source: {
       masterProfileId: request.documentSnapshot.masterProfileId,
       targetedCVId: request.documentSnapshot.targetedCVId,
-      masterProfileRevision: request.documentSnapshot.targetedCVRevision,
+      masterProfileRevision: request.documentSnapshot.masterProfileRevision,
       targetedCVRevision: request.documentSnapshot.targetedCVRevision,
       templateId: request.template.id,
       templateVersion: request.template.version
