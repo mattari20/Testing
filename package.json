@@ -45,6 +45,8 @@
     "test:m26": "node --test tests/m26/real-browser-evidence.test.js",
     "test:real-browser": "npm run test:m26",
     "test:m27": "node --test tests/m27/v1-browser-validation-runner.test.js tests/m27/v1-real-browser-evidence.test.js",
-    "test:v1-browser": "npm run test:m27"
+    "test:v1-browser": "npm run test:m27",
+    "test:m28": "node --test tests/m28/paired-browser-comparison.test.js tests/m28/real-paired-browser-comparison.test.js",
+    "test:paired-browser": "npm run test:m28"
   }
 }
