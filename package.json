@@ -51,6 +51,9 @@
     "test:m29": "node --test tests/m29/template-onboarding.test.js",
     "test:template-onboarding": "npm run test:m29",
     "test:m30": "node --test tests/m30/template-library.test.js",
-    "test:template-library": "npm run test:m30"
+    "test:template-library": "npm run test:m30",
+    "test:m31": "node --test tests/m31/template-preview.test.js",
+    "test:m32": "node --test tests/m32/build-online.test.js",
+    "test:distribution": "npm run test:m30 && npm run test:m31 && npm run test:m32"
   }
 }
