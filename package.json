@@ -95,6 +95,11 @@
     "test:m62": "node --test tests/m62/m0-closure-gate.test.js",
     "test:m63": "node --test tests/m63/ui-modernization-contract.test.js",
     "validate:v2": "node scripts/run-v2-validation.mjs",
-    "test:m60-m63": "npm run test:m60 && npm run test:m62 && npm run test:m63"
+    "test:m60-m63": "npm run test:m60 && npm run test:m62 && npm run test:m63",
+    "test:m64": "node --test tests/m64/editor-command-executor.test.js",
+    "test:m65": "node --test tests/m65/template-selection-controller.test.js",
+    "test:m66": "node --test tests/m66/editor-preview-controller.test.js",
+    "test:m67": "node --test tests/m67/editor-surface.test.js",
+    "test:m64-m67": "npm run test:m64 && npm run test:m65 && npm run test:m66 && npm run test:m67"
   }
 }
