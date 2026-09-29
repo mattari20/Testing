@@ -100,6 +100,11 @@
     "test:m65": "node --test tests/m65/template-selection-controller.test.js",
     "test:m66": "node --test tests/m66/editor-preview-controller.test.js",
     "test:m67": "node --test tests/m67/editor-surface.test.js",
-    "test:m64-m67": "npm run test:m64 && npm run test:m65 && npm run test:m66 && npm run test:m67"
+    "test:m64-m67": "npm run test:m64 && npm run test:m65 && npm run test:m66 && npm run test:m67",
+    "test:m72": "node --test tests/m72/editor-form-renderer.test.js",
+    "test:m73": "node --test tests/m73/section-editor-controller.test.js",
+    "test:m74": "node --test tests/m74/template-preview-controller.test.js",
+    "test:m75": "node --test tests/m75/editor-browser-contract.test.js",
+    "test:m72-m75": "npm run test:m72 && npm run test:m73 && npm run test:m74 && npm run test:m75"
   }
 }
