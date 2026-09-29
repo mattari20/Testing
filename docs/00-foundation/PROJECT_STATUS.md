@@ -108,3 +108,14 @@ These documents are now the working source of truth for capability planning befo
 The project owner has explicitly added advertising/revenue generation, future premium CV/profile sales, entitlement-based paid features, the Student Career Wallet, and future connections between the wallet and CV Builder, ATS, Job Matcher, Cover Letter, Online CV, Interview Coach and other eStudent career/student tools.
 
 The implementation must keep these concerns modular and must not turn the V2 document engine into a payment, advertising or career-platform monolith.
+
+## Competitive research reconciliation completed
+
+A dedicated current-market research pass has now been completed and documented in:
+
+- docs/02-v2-product/V2_COMPETITIVE_RESEARCH_AND_PRODUCT_RECOMMENDATIONS.md
+- docs/02-v2-product/V2_PRESENTATION_VARIANT_SYSTEM.md
+
+The research was reconciled into the Master Capability Register, Feature Matrix and Product Requirements. The resulting baseline now explicitly covers explainable career intelligence, skill evidence, achievement discovery, controlled AI approval/anti-fabrication, import confidence, specialized student/academic modes, online CV privacy, career continuity and presentation variants.
+
+The project should not freeze documentation until the remaining V1-to-V2 capability reconciliation and architecture review gates are completed.
