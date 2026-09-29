@@ -73,3 +73,19 @@ Legend:
 | ATS checker SEO | Not present | V2 SEO architecture |
 | Analytics/tracking | Existing | Preserve with privacy review |
 | Privacy/data controls | Limited | V2 Core |
+
+
+| Google Ads/AdSense capability | Not present as V2 architecture | V2 Core / Monetization Layer |
+| Advertising placement controls | Limited/legacy | V2 Release |
+| Ad-free premium entitlement | Not present | V2 Release/Future |
+| Premium template/profile catalog | Not present | V2 Core boundary + V2 Release |
+| Premium template purchase | Not present | V2 Release/Future |
+| Feature entitlement system | Not present | V2 Core |
+| Subscription support | Not present | Future |
+| One-time premium purchase | Not present | Future/V2 Release |
+| Credit/package model | Not present | Future |
+| Student Career Wallet boundary | Not present | Architecture provision now |
+| Career data reuse across eStudent tools | Not present | Future |
+| Job application integration | Not present | Future |
+| Interview Coach integration | Not present | Future |
+| Career document ecosystem | Not present | Future |
