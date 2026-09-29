@@ -65,6 +65,11 @@
     "test:m37": "node --test tests/m37/docx-runtime.test.js",
     "test:m38": "node --test tests/m38/production-intelligence.test.js",
     "test:m39": "node --test tests/m39/production-security.test.js",
-    "test:m36-m39": "npm run test:m36 && npm run test:m37 && npm run test:m38 && npm run test:m39"
+    "test:m36-m39": "npm run test:m36 && npm run test:m37 && npm run test:m38 && npm run test:m39",
+    "test:m40": "node --test tests/m40/pdf-print-adapter.test.js",
+    "test:m41": "node --test tests/m41/docx-adapter.test.js",
+    "test:m42": "node --test tests/m42/import-review-pipeline.test.js",
+    "test:m43": "node --test tests/m43/intelligence-report.test.js",
+    "test:m40-m43": "npm run test:m40 && npm run test:m41 && npm run test:m42 && npm run test:m43"
   }
 }
