@@ -217,73 +217,34 @@ Known asset gaps or credential exposure cannot be marked complete merely because
 - V1 source/security audit exists.
 - V1 data model has been recovered.
 - V1 template registry has been recovered.
-- V1 export behavior has been documented.
+- Seven recovered V1 template sources are stored in the V2 repository.
+- Seven corresponding Native V2 template sources are stored and registered.
+- V1-to-V2 master reconciliation is now present.
 - V2 architecture and implementation blueprint are complete.
 
 ### Still requiring external/source verification
-- recovery/disposition of the four identified missing V1 assets;
+- recovery/disposition of T01 ATS and T01 Simple source;
+- reconciliation of remaining historical asset references;
 - actual production credential rotation/revocation;
 - repository-history secret verification;
-- creation of the final Golden Baseline fixture/evidence package.
+- creation of the final Golden Baseline fixture/evidence package;
+- successful real browser/CI validation.
 
-These items require access to the original V1 files/environment or an authoritative V1 copy and must not be fabricated.
-
-## 14. M0 Gate Decision
-
+### Current gate
 **M0 Architecture/Planning Readiness: PASS**
 
 **M0 Source/Security/Golden-Baseline Readiness: CONDITIONAL**
 
-Reason: the architecture is ready, but the known V1 asset and security evidence gaps cannot be truthfully marked resolved without the authoritative source/environment.
+The repository now contains the documented reconciliation and recovered seven-template baseline, but unresolved source/security/evidence items remain conditional until authoritative evidence is available.
 
-Therefore:
+## 14. M0 Completion Rule
 
-> **M1 implementation should begin only after the conditional M0 items are explicitly closed.**
+M0 is complete only when all required evidence exists. Known asset gaps, credential exposure, or missing runtime evidence cannot be marked complete by assumption.
 
-## 15. M1 Entry Criteria
+## 15. V2 implementation sequencing
 
-Before the first V2 application-code commit:
+V2 implementation may continue under the established architecture, but unresolved M0 items remain release/production gates. V1 runtime/adapters remain temporary migration and regression infrastructure.
 
-- [ ] Missing V1 assets reconciled
-- [ ] Production credentials rotated/revoked
-- [ ] V2 source confirmed secret-free
-- [ ] Golden Baseline fixtures created
-- [ ] Template compatibility inventory completed
-- [ ] Representative baseline outputs captured
-- [ ] Migration fixtures prepared
+## 16. Governance Rule
 
-## 16. M1 Scope Reminder
-
-Once M0 is closed, M1 begins with:
-
-**Canonical Career Document Core**
-
-including:
-- Master Profile;
-- Targeted CV;
-- Document Configuration;
-- sections/fields;
-- repeatable entries;
-- custom sections/fields;
-- visibility;
-- ordering;
-- presentation configuration;
-- versioning foundation.
-
-M1 does not begin with:
-- ATS;
-- Job Match;
-- AI generation;
-- public CV;
-- monetization;
-- broad UI redesign.
-
-## 17. Governance Rule
-
-No one should mark M0 complete by assumption.
-
-If an item cannot be verified, it must remain explicitly **unverified/conditional**.
-
-This protects the V2 project from creating a false baseline and discovering the same V1 gaps later during implementation.
-
-**No application code is introduced by this milestone.**
+If an item cannot be verified, it must remain explicitly unverified/conditional.
