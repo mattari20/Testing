@@ -83,7 +83,7 @@ function resolvePath(source, path) {
     if (!field) return section;
     const direct = section[field];
     if (direct !== undefined) return direct;
-    return section.fields?.find(item => item.id === field || item.label === field)?.value;
+    return section.fields?.find(item => item.id === field || item.label === field || item.metadata?.semanticKey === field)?.value;
   }
   return text.split('.').reduce((value, key) => value == null ? undefined : value[key], source);
 }
