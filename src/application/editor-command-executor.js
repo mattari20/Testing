@@ -4,7 +4,7 @@ import {
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
-export const EDITOR_EXECUTOR_VERSION = '1.0.0';
+export const EDITOR_EXECUTOR_VERSION = '1.1.0';
 
 const findSection = (profile,id) => profile.careerData.sections.find(s=>s.id===id);
 const touch = o => { o.revision += 1; o.updatedAt = new Date().toISOString(); };
@@ -30,6 +30,24 @@ export function executeEditorCommand(editorSession, command) {
       else throw new Error('Visibility target kind is required.');
       break;
     case COMMAND_TYPE.ADD_ENTRY: addEntry(masterProfile,target.sectionId,p); break;
+    case COMMAND_TYPE.UPDATE_ENTRY: {
+      const section=findSection(masterProfile,target.sectionId);
+      const entry=section?.entries?.find(e=>e.id===target.entryId);
+      if(!entry) throw new Error('Entry not found: '+target.entryId);
+      entry.values={...entry.values,...(p.values||{})};
+      if(p.visibility!==undefined) entry.visibility=p.visibility;
+      touch(masterProfile);
+      break;
+    }
+    case COMMAND_TYPE.REMOVE_ENTRY: {
+      const section=findSection(masterProfile,target.sectionId);
+      if(!section) throw new Error('Section not found: '+target.sectionId);
+      const before=section.entries.length;
+      section.entries=section.entries.filter(e=>e.id!==target.entryId);
+      if(section.entries.length===before) throw new Error('Entry not found: '+target.entryId);
+      touch(masterProfile);
+      break;
+    }
     case COMMAND_TYPE.REORDER:
       if(target.kind==='section') setSectionOrder(targetedCV,p.order);
       else if(target.kind==='field') setFieldOrder(targetedCV,target.sectionId,p.order);
