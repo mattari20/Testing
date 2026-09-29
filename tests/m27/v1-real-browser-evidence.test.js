@@ -15,7 +15,7 @@ const snapshot={careerData:{identity:{fullName:'Alex Morgan',jobTitle:'Senior So
 {id:'achievements-1',type:'achievements',title:'Achievements',visibility:true,repeatable:true,fields:[],entries:[{id:'a1',visibility:true,values:{title:'Award',description:'Engineering excellence award.'}}]},
 {id:'contact-1',type:'contact',title:'Contact',visibility:true,fields:[],entries:[]}]},configuration:{hiddenSections:[],hiddenFields:[],hiddenEntries:[]}};
 
-const templates=listNativeV2Templates().map(t=>({...t,sourcePath:`src/templates/assets/v1/${t.v1BaselineId}.html`}));
+const templates=listNativeV2Templates().filter(t=>t.v1BaselineId).map(t=>({...t,sourcePath:`src/templates/assets/v1/${t.v1BaselineId}.html`}));
 const browser=await chromium.launch({headless:true});
 try {
  const result=await runV1BrowserValidation({templates,snapshot,artifactDir:'artifacts/m27/v1',pageFactory:createPlaywrightRawPageFactory(browser)});
