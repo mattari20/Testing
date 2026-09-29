@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
@@ -31,5 +31,13 @@ try{
  assert.equal(state.session.application.masterProfile.careerData.sections[0].fields[0].value,'Updated Browser User');
  assert.ok(state.session.dirty);
  assert.ok(await page.locator('[data-v2-editor-field]').count()===1);
+ const artifactDir=path.join(root,'artifacts/m87');
+ await mkdir(artifactDir,{recursive:true});
+ await page.screenshot({path:path.join(artifactDir,'editor-runtime.png'),fullPage:true});
+ await writeFile(path.join(artifactDir,'editor-runtime-evidence.json'),JSON.stringify({
+   version:'1.0.0',
+   status:'partial',
+   checks:{mount:'passed',fields:'passed',mutation:'passed',preview:'not-run',templateSwitch:'not-run'}
+ },null,2));
  console.log(JSON.stringify({mount:'passed',fields:'passed',mutation:'passed',preview:'not-run',templateSwitch:'not-run'}));
 }finally{await browser.close();server.close();}
