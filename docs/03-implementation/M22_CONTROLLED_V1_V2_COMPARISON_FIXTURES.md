@@ -2,46 +2,36 @@
 
 ## Purpose
 
-M22 creates the controlled fixture set used by Golden Baseline comparison.
+M22 provides a registry-driven comparison fixture system. The repository currently contains seven recovered templates, but **seven is not the architectural limit**.
 
-Exactly seven template fixtures are generated, one for each recovered V1 modern template.
+The fixture system automatically covers every template registered in the V2 native template catalog and can accept an explicit future template set.
 
-## Controls
+## Extension rule
 
-Every fixture uses:
-- the same representative career-document data identity;
-- the same A4 page model;
-- the same 794×1123 reference viewport;
-- a unique V1 baseline/template identity;
-- the same required comparison dimensions.
+New templates do not require an M22 hard-coded template-ID list.
 
-## Required dimensions
+When a new template is registered, comparison fixtures are generated from the registry. A V1 baseline identity may be supplied when the template is derived from an existing V1 template.
 
-- typography;
-- color;
-- spacing;
-- hierarchy;
-- columns;
-- photo;
-- icons;
-- background;
-- page structure;
-- content visibility;
-- pagination.
+This supports:
+- existing V1 templates;
+- current native V2 templates;
+- future native V2 templates;
+- future templates without a V1 predecessor, where the baseline/evidence policy is explicitly defined.
 
-## Evidence rule
+## Legacy and native coexistence
 
-Every dimension starts as **insufficient evidence**.
+V1 source remains immutable Golden Baseline/reference material. Native V2 source is the current presentation implementation. Adapters/migration remain compatibility mechanisms.
 
-M22 does not manufacture a pass result. Browser screenshots, measured geometry, exported artifacts, or documented intentional differences must be attached in later validation work.
+A future native template does not need to copy V1 syntax. It must satisfy the current V2 template contract and enter the same validation/evidence pipeline.
 
-## Seven-template scope
+## Evidence
 
-The controlled set covers:
-1. T01 Modern Minimalist
-2. T02 Professional CV
-3. T03 Professional CV
-4. T04 Modern Blue Corporate
-5. T05 Simple CV Graphic Web Designer
-6. T06 Professional CV Graphic Designer
-7. T07 Professional CV Store Manager/Incharge
+Every fixture uses controlled CV data, A4 page model, reference viewport, registry identity, and V1 baseline identity when applicable.
+
+Required dimensions are typography, color, spacing, hierarchy, columns, photo, icons, background, page structure, content visibility, and pagination.
+
+Every dimension starts as **insufficient evidence**. No compatibility result is manufactured.
+
+## Current scope
+
+Seven templates are currently registered. M22 treats this as the **current registered set**, not the permanent template count.
