@@ -27,6 +27,8 @@
     "test:m15": "node tests/m15/native-v2-template-catalog.test.js",
     "test:native-v2-catalog": "npm run test:m15",
     "test:m16": "node tests/m16/native-v2-render-fixture.test.js",
-    "test:render-native": "npm run test:m16"
+    "test:render-native": "npm run test:m16",
+    "test:m18": "node tests/m18/native-measurement-harness.test.js",
+    "test:measurement": "npm run test:m18"
   }
 }
