@@ -1,0 +1,522 @@
+<style>
+    :root {
+        --primary: #1e3a68; 
+    }
+    .t06-professional-cv-graphic-designer_modern {
+        /* Color Configuration */
+        --text-dark: #000000;
+        --text-light: #ffffff;
+        --divider-color: #ffffff44;
+        --main-padding: 30px;
+
+        /* A4 Constraints */
+        width: 210mm;
+        height: 297mm;
+        margin: 0 auto;
+        background: #ffffff;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative; /* Base tracking layer */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    .t06-professional-cv-graphic-designer_modern * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* --- Background Layer Color Split --- */
+    /* Forces the vertical sidebar background color to go from absolute top to bottom */
+    .t06-professional-cv-graphic-designer_modern .cv-background-columns {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        z-index: 1;
+        pointer-events: none; 
+    }
+    .t06-professional-cv-graphic-designer_modern .bg-sidebar {
+        width: 35%;
+        background-color: var(--primary-light80) !important;
+        height: 100%;
+    }
+    .t06-professional-cv-graphic-designer_modern .bg-main {
+        width: 65%;
+        background-color: #ffffff;
+        height: 100%;
+    }
+
+    /* --- Content Layer Layout --- */
+    .t06-professional-cv-graphic-designer_modern .cv-content-wrapper {
+        position: relative;
+        z-index: 2; /* Sits over the background tracking color */
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Top Spacer Block matches layout widths so sidebar background hits the absolute top */
+    .t06-professional-cv-graphic-designer_modern .top-spacer {
+        height: 50px;
+        width: 100%;
+        display: flex;
+    }
+    .t06-professional-cv-graphic-designer_modern .top-spacer-left {
+        width: 35%;
+        background-color: transparent; 
+    }
+    .t06-professional-cv-graphic-designer_modern .top-spacer-right {
+        width: 65%;
+        background-color: #ffffff;
+    }
+
+    /* Horizontal Header Section - Spans edge-to-edge; text starts right at the left border */
+    .t06-professional-cv-graphic-designer_modern .cv-header {
+        background-color: var(--primary) !important;
+        height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: var(--main-padding); 
+        color: var(--text-light);
+        position: relative;
+        width: 100%; 
+    }
+
+    .t06-professional-cv-graphic-designer_modern .header-text {
+        font-size: 26pt;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .title-text {
+        font-size: 14pt;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+    }
+
+    /* Fixed Profile Photo Container - Shifted left with 5px theme-colored border */
+    .t06-professional-cv-graphic-designer_modern .profile-photo-container {
+        position: absolute;
+        right: 80px; /* Moved left to leave space on the right side of the page */
+        top: 50%;
+        transform: translateY(-50%); 
+        width: 120px;
+        height: 145px;
+        border-radius: 4px;
+        border: 5px solid var(--primary); /* Updated to 5px thickness and primary theme color */
+        overflow: hidden;
+        z-index: 20; 
+        background: #eee;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .profile-photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Structured Layout Grid under Header */
+    .t06-professional-cv-graphic-designer_modern .cv-body {
+        display: flex;
+        flex: 1;
+        width: 100%;
+    }
+
+    /* Left Sidebar Text Columns */
+    .t06-professional-cv-graphic-designer_modern aside {
+        width: 35%;
+        color: #000000; /* Changed text color to a crisp dark gray for effortless reading on the light tint background */
+        padding: 30px 25px 25px 25px; 
+    }
+
+    .t06-professional-cv-graphic-designer_modern aside h3 {
+        font-size: 14pt;
+        text-transform: uppercase;
+        border-bottom: 2px solid var(--primary-light60);
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+        margin-top: 25px;
+        color: var(--primary);
+    }
+
+    .t06-professional-cv-graphic-designer_modern .contact-item {
+        margin-bottom: 12px;
+        font-size: 10pt;
+        display: flex;
+        align-items: flex-start; /* Keeps wrapped multi-line text top-aligned */
+        color: #000000; 
+        width: 100%;
+        
+    }
+    
+    .t06-professional-cv-graphic-designer_modern .contact-item b {
+        color: var(--primary); 
+        display: inline-flex;  
+        align-items: center;   
+        white-space: nowrap;   
+        width: 80px;           /* Increased to create a uniform vertical alignment column */
+        flex-shrink: 0;        
+        margin-right: 10px;    /* Provides clean, reliable spacing right before the text value begins */
+    }
+
+    .t06-professional-cv-graphic-designer_modern .sidebar-list {
+        list-style: none;
+        font-size: 10pt;
+        line-height: 1.6;
+    }
+
+    /* Right Main Content Area */
+    .t06-professional-cv-graphic-designer_modern main {
+        width: 65%;
+        padding: 30px 30px 30px 30px; 
+        background: transparent; 
+    }
+
+    .t06-professional-cv-graphic-designer_modern .section-label,
+    .t06-professional-cv-graphic-designer_modern .section-label h3 {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Main Area labels keep their standard color layout */
+    .t06-professional-cv-graphic-designer_modern main .section-label {
+        margin-bottom: 10px;
+        margin-top: 15px;
+        font-size: 14pt;
+        color: #000000;
+        text-transform: uppercase;
+        margin-right: 15px;
+        white-space: nowrap;
+    }
+
+    /* Sidebar specific labels adjusted to use full theme primary color text and clean border accent line */
+    .t06-professional-cv-graphic-designer_modern aside .section-label {
+        margin-bottom: 10px;
+        margin-top: 25px;
+        font-size: 14pt;
+        color: var(--primary);
+        text-transform: uppercase;
+        white-space: nowrap;
+        border-bottom: 2px solid var(--primary-light60);
+        padding-bottom: 4px;
+        width: 100%;
+    }
+
+    /* Universal spacing adjustment for layout heading icons */
+    .t06-professional-cv-graphic-designer_modern .section-label i {
+        margin-right: 10px;
+        font-size: 0.95em;
+        width: 24px;
+        text-align: center;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .content-block {
+        margin-bottom: 20px;
+        font-size: 10.5pt;
+        color: var(--text-dark);
+        line-height: 1.5;
+    }
+    
+    /* Timeline Layouts */
+    .t06-professional-cv-graphic-designer_modern .timeline-section {
+        margin-top: 15px;
+        padding-left: 5px;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .education-item,
+    .t06-professional-cv-graphic-designer_modern .experience-item {
+        margin-bottom: 18px;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .edu-header-row,
+    .t06-professional-cv-graphic-designer_modern .exp-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 3px;
+    }
+
+    /* Typography Rules */
+    .t06-professional-cv-graphic-designer_modern .edu-institute,
+    .t06-professional-cv-graphic-designer_modern .exp-company {
+        font-size: 11pt;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .exp-date {
+        font-size: 9.5pt;
+        color: #000000;
+        font-weight: 500;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .exp-role {
+        display: block;
+        font-size: 10pt;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 4px;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .exp-description {
+        font-size: 10pt;
+        color: #555555;
+        line-height: 1.4;
+    }
+
+    /* Accent Decorative Divider Line */
+    .t06-professional-cv-graphic-designer_modern .line {
+        flex-grow: 1;
+        height: 1px;
+        background-color: #e0e0e0;
+        margin-left: 15px;
+    }
+
+    /* Contact Info & Skill Tags */
+    .t06-professional-cv-graphic-designer_modern .contact-info {
+        margin-bottom: 20px;
+    }
+
+    .t06-professional-cv-graphic-designer_modern .contact-item b {
+        color: var(--primary); /* Text labels like "Phone" now use the primary theme accent */
+    }
+
+    .t06-professional-cv-graphic-designer_modern .contact-item b i {
+        margin-right: 8px;
+        width: 14px;
+        text-align: center;
+        color: var(--primary); /* FontAwesome icons in sidebar updated from white to primary theme accent */
+    }
+
+    .t06-professional-cv-graphic-designer_modern .skill-tag {
+        display: inline-block;
+        background-color: var(--dark-bg); /* Darkened background tint for clear visibility */
+        padding: 4px 10px;
+        border-radius: 4px;
+        margin-right: 6px;
+        margin-bottom: 8px;
+        font-size: 9pt;
+        color: var(--primary); /* Text inside skill tags changed to primary color for top contrast */
+        font-weight: 600;
+    }
+    
+    /* ATOMIC ACHIEVEMENTS */
+    .t06-professional-cv-graphic-designer_modern .ach-item {
+        font-size: 12px;
+        margin-bottom: 5px;
+        padding-left: 15px;
+        position: relative;
+        color: #000000;
+    }
+    .t06-professional-cv-graphic-designer_modern .ach-item::before {
+        content: "•";
+        position: absolute;
+        left: 3px;
+        top: -4px;                    /* Counteracts the font's natural low baseline drift */
+        font-size: 1.9em;             /* Increases the size so it looks intentional and sharp */
+        line-height: 1;               /* Eliminates standard line heights pulling it down */
+        color: var(--primary);
+    }
+    
+    
+</style>
+
+<div class="t06-professional-cv-graphic-designer_modern" data-v2-template-root data-v2-template-id="t06-professional-cv-graphic-designer_modern" data-v2-template-version="2.0.0">
+    <div class="cv-background-columns">
+        <div class="bg-sidebar"></div>
+        <div class="bg-main"></div>
+    </div>
+
+    <div class="cv-content-wrapper">
+        <div class="top-spacer">
+            <div class="top-spacer-left"></div>
+            <div class="top-spacer-right"></div>
+        </div>
+
+        <header class="cv-header">
+            
+            <h1  data-v2-visible-when="identity.fullName" class="header-text"><span data-v2-value="identity.fullName"></span></h1>
+            
+
+            
+            <p  data-v2-visible-when="identity.jobTitle" class="title-text"><span data-v2-value="identity.jobTitle"></span></p>
+            
+            
+            
+            <div  data-v2-section="photo" data-v2-visible-when="section:photo" class="profile-photo-container">
+                <a href="https://estudent.pk/cv-builder/" target="_blank" style="text-decoration: none; display: block; line-height: 0;">
+                    <img data-v2-bind-src="asset:profile-photo" alt="Profile Photo"></a>
+            </div>
+            
+        </header>
+
+        <div class="cv-body">
+            <aside>
+                <div class="contact-info">
+                    
+                    <div  data-v2-visible-when="identity.phone" class="contact-item">
+                        <b><i class="fas fa-phone"></i>Phone</b>
+                        <span data-v2-value="identity.phone"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.whatsapp" class="contact-item">
+                        <b><i class="fab fa-whatsapp"></i>WhatsApp</b>
+                        <span data-v2-value="identity.whatsapp"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.email" class="contact-item">
+                        <b><i class="fas fa-envelope"></i>Email</b>
+                        <span data-v2-value="identity.email"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.address" class="contact-item">
+                        <b><i class="fas fa-map-marker-alt"></i>Address</b>
+                        <span data-v2-value="identity.address"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.dateOfBirth" class="contact-item">
+                        <b><i class="fas fa-cake-candles"></i>DOB</b>
+                        <span data-v2-value="identity.dateOfBirth"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.cnic" class="contact-item">
+                        <b><i class="fas fa-id-card"></i>CNIC</b>
+                        <span data-v2-value="identity.cnic"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.religion" class="contact-item">
+                        <b><i class="fas fa-pray"></i>Religion</b>
+                        <span data-v2-value="identity.religion"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.linkedin" class="contact-item">
+                        <b><i class="fab fa-linkedin"></i>LinkedIn</b>
+                        <span data-v2-value="identity.linkedin"></span>
+                    </div>
+                    
+
+                    
+                    <div  data-v2-visible-when="identity.website" class="contact-item">
+                        <b><i class="fas fa-globe"></i>Website</b>
+                        <span data-v2-value="identity.website"></span>
+                    </div>
+                    
+                </div>
+                
+                <div  data-v2-section="skills" data-v2-visible-when="section:skills" class="section-label"><i class="fas fa-tools"></i>Skills</div>
+                <div class="sidebar-list">
+                    
+                    <span  data-v2-repeat="section:skills:values" class="skill-tag"><span data-v2-item-value="skill"></span></span>
+                    
+                </div>
+                
+
+
+
+                
+
+
+                
+            <div  data-v2-section="achievements" data-v2-visible-when="section:achievements" class="section-label"><i class="fas fa-trophy"></i>Achievements</div>
+            
+            <div  data-v2-repeat="section:achievements:entries" class="ach-item"><span data-v2-entry-value="achievement"></span></div>
+            
+            
+                
+                
+                
+
+
+                
+                <div  data-v2-section="languages" data-v2-visible-when="section:languages" class="section-label"><i class="fas fa-language"></i>Languages</div>
+                
+                <div  data-v2-repeat="section:languages:values" class="lang-item">
+                    <div class="lang-name"><span data-v2-item-value="language"></span></div>
+                </div>
+                
+                
+            </aside>
+
+            <main>
+                <section>
+                    
+                    <div  data-v2-section="summary" data-v2-visible-when="section:summary" class="section-label">
+                        <h3><i class="fas fa-bullseye"></i>Objective</h3>
+                        <div class="line"></div>
+                    </div>
+                    <div class="content-block">
+                        <span data-v2-value="section:summary:text"></span>
+                    </div>
+                    
+                </section>
+
+                <section>
+                
+                <div  data-v2-section="education" data-v2-visible-when="section:education" class="section-label">
+                    <h3><i class="fas fa-graduation-cap"></i>Education</h3>
+                    <div class="line"></div>
+                </div>
+                <div class="timeline-section">
+                    
+                    <div  data-v2-repeat="section:education:entries" class="education-item">
+                        <div class="edu-header-row">
+                            <span class="edu-institute"><span data-v2-entry-value="institute"></span></span>
+                            <span class="exp-date"><span data-v2-entry-value="year"></span></span>
+                        </div>
+                        <span class="exp-role"><span data-v2-entry-value="degree"></span>&nbsp;<span class="exp-description">  - <span data-v2-entry-value="grade"></span></span></span>
+                    </div>
+                    
+                </div>
+                
+                </section>
+
+                <section>
+                
+                <div  data-v2-section="experience" data-v2-visible-when="section:experience" class="section-label">
+                    <h3><i class="fas fa-briefcase"></i>Experience</h3>
+                    <div class="line"></div>
+                </div>
+                <div class="timeline-section">
+                    
+                    <div  data-v2-repeat="section:experience:entries" class="experience-item">
+                        <div class="exp-header-row">
+                            <span class="exp-company"><span data-v2-entry-value="company"></span></span>
+                            <span class="exp-date"><span data-v2-entry-value="duration"></span></span>
+                        </div>
+                        <span class="exp-role"><span data-v2-entry-value="title"></span></span>
+                        <div class="exp-description"><span data-v2-entry-value="desc"></span></div>
+                    </div>
+                    
+                </div>
+                
+                </section>
+            </main>
+        </div>
+    </div>
+</div>
