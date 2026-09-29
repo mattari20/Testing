@@ -41,6 +41,8 @@
     "test:m24": "node --test tests/m24/browser-validation-runner.test.js",
     "test:browser-runner": "npm run test:m24",
     "test:m25": "node --test tests/m25/playwright-page-adapter.test.js",
-    "test:playwright-adapter": "npm run test:m25"
+    "test:playwright-adapter": "npm run test:m25",
+    "test:m26": "node --test tests/m26/real-browser-evidence.test.js",
+    "test:real-browser": "npm run test:m26"
   }
 }
