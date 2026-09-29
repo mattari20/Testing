@@ -175,6 +175,51 @@ ATS analysis is readiness/compatibility analysis, not a guarantee of acceptance 
 NEW: job description input, requirement extraction, skills/keywords/title/qualification/tool/technology/responsibility/experience extraction, matched items, missing/relevant items, weak areas, improvement suggestions and match analysis/score.
 ATS readiness and job match remain conceptually separate.
 
+
+## 12A. Career Intelligence Quality Layer
+V2 should not stop at a single ATS or match number. Intelligence findings must be explainable and actionable.
+
+Required capabilities include:
+- separate Resume Health/ATS Readiness and Job Match analyses;
+- issue → reason → evidence → recommended fix structure;
+- keyword and skill gap analysis;
+- exact, related and missing requirement distinctions where confidence permits;
+- Skill Evidence Engine linking claimed skills to supporting CV evidence;
+- missing-evidence detection for skills or claims;
+- chronology and consistency checks;
+- achievement-discovery prompts that ask for real metrics rather than inventing them;
+- template recommendations based on content and compatibility.
+
+Scores are summaries of analysis, not guarantees of ATS acceptance, interviews or employment outcomes.
+
+## 14A. Controlled AI Assistance
+AI assistance should be contextual, modular and user-controlled.
+
+Recommended actions include summary generation, bullet rewriting, clarity/grammar improvement, achievement framing, job-specific tailoring, CV review, issue explanation and cover-letter generation.
+
+AI output must have a clear suggested state before replacing authoritative user content. The product should support an **AI Suggested → User Approved** distinction where practical.
+
+AI must never invent experience, qualifications, dates, employers, achievements, skills, metrics or credentials. When a required metric is unknown, the system should ask the user or use an explicit placeholder rather than fabricate a value.
+
+## 16A. Online CV, Privacy and Portfolio
+Future public career documents should support explicit visibility modes such as public, link-only and private. Search-engine indexing should be separately controllable where public publishing is implemented.
+
+Online CVs should be able to connect to a portfolio without duplicating career source data. Future analytics such as views/downloads must be privacy-controlled and must not expose sensitive career data.
+
+## 17A. Student, Fresh Graduate and Academic Modes
+V2 should support specialized document guidance without creating separate incompatible data models.
+
+Student/fresh-graduate capabilities include education-first layouts, projects, coursework, internships, certifications, extracurricular activities, volunteer work, academic achievements and final-year projects.
+
+Academic capabilities include research, publications, thesis, conferences, presentations, teaching, grants, memberships and research interests.
+
+Both modes must remain compatible with the Master Profile and presentation-variant architecture.
+
+## 23A. Application Workspace and Career Continuity
+Future application workflows should connect a job description with its selected CV version, cover letter, match analysis, application status, interview information, notes and follow-up history.
+
+This remains separate from the Document Core but should consume the same authorized career data and document versions.
+
 ## 13. Keyword and skill gap
 NEW: keyword coverage, relevant missing keywords, skill alignment, relevant skill gaps and terminology alignment.
 The system must not encourage users to claim skills they do not actually possess.
