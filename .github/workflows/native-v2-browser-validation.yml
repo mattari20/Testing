@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          # npm cache is intentionally not enabled here because this repository does not commit a package-lock.json.
 
       - name: Install browser test dependency
         run: npm install --no-save playwright
