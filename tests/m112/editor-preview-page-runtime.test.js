@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {renderPaginatedPreview} from '../../src/ui/editor-preview-page-runtime.js';test('M112 requires a preview root',()=>{assert.throws(()=>renderPaginatedPreview(null,{pages:[]}),/Preview root is required/);});
