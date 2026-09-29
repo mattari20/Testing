@@ -90,6 +90,26 @@ Legend:
 | Variant fallback/recommendation | Not present | V2 Release |
 | Variant persistence and undo | Not present | V2 Release |
 
+| Resume Health / explainable analysis | Not present | V2 Core |
+| Issue-reason-evidence-fix feedback | Not present | V2 Core |
+| Skill Evidence Engine | Not present | V2 Release |
+| Missing evidence detection | Not present | V2 Release |
+| Achievement discovery prompts | Not present | V2 Release |
+| Chronology/consistency checks | Not present | V2 Core |
+| Template recommendation engine | Not present | V2 Release |
+| AI Suggested → User Approved state | Not present | V2 Core |
+| AI anti-fabrication safeguards | Not formal | V2 Core |
+| PDF/DOCX import confidence | Not present | V2 Release |
+| Student/fresh graduate mode | Not present | V2 Release |
+| Academic CV mode | Not present | V2 Release |
+| Public/link-only/private online CV | Not present | Future/V2+ |
+| Search-engine visibility control | Not present | Future/V2+ |
+| CV/portfolio linking | Not present | Future/V2+ |
+| CV view/download analytics | Not present | Future |
+| CV/job/application workspace | Not present | Future |
+| CV version comparison | Not present | V2 Release |
+| Change history/restore | Not present | V2 Core |
+
 | Google Ads/AdSense capability | Not present as V2 architecture | V2 Core / Monetization Layer |
 | Advertising placement controls | Limited/legacy | V2 Release |
 | Ad-free premium entitlement | Not present | V2 Release/Future |
