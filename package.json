@@ -58,6 +58,8 @@
     "test:m33": "node --test tests/m33/production-export.test.js",
     "test:export-boundary": "npm run test:m33",
     "test:m34": "node --test tests/m34/pdf-print-generator.test.js",
-    "test:pdf-print": "npm run test:m34"
+    "test:pdf-print": "npm run test:m34",
+    "test:m35": "node --test tests/m35/docx-generator.test.js",
+    "test:docx-generator": "npm run test:m35"
   }
 }
