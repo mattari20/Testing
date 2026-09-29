@@ -3,6 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:m1": "node --test tests/m1/career-document-core.test.js"
+    "test:m1": "node --test tests/m1/career-document-core.test.js",
+    "test:m2": "node --test tests/m2/document-lifecycle.test.js",
+    "test:m3": "node --test tests/m3/template-engine.test.js",
+    "test:core": "node --test tests/m1/career-document-core.test.js tests/m2/document-lifecycle.test.js tests/m3/template-engine.test.js"
   }
 }
