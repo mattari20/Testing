@@ -1,0 +1,4 @@
+import {createPaginatedPreview} from './editor-paginated-preview.js';
+import {setEditorPaginationPage} from '../preview/editor-pagination-state.js';
+export const EDITOR_PREVIEW_PAGE_CONTROLLER_VERSION='1.0.0';
+export function createEditorPreviewPageController(layoutResult,onChange=()=>{}){let preview=createPaginatedPreview(layoutResult);return Object.freeze({getState:()=>preview.state,next:()=>{preview=Object.freeze({...preview,state:setEditorPaginationPage(preview.state,preview.state.currentPage+1)});onChange(preview.state);return preview.state;},previous:()=>{preview=Object.freeze({...preview,state:setEditorPaginationPage(preview.state,preview.state.currentPage-1)});onChange(preview.state);return preview.state;},goTo:page=>{preview=Object.freeze({...preview,state:setEditorPaginationPage(preview.state,page)});onChange(preview.state);return preview.state;}});}
