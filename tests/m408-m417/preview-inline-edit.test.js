@@ -44,7 +44,7 @@ try {
   await name.type('Updated Preview User');
   await name.blur();
   await page.waitForFunction(()=>window.editorRuntime.surface.getState().session.application.masterProfile.careerData.identity.fullName==='Updated Preview User');
-  assert.equal(await page.locator('#preview [data-v2-preview-edit="identity"]').first().textContent(),'Updated Preview User');
+  assert.equal(await name.textContent(),'Updated Preview User');
 
   const company=page.locator('#preview [data-v2-preview-edit="entry"]').first();
   await company.click();
