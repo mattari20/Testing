@@ -118,7 +118,7 @@ A dedicated current-market research pass has now been completed and documented i
 
 The research was reconciled into the Master Capability Register, Feature Matrix and Product Requirements. The resulting baseline now explicitly covers explainable career intelligence, skill evidence, achievement discovery, controlled AI approval/anti-fabrication, import confidence, specialized student/academic modes, online CV privacy, career continuity and presentation variants.
 
-The project should not freeze documentation until the remaining V1-to-V2 capability reconciliation and architecture review gates are completed.
+This earlier planning-stage statement is historical; the V1-to-V2 reconciliation and architecture review documents are now stored. Remaining release gates are tracked in FINAL_RELEASE_READINESS.md.
 
 
 ## Template Library documentation completed
@@ -135,7 +135,7 @@ The following governing product documents were reconciled with this work:
 - docs/02-v2-product/V2_FEATURE_MATRIX.md
 - docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md
 
-The V2 implementation is actively committed to the repository through M109. V1 remains the Golden Baseline/reference while final production is intended to run V2 only. Browser runtime and M0 security/asset gates remain evidence-controlled.
+The V2 implementation is actively committed to the repository through M217. V1 remains the Golden Baseline/reference while final production is intended to run V2 only. Browser runtime and M0 security/asset gates remain evidence-controlled.
 
 
 ## M118–M127 content distribution batch
