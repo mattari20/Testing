@@ -64,7 +64,7 @@ jobs:
       - name: Run M28 paired V1 V2 browser comparison
         run: npm run test:m28
 
-      - name: Run M194 real integrated fragmentation browser validation
+      - name: Run M208-M217 real integrated fragmentation browser validation
         run: npm run test:m208-m217
 
       - name: Upload integrated fragmentation browser evidence
