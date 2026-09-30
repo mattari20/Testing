@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {createContentFragments} from '../../src/ui/editor-preview-content-fragments.js';
+test('M122 creates page fragment descriptors',()=>{const el={};const r=createContentFragments([{id:'a',element:el}],[{number:1,blocks:[{id:'a',state:'fit',height:40}]}]);assert.equal(r[0].fragments[0].blockId,'a');assert.equal(r[0].fragments[0].element,el);});
