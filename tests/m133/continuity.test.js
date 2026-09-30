@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {validateFragmentContinuity} from '../../src/ui/editor-preview-pagination-continuity.js';test('M133 validates sequential parts',()=>{const r=validateFragmentContinuity([{fragments:[{blockId:'x',part:1}]},{fragments:[{blockId:'x',part:2}]}]);assert.equal(r.valid,true);});
