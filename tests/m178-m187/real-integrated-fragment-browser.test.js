@@ -24,6 +24,11 @@ try{
  await page.goto('http://127.0.0.1:'+address.port+'/tests/browser/editor-runtime-flow.html');
  await page.waitForFunction(()=>window.editorRuntimeTestReady===true);
  await page.evaluate(()=>window.runTemplatePreview('t01-modern-minimalist-cv-design_modern'));
+ const fragmentation=await page.evaluate(()=>window.runFragmentationDemo());
+ assert.ok(fragmentation.runtime.layoutResult.pageCount>=2);
+ assert.equal(fragmentation.integrity.valid,true);
+ assert.equal(fragmentation.runtime.continuity.valid,true);
+ assert.ok(fragmentation.probe.pages.every(item=>item.scrollHeight<=item.height+2));
  await page.screenshot({path:path.replace('.js','.png'),fullPage:true});
  await page.waitForSelector('#preview [data-v2-template-root],#preview [data-v2-template-id]');
  const result=await page.evaluate(()=>{
