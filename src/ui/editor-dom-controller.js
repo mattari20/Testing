@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.1.0';
+export const EDITOR_DOM_VERSION = '1.2.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -14,44 +14,46 @@ export function bindEditorFields(root, surface, options = {}) {
     const handler = () => {
       const [sectionId, fieldId] = String(input.dataset.v2EditorField || '').split(':');
       if (!sectionId || !fieldId) return;
-      surface.dispatch(createEditorCommand({
-        type: 'set-field',
-        target: { sectionId, fieldId },
-        payload: { value: input.value }
-      }));
+      surface.dispatch(createEditorCommand({type:'set-field',target:{sectionId,fieldId},payload:{value:input.value}}));
     };
     input.addEventListener('input', handler);
     listeners.push(() => input.removeEventListener('input', handler));
   });
-
   root.querySelectorAll('[data-v2-editor-identity-field]').forEach(input => {
-    const handler = () => {
-      surface.dispatch(createEditorCommand({
-        type: 'set-identity',
-        target: { key: input.dataset.v2EditorIdentityField },
-        payload: { value: input.value }
-      }));
-    };
+    const handler = () => surface.dispatch(createEditorCommand({type:'set-identity',target:{key:input.dataset.v2EditorIdentityField},payload:{value:input.value}}));
     input.addEventListener('input', handler);
     listeners.push(() => input.removeEventListener('input', handler));
   });
-
   root.querySelectorAll('[data-v2-editor-entry-field]').forEach(input => {
     const handler = () => {
       const target = parseJson(input.dataset.v2EntryTarget);
       const key = String(input.dataset.v2EntryKey || '');
       if (!target.sectionId || !target.entryId || !key) return;
-      surface.dispatch(createEditorCommand({
-        type: 'update-entry',
-        target,
-        payload: { values: { [key]: input.value } }
-      }));
+      surface.dispatch(createEditorCommand({type:'update-entry',target,payload:{values:{[key]:input.value}}}));
     };
     input.addEventListener('input', handler);
     listeners.push(() => input.removeEventListener('input', handler));
   });
-
-  return Object.freeze({ version: EDITOR_DOM_VERSION, destroy: () => listeners.forEach(fn => fn()) });
+  root.querySelectorAll('[data-v2-editor-section-title]').forEach(input => {
+    const handler = () => surface.dispatch(createEditorCommand({type:'set-section-title',target:{sectionId:input.dataset.v2EditorSectionTitle},payload:{title:input.value}}));
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-field-label]').forEach(input => {
+    const [sectionId, fieldId] = String(input.dataset.v2EditorFieldLabel || '').split(':');
+    if (!sectionId || !fieldId) return;
+    const handler = () => surface.dispatch(createEditorCommand({type:'set-field-definition',target:{sectionId,fieldId},payload:{label:input.value}}));
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-field-type]').forEach(input => {
+    const [sectionId, fieldId] = String(input.dataset.v2EditorFieldType || '').split(':');
+    if (!sectionId || !fieldId) return;
+    const handler = () => surface.dispatch(createEditorCommand({type:'set-field-definition',target:{sectionId,fieldId},payload:{type:input.value}}));
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  return Object.freeze({version:EDITOR_DOM_VERSION,destroy:()=>listeners.forEach(fn=>fn())});
 }
 
 export function bindEditorActions(root, surface) {
@@ -62,10 +64,10 @@ export function bindEditorActions(root, surface) {
       const type = element.dataset.v2EditorCommand;
       const target = parseJson(element.dataset.v2Target);
       const payload = parseJson(element.dataset.v2Payload);
-      surface.dispatch({ type, target, payload });
+      surface.dispatch({type,target,payload});
     };
     element.addEventListener('click', handler);
     listeners.push(() => element.removeEventListener('click', handler));
   });
-  return Object.freeze({ destroy: () => listeners.forEach(fn => fn()) });
+  return Object.freeze({destroy:()=>listeners.forEach(fn=>fn())});
 }
