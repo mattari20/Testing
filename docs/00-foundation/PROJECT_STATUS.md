@@ -274,3 +274,10 @@ Dedicated tests and CI validation were added. This milestone does not claim that
 Added a production evidence package boundary that combines the controlled smoke-test record, explicit V1/V2/blocked bridge state, non-secret evidence references, and the existing R6 handoff evaluation. The package remains OPEN when evidence is incomplete and becomes ready for acceptance only when the complete smoke record and explicit V2 bridge are both present. Secret-like keys are rejected from the package structure.
 
 **R6 remains OPEN.** This batch improves evidence integrity and operator handoff; it does not claim a production deployment, V2 cutover, or V1 retirement.
+
+## M298–M307 Batch Record
+
+Added the machine-checkable final release gate for R1–R8. The new gate requires every governed release gate to be explicitly PASS before final release can become READY. It rejects unknown statuses and prevents R8 from self-authorizing while any earlier gate remains unresolved.
+
+This batch does not close any external gate. The current release state remains R1/R2/R3 CONDITIONAL, R4/R5 PASS, R6/R7 OPEN, and R8 BLOCKED.
+
