@@ -180,6 +180,9 @@
     "test:m157": "npm run test:m148-m157",
     "test:fragment-runtime": "npm run test:m148-m157",
     "test:m158-m167": "node --test tests/m158-m167/browser-pagination-contract.test.js",
-    "test:browser-pagination-contract": "npm run test:m158-m167"
+    "test:browser-pagination-contract": "npm run test:m158-m167",
+    "test:m168-m177": "node --test tests/m168-m177/browser-fragment-contract.test.js tests/m173/real-fragment-browser-validation.test.js",
+    "test:m173": "node --test tests/m173/real-fragment-browser-validation.test.js",
+    "test:integrated-browser-fragment": "npm run test:m168-m177"
   }
 }
