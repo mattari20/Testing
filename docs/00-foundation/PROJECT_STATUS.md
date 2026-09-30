@@ -232,3 +232,10 @@ This is fixture preparation only. It does not replace authoritative V1 output ev
 **R3 status: CONDITIONAL — browser execution evidence observed; historical V1 baseline gaps remain.**
 **R4 status: PASS — observed successful browser CI run 36681451778.**
 **R5 status: PASS — integrated M208–M217 fragmentation browser evidence observed.**
+
+
+## M218–M227 Batch Record
+
+Established the production-integration evidence contract for R6. The repository now has an executable nine-requirement acceptance model covering the V2 production entrypoint, real CV editing, template/live preview, multi-page pagination/fragmentation, PDF/print and DOCX export, V1 data/migration handling, V1 fallback detection, production credential/configuration review, and required smoke-test metadata.
+
+This batch intentionally does **not** claim live production integration. R6 remains OPEN until the contract is executed against the actual production deployment and the resulting evidence is recorded.
