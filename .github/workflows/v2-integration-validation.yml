@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          # npm cache is intentionally not enabled because this repository does not commit a package-lock.json.
       - run: npm install
       - run: npm run test:m48-m51
       - run: npm run test:m52-m55
