@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {distributeRenderedBlocks} from '../../src/ui/editor-preview-content-distributor.js';
+test('M123 distributes cloned blocks',()=>{const target={children:[],replaceChildren(){this.children=[];},appendChild(x){this.children.push(x);}};const source={cloneNode(){return {cloned:true};}};const r=distributeRenderedBlocks([target],[{fragments:[{element:source}]}]);assert.equal(r.distributedPages,1);assert.equal(target.children.length,1);});
