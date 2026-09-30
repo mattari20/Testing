@@ -136,3 +136,23 @@ The following governing product documents were reconciled with this work:
 - docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md
 
 The V2 implementation is actively committed to the repository through M109. V1 remains the Golden Baseline/reference while final production is intended to run V2 only. Browser runtime and M0 security/asset gates remain evidence-controlled.
+
+
+## M118–M127 content distribution batch
+
+The implementation has advanced from page-container/content association into a measured rendered-block distribution boundary:
+
+- M118 rendered content block extraction
+- M119 semantic block normalization
+- M120 block-to-page pagination using the existing layout engine
+- M121 split/overflow state preservation
+- M122 page fragment descriptors
+- M123 rendered block distribution into page containers
+- M124 integrated V2 distribution runtime
+- M125 block/page/distribution evidence contract
+- M126 explicit overflow evidence
+- M127 deterministic long-content validation boundary
+
+Implementation files are under `src/ui/` and `src/validation/`, with batch documentation in `docs/03-implementation/M118-M127_CONTENT_FRAGMENTATION_AND_DISTRIBUTION.md`.
+
+**Important validation boundary:** this batch does not claim arbitrary DOM/text-node fragmentation inside an individual rendered block. A block is distributable as a measured unit unless its layout contract supplies valid split points. Actual browser-green results must only be reported after real browser execution evidence is available.
