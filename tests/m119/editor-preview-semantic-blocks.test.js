@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {createSemanticLayoutBlocks} from '../../src/ui/editor-preview-semantic-blocks.js';
+test('M119 normalizes semantic metadata',()=>{const r=createSemanticLayoutBlocks([{id:'x',kind:'experience-entry',measuredHeight:80,splittable:true}]);assert.equal(r[0].kind,'experience-entry');assert.equal(r[0].splittable,true);});
