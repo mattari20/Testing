@@ -2,6 +2,7 @@ export const EDITOR_COMMAND_VERSION = '1.0.0';
 
 export const COMMAND_TYPE = Object.freeze({
   SET_FIELD: 'set-field',
+  SET_IDENTITY: 'set-identity',
   SET_VISIBILITY: 'set-visibility',
   ADD_ENTRY: 'add-entry',
   UPDATE_ENTRY: 'update-entry',
