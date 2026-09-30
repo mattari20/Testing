@@ -72,3 +72,6 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 - M388–M397: complete section and field management — add/remove/edit section and field definitions, entry duplication, targeted ordering, structural editor controls, runtime refresh, and regression coverage
 
 - M398–M407: editor interaction layer — drag-and-drop section/field/entry ordering, sortable editor markers, preview inline-edit command boundary, runtime reorder binding, regression coverage
+
+
+- M408–M417: concrete Native V2 live-preview editing targets, preview-mount inline-edit binding, stale-safe live-preview runtime, seven-template compatibility coverage and browser round-trip validation
