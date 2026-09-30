@@ -34,6 +34,7 @@ jobs:
       - run: npm run test:m358-m367
       - run: node --test tests/m368-m377/editor-builder-foundation.test.js
       - run: node --test tests/m378-m387/targeted-cv-editing.test.js
+      - run: npm run test:m388-m397
       - run: npm test
         continue-on-error: true
       - name: Upload validation metadata
