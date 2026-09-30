@@ -175,3 +175,7 @@ Completed the fragmentation-quality batch on the current main branch. See `docs/
 
 ## M148–M157 Batch Record
 Completed fragment runtime integration and safety hardening. Quality metadata, continuity, clipping normalization, runtime integration, regression utilities, evidence, and contract coverage are now recorded. Production browser/Chromium validation remains outstanding.
+
+
+## M158–M167 Batch Record
+Completed browser pagination hardening contracts: page geometry, navigation normalization, distributed-fragment DOM integrity, repeated-header DOM semantics, runtime evidence, and browser overflow validation. Actual Chromium execution of the integrated fragmentation runtime remains required.
