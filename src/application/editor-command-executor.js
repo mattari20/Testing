@@ -1,14 +1,31 @@
 import {
-  addSection, addField, addEntry, setSectionVisibility, setFieldVisibility, setEntryVisibility,
+  addSection, removeSection, setSectionTitle, addField, removeField, setFieldDefinition, addEntry, duplicateEntry,
   setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV, createDocumentSnapshot,
   setTargetedSectionVisibility, setTargetedFieldVisibility, setTargetedEntryVisibility
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
-export const EDITOR_EXECUTOR_VERSION = '1.1.0';
+export const EDITOR_EXECUTOR_VERSION = '1.2.0';
 
 const findSection = (profile,id) => profile.careerData.sections.find(s=>s.id===id);
 const touch = o => { o.revision += 1; o.updatedAt = new Date().toISOString(); };
+const removeFromList = (list, id) => list.filter(value => value !== id);
+
+function cleanupTargetedConfiguration(targetedCV, sectionId, fieldId = null) {
+  const sid = String(sectionId);
+  targetedCV.configuration.hiddenSections = removeFromList(targetedCV.configuration.hiddenSections || [], sid);
+  targetedCV.configuration.sectionOrder = removeFromList(targetedCV.configuration.sectionOrder || [], sid);
+  delete targetedCV.configuration.fieldOrder[sid];
+  delete targetedCV.configuration.entryOrder[sid];
+  targetedCV.configuration.hiddenFields = (targetedCV.configuration.hiddenFields || []).filter(key => !key.startsWith(sid + ':'));
+  targetedCV.configuration.hiddenEntries = (targetedCV.configuration.hiddenEntries || []).filter(key => !key.startsWith(sid + ':'));
+  if (fieldId != null) {
+    const key = sid + ':' + String(fieldId);
+    targetedCV.configuration.hiddenFields = removeFromList(targetedCV.configuration.hiddenFields, key);
+    const order = targetedCV.configuration.fieldOrder[sid] || [];
+    targetedCV.configuration.fieldOrder[sid] = removeFromList(order, String(fieldId));
+  }
+}
 
 export function executeEditorCommand(editorSession, command) {
   if (!editorSession?.application) throw new Error('Editor session is required.');
@@ -36,6 +53,29 @@ export function executeEditorCommand(editorSession, command) {
       else if (target.kind==='entry') setTargetedEntryVisibility(targetedCV,target.sectionId,target.entryId,p.visible);
       else throw new Error('Visibility target kind is required.');
       break;
+    case COMMAND_TYPE.ADD_SECTION:
+      addSection(masterProfile,p);
+      break;
+    case COMMAND_TYPE.REMOVE_SECTION: {
+      removeSection(masterProfile,target.sectionId);
+      cleanupTargetedConfiguration(targetedCV,target.sectionId);
+      targetedCV.revision += 1; targetedCV.state.revision += 1; targetedCV.updatedAt = new Date().toISOString();
+      break;
+    }
+    case COMMAND_TYPE.SET_SECTION_TITLE:
+      setSectionTitle(masterProfile,target.sectionId,p.title);
+      break;
+    case COMMAND_TYPE.ADD_FIELD:
+      addField(masterProfile,target.sectionId,p);
+      break;
+    case COMMAND_TYPE.REMOVE_FIELD:
+      removeField(masterProfile,target.sectionId,target.fieldId);
+      cleanupTargetedConfiguration(targetedCV,target.sectionId,target.fieldId);
+      targetedCV.revision += 1; targetedCV.state.revision += 1; targetedCV.updatedAt = new Date().toISOString();
+      break;
+    case COMMAND_TYPE.SET_FIELD_DEFINITION:
+      setFieldDefinition(masterProfile,target.sectionId,target.fieldId,p);
+      break;
     case COMMAND_TYPE.ADD_ENTRY: addEntry(masterProfile,target.sectionId,p); break;
     case COMMAND_TYPE.UPDATE_ENTRY: {
       const section=findSection(masterProfile,target.sectionId);
@@ -52,9 +92,15 @@ export function executeEditorCommand(editorSession, command) {
       const before=section.entries.length;
       section.entries=section.entries.filter(e=>e.id!==target.entryId);
       if(section.entries.length===before) throw new Error('Entry not found: '+target.entryId);
+      section.entries.forEach((entry,index)=>{entry.order=index;});
+      targetedCV.configuration.hiddenEntries=(targetedCV.configuration.hiddenEntries||[]).filter(key=>key!==String(target.sectionId)+':'+String(target.entryId));
+      targetedCV.configuration.entryOrder[target.sectionId]=(targetedCV.configuration.entryOrder[target.sectionId]||[]).filter(id=>id!==String(target.entryId));
       touch(masterProfile);
       break;
     }
+    case COMMAND_TYPE.DUPLICATE_ENTRY:
+      duplicateEntry(masterProfile,target.sectionId,target.entryId);
+      break;
     case COMMAND_TYPE.REORDER:
       if(target.kind==='section') setSectionOrder(targetedCV,p.order);
       else if(target.kind==='field') setFieldOrder(targetedCV,target.sectionId,p.order);
