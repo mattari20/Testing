@@ -1,10 +1,39 @@
-<!doctype html><html><body><div id="editor"><div data-v2-editor-form></div><div id="preview"></div></div><script type="module">
+<!doctype html><html><body><div id="editor"><div data-v2-editor-form></div><div id="preview"></div><div id="fragment-source"></div></div><script type="module">
 import { mountV2EditorRuntime } from '/src/ui/editor-runtime.js';
 import { switchTemplate } from '/src/ui/template-preview-controller.js';
 import { loadNativeTemplateSource } from '/src/templates/native-template-source-loader.js';
 import { mountTemplatePreview } from '/src/ui/template-preview-mounter.js';
 import { createApplicationSnapshot } from '/src/application/cv-application.js';
-const input={profileData:{identity:{fullName:'Browser User',jobTitle:'Engineer'},sections:[{id:'personal',type:'personal',title:'Personal',visibility:true,fields:[{id:'name',type:'text',label:'Name',value:'Browser User',visibility:true}],entries:[]},{id:'summary',type:'summary',title:'Summary',visibility:true,fields:[{id:'text',type:'text',label:'Summary',value:'Browser test summary',visibility:true}],entries:[]}]}};
-window.editorRuntime=mountV2EditorRuntime(document.querySelector('#editor'),input); window.editorRuntimeTestReady=true;
-window.runTemplatePreview=async(id)=>{switchTemplate(window.editorRuntime.surface,id,{templateVersion:'2.0.0'});const source=await loadNativeTemplateSource(id);const app=window.editorRuntime.surface.getState().session.application;const snapshot=createApplicationSnapshot(app);return mountTemplatePreview(document.querySelector('#preview'),source.sourceHtml,snapshot,{templateId:id,templateVersion:source.version});};
+import { renderBrowserFragmentedPreview } from '/src/ui/editor-preview-fragment-browser-adapter.js';
+
+const input={profileData:{identity:{fullName:'Browser User',jobTitle:'Engineer'},sections:[{id:'personal',type:'personal',title:'Personal',visibility:true,fields:[{id:'name',type:'text',label:'Name',value:'Browser User',visibility:true}],entries:[]},{id:'summary',type:'summary',title:'Summary',visibility:true,fields:[{id:'text',type:'text',label:'Summary',value:'Browser test summary',visibility:true}],entries:[]}] }};
+window.editorRuntime=mountV2EditorRuntime(document.querySelector('#editor'),input);
+window.editorRuntimeTestReady=true;
+
+window.runTemplatePreview=async(id)=>{
+ switchTemplate(window.editorRuntime.surface,id,{templateVersion:'2.0.0'});
+ const source=await loadNativeTemplateSource(id);
+ const app=window.editorRuntime.surface.getState().session.application;
+ const snapshot=createApplicationSnapshot(app);
+ return mountTemplatePreview(document.querySelector('#preview'),source.sourceHtml,snapshot,{templateId:id,templateVersion:source.version});
+};
+
+window.runFragmentationDemo=()=>{
+ const source=document.querySelector('#fragment-source');
+ source.replaceChildren();
+ for(let i=1;i<=3;i++){
+  const block=document.createElement('div');
+  block.setAttribute('data-v2-layout-block','long-'+i);
+  block.setAttribute('data-v2-block-type','section');
+  block.setAttribute('data-v2-splittable','true');
+  block.setAttribute('data-v2-split-at','800,1400');
+  block.style.width='794px';
+  block.style.height='1800px';
+  block.style.boxSizing='border-box';
+  block.style.overflow='hidden';
+  block.textContent='Long CV content block '+i+' '.repeat(1000);
+  source.appendChild(block);
+ }
+ return renderBrowserFragmentedPreview(document.querySelector('#preview'),source,{width:794,height:1123,margins:{top:0,right:0,bottom:0,left:0},columns:1},1);
+};
 </script></body></html>
