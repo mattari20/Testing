@@ -62,7 +62,8 @@ test('renderer respects targeted section, field and entry visibility', () => {
   surface.dispatch({ type: 'set-visibility', target: { kind: 'field', sectionId: 'experience', fieldId: 'company' }, payload: { visible: false } });
   let html = renderEditorForm(surface, surface.getState().session.application.masterProfile).html;
   assert.match(html, /Engineer/);
-  assert.doesNotMatch(html, /Example Ltd/);
+  assert.match(html, /data-v2-editor-field-hidden-state="true"/);
+  assert.doesNotMatch(html, /data-v2-editor-field="experience:company"/);
   surface.dispatch({ type: 'set-visibility', target: { kind: 'entry', sectionId: 'experience', entryId: 'job1' }, payload: { visible: false } });
   assert.deepEqual(surface.getState().session.application.targetedCV.configuration.hiddenEntries, ['experience:job1']);
   html = renderEditorForm(surface, surface.getState().session.application.masterProfile, { configuration: surface.getState().session.application.targetedCV.configuration }).html;
