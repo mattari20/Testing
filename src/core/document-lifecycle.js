@@ -32,6 +32,19 @@ export function createLifecycleState(kind = 'draft') {
   };
 }
 
+export function createDocumentLifecycle(input = {}) {
+  assert(input.masterProfileId, 'Document lifecycle requires masterProfileId.');
+  assert(input.targetedCVId, 'Document lifecycle requires targetedCVId.');
+  return {
+    lifecycleVersion: LIFECYCLE_VERSION,
+    masterProfileId: String(input.masterProfileId),
+    targetedCVId: String(input.targetedCVId),
+    kind: input.kind || 'draft',
+    revision: 1,
+    updatedAt: now()
+  };
+}
+
 export function createDocumentRecord(snapshot, options = {}) {
   assert(snapshot && snapshot.targetedCVId, 'A targeted CV snapshot is required.');
   return {
