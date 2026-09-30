@@ -175,6 +175,9 @@
     "test:m128-m137": "npm run test:m128 && npm run test:m129 && npm run test:m130 && npm run test:m131 && npm run test:m132 && npm run test:m133 && npm run test:m134 && npm run test:m135 && npm run test:m136 && npm run test:m137",
     "test:m138-m147": "node --test tests/m138-m147/fragmentation-quality-contract.test.js tests/m147/fragmentation-quality-batch.test.js",
     "test:m147": "node --test tests/m147/fragmentation-quality-batch.test.js",
-    "test:pagination-quality": "npm run test:m138-m147"
+    "test:pagination-quality": "npm run test:m138-m147",
+    "test:m148-m157": "node --test tests/m148-m157/fragment-runtime-integration.test.js",
+    "test:m157": "npm run test:m148-m157",
+    "test:fragment-runtime": "npm run test:m148-m157"
   }
 }
