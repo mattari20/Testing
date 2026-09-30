@@ -68,3 +68,5 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 - M368–M377: builder editing foundation — identity editing command, repeatable-entry rendering/editing, fresh document snapshots after mutations, and editor-surface undo/redo history with regression coverage
 
 - M378–M387: targeted CV editing foundation — isolated section/field/entry visibility from Master Profile, structural editor subscriptions, runtime refresh, and regression coverage
+
+- M388–M397: complete section and field management — add/remove/edit section and field definitions, entry duplication, targeted ordering, structural editor controls, runtime refresh, and regression coverage
