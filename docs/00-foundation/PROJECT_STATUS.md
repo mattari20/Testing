@@ -314,3 +314,8 @@ Next executable release action: deploy the accepted V2 commit to the production 
 
 Word Template Download Layer added. The repository now has a machine-checkable catalog for seven planned pre-designed editable DOCX assets, shared V2 template IDs, deterministic download requests, no-login contract, and explicit asset-acceptance rules. Binary DOCX files remain planned until individually created, visually reviewed, deployed, and marked READY.
 
+
+
+## M328–M337
+
+Added the Word-template asset readiness audit. Library evidence confirms three candidate source DOCX files for T03, T04 and T05, but they require normalization; matching source documents for T01, T02, T06 and T07 were not located. The machine-readable audit keeps all seven assets release-blocked until individually normalized, reviewed, deployed and marked READY. No binary asset is falsely marked ready.
