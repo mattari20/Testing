@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createEditorPreviewFragmentEvidence} from '../../src/validation/editor-preview-fragment-evidence.js';test('M135 evidence passes',()=>assert.equal(createEditorPreviewFragmentEvidence({pages:2,fragments:2,distribution:'passed',continuity:'passed',overflowControlled:'passed'}).status,'passed'));
