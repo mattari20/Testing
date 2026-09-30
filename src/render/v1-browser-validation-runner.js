@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { compileV1TemplateSource } from './v1-template-normalizer.js';
+import { compileV1TemplateSource } from '../templates/v1-template-normalizer.js';
 import { createGenericV1TemplateAdapter, getV1Visibility } from './v1-browser-template-adapter.js';
 
 export const M27_V1_BROWSER_RUNNER_VERSION='1.0.0';
