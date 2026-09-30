@@ -25,6 +25,6 @@ try {
  assert.ok(result.results.every(x=>x.screenshotArtifact && fs.existsSync(x.screenshotArtifact)));
  fs.mkdirSync('artifacts/m27',{recursive:true});
  fs.writeFileSync('artifacts/m27/v1-browser-evidence.json',JSON.stringify(result,null,2));
- console.log(JSON.stringify(result.results.map(x=>({templateId:x.templateId,blocks:x.blocks.length,text:x.visibleTextLength,compileDiagnostics:x.compileDiagnostics.length,screenshot:x.screenshotArtifact})),null,2);
+ console.log(`M27 validated ${result.results.length} V1 templates with browser evidence.`);
 } finally { await browser.close(); }
 console.log('M27 V1 real browser evidence validation completed.');
