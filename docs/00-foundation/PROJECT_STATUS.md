@@ -203,3 +203,12 @@ Hardened the integrated browser fragmentation evidence path. The real Chromium t
 
 This batch still follows the evidence rule: repository configuration is not equivalent to a passing browser run. Actual CI execution must be observed before claiming browser-green status.
 
+
+
+## R1 — V1 Source & Asset Closure
+
+R1 has been formally started and reconciled against the current repository. Seven recovered V1 HTML template sources are confirmed present on `main`, with seven corresponding Native V2 templates. The two catalogued T01 variants (`ATS` and `Simple`) remain unavailable and are explicitly not recreated. Historical ATS preview and demo-image path/extension references also remain conditional pending authoritative verification or approved disposition.
+
+See `docs/00-foundation/R1_V1_SOURCE_AND_ASSET_CLOSURE.md`.
+
+**R1 status: CONDITIONAL — source/asset verification remains an external evidence gate.**
