@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createEditorPreviewContentEvidence} from '../../src/validation/editor-preview-content-evidence.js';test('M117 requires pages, content and selection',()=>{const e=createEditorPreviewContentEvidence({pages:2,contentMounted:'passed',selection:'passed',currentPage:1});assert.equal(e.status,'passed');});
