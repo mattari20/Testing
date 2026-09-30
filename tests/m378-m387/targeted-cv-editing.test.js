@@ -62,7 +62,7 @@ test('renderer respects targeted section, field and entry visibility', () => {
   surface.dispatch({ type: 'set-visibility', target: { kind: 'field', sectionId: 'experience', fieldId: 'company' }, payload: { visible: false } });
   let html = renderEditorForm(surface, surface.getState().session.application.masterProfile).html;
   assert.match(html, /Engineer/);
-  assert.doesNotContain(html, 'Example Ltd');
+  assert.doesNotMatch(html, /Example Ltd/);
   surface.dispatch({ type: 'set-visibility', target: { kind: 'entry', sectionId: 'experience', entryId: 'job1' }, payload: { visible: false } });
   html = renderEditorForm(surface, surface.getState().session.application.masterProfile).html;
   assert.doesNotMatch(html, /Example Ltd/);
