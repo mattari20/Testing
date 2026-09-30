@@ -5,6 +5,10 @@ function esc(value) {
 }
 function attr(value) { return esc(JSON.stringify(value)); }
 
+function hasConfiguredKey(collection, key) {
+  return Array.isArray(collection) && collection.some(value => String(value) === String(key));
+}
+
 function orderItems(items, configuredOrder = []) {
   const source = Array.isArray(items) ? [...items] : [];
   const configured = Array.isArray(configuredOrder) ? configuredOrder.map(String) : [];
@@ -68,9 +72,9 @@ export function renderEditorForm(surface, documentData, options = {}) {
   if (!surface || !documentData) throw new Error('Editor surface and document data are required.');
   const liveConfiguration = surface.getState()?.session?.application?.targetedCV?.configuration;
   const configuration = options.configuration || liveConfiguration || {};
-  const hiddenSections = new Set(configuration.hiddenSections || []);
-  const hiddenFields = new Set(configuration.hiddenFields || []);
-  const hiddenEntries = new Set(configuration.hiddenEntries || []);
+  const hiddenSections = Array.isArray(configuration.hiddenSections) ? configuration.hiddenSections.map(String) : [];
+  const hiddenFields = Array.isArray(configuration.hiddenFields) ? configuration.hiddenFields.map(String) : [];
+  const hiddenEntries = Array.isArray(configuration.hiddenEntries) ? configuration.hiddenEntries.map(String) : [];
   const identity = documentData.careerData?.identity && typeof documentData.careerData.identity === 'object' ? documentData.careerData.identity : {};
   const identityHtml = Object.entries(identity).map(([key,value]) =>
     '<label data-v2-editor-identity-wrapper="'+esc(key)+'"><span>'+esc(key)+'</span><input data-v2-editor-identity-field="'+esc(key)+'" value="'+esc(value)+'"></label>'
@@ -78,13 +82,13 @@ export function renderEditorForm(surface, documentData, options = {}) {
   const sections = orderItems(documentData.careerData?.sections || [], configuration.sectionOrder || []);
   const sectionIds = sections.map(s=>s.id);
   const sectionsHtml = sections.filter(s => s.visibility !== false).map((section, sectionIndex) => {
-    const sectionHidden = hiddenSections.has(String(section.id));
+    const sectionHidden = hasConfiguredKey(hiddenSections, section.id);
     const fields = orderItems(section.fields || [], configuration.fieldOrder?.[section.id] || []);
     const fieldIds = fields.map(f=>f.id);
     const entries = orderItems(section.entries || [], configuration.entryOrder?.[section.id] || []);
     const entryIds = entries.map(e=>e.id);
-    const fieldHtml = sectionHidden ? '' : fields.map((field,index) => renderField(section.id,field,index,fieldIds,!hiddenFields.has(String(section.id)+':'+String(field.id)))).join('');
-    const entryHtml = sectionHidden ? '' : entries.map((entry,index) => renderEntry(section.id,entry,index,entryIds,!hiddenEntries.has(String(section.id)+':'+String(entry.id)))).join('');
+    const fieldHtml = sectionHidden ? '' : fields.map((field,index) => renderField(section.id,field,index,fieldIds,!hasConfiguredKey(hiddenFields, String(section.id)+':'+String(field.id)))).join('');
+    const entryHtml = sectionHidden ? '' : entries.map((entry,index) => renderEntry(section.id,entry,index,entryIds,!hasConfiguredKey(hiddenEntries, String(section.id)+':'+String(entry.id)))).join('');
     const sectionUp = moveOrder(sectionIds,sectionIndex,-1);
     const sectionDown = moveOrder(sectionIds,sectionIndex,1);
     return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
