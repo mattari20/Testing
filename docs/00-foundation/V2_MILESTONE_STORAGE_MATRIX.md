@@ -58,3 +58,6 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 - M328–M337: Word-template source audit, normalization gate, missing-source disposition and machine-checkable asset readiness coverage
 
 - M338–M347: T03/T04/T05 DOCX normalization, A4 conversion, one-page render validation, editable-text/package checks and final-manual-review boundary
+
+
+- M348–M357: final seven Word-template source package, standardized filenames, SHA-256 asset manifest, and repository-to-public download path correction
