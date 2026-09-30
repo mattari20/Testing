@@ -3,6 +3,11 @@ import { createDownloadRequest, transitionDownload } from './download-delivery.j
 
 export const WORD_TEMPLATE_DOWNLOAD_VERSION = '1.0.0';
 
+function toPublicDownloadPath(repositoryPath) {
+  const path = String(repositoryPath || '');
+  return path.startsWith('public/') ? '/' + path.slice('public/'.length) : path;
+}
+
 export function createWordTemplateDownload(templateId) {
   const template = createWordTemplateDownloadRequest(templateId);
   return createDownloadRequest({
@@ -23,5 +28,5 @@ export function markWordTemplateReady(request) {
 
 export function getWordTemplateDownloadHref(request) {
   if (!request || request.state !== 'ready') throw new Error('Word template is not ready for download.');
-  return request.path;
+  return toPublicDownloadPath(request.path);
 }
