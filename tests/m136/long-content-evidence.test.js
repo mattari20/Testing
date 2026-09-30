@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createEditorPreviewLongContentEvidence} from '../../src/validation/editor-preview-long-content-evidence.js';test('M136 distinguishes multi-page fragmentation',()=>assert.equal(createEditorPreviewLongContentEvidence({pages:3,blocks:2,fragments:4,continuity:'passed'}).status,'passed'));
