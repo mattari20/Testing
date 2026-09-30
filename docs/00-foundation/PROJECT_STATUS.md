@@ -310,3 +310,7 @@ The final-release gate remains intentionally blocked until external/source-depen
 
 Next executable release action: deploy the accepted V2 commit to the production environment and complete `docs/03-implementation/PRODUCTION_HANDOFF_PACKAGE.md`.
 
+## M308–M317
+
+Word Template Download Layer added. The repository now has a machine-checkable catalog for seven planned pre-designed editable DOCX assets, shared V2 template IDs, deterministic download requests, no-login contract, and explicit asset-acceptance rules. Binary DOCX files remain planned until individually created, visually reviewed, deployed, and marked READY.
+
