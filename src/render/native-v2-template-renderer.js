@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.1.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.2.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -146,6 +146,63 @@ function applyValues(root, snapshot, context = {}) {
   }
 }
 
+
+function findSectionByType(snapshot, sectionType) {
+  const sections = Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [];
+  return sections.find(section => String(section.type) === String(sectionType)) || null;
+}
+
+function findSectionField(section, fieldKey) {
+  const fields = Array.isArray(section?.fields) ? section.fields : [];
+  return fields.find(field =>
+    String(field.id) === String(fieldKey) ||
+    String(field.metadata?.semanticKey || '') === String(fieldKey) ||
+    String(field.label || '').toLowerCase() === String(fieldKey).toLowerCase()
+  ) || null;
+}
+
+function applyPreviewEditTargets(root, snapshot) {
+  for (const element of [...root.querySelectorAll('[data-v2-value]')]) {
+    const binding = element.getAttribute('data-v2-value') || '';
+    if (!binding.startsWith('identity.')) continue;
+    const key = binding.slice('identity.'.length);
+    element.setAttribute('data-v2-preview-edit', 'identity');
+    element.setAttribute('data-v2-preview-target', JSON.stringify({ key }));
+    element.setAttribute('contenteditable', 'true');
+    element.setAttribute('spellcheck', 'false');
+  }
+
+  for (const element of [...root.querySelectorAll('[data-v2-value^="section:"]')]) {
+    const parts = (element.getAttribute('data-v2-value') || '').split(':');
+    const sectionType = parts[1];
+    const fieldKey = parts.slice(2).join(':');
+    const section = findSectionByType(snapshot, sectionType);
+    const field = findSectionField(section, fieldKey);
+    if (!section || !field) continue;
+    element.setAttribute('data-v2-preview-edit', 'field');
+    element.setAttribute('data-v2-preview-target', JSON.stringify({ sectionId: section.id, fieldId: field.id }));
+    element.setAttribute('contenteditable', 'true');
+    element.setAttribute('spellcheck', 'false');
+  }
+
+  for (const element of [...root.querySelectorAll('[data-v2-entry-value]')]) {
+    const entryRoot = element.closest('[data-v2-preview-entry-id]');
+    const entryId = entryRoot?.getAttribute('data-v2-preview-entry-id');
+    const sectionType = entryRoot?.getAttribute('data-v2-preview-section-type');
+    if (!entryId || !sectionType) continue;
+    const section = findSectionByType(snapshot, sectionType);
+    if (!section) continue;
+    element.setAttribute('data-v2-preview-edit', 'entry');
+    element.setAttribute('data-v2-preview-target', JSON.stringify({
+      sectionId: section.id,
+      entryId,
+      key: element.getAttribute('data-v2-entry-value')
+    }));
+    element.setAttribute('contenteditable', 'true');
+    element.setAttribute('spellcheck', 'false');
+  }
+}
+
 function applyRepeats(root, snapshot) {
   for (const container of [...root.querySelectorAll('[data-v2-repeat]')]) {
     const binding = container.getAttribute('data-v2-repeat') || '';
@@ -179,6 +236,10 @@ function applyRepeats(root, snapshot) {
 
     for (const item of entries) {
       const cloneNode = prototype.cloneNode(true);
+      if (mode === 'entries') {
+        cloneNode.setAttribute('data-v2-preview-entry-id', String(item.id || ''));
+        cloneNode.setAttribute('data-v2-preview-section-type', String(sectionType));
+      }
       const context = mode === 'values' ? { item } : { entry: item };
       applyValues(cloneNode, snapshot, context);
       applyVisibility(cloneNode, snapshot, context);
@@ -225,6 +286,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyRepeats(root, snapshot);
   applyVisibility(root, snapshot);
   applyValues(root, snapshot);
+  applyPreviewEditTargets(root, snapshot);
   removeUndefinedTextNodes(root);
 
   return {
