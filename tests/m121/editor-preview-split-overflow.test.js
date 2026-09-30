@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {paginateBlocks} from '../../src/layout/layout-pagination-engine.js';
+test('M121 preserves split and overflow states',()=>{const r=paginateBlocks([{id:'s',measuredHeight:120,splittable:true,splitAt:[50]}],{height:100});assert.equal(r.pages[0].blocks[0].state,'split');assert.equal(r.pageCount,2);});
