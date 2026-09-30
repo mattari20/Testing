@@ -359,3 +359,8 @@ Drag-and-drop ordering is now integrated for sections, fields and repeatable ent
 ## M408–M417 — Live Preview Inline Editing & Template Compatibility
 
 The concrete Native V2 preview path now exposes editable identity, section-field and repeatable-entry targets, the preview mount can bind the existing inline-edit controller, and a dedicated live-preview runtime coordinates snapshot rendering, template source loading and stale-refresh protection. Browser coverage has been added for all seven Native V2 templates plus identity and entry round-trip editing. Production deployment and final release gates remain open.
+
+
+### M408–M417 observed validation
+
+M408–M417 is repository/browser validated on the current main sequence. V2 Integration Validation run **565** and Native V2 Browser Validation run **732** both completed successfully. The live preview path is opt-in at the editor-runtime mount via the preview root, preserving existing production-entry/editor mounts when preview is not requested. Production deployment and final release gates remain open.
