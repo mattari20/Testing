@@ -206,6 +206,7 @@
     "test:m308-m317": "node --test tests/m308-m317/word-template-catalog.test.js",
     "test:m318-m327": "node --test tests/m318-m327/download-delivery.test.js tests/m318-m327/word-template-download.test.js",
     "test:m328-m337": "node --test tests/m328-m337/word-template-asset-readiness.test.js",
-    "test:m348-m357": "node --test tests/m348-m357/final-word-template-manifest.test.js"
+    "test:m348-m357": "node --test tests/m348-m357/final-word-template-manifest.test.js",
+    "test:m358-m367": "node --test tests/m358-m367/word-template-production-gate.test.js"
   }
 }
