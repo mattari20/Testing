@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {createEditorPreviewBlockPaginationEvidence} from '../../src/validation/editor-preview-block-pagination-evidence.js';
+test('M125 evidence passes complete distribution',()=>{const r=createEditorPreviewBlockPaginationEvidence({blocks:2,pages:1,assignments:'passed',distribution:'passed'});assert.equal(r.status,'passed');});
