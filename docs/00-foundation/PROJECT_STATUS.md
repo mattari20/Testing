@@ -290,3 +290,7 @@ The current main-branch release commit `4bde21a20da081a6948da8b1bc406db64b8561cb
 
 The successful browser run re-establishes current R4/R5 evidence for the configured browser validation and integrated fragmentation suites. It does not close R1, R2, R3, R6, or R7, and therefore R8 remains blocked.
 
+## Production Handoff Consolidation
+
+A single operational handoff package is now available at `docs/03-implementation/PRODUCTION_HANDOFF_PACKAGE.md`. It consolidates the exact production execution order, R6 evidence record, security/configuration checks, V1 retirement sequence, and R8 acceptance boundary. It does not claim that any external production action has already occurred.
+
