@@ -60,3 +60,14 @@ The current fragmentation implementation is rendered-DOM vertical slicing driven
 **Production/release completion: not yet claimable** until the external/source verification items above are actually evidenced.
 
 The project governance rule is to keep these gates explicit rather than converting unknowns into a false 100% completion claim.
+
+
+## Release-Closure Records
+
+The release-closure work now has explicit records for the first three gates:
+
+- `docs/00-foundation/R1_V1_SOURCE_AND_ASSET_CLOSURE.md` — V1 source/asset reconciliation remains conditional because T01 ATS, T01 Simple and remaining historical asset references are not authoritatively recovered.
+- `docs/00-foundation/R2_SECURITY_CLOSURE.md` — current-main repository secret-indicator scan is clean for the checked indicators; production credential rotation/revocation and historical-secret verification remain open.
+- `docs/00-foundation/R3_GOLDEN_BASELINE_CLOSURE.md` — sanitized A–I Golden Baseline input fixtures are present; final runtime/output evidence remains conditional.
+
+These records do not change the release-gate policy: unresolved external evidence remains explicitly open.
