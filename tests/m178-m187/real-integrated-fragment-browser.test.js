@@ -26,6 +26,7 @@ try{
  await page.evaluate(()=>window.runTemplatePreview('t01-modern-minimalist-cv-design_modern'));
  const fragmentation=await page.evaluate(()=>window.runFragmentationDemo());
  assert.ok(fragmentation.runtime.layoutResult.pageCount>=2);
+ assert.ok(fragmentation.distribution.fragmentCount>0);
  assert.equal(fragmentation.integrity.valid,true);
  assert.equal(fragmentation.runtime.continuity.valid,true);
  assert.ok(fragmentation.probe.pages.every(item=>item.scrollHeight<=item.height+2));
