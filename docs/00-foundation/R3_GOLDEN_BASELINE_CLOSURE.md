@@ -80,7 +80,8 @@ Repository test definitions are not themselves proof that these runtime artifact
 - T01 ATS source/output;
 - T01 Simple source/output;
 - final export artifacts where runtime evidence is still pending;
-- observed CI artifacts from the configured workflow.
+- authoritative V1 historical source/output gaps for T01 ATS/Simple;
+- final export artifacts where runtime evidence is still pending.
 
 ## 6. Governance rule
 
@@ -92,10 +93,10 @@ No visual equivalence claim is made from source inspection alone.
 
 **Golden Baseline input readiness: PASS**
 
-**Golden Baseline evidence readiness: CONDITIONAL**
+**Golden Baseline evidence readiness: CONDITIONAL — browser execution PASS observed.**
 
 The input fixture foundation is present. Final Golden Baseline closure remains dependent on authoritative V1 runtime/output evidence and observed browser execution.
 
 ## 8. Next action
 
-Proceed to the configured browser/CI execution gate and collect actual artifacts. Missing historical T01 sources remain a separate source gate and must not be silently substituted.
+Browser/CI execution gate is now observed PASS for the configured suites. Proceed to the remaining source/asset and final historical baseline closure gates. Missing historical T01 sources remain a separate source gate and must not be silently substituted.
