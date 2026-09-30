@@ -33,6 +33,7 @@ Repository-level storage audit, not a runtime-pass certificate.
 - M238–M247: machine-checkable production smoke-test validation and R6 contract mapping
 - M258–M267: framework-neutral V2 production entry boundary
 - M268–M277: explicit V1 production source bridge, V1-safe fallback state, V2 handoff state, blocked state, tests and CI validation
+- M278–M287: machine-checkable R6 production handoff gate requiring complete smoke evidence and explicit V2 bridge state
 
 ## Runtime evidence status
 Stored browser tests are not automatically runtime-passed. The current release gate requires an observed successful GitHub Actions run for the configured browser workflow and inspection of its evidence artifacts.
