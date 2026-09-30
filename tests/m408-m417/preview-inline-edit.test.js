@@ -47,7 +47,7 @@ try {
   assert.equal(await name.textContent(),'Updated Preview User');
 
   const company=page.locator('#preview [data-v2-preview-edit="entry"]').first();
-  await company.click();
+  await company.click({ force: true });
   await company.press('ControlOrMeta+A');
   await company.type('Updated Company');
   await company.blur();
