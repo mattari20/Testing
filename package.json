@@ -196,6 +196,8 @@
     "test:m258-m267": "node --test tests/m258-m267/v2-production-entry.test.js",
     "test:v2-production-entry": "npm run test:m258-m267",
     "test:m268-m277": "node --test tests/m268-m277/v1-production-bridge.test.js",
-    "test:v1-production-bridge": "npm run test:m268-m277"
+    "test:v1-production-bridge": "npm run test:m268-m277",
+    "test:m278-m287": "node --test tests/m278-m287/production-handoff-gate.test.js",
+    "test:production-handoff-gate": "npm run test:m278-m287"
   }
 }
