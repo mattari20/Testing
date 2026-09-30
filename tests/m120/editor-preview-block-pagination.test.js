@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {paginateRenderedBlocks} from '../../src/ui/editor-preview-block-pagination.js';
+test('M120 assigns blocks to pages',()=>{const r=paginateRenderedBlocks([{id:'a',measuredHeight:60},{id:'b',measuredHeight:60}],{width:100,height:100});assert.equal(r.pageCount,2);assert.deepEqual(r.pages.map(p=>p.blocks[0].id),['a','b']);});
