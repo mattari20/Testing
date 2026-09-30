@@ -26,8 +26,8 @@ function moveOrder(ids, index, delta) {
 function visibilityButton(kind, target, visible) {
   return '<button type="button" data-v2-editor-command="set-visibility" data-v2-target="'+attr({kind,...target})+'" data-v2-payload="'+attr({visible:!visible})+'">'+esc(visible ? 'Hide' : 'Show')+'</button>';
 }
-function renderField(sectionId, field, index, fieldIds) {
-  const visible = field.visibility !== false;
+function renderField(sectionId, field, index, fieldIds, visible = true) {
+  const fieldVisible = visible && field.visibility !== false;
   const up = moveOrder(fieldIds,index,-1);
   const down = moveOrder(fieldIds,index,1);
   const typeOptions = ['text','textarea','email','url','date'].map(type =>
@@ -36,27 +36,27 @@ function renderField(sectionId, field, index, fieldIds) {
   return '<div data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!visible)+'">' +
     '<div><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.label || field.id)+'">' +
     '<select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'">'+typeOptions+'</select></div>' +
-    '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">' +
-    visibilityButton('field',{sectionId,fieldId:field.id},visible) +
+    fieldVisible ? '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">' : '<span data-v2-editor-field-hidden-state="true">Hidden in this CV</span>' +
+    visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible) +
     '<button type="button" data-v2-editor-command="remove-field" data-v2-target="'+attr({sectionId,fieldId:field.id})+'">Remove</button>' +
     '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:up})+'">Move Up</button>' +
     '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:down})+'">Move Down</button>' +
     '</div>';
 }
-function renderEntry(sectionId, entry, index, entryIds) {
+function renderEntry(sectionId, entry, index, entryIds, visible = true) {
   const values = entry.values && typeof entry.values === 'object' ? entry.values : {};
-  const visible = entry.visibility !== false;
+  const entryVisible = visible && entry.visibility !== false;
   const up = moveOrder(entryIds,index,-1);
   const down = moveOrder(entryIds,index,1);
-  const fields = Object.keys(values).map(key =>
+  const fields = entryVisible ? Object.keys(values).map(key =>
     '<label data-v2-editor-entry-field-wrapper="'+esc(sectionId)+':'+esc(entry.id)+':'+esc(key)+'">' +
     '<span>'+esc(key)+'</span>' +
     '<input data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(values[key])+'">' +
     '</label>'
-  ).join('');
-  return '<article data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!visible)+'">' +
+  ).join('') : '<span data-v2-editor-entry-hidden-state="true">Hidden in this CV</span>';
+  return '<article data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">' +
     '<h4>'+esc('Entry '+(index+1))+'</h4>'+fields +
-    visibilityButton('entry',{sectionId,entryId:entry.id},visible) +
+    visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible) +
     '<button type="button" data-v2-editor-command="duplicate-entry" data-v2-target="'+attr({sectionId,entryId:entry.id})+'">Duplicate</button>' +
     '<button type="button" data-v2-editor-command="remove-entry" data-v2-target="'+attr({sectionId,entryId:entry.id})+'">Remove</button>' +
     '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'entry',sectionId})+'" data-v2-payload="'+attr({order:up})+'">Move Up</button>' +
@@ -82,10 +82,8 @@ export function renderEditorForm(surface, documentData, options = {}) {
     const fieldIds = fields.map(f=>f.id);
     const entries = orderItems(section.entries || [], configuration.entryOrder?.[section.id] || []);
     const entryIds = entries.map(e=>e.id);
-    const fieldHtml = fields.filter(f => !hiddenFields.has(String(section.id)+':'+String(f.id)) || true)
-      .map((field,index)=>renderField(section.id,field,index,fieldIds)).join('');
-    const entryHtml = entries.filter(e => !hiddenEntries.has(String(section.id)+':'+String(e.id)) || true)
-      .map((entry,index)=>renderEntry(section.id,entry,index,entryIds)).join('');
+    const fieldHtml = sectionHidden ? '' : fields.map((field,index) => renderField(section.id,field,index,fieldIds,!hiddenFields.has(String(section.id)+':'+String(field.id)))).join('');
+    const entryHtml = sectionHidden ? '' : entries.map((entry,index) => renderEntry(section.id,entry,index,entryIds,!hiddenEntries.has(String(section.id)+':'+String(entry.id)))).join('');
     const sectionUp = moveOrder(sectionIds,sectionIndex,-1);
     const sectionDown = moveOrder(sectionIds,sectionIndex,1);
     return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
