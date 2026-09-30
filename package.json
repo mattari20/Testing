@@ -150,6 +150,17 @@
     "test:m115": "node --test tests/m115/editor-preview-content-slicer.test.js",
     "test:m116": "node --test tests/m116/editor-preview-content-runtime.test.js",
     "test:m117": "node --test tests/m117/editor-preview-content-evidence.test.js",
-    "test:m114-m117": "npm run test:m114 && npm run test:m115 && npm run test:m116 && npm run test:m117"
+    "test:m114-m117": "npm run test:m114 && npm run test:m115 && npm run test:m116 && npm run test:m117",
+    "test:m118": "node --test tests/m118/editor-preview-content-blocks.test.js",
+    "test:m119": "node --test tests/m119/editor-preview-semantic-blocks.test.js",
+    "test:m120": "node --test tests/m120/editor-preview-block-pagination.test.js",
+    "test:m121": "node --test tests/m121/editor-preview-split-overflow.test.js",
+    "test:m122": "node --test tests/m122/editor-preview-content-fragments.test.js",
+    "test:m123": "node --test tests/m123/editor-preview-content-distributor.test.js",
+    "test:m124": "node --test tests/m124/editor-preview-content-runtime-v2.test.js",
+    "test:m125": "node --test tests/m125/editor-preview-block-pagination-evidence.test.js",
+    "test:m126": "node --test tests/m126/editor-preview-overflow-evidence.test.js",
+    "test:m127": "node --test tests/m127/content-fragmentation-batch.test.js",
+    "test:m118-m127": "npm run test:m118 && npm run test:m119 && npm run test:m120 && npm run test:m121 && npm run test:m122 && npm run test:m123 && npm run test:m124 && npm run test:m125 && npm run test:m126 && npm run test:m127"
   }
 }
