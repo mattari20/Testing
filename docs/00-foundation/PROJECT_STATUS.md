@@ -167,3 +167,7 @@ The implementation deliberately does not invent semantic text split points. Spli
 Batch documentation: `docs/03-implementation/M128-M137_TRUE_FRAGMENTATION.md`.
 
 Runtime/CI status remains evidence-controlled; no browser-green result is claimed without an actual execution record.
+
+
+## M138–M147 Batch Record
+Completed the fragmentation-quality batch on the current main branch. See `docs/03-implementation/M138-M147_FRAGMENTATION_QUALITY_AND_REGRESSION.md`.
