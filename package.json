@@ -145,6 +145,11 @@
     "test:m111": "node --test tests/m111/editor-preview-page-controller.test.js",
     "test:m112": "node --test tests/m112/editor-preview-page-runtime.test.js",
     "test:m113": "node --test tests/m113/editor-preview-page-evidence.test.js",
-    "test:m110-m113": "npm run test:m110 && npm run test:m111 && npm run test:m112 && npm run test:m113"
+    "test:m110-m113": "npm run test:m110 && npm run test:m111 && npm run test:m112 && npm run test:m113",
+    "test:m114": "node --test tests/m114/editor-preview-page-content.test.js",
+    "test:m115": "node --test tests/m115/editor-preview-content-slicer.test.js",
+    "test:m116": "node --test tests/m116/editor-preview-content-runtime.test.js",
+    "test:m117": "node --test tests/m117/editor-preview-content-evidence.test.js",
+    "test:m114-m117": "npm run test:m114 && npm run test:m115 && npm run test:m116 && npm run test:m117"
   }
 }
