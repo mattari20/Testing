@@ -54,3 +54,5 @@ Do not convert “file exists” into “feature passed”.
 
 Word Template Download Layer added. The repository now has a machine-checkable catalog for seven planned pre-designed editable DOCX assets, shared V2 template IDs, deterministic download requests, no-login contract, and explicit asset-acceptance rules. Binary DOCX files remain planned until individually created, visually reviewed, deployed, and marked READY.
 
+
+- M328–M337: Word-template source audit, normalization gate, missing-source disposition and machine-checkable asset readiness coverage
