@@ -267,3 +267,10 @@ The new bridge has explicit `v1`, `v2`, and `blocked` states. V1 remains the saf
 Added the machine-checkable production handoff gate for R6. The gate requires a complete validated production smoke-test record and an explicit V2 production source bridge state before R6 can become PASS. Incomplete evidence or a V1 bridge keeps R6 OPEN.
 
 Dedicated tests and CI validation were added. This milestone does not claim that V2 is deployed or that R6 has passed; actual production execution remains the required external evidence step.
+
+
+## M288–M297 Batch Record
+
+Added a production evidence package boundary that combines the controlled smoke-test record, explicit V1/V2/blocked bridge state, non-secret evidence references, and the existing R6 handoff evaluation. The package remains OPEN when evidence is incomplete and becomes ready for acceptance only when the complete smoke record and explicit V2 bridge are both present. Secret-like keys are rejected from the package structure.
+
+**R6 remains OPEN.** This batch improves evidence integrity and operator handoff; it does not claim a production deployment, V2 cutover, or V1 retirement.
