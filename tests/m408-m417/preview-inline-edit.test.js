@@ -38,7 +38,7 @@ try {
   await name.press('ControlOrMeta+A');
   await name.type('Updated Preview User');
   await name.blur();
-  await page.waitForFunction(()=>window.surface.getState().session.application.masterProfile.careerData.identity.fullName==='Updated Preview User');
+  await page.waitForFunction(()=>window.editorRuntime.surface.getState().session.application.masterProfile.careerData.identity.fullName==='Updated Preview User');
   assert.equal(await page.locator('#preview [data-v2-preview-edit="identity"]').first().textContent(),'Updated Preview User');
 
   const company=page.locator('#preview [data-v2-preview-edit="entry"]').first();
@@ -46,7 +46,7 @@ try {
   await company.press('ControlOrMeta+A');
   await company.type('Updated Company');
   await company.blur();
-  await page.waitForFunction(()=>window.surface.getState().session.application.masterProfile.careerData.sections.find(s=>s.type==='experience').entries[0].values.company==='Updated Company');
+  await page.waitForFunction(()=>window.editorRuntime.surface.getState().session.application.masterProfile.careerData.sections.find(s=>s.type==='experience').entries[0].values.company==='Updated Company');
 
   console.log(JSON.stringify({templates:'passed',identityEdit:'passed',entryEdit:'passed'}));
 } finally {
