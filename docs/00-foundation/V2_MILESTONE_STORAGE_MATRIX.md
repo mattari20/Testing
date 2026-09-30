@@ -49,3 +49,8 @@ Stored browser tests are not automatically runtime-passed. The current release g
 
 ## Rule
 Do not convert “file exists” into “feature passed”.
+
+## M308–M317
+
+Word Template Download Layer added. The repository now has a machine-checkable catalog for seven planned pre-designed editable DOCX assets, shared V2 template IDs, deterministic download requests, no-login contract, and explicit asset-acceptance rules. Binary DOCX files remain planned until individually created, visually reviewed, deployed, and marked READY.
+
