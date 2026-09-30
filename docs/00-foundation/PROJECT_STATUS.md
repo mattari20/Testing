@@ -246,3 +246,8 @@ This batch intentionally does **not** claim live production integration. R6 rema
 Defined the controlled R6 production smoke-test record and a safe operator template. The record captures production URL, exact deployment commit, environment, observation time, functional V2 checks, pagination/fragmentation, export paths, V1 migration/fallback checks, and production configuration review without storing secrets.
 
 This batch prepares the final operational evidence step but does not claim production verification. R6 remains OPEN until the template is completed from an actual deployed V2 environment.
+
+
+## M238–M247 Batch Record
+
+Added automated validation for the controlled R6 smoke-test record and mapped its checks to the existing nine-point acceptance contract. CI runs the new suite. This is evidence-format validation only; R6 remains OPEN pending real deployment observations.
