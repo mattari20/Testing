@@ -251,3 +251,12 @@ This batch prepares the final operational evidence step but does not claim produ
 ## M238–M247 Batch Record
 
 Added automated validation for the controlled R6 smoke-test record and mapped its checks to the existing nine-point acceptance contract. CI runs the new suite. This is evidence-format validation only; R6 remains OPEN pending real deployment observations.
+
+
+## M268–M277 Batch Record
+
+Established the V1 production source bridge boundary. The currently observable production flow is recorded as template gallery → `bridge.php` → template/style selection → Build Online or Word-file action. Because the live PHP implementation is not present in the V2 repository, no unverified production source or deployment detail was invented.
+
+The new bridge has explicit `v1`, `v2`, and `blocked` states. V1 remains the safe default; V2 handoff requires an explicit template identifier; blocked state cannot silently fall back. Dedicated tests and CI validation were added.
+
+**R6 status remains OPEN.** The bridge is an implementation boundary, not production evidence. Live V2 execution and the nine-point smoke-test contract are still required before production integration can be accepted.
