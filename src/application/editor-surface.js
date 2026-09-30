@@ -19,10 +19,17 @@ export function createEditorSurface(input={}) {
     preview:null,
     history:{past:[],future:[]}
   });
+  const subscribers = new Set();
+  const notify = command => subscribers.forEach(listener => listener(state, command));
 
   return Object.freeze({
     version:EDITOR_SURFACE_VERSION,
     getState:()=>state,
+    subscribe(listener){
+      if (typeof listener !== 'function') throw new Error('Editor subscriber must be a function.');
+      subscribers.add(listener);
+      return () => subscribers.delete(listener);
+    },
     canUndo:()=>state.history.past.length>0,
     canRedo:()=>state.history.future.length>0,
     dispatch(commandInput){
@@ -39,6 +46,7 @@ export function createEditorSurface(input={}) {
           preview:null,
           history:{past,future}
         });
+        notify(command);
         return state;
       }
 
@@ -53,6 +61,7 @@ export function createEditorSurface(input={}) {
           preview:null,
           history:{past,future}
         });
+        notify(command);
         return state;
       }
 
@@ -65,6 +74,7 @@ export function createEditorSurface(input={}) {
         preview:null,
         history:{past,future:[]}
       });
+      notify(command);
       return state;
     },
     preview(options={}){
