@@ -72,7 +72,7 @@ try{
  });
  assert.ok(browserEvidence.pageCount>=2);
  assert.ok(browserEvidence.fragmentCount>0);
- assert.ok(browserEvidence.pages.every(item=>Math.abs(item.width-794)<=2));
+ assert.ok(browserEvidence.pages.every(item=>Math.abs(item.width-794)<=2), JSON.stringify(browserEvidence.pages));
  assert.ok(browserEvidence.pages.every(item=>item.height<=1125));
  assert.ok(browserEvidence.pages.every(item=>item.scrollHeight<=item.height+2));
  assert.ok(browserEvidence.ordering.length>0);
