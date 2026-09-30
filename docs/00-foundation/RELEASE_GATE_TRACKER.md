@@ -22,3 +22,13 @@
 
 The repository now contains a machine-checkable final release gate in `src/release/final-release-gate.js`. It requires R1–R8 to be explicitly PASS before returning READY. It does not change the tracker statuses above or create production evidence.
 
+## Final Repository Verification — 2026-09-30
+
+Repository validation has now been re-established on main after the production-handoff documentation update:
+
+- V2 Integration Validation: SUCCESS — run `36701597844`.
+- Native V2 Browser Validation: SUCCESS — run `36701597951`.
+- Release commit: `283cedf4fd2d24a5e542bcdf3db3fe73df5d69c1`.
+
+These results support the current PASS state of R4/R5. They do not close R1/R2/R3/R6/R7.
+
