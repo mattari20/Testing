@@ -178,6 +178,8 @@
     "test:pagination-quality": "npm run test:m138-m147",
     "test:m148-m157": "node --test tests/m148-m157/fragment-runtime-integration.test.js",
     "test:m157": "npm run test:m148-m157",
-    "test:fragment-runtime": "npm run test:m148-m157"
+    "test:fragment-runtime": "npm run test:m148-m157",
+    "test:m158-m167": "node --test tests/m158-m167/browser-pagination-contract.test.js",
+    "test:browser-pagination-contract": "npm run test:m158-m167"
   }
 }
