@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.4.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.4.1';
 
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -66,7 +66,8 @@ function renderEntry(sectionId, entry, index, entryIds, visible = true) {
 
 export function renderEditorForm(surface, documentData, options = {}) {
   if (!surface || !documentData) throw new Error('Editor surface and document data are required.');
-  const configuration = options.configuration || surface.getState()?.session?.application?.targetedCV?.configuration || {};
+  const liveConfiguration = surface.getState()?.session?.application?.targetedCV?.configuration;
+  const configuration = options.configuration || liveConfiguration || {};
   const hiddenSections = new Set(configuration.hiddenSections || []);
   const hiddenFields = new Set(configuration.hiddenFields || []);
   const hiddenEntries = new Set(configuration.hiddenEntries || []);
