@@ -1,6 +1,7 @@
 import { mountEditorPage } from './editor-page-controller.js';
 import { bindEditorFields, bindEditorActions } from './editor-dom-controller.js';
 import { renderEditorForm } from './editor-form-renderer.js';
+import { bindEditorReorder } from './editor-reorder-controller.js';
 
 export const EDITOR_RUNTIME_VERSION = '1.3.0';
 
@@ -9,9 +10,11 @@ export function mountV2EditorRuntime(root, input = {}) {
   const mounted = mountEditorPage(root, input);
   let fieldBinding = null;
   let actionBinding = null;
+  let reorderBinding = null;
   const render = () => {
     fieldBinding?.destroy();
     actionBinding?.destroy();
+    reorderBinding?.destroy();
     const state = mounted.surface.getState();
     const profile = state.session.application.masterProfile;
     const form = root.querySelector('[data-v2-editor-form]');
@@ -21,6 +24,7 @@ export function mountV2EditorRuntime(root, input = {}) {
       form.replaceChildren(...holder.childNodes);
       fieldBinding = bindEditorFields(form, mounted.surface);
       actionBinding = bindEditorActions(form, mounted.surface);
+      reorderBinding = bindEditorReorder(form, mounted.surface);
     }
     return state;
   };
@@ -39,6 +43,7 @@ export function mountV2EditorRuntime(root, input = {}) {
     destroy() {
       fieldBinding?.destroy();
       actionBinding?.destroy();
+      reorderBinding?.destroy();
       unsubscribe();
       mounted.destroy();
     }
