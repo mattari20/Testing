@@ -66,3 +66,5 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 - M348–M357: final T01–T07 A4/single-page QA, editable-text rendering checks, public/demo-data sanitization, final release package manifest and successful CI/browser validation
 
 - M368–M377: builder editing foundation — identity editing command, repeatable-entry rendering/editing, fresh document snapshots after mutations, and editor-surface undo/redo history with regression coverage
+
+- M378–M387: targeted CV editing foundation — isolated section/field/entry visibility from Master Profile, structural editor subscriptions, runtime refresh, and regression coverage
