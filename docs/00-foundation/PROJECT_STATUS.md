@@ -171,3 +171,7 @@ Runtime/CI status remains evidence-controlled; no browser-green result is claime
 
 ## M138–M147 Batch Record
 Completed the fragmentation-quality batch on the current main branch. See `docs/03-implementation/M138-M147_FRAGMENTATION_QUALITY_AND_REGRESSION.md`.
+
+
+## M148–M157 Batch Record
+Completed fragment runtime integration and safety hardening. Quality metadata, continuity, clipping normalization, runtime integration, regression utilities, evidence, and contract coverage are now recorded. Production browser/Chromium validation remains outstanding.
