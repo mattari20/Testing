@@ -38,9 +38,81 @@ export function createTargetedCV(input = {}) {
 export function getSection(profile, sectionId) { return profile.careerData.sections.find(s => s.id === sectionId) || null; }
 export function getField(profile, sectionId, fieldId) { const s = getSection(profile, sectionId); return s ? s.fields.find(f => f.id === fieldId) || null : null; }
 export function getEntry(profile, sectionId, entryId) { const s = getSection(profile, sectionId); return s ? s.entries.find(e => e.id === entryId) || null : null; }
-export function addSection(profile, input) { const section = normalizeSection(input); section.order = profile.careerData.sections.length; profile.careerData.sections.push(section); touch(profile); return section; }
-export function addField(profile, sectionId, input) { const s = getSection(profile, sectionId); assert(s, 'Section not found: ' + sectionId); const field = normalizeField(input); field.order = s.fields.length; s.fields.push(field); touch(profile); return field; }
-export function addEntry(profile, sectionId, input = {}) { const s = getSection(profile, sectionId); assert(s, 'Section not found: ' + sectionId); assert(s.repeatable, 'Entries require a repeatable section.'); const entry = normalizeEntry(input); entry.order = s.entries.length; s.entries.push(entry); touch(profile); return entry; }
+
+export function addSection(profile, input) {
+  const section = normalizeSection(input);
+  section.order = profile.careerData.sections.length;
+  profile.careerData.sections.push(section);
+  touch(profile);
+  return section;
+}
+export function removeSection(profile, sectionId) {
+  const id = String(sectionId);
+  const before = profile.careerData.sections.length;
+  profile.careerData.sections = profile.careerData.sections.filter(s => s.id !== id);
+  assert(profile.careerData.sections.length !== before, 'Section not found: ' + id);
+  profile.careerData.sections.forEach((section, index) => { section.order = index; });
+  touch(profile);
+}
+export function setSectionTitle(profile, sectionId, title) {
+  const section = getSection(profile, sectionId);
+  assert(section, 'Section not found: ' + sectionId);
+  section.title = String(title ?? '');
+  touch(profile);
+  return section;
+}
+export function addField(profile, sectionId, input) {
+  const s = getSection(profile, sectionId);
+  assert(s, 'Section not found: ' + sectionId);
+  const field = normalizeField(input);
+  field.order = s.fields.length;
+  s.fields.push(field);
+  touch(profile);
+  return field;
+}
+export function removeField(profile, sectionId, fieldId) {
+  const s = getSection(profile, sectionId);
+  assert(s, 'Section not found: ' + sectionId);
+  const id = String(fieldId);
+  const before = s.fields.length;
+  s.fields = s.fields.filter(f => f.id !== id);
+  assert(s.fields.length !== before, 'Field not found: ' + id);
+  s.fields.forEach((field, index) => { field.order = index; });
+  touch(profile);
+}
+export function setFieldDefinition(profile, sectionId, fieldId, patch = {}) {
+  const field = getField(profile, sectionId, fieldId);
+  assert(field, 'Field not found: ' + fieldId);
+  const p = patch || {};
+  if (p.label !== undefined) field.label = String(p.label ?? '');
+  if (p.type !== undefined) field.type = String(p.type || 'text');
+  if (p.value !== undefined) field.value = clone(p.value);
+  if (p.metadata !== undefined && isObject(p.metadata)) field.metadata = clone(p.metadata);
+  touch(profile);
+  return field;
+}
+export function addEntry(profile, sectionId, input = {}) {
+  const s = getSection(profile, sectionId);
+  assert(s, 'Section not found: ' + sectionId);
+  assert(s.repeatable, 'Entries require a repeatable section.');
+  const entry = normalizeEntry(input);
+  entry.order = s.entries.length;
+  s.entries.push(entry);
+  touch(profile);
+  return entry;
+}
+export function duplicateEntry(profile, sectionId, entryId) {
+  const s = getSection(profile, sectionId);
+  assert(s, 'Section not found: ' + sectionId);
+  const source = getEntry(profile, sectionId, entryId);
+  assert(source, 'Entry not found: ' + entryId);
+  const index = s.entries.findIndex(e => e.id === source.id);
+  const copy = normalizeEntry({ ...clone(source), id: makeId('entry'), metadata: { ...clone(source.metadata), duplicatedFrom: source.id } });
+  s.entries.splice(index + 1, 0, copy);
+  s.entries.forEach((entry, i) => { entry.order = i; });
+  touch(profile);
+  return copy;
+}
 export function setSectionVisibility(profile, sectionId, visible) { const s = getSection(profile, sectionId); assert(s, 'Section not found: ' + sectionId); s.visibility = Boolean(visible); touch(profile); }
 export function setFieldVisibility(profile, sectionId, fieldId, visible) { const f = getField(profile, sectionId, fieldId); assert(f, 'Field not found: ' + fieldId); f.visibility = Boolean(visible); touch(profile); }
 export function setEntryVisibility(profile, sectionId, entryId, visible) { const e = getEntry(profile, sectionId, entryId); assert(e, 'Entry not found: ' + entryId); e.visibility = Boolean(visible); touch(profile); }
@@ -51,7 +123,6 @@ export function setTargetedSectionVisibility(cv, sectionId, visible) {
   cv.configuration.hiddenSections = [...hidden];
   cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
 }
-
 export function setTargetedFieldVisibility(cv, sectionId, fieldId, visible) {
   const key = String(sectionId) + ':' + String(fieldId);
   const hidden = new Set(cv.configuration.hiddenFields || []);
@@ -59,7 +130,6 @@ export function setTargetedFieldVisibility(cv, sectionId, fieldId, visible) {
   cv.configuration.hiddenFields = [...hidden];
   cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
 }
-
 export function setTargetedEntryVisibility(cv, sectionId, entryId, visible) {
   const key = String(sectionId) + ':' + String(entryId);
   const hidden = new Set(cv.configuration.hiddenEntries || []);
@@ -67,7 +137,6 @@ export function setTargetedEntryVisibility(cv, sectionId, entryId, visible) {
   cv.configuration.hiddenEntries = [...hidden];
   cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
 }
-
 export function configureTargetedCV(cv, patch = {}) {
   const p = patch || {};
   cv.configuration = normalizeConfig({ ...cv.configuration, ...p, presentation: { ...cv.configuration.presentation, ...(isObject(p.presentation) ? p.presentation : {}) }, metadata: { ...cv.configuration.metadata, ...(isObject(p.metadata) ? p.metadata : {}) } });
