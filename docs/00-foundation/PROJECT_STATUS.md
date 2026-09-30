@@ -166,7 +166,7 @@ The implementation deliberately does not invent semantic text split points. Spli
 
 Batch documentation: `docs/03-implementation/M128-M137_TRUE_FRAGMENTATION.md`.
 
-Runtime/CI status remains evidence-controlled; no browser-green result is claimed without an actual execution record.
+Runtime/CI evidence is now observed green for the configured browser validation gate on main. Historical source/asset and final release gates remain open.
 
 
 ## M138–M147 Batch Record
@@ -201,7 +201,7 @@ Hardened integrated browser fragmentation execution: fixed a fragment transform 
 
 Hardened the integrated browser fragmentation evidence path. The real Chromium test now validates native template rendering before fragmentation, captures before/after screenshots, verifies multi-page fragment distribution, sequential fragment ordering, page geometry, overflow limits, and page-by-page navigation. The test writes a machine-readable evidence JSON artifact. CI now runs the hardened suite and uploads PNG/JSON evidence.
 
-This batch still follows the evidence rule: repository configuration is not equivalent to a passing browser run. Actual CI execution must be observed before claiming browser-green status.
+This batch follows the evidence rule: browser-green status is based on observed GitHub Actions execution and uploaded evidence, not configuration alone.
 
 
 
@@ -229,4 +229,6 @@ A sanitized synthetic Golden Baseline input set covering the nine required fixtu
 
 This is fixture preparation only. It does not replace authoritative V1 output evidence. Final Golden Baseline acceptance still requires observed V1/V2 browser/output artifacts and the unresolved V1 source/asset dispositions.
 
-**R3 status: CONDITIONAL.**
+**R3 status: CONDITIONAL — browser execution evidence observed; historical V1 baseline gaps remain.**
+**R4 status: PASS — observed successful browser CI run 36681451778.**
+**R5 status: PASS — integrated M208–M217 fragmentation browser evidence observed.**
