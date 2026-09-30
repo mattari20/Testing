@@ -53,7 +53,8 @@ test('R8 cannot self-authorize while an earlier gate is unresolved', () => {
   });
 
   assert.equal(result.status, 'BLOCKED');
-  assert.deepEqual(result.blockers, ['R6', 'R7', 'R8']);
+  assert.deepEqual(result.blockers, ['R6', 'R7']);
+  assert.throws(() => assertFinalReleaseReady(result), /Final release is blocked/);
 });
 
 test('unknown gate status is rejected', () => {
