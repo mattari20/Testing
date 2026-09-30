@@ -187,3 +187,7 @@ Completed the integrated browser-fragment validation contract batch. Browser pro
 
 ## M178–M187 Batch Record
 Added an executable real Chromium editor-preview test against the existing browser fixture, including native template rendering, geometry assertions, and screenshot capture. The batch deliberately does not claim multi-page fragmentation success: the existing fixture still mounts the template directly and must next be connected to the controlled fragmentation runtime for true multi-page browser evidence.
+
+
+## M188–M197 Batch Record
+Advanced the browser fragmentation path into an executable multi-page scenario. Browser-declared split points now survive extraction and semantic normalization; multi-page split continuation was hardened; the browser fixture can invoke fragmentation; the real browser test checks page count, continuity, integrity and overflow; and CI now executes the integrated fragmentation browser test and uploads screenshot evidence. Actual CI success remains unclaimed until a run is observed.
