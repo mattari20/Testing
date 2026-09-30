@@ -24,6 +24,7 @@ try{
  await page.goto('http://127.0.0.1:'+address.port+'/tests/browser/editor-runtime-flow.html');
  await page.waitForFunction(()=>window.editorRuntimeTestReady===true);
  await page.evaluate(()=>window.runTemplatePreview('t01-modern-minimalist-cv-design_modern'));
+ await page.screenshot({path:path.replace('.js','.png'),fullPage:true});
  await page.waitForSelector('#preview [data-v2-template-root],#preview [data-v2-template-id]');
  const result=await page.evaluate(()=>{
   const root=document.querySelector('#preview [data-v2-template-root],#preview [data-v2-template-id]');
