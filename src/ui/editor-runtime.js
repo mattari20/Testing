@@ -2,7 +2,7 @@ import { mountEditorPage } from './editor-page-controller.js';
 import { bindEditorFields, bindEditorActions } from './editor-dom-controller.js';
 import { renderEditorForm } from './editor-form-renderer.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.2.0';
+export const EDITOR_RUNTIME_VERSION = '1.3.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -25,8 +25,12 @@ export function mountV2EditorRuntime(root, input = {}) {
     return state;
   };
   render();
+  const rerenderTypes = new Set([
+    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition',
+    'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
+    'upload-asset','remove-asset','undo','redo'
+  ]);
   const unsubscribe = mounted.surface.subscribe((state, command) => {
-    const rerenderTypes = new Set(['add-entry','remove-entry','set-visibility','reorder','set-template','set-variant','upload-asset','remove-asset','undo','redo']);
     if (rerenderTypes.has(command?.type)) render();
   });
   return Object.freeze({
