@@ -202,6 +202,7 @@
     "test:m288-m297": "node --test tests/m288-m297/production-evidence-package.test.js",
     "test:production-evidence-package": "npm run test:m288-m297",
     "test:m298-m307": "node --test tests/m298-m307/final-release-gate.test.js",
-    "test:final-release-gate": "npm run test:m298-m307"
+    "test:final-release-gate": "npm run test:m298-m307",
+    "test:m308-m317": "node --test tests/m308-m317/word-template-catalog.test.js"
   }
 }
