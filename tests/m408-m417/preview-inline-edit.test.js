@@ -33,7 +33,7 @@ try {
   }
 
   await page.evaluate(async()=>{ await window.renderTemplate('t01-modern-minimalist-cv-design_modern'); });
-  const name=page.locator('#preview [data-v2-preview-edit="identity"]').first();
+  const name=page.locator('#preview [data-v2-preview-edit="identity"]').filter({ hasText: 'Preview User' }).first();
   await name.click();
   await name.press('ControlOrMeta+A');
   await name.type('Updated Preview User');
