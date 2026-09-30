@@ -1,6 +1,6 @@
 import {
   addSection, addField, addEntry, setSectionVisibility, setFieldVisibility, setEntryVisibility,
-  setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV
+  setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV, createDocumentSnapshot
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
@@ -16,6 +16,12 @@ export function executeEditorCommand(editorSession, command) {
   const p = command.payload || {};
 
   switch (command.type) {
+    case COMMAND_TYPE.SET_IDENTITY: {
+      const key = String(target.key || p.key || '');
+      if (!key) throw new Error('Identity key is required.');
+      masterProfile.careerData.identity[key] = p.value == null ? '' : p.value;
+      touch(masterProfile); break;
+    }
     case COMMAND_TYPE.SET_FIELD: {
       const section = findSection(masterProfile,target.sectionId);
       if (!section) throw new Error('Section not found: '+target.sectionId);
@@ -67,5 +73,10 @@ export function executeEditorCommand(editorSession, command) {
     default:
       throw new Error('Command requires higher-level handling: '+command.type);
   }
-  return Object.freeze({...editorSession,lastCommand:command.type,dirty:true});
+  return Object.freeze({
+    ...editorSession,
+    snapshot: createDocumentSnapshot(masterProfile, targetedCV),
+    lastCommand:command.type,
+    dirty:true
+  });
 }
