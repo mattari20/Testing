@@ -1,32 +1,29 @@
 # Browser CI Reconciliation
 
 ## Current workflow
-Workflow: .github/workflows/native-v2-browser-validation.yml
+Workflow: `.github/workflows/native-v2-browser-validation.yml`
 
-The workflow is stored in the repository and is intended to execute the browser-validation sequence.
+The workflow installs Playwright/Chromium and executes the browser-validation sequence, including the hardened M208–M217 integrated fragmentation suite.
 
-## Confirmed CI blocker resolved
-The workflow previously used npm caching without a committed npm lockfile. GitHub Actions therefore failed before browser tests started with a missing dependency lockfile error.
-
-The npm cache dependency was removed on 2026-09-29.
+## Confirmed blocker resolved
+The workflow previously used npm caching without a committed npm lockfile. GitHub Actions failed before browser tests started with a missing dependency-lockfile error. The npm cache dependency was removed on 2026-09-29.
 
 ## Current status
-The workflow should be treated as **runtime verification pending** until a subsequent GitHub Actions run completes successfully.
+**Runtime verification pending observed evidence.**
 
-## Warnings seen in the failed run
-The observed Node.js 20 deprecation warning and Ubuntu runner migration notice were warnings/notices, not the root cause of the failed run.
+The repository now contains the executable browser gate, but configuration alone is not a passing result.
 
-## Evidence rule
-A green workflow run is required before describing the affected browser validation milestones as runtime-passed.
-
-## Next CI evidence
-The next push-triggered run should be inspected for:
+## Required observed evidence
+The next successful run must be inspected for:
 1. dependency/setup success;
 2. Playwright/Chromium installation;
-3. M26 real browser evidence;
+3. M26 Native V2 browser evidence;
 4. M27 V1 browser evidence;
-5. M87 editor browser evidence;
-6. M90 preview browser evidence;
-7. M28 paired comparison evidence.
+5. M87 real editor browser evidence;
+6. M90 real editor-preview evidence;
+7. M28 paired V1/V2 browser comparison;
+8. M208–M217 integrated fragmentation execution;
+9. uploaded screenshots/JSON evidence for the integrated fragmentation scenario.
 
-Later M99 and pagination browser validation should be added to the workflow only after their local/CI contract is stable.
+## Rule
+Do not label any affected browser milestone runtime-passed until the workflow run is actually observed and its evidence is inspected.
