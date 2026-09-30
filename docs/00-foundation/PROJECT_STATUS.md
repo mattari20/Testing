@@ -183,3 +183,7 @@ Completed browser pagination hardening contracts: page geometry, navigation norm
 
 ## M168–M177 Batch Record
 Completed the integrated browser-fragment validation contract batch. Browser probes, navigation, fragment integrity, evidence models, executable Chromium harness, and validation documentation are now stored. The harness is present, but no actual Chromium execution result is claimed from repository writes alone.
+
+
+## M178–M187 Batch Record
+Added an executable real Chromium editor-preview test against the existing browser fixture, including native template rendering, geometry assertions, and screenshot capture. The batch deliberately does not claim multi-page fragmentation success: the existing fixture still mounts the template directly and must next be connected to the controlled fragmentation runtime for true multi-page browser evidence.
