@@ -200,6 +200,8 @@
     "test:m278-m287": "node --test tests/m278-m287/production-handoff-gate.test.js",
     "test:production-handoff-gate": "npm run test:m278-m287",
     "test:m288-m297": "node --test tests/m288-m297/production-evidence-package.test.js",
-    "test:production-evidence-package": "npm run test:m288-m297"
+    "test:production-evidence-package": "npm run test:m288-m297",
+    "test:m298-m307": "node --test tests/m298-m307/final-release-gate.test.js",
+    "test:final-release-gate": "npm run test:m298-m307"
   }
 }
