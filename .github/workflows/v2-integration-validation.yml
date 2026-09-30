@@ -32,6 +32,7 @@ jobs:
       - run: npm run test:m328-m337
       - run: npm run test:m348-m357
       - run: npm run test:m358-m367
+      - run: node --test tests/m368-m377/editor-builder-foundation.test.js
       - run: npm test
         continue-on-error: true
       - name: Upload validation metadata
