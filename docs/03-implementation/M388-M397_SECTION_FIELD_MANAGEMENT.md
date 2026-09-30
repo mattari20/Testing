@@ -48,3 +48,6 @@ The package exposes `npm run test:m388-m397`. The integration workflow update re
 
 ## Scope boundary
 This batch does not claim production deployment, live Hostinger execution, final PDF/DOCX provider wiring, production release-gate closure, or final V2 release. Those remain later milestones.
+
+
+Validation note: an earlier CI attempt exposed a pre-existing assertion/API defect in the M378 regression test and a renderer visibility issue; both were corrected before final batch validation.
