@@ -335,3 +335,17 @@ The Word download runtime now correctly converts the repository catalog path `pu
 The seven binary assets are not copied into the Git repository by this batch. Hostinger is the intended production storage location. The catalog remains PLANNED until the files are uploaded to the production path and live download smoke tests pass.
 
 **M348–M357 status: source package received and download-path integration fixed; production asset upload and live smoke test remain pending.**
+
+
+## M348–M357 — Final QA completed
+
+The final T01–T07 static Word-template release package has been machine-validated after A4 normalization and public/demo-data sanitization. All seven assets render as one-page A4 documents, representative editable text replacement survives PDF rendering, and production-domain/demo contact references were removed from the release assets.
+
+Final release package SHA-256:
+a46a8c26d673dab518d51662d38e6c80603dc8e0869b38218517625703016177
+
+Repository-side M348–M357 validation is green:
+- V2 Integration Validation run 36711780684 — SUCCESS
+- Native V2 Browser Validation run 36711780710 — SUCCESS
+
+The binary DOCX files are intentionally not encoded into repository source. The release ZIP is the authoritative deployment package. The remaining external release action is Hostinger upload to /cv-builder/word-templates/ followed by live download/hash verification. The Word catalog remains PLANNED until that external evidence exists.
