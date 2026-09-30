@@ -12,6 +12,6 @@ try {
  assert.ok(result.results.every(x=>x.v1.renderStatus==='ready'&&x.v2.renderStatus==='ready'));
  assert.ok(result.results.every(x=>x.v1.screenshotArtifact&&x.v2.screenshotArtifact));
  assert.ok(result.results.every(x=>x.pairedEvidence.visualEquivalenceStatus==='insufficient-evidence'));
- console.log(JSON.stringify(result.results.map(x=>({templateId:x.templateId,heightDelta:x.pairedEvidence.rootHeightDelta,textDelta:x.pairedEvidence.visibleTextLengthDelta,blocksV1:x.v1.blockCount,blocksV2:x.v2.blockCount})),null,2);
+ console.log(`M28 paired comparison validated ${result.results.length} template pair(s).`);
 } finally { await browser.close(); }
 console.log('M28 real paired V1/V2 browser comparison completed.');
