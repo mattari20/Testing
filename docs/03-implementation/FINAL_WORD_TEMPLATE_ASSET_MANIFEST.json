@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "purpose": "Final static Word-template source package manifest",
+  "productionBasePath": "/cv-builder/word-templates/",
+  "assets": [
+    {"templateId":"t01-modern-minimalist-cv-design_modern","fileName":"T01-Modern-Minimalist-CV-Template.docx","sha256":"27c2ee29ef79504d03fb4c748a3fbd80f0f5760d296b16d8eb7ade076859e80b","sizeBytes":54272},
+    {"templateId":"t02-professional-cv-design_modern","fileName":"T02-Professional-CV-Template.docx","sha256":"a04943191c221eab8948d1e6bda733402d1a9743fed569b6deb8a61f416ebd61","sizeBytes":140288},
+    {"templateId":"t03-professional-cv-design_modern","fileName":"T03-Professional-CV-Template.docx","sha256":"442e53383739c6f61aec67e5730e65125a49770a31a73f799dac96ae3d3b7092","sizeBytes":93184},
+    {"templateId":"t04-modern-blue-corporate_modern","fileName":"T04-Modern-Blue-Corporate-CV-Template.docx","sha256":"192ffb3793fdd009a8c35cb9547f56517be572811b840f6bcf17f9e75a01493e","sizeBytes":69632},
+    {"templateId":"t05-simple-cv-graphic-web-designer_modern","fileName":"T05-Graphic-Web-Designer-CV-Template.docx","sha256":"4b6d736d0c17ddbf39b5b70514457d42b60d86be9c4a8d598e5de3491f3d8222","sizeBytes":52224},
+    {"templateId":"t06-professional-cv-graphic-designer_modern","fileName":"T06-Professional-Graphic-Designer-CV-Template.docx","sha256":"9ecbf0e58e9c513f5d12695d0680bedbc21d8667824c42ee87dd5408ac69b8a1","sizeBytes":35840},
+    {"templateId":"t07-professional-cv-store-manager-incharge_modern","fileName":"T07-Store-Manager-CV-Template.docx","sha256":"1b91ba6b2b695a44309ba49e6756d63c215157345cf52e08f59e622f73ec2060","sizeBytes":43008}
+  ]
+}
