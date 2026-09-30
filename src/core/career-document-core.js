@@ -44,6 +44,30 @@ export function addEntry(profile, sectionId, input = {}) { const s = getSection(
 export function setSectionVisibility(profile, sectionId, visible) { const s = getSection(profile, sectionId); assert(s, 'Section not found: ' + sectionId); s.visibility = Boolean(visible); touch(profile); }
 export function setFieldVisibility(profile, sectionId, fieldId, visible) { const f = getField(profile, sectionId, fieldId); assert(f, 'Field not found: ' + fieldId); f.visibility = Boolean(visible); touch(profile); }
 export function setEntryVisibility(profile, sectionId, entryId, visible) { const e = getEntry(profile, sectionId, entryId); assert(e, 'Entry not found: ' + entryId); e.visibility = Boolean(visible); touch(profile); }
+export function setTargetedSectionVisibility(cv, sectionId, visible) {
+  const id = String(sectionId);
+  const hidden = new Set(cv.configuration.hiddenSections || []);
+  if (visible) hidden.delete(id); else hidden.add(id);
+  cv.configuration.hiddenSections = [...hidden];
+  cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
+}
+
+export function setTargetedFieldVisibility(cv, sectionId, fieldId, visible) {
+  const key = String(sectionId) + ':' + String(fieldId);
+  const hidden = new Set(cv.configuration.hiddenFields || []);
+  if (visible) hidden.delete(key); else hidden.add(key);
+  cv.configuration.hiddenFields = [...hidden];
+  cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
+}
+
+export function setTargetedEntryVisibility(cv, sectionId, entryId, visible) {
+  const key = String(sectionId) + ':' + String(entryId);
+  const hidden = new Set(cv.configuration.hiddenEntries || []);
+  if (visible) hidden.delete(key); else hidden.add(key);
+  cv.configuration.hiddenEntries = [...hidden];
+  cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
+}
+
 export function configureTargetedCV(cv, patch = {}) {
   const p = patch || {};
   cv.configuration = normalizeConfig({ ...cv.configuration, ...p, presentation: { ...cv.configuration.presentation, ...(isObject(p.presentation) ? p.presentation : {}) }, metadata: { ...cv.configuration.metadata, ...(isObject(p.metadata) ? p.metadata : {}) } });
