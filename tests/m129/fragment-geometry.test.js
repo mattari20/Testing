@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createFragmentGeometry} from '../../src/ui/editor-preview-fragment-geometry.js';test('M129 creates fragment geometry',()=>{assert.deepEqual(createFragmentGeometry({offset:40,height:60}),{top:40,height:60,bottom:100,sourceHeight:60});});
