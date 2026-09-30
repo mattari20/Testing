@@ -354,3 +354,8 @@ The binary DOCX files are intentionally not encoded into repository source. The 
 ## M398–M407 — Editor Interaction Layer
 
 Drag-and-drop ordering is now integrated for sections, fields and repeatable entries, while a provider/template-neutral inline preview editing boundary maps preview edits to the existing editor commands. Regression coverage and CI wiring are included. Production deployment and final release gates remain open.
+
+
+## M408–M417 — Live Preview Inline Editing & Template Compatibility
+
+The concrete Native V2 preview path now exposes editable identity, section-field and repeatable-entry targets, the preview mount can bind the existing inline-edit controller, and a dedicated live-preview runtime coordinates snapshot rendering, template source loading and stale-refresh protection. Browser coverage has been added for all seven Native V2 templates plus identity and entry round-trip editing. Production deployment and final release gates remain open.
