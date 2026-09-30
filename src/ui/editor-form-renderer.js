@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.3.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.4.0';
 
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -33,7 +33,7 @@ function renderField(sectionId, field, index, fieldIds, visible = true) {
   const typeOptions = ['text','textarea','email','url','date'].map(type =>
     '<option value="'+type+'"'+(String(field.type||'text')===type?' selected':'')+'>'+type+'</option>'
   ).join('');
-  return '<div data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!visible)+'">' +
+  return '<div data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!visible)+'">' +
     '<div><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.label || field.id)+'">' +
     '<select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'">'+typeOptions+'</select></div>' +
     fieldVisible ? '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">' : '<span data-v2-editor-field-hidden-state="true">Hidden in this CV</span>' +
@@ -54,7 +54,7 @@ function renderEntry(sectionId, entry, index, entryIds, visible = true) {
     '<input data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(values[key])+'">' +
     '</label>'
   ).join('') : '<span data-v2-editor-entry-hidden-state="true">Hidden in this CV</span>';
-  return '<article data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">' +
+  return '<article data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">' +
     '<h4>'+esc('Entry '+(index+1))+'</h4>'+fields +
     visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible) +
     '<button type="button" data-v2-editor-command="duplicate-entry" data-v2-target="'+attr({sectionId,entryId:entry.id})+'">Duplicate</button>' +
@@ -86,7 +86,7 @@ export function renderEditorForm(surface, documentData, options = {}) {
     const entryHtml = sectionHidden ? '' : entries.map((entry,index) => renderEntry(section.id,entry,index,entryIds,!hiddenEntries.has(String(section.id)+':'+String(entry.id)))).join('');
     const sectionUp = moveOrder(sectionIds,sectionIndex,-1);
     const sectionDown = moveOrder(sectionIds,sectionIndex,1);
-    return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
+    return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
       '<header><input data-v2-editor-section-title="'+esc(section.id)+'" value="'+esc(section.title || section.type)+'">' +
       '<span>'+esc(sectionHidden ? 'Hidden in this CV' : 'Visible in this CV')+'</span></header>' +
       visibilityButton('section',{sectionId:section.id},!sectionHidden) +
