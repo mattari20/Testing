@@ -349,3 +349,8 @@ Repository-side M348–M357 validation is green:
 - Native V2 Browser Validation run 36711780710 — SUCCESS
 
 The binary DOCX files are intentionally not encoded into repository source. The release ZIP is the authoritative deployment package. The remaining external release action is Hostinger upload to /cv-builder/word-templates/ followed by live download/hash verification. The Word catalog remains PLANNED until that external evidence exists.
+
+
+## M398–M407 — Editor Interaction Layer
+
+Drag-and-drop ordering is now integrated for sections, fields and repeatable entries, while a provider/template-neutral inline preview editing boundary maps preview edits to the existing editor commands. Regression coverage and CI wiring are included. Production deployment and final release gates remain open.
