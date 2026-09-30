@@ -34,6 +34,7 @@ export function mountV2EditorRuntime(root, input = {}) {
     return state;
   };
   render();
+  previewRuntime?.refresh().catch(() => {});
   const rerenderTypes = new Set([
     'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
