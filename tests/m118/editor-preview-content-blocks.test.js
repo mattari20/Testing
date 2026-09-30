@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {extractRenderedContentBlocks} from '../../src/ui/editor-preview-content-blocks.js';
+test('M118 extracts measured blocks',()=>{const els=[{getAttribute:n=>n==='data-v2-layout-block'?'a':null,getBoundingClientRect:()=>({top:0,left:0,width:100,height:50})}];const root={querySelectorAll:()=>els};const r=extractRenderedContentBlocks(root);assert.equal(r.length,1);assert.equal(r[0].id,'a');assert.equal(r[0].measuredHeight,50);});
