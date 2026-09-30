@@ -25,6 +25,7 @@ try{
  const browserErrors=[];
  page.on('pageerror', error=>browserErrors.push('pageerror: '+String(error?.stack||error?.message||error)));
  page.on('console', message=>{ if(message.type()==='error') browserErrors.push('console: '+message.text()); });
+ page.on('response', response=>{ if(response.status()>=400) browserErrors.push('http '+response.status()+': '+response.url()); });
  await page.goto('http://127.0.0.1:'+address.port+'/tests/browser/editor-runtime-flow.html');
  try { await page.waitForFunction(()=>window.editorRuntimeTestReady===true,{timeout:10000}); }
  catch(error){ throw new Error('Editor runtime did not become ready. Browser diagnostics: '+JSON.stringify(browserErrors)+'; timeout: '+String(error?.message||error)); }
