@@ -183,6 +183,8 @@
     "test:browser-pagination-contract": "npm run test:m158-m167",
     "test:m168-m177": "node --test tests/m168-m177/browser-fragment-contract.test.js tests/m173/real-fragment-browser-validation.test.js",
     "test:m173": "node --test tests/m173/real-fragment-browser-validation.test.js",
-    "test:integrated-browser-fragment": "npm run test:m168-m177"
+    "test:integrated-browser-fragment": "npm run test:m168-m177",
+    "test:m190": "node --test tests/m190/multi-page-split-continuation.test.js",
+    "test:m178-m197": "node --test tests/m178-m187/real-integrated-fragment-browser.test.js tests/m190/multi-page-split-continuation.test.js"
   }
 }
