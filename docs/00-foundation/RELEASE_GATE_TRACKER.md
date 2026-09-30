@@ -5,7 +5,7 @@
 | R1 V1 source/asset closure | CONDITIONAL | Seven V1 sources verified on main; missing T01 ATS/Simple recorded | Recover sources or approve replacement/retirement; verify historical assets |
 | R2 Security closure | CONDITIONAL | Current-main indicator scan clean | Rotate/revoke production credentials; verify repository history |
 | R3 Golden Baseline package | CONDITIONAL | Comparison contracts plus a sanitized 9-fixture input set now exist | Produce authoritative V1/V2 output artifacts and inspect evidence; V1 source gaps still affect final baseline coverage |
-| R4 Browser CI | OPEN | Workflow configured; integrated test registered | Observe successful GitHub Actions run and inspect artifacts |
+| R4 Browser CI | CONDITIONAL | Workflow now also validates Golden Baseline fixture inputs and runs the browser suites | Observe a successful GitHub Actions run and inspect uploaded artifacts |
 | R5 Pagination/fragmentation acceptance | OPEN | Contracts/tests/harness exist | Confirm real browser behavior and acceptance evidence |
 | R6 Production integration | OPEN | V2 editor/application architecture exists | Verify final production wiring and V2-only path |
 | R7 V1 retirement | OPEN | Governance rule defined | Retire temporary V1 runtime/adapters after acceptance |
