@@ -195,3 +195,11 @@ Advanced the browser fragmentation path into an executable multi-page scenario. 
 
 ## M198–M207 Batch Record
 Hardened integrated browser fragmentation execution: fixed a fragment transform syntax defect, strengthened real-browser distribution assertions, tightened browser-flow evidence so completion requires multiple pages and distributed fragments, added regression coverage, and documented the CI execution gate. No CI success is claimed without an observed workflow result.
+
+
+## M208–M217 Batch Record
+
+Hardened the integrated browser fragmentation evidence path. The real Chromium test now validates native template rendering before fragmentation, captures before/after screenshots, verifies multi-page fragment distribution, sequential fragment ordering, page geometry, overflow limits, and page-by-page navigation. The test writes a machine-readable evidence JSON artifact. CI now runs the hardened suite and uploads PNG/JSON evidence.
+
+This batch still follows the evidence rule: repository configuration is not equivalent to a passing browser run. Actual CI execution must be observed before claiming browser-green status.
+
