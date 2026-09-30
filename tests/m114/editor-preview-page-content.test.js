@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {mountPreviewPageContent} from '../../src/ui/editor-preview-page-content.js';test('M114 requires a page element',()=>{assert.throws(()=>mountPreviewPageContent(null),/Preview page element is required/);});
