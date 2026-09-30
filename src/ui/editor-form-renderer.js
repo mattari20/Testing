@@ -37,11 +37,13 @@ function renderField(sectionId, field, index, fieldIds, visible = true) {
   const typeOptions = ['text','textarea','email','url','date'].map(type =>
     '<option value="'+type+'"'+(String(field.type||'text')===type?' selected':'')+'>'+type+'</option>'
   ).join('');
-  return '<div data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!visible)+'">' +
+  const valueControl = fieldVisible
+    ? '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">'
+    : '<span data-v2-editor-field-hidden-state="true">Hidden in this CV</span>';
+  return '<div data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">' +
     '<div><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.label || field.id)+'">' +
     '<select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'">'+typeOptions+'</select></div>' +
-    fieldVisible ? '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">' : '<span data-v2-editor-field-hidden-state="true">Hidden in this CV</span>' +
-    visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible) +
+    valueControl +
     '<button type="button" data-v2-editor-command="remove-field" data-v2-target="'+attr({sectionId,fieldId:field.id})+'">Remove</button>' +
     '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:up})+'">Move Up</button>' +
     '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:down})+'">Move Down</button>' +
