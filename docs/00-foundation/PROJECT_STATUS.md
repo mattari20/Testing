@@ -212,3 +212,12 @@ R1 has been formally started and reconciled against the current repository. Seve
 See `docs/00-foundation/R1_V1_SOURCE_AND_ASSET_CLOSURE.md`.
 
 **R1 status: CONDITIONAL — source/asset verification remains an external evidence gate.**
+
+
+## R2 — Security Closure
+
+R2 repository-side security reconciliation has been completed. The current `main` content was checked for the documented secret indicators and no matches were found. This does not close production credential rotation/revocation or historical Git-history verification; both remain explicit external release gates.
+
+See `docs/00-foundation/R2_SECURITY_CLOSURE.md` and `docs/00-foundation/RELEASE_GATE_TRACKER.md`.
+
+**R2 status: CONDITIONAL.**
