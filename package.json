@@ -188,6 +188,8 @@
     "test:m178-m197": "node --test tests/m178-m187/real-integrated-fragment-browser.test.js tests/m190/multi-page-split-continuation.test.js",
     "test:m198-m207": "node --test tests/m200-m207/browser-flow-evidence.test.js tests/m190/multi-page-split-continuation.test.js",
     "test:m208-m217": "node --test tests/m178-m187/real-integrated-fragment-browser.test.js tests/m200-m207/browser-flow-evidence.test.js tests/m190/multi-page-split-continuation.test.js",
-    "test:golden-fixtures": "node --test tests/fixtures/golden-baseline/synthetic-fixture-set.test.js"
+    "test:golden-fixtures": "node --test tests/fixtures/golden-baseline/synthetic-fixture-set.test.js",
+    "test:m218-m227": "node --test tests/m218-m227/production-integration-evidence.test.js",
+    "test:production-integration-evidence": "npm run test:m218-m227"
   }
 }
