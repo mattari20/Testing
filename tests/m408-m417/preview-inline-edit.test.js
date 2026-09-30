@@ -33,7 +33,12 @@ try {
   }
 
   await page.evaluate(async()=>{ await window.renderTemplate('t01-modern-minimalist-cv-design_modern'); });
-  const name=page.locator('#preview [data-v2-preview-edit="identity"][data-v2-preview-target*="fullName"]').first();
+  const identityTargets=page.locator('#preview [data-v2-preview-edit="identity"]');
+  const nameIndex=await identityTargets.evaluateAll(elements=>elements.findIndex(element=>{
+    try { return JSON.parse(element.getAttribute('data-v2-preview-target') || '{}').key === 'fullName'; } catch { return false; }
+  }));
+  assert.ok(nameIndex >= 0, 'fullName preview target should exist');
+  const name=identityTargets.nth(nameIndex);
   await name.click();
   await name.press('ControlOrMeta+A');
   await name.type('Updated Preview User');
