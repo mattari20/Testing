@@ -21,3 +21,6 @@ The existing layout runtime remains the default path. Fragmentation is activated
 These modules define what a real browser run must prove. They do not themselves prove that Chromium has passed.
 
 No Chromium pass, CI-green result, Golden Baseline parity, or production readiness is claimed until an actual execution record exists.
+
+## M177 execution note
+The repository contains an executable Chromium harness, but this work session does not have a checked-out repository runtime from which to execute Node/Playwright. Therefore no Chromium pass is recorded here. The next execution-capable batch must run the harness against the actual editor/template flow and store browser evidence.
