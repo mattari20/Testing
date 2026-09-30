@@ -61,3 +61,6 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 
 
 - M348–M357: final seven Word-template source package, standardized filenames, SHA-256 asset manifest, and repository-to-public download path correction
+
+
+- M348–M357: final T01–T07 A4/single-page QA, editable-text rendering checks, public/demo-data sanitization, final release package manifest and successful CI/browser validation
