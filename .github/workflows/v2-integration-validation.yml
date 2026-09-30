@@ -20,6 +20,7 @@ jobs:
       - run: npm run test:m48-m51
       - run: npm run test:m52-m55
       - run: npm run test:m56-m59
+      - run: npm run test:m218-m227
       - run: npm test
         continue-on-error: true
       - name: Upload validation metadata
