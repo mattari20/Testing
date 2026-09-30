@@ -70,3 +70,5 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 - M378–M387: targeted CV editing foundation — isolated section/field/entry visibility from Master Profile, structural editor subscriptions, runtime refresh, and regression coverage
 
 - M388–M397: complete section and field management — add/remove/edit section and field definitions, entry duplication, targeted ordering, structural editor controls, runtime refresh, and regression coverage
+
+- M398–M407: editor interaction layer — drag-and-drop section/field/entry ordering, sortable editor markers, preview inline-edit command boundary, runtime reorder binding, regression coverage
