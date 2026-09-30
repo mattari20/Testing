@@ -191,3 +191,7 @@ Added an executable real Chromium editor-preview test against the existing brows
 
 ## M188–M197 Batch Record
 Advanced the browser fragmentation path into an executable multi-page scenario. Browser-declared split points now survive extraction and semantic normalization; multi-page split continuation was hardened; the browser fixture can invoke fragmentation; the real browser test checks page count, continuity, integrity and overflow; and CI now executes the integrated fragmentation browser test and uploads screenshot evidence. Actual CI success remains unclaimed until a run is observed.
+
+
+## M198–M207 Batch Record
+Hardened integrated browser fragmentation execution: fixed a fragment transform syntax defect, strengthened real-browser distribution assertions, tightened browser-flow evidence so completion requires multiple pages and distributed fragments, added regression coverage, and documented the CI execution gate. No CI success is claimed without an observed workflow result.
