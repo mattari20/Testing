@@ -34,4 +34,11 @@ Repository unit coverage: `tests/m408-m417/preview-inline-edit.test.js`.
 
 Browser coverage: `tests/browser/m408-m417-preview-inline.html`, executed through the Native V2 browser validation workflow.
 
-This milestone does not claim production deployment or final release-gate closure.
+
+## Observed CI result
+
+- V2 Integration Validation run **565** — SUCCESS.
+- Native V2 Browser Validation run **732** — SUCCESS.
+- The browser validation exercised all seven Native V2 templates and completed the inline identity and repeatable-entry round-trip checks through the actual editor runtime preview mount.
+
+The batch does not claim production deployment or final release-gate closure.
