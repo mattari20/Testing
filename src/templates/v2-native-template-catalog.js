@@ -96,7 +96,7 @@ export function listNativeV2Templates() {
 
 export function getNativeV2Template(id) {
   const found = nativeTemplates.find(template => template.id === String(id));
-  return found ? Object.freeze({ ...found, supportedSections: [...found.supportedSections], capabilities: { ...found.capabilities }) : null;
+  return found ? Object.freeze({ ...found, supportedSections: [...found.supportedSections], capabilities: { ...found.capabilities } }) : null;
 }
 
 export const V2_NATIVE_TEMPLATE_IDS = Object.freeze(nativeTemplates.map(template => template.id));
