@@ -10,7 +10,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const server=createServer(async(req,res)=>{
  try{
   const clean=decodeURIComponent((req.url||'/').split('?')[0]);
-  const file=clean==='/'?'/tests/browser/editor-runtime-flow.html':clean;
+  const file=clean==='/'?'/tests/browser/editor-runtime-m87.html':clean;
   const body=await readFile(path.join(root,file));
   const ext=path.extname(file);
   res.writeHead(200,{'Content-Type':ext==='.js'?'text/javascript':ext==='.html'?'text/html':'text/plain'});
