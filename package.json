@@ -209,6 +209,7 @@
     "test:m348-m357": "node --test tests/m348-m357/final-word-template-manifest.test.js",
     "test:m358-m367": "node --test tests/m358-m367/word-template-production-gate.test.js",
     "test:m388-m397": "node --test tests/m388-m397/section-field-management.test.js",
-    "test:m398-m407": "node --test tests/m398-m407/editor-interaction-layer.test.js"
+    "test:m398-m407": "node --test tests/m398-m407/editor-interaction-layer.test.js",
+    "test:m408-m417": "node --test tests/m408-m417/preview-inline-edit.test.js"
   }
 }
