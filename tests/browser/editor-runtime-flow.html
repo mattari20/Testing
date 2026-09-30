@@ -5,7 +5,7 @@ import { loadNativeTemplateSource } from '/src/templates/native-template-source-
 import { mountTemplatePreview } from '/src/ui/template-preview-mounter.js';
 import { createApplicationSnapshot } from '/src/application/cv-application.js';
 
-const input={profileData:{identity:{fullName:'Browser User',jobTitle:'Engineer'},sections:[{id:'personal',type:'personal',title:'Personal',visibility:true,fields:[{id:'name',type:'text',label:'Name',value:'Browser User',visibility:true}],entries:[]},{id:'summary',type:'summary',title:'Summary',visibility:true,fields:[{id:'text',type:'text',label:'Summary',value:'Browser test summary',visibility:true}],entries:[]}] }};
+const input={profileData:{careerData:{identity:{fullName:'Browser User',jobTitle:'Engineer'},sections:[{id:'personal',type:'personal',title:'Personal',visibility:true,fields:[{id:'name',type:'text',label:'Name',value:'Browser User',visibility:true}],entries:[]},{id:'summary',type:'summary',title:'Summary',visibility:true,fields:[{id:'text',type:'text',label:'Summary',value:'Browser test summary',visibility:true}],entries:[]}] } };
 window.editorRuntime=mountV2EditorRuntime(document.querySelector('#editor'),input);
 window.editorRuntimeTestReady=true;
 
