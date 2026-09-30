@@ -25,3 +25,7 @@ Any state may transition to BLOCKED when delivery cannot safely continue.
 
 ## Initial implementation
 The repository contains the deterministic lifecycle contract and tests. Actual browser wiring and real DOCX assets remain subsequent acceptance work.
+
+## Word-template integration
+
+The Word-template adapter now resolves a shared V2 template ID through the Word-template catalog, creates the reusable delivery request, and prevents a public download href from being exposed before the request reaches READY. The adapter does not require or infer ad completion.
