@@ -221,3 +221,12 @@ R2 repository-side security reconciliation has been completed. The current `main
 See `docs/00-foundation/R2_SECURITY_CLOSURE.md` and `docs/00-foundation/RELEASE_GATE_TRACKER.md`.
 
 **R2 status: CONDITIONAL.**
+
+
+## R3 — Golden Baseline Fixture Preparation
+
+A sanitized synthetic Golden Baseline input set covering the nine required fixture categories (minimal, complete, long, visibility, theme, template, mobile, desktop, export) has been added under `tests/fixtures/golden-baseline/`, with a validation test and package script.
+
+This is fixture preparation only. It does not replace authoritative V1 output evidence. Final Golden Baseline acceptance still requires observed V1/V2 browser/output artifacts and the unresolved V1 source/asset dispositions.
+
+**R3 status: CONDITIONAL.**
