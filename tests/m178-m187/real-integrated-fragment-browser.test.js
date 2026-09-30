@@ -55,17 +55,18 @@ try{
    parts,
    ordered:parts.every((item,index)=>index===0 || item.part===parts[index-1].part+1)
   }));
+  const pageGeometry=pages.map((page,index)=>{
+   const wasHidden=page.hidden;
+   page.hidden=false;
+   const rect=page.getBoundingClientRect();
+   const evidence={page:index+1,width:rect.width,height:rect.height,scrollHeight:page.scrollHeight,fragmentCount:page.querySelectorAll('[data-v2-fragment-of]').length,visible:!wasHidden};
+   page.hidden=wasHidden;
+   return evidence;
+  });
   return {
    pageCount:pages.length,
    fragmentCount:fragments.length,
-   pages:pages.map((page,index)=>({
-    page:index+1,
-    width:page.getBoundingClientRect().width,
-    height:page.getBoundingClientRect().height,
-    scrollHeight:page.scrollHeight,
-    fragmentCount:page.querySelectorAll('[data-v2-fragment-of]').length,
-    visible:!page.hidden
-   })),
+   pages:pageGeometry,
    ordering,
    visiblePages:pages.filter(page=>!page.hidden).length
   };
