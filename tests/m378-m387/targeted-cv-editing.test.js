@@ -60,6 +60,7 @@ test('renderer respects targeted section, field and entry visibility', () => {
     }
   });
   surface.dispatch({ type: 'set-visibility', target: { kind: 'field', sectionId: 'experience', fieldId: 'company' }, payload: { visible: false } });
+  assert.deepEqual(surface.getState().session.application.targetedCV.configuration.hiddenFields, ['experience:company']);
   let html = renderEditorForm(surface, surface.getState().session.application.masterProfile, { configuration: surface.getState().session.application.targetedCV.configuration }).html;
   assert.match(html, /Engineer/);
   assert.match(html, /data-v2-editor-field-hidden-state="true"/);
