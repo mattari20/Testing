@@ -1,6 +1,7 @@
 import {
   addSection, addField, addEntry, setSectionVisibility, setFieldVisibility, setEntryVisibility,
-  setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV, createDocumentSnapshot
+  setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV, createDocumentSnapshot,
+  setTargetedSectionVisibility, setTargetedFieldVisibility, setTargetedEntryVisibility
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
@@ -30,9 +31,9 @@ export function executeEditorCommand(editorSession, command) {
       field.value = p.value == null ? '' : p.value; touch(masterProfile); break;
     }
     case COMMAND_TYPE.SET_VISIBILITY:
-      if (target.kind==='section') setSectionVisibility(masterProfile,target.sectionId,p.visible);
-      else if (target.kind==='field') setFieldVisibility(masterProfile,target.sectionId,target.fieldId,p.visible);
-      else if (target.kind==='entry') setEntryVisibility(masterProfile,target.sectionId,target.entryId,p.visible);
+      if (target.kind==='section') setTargetedSectionVisibility(targetedCV,target.sectionId,p.visible);
+      else if (target.kind==='field') setTargetedFieldVisibility(targetedCV,target.sectionId,target.fieldId,p.visible);
+      else if (target.kind==='entry') setTargetedEntryVisibility(targetedCV,target.sectionId,target.entryId,p.visible);
       else throw new Error('Visibility target kind is required.');
       break;
     case COMMAND_TYPE.ADD_ENTRY: addEntry(masterProfile,target.sectionId,p); break;
