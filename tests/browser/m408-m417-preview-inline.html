@@ -21,7 +21,7 @@ const input = {
   cvData: { configuration: { template: { id: 't01-modern-minimalist-cv-design_modern', version: '2.0.0' } } }
 };
 
-window.editorRuntime = mountV2EditorRuntime(document.querySelector('#editor'), input);
+window.editorRuntime = mountV2EditorRuntime(document.querySelector('#editor'), { ...input, preview: true });
 window.renderTemplate = async id => {
   switchTemplate(window.editorRuntime.surface, id, { templateVersion: '2.0.0' });
   return window.editorRuntime.previewRuntime?.refresh();
