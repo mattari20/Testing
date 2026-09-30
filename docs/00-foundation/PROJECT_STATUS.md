@@ -324,3 +324,14 @@ Added the Word-template asset readiness audit. Library evidence confirms three c
 ## M338–M347
 
 Normalized candidate DOCX assets for T03, T04 and T05 from the available source documents. All three now render as one-page A4 documents and passed an editable-text render check and package inspection. They remain REVIEW REQUIRED rather than READY until Microsoft Word/Word Online manual acceptance, longer-content checks, and repository deployment are completed. Binary assets are supplied separately because the available GitHub write interface only accepts UTF-8 text.
+
+
+## M348–M357
+
+The final seven static Word-template source files were supplied by the project owner and standardized to the production filenames T01–T07. A source manifest with SHA-256 and file-size records is stored at `docs/03-implementation/FINAL_WORD_TEMPLATE_ASSET_MANIFEST.json`.
+
+The Word download runtime now correctly converts the repository catalog path `public/cv-builder/word-templates/...` into the public URL `/cv-builder/word-templates/...`. This resolves the M318–M327 path-contract regression.
+
+The seven binary assets are not copied into the Git repository by this batch. Hostinger is the intended production storage location. The catalog remains PLANNED until the files are uploaded to the production path and live download smoke tests pass.
+
+**M348–M357 status: source package received and download-path integration fixed; production asset upload and live smoke test remain pending.**
