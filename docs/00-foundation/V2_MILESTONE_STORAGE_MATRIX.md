@@ -1,7 +1,7 @@
 # V2 Milestone Storage Matrix
 
 ## Purpose
-This is a repository-level storage audit, not a runtime-pass certificate.
+Repository-level storage audit, not a runtime-pass certificate.
 
 ## Stored implementation sequence
 - M1–M9: core document, lifecycle, template, layout, preview, export, migration, intelligence, security
@@ -15,26 +15,30 @@ This is a repository-level storage audit, not a runtime-pass certificate.
 - M72–M79: editor form/section/template/runtime layers
 - M80–M87: browser adapter, live preview, evidence, real browser editor flow
 - M88–M91: native template loading/switching and browser preview evidence
-- M92–M95: browser layout measurement, preview layout, layout evidence
-- M96–M99: integrated browser preview layout, overflow diagnostics, geometry evidence, real browser layout evidence
-- M100–M105: pagination state, page navigation, paginated preview, evidence, page rendering
-- M106–M109: integrated preview pagination/layout flow and evidence
-
-## Storage interpretation
-For the milestones above, source/test/documentation artifacts have been found in the repository for the audited sequence. This does not imply every milestone has passed at runtime.
+- M92–M99: browser layout measurement, preview layout, overflow diagnostics, geometry evidence, real browser layout evidence
+- M100–M109: pagination state, page navigation, paginated preview, page rendering, integrated preview pagination/layout flow and evidence
+- M110–M117: page DOM/content mounting, content slicing/runtime/evidence
+- M118–M127: semantic rendered-block extraction, block pagination, distribution and overflow evidence
+- M128–M137: multi-page split continuation, fragment geometry/planning/distribution/continuity and runtime evidence
+- M138–M147: fragmentation quality, repeated-header metadata, page-break, orphan/widow and keep-with-next contracts
+- M148–M157: fragment runtime integration, clipping/continuity hardening and regression evidence
+- M158–M167: page geometry/navigation/fragment DOM integrity and browser pagination contracts
+- M168–M177: browser fragment probes, navigation/integrity/evidence and controlled browser adapter
+- M178–M187: executable integrated Chromium fragmentation scenario
+- M188–M197: split-point propagation, multi-page continuation and CI browser execution path
+- M198–M207: browser fragmentation execution hardening and completion evidence contract
+- M208–M217: hardened browser evidence, before/after screenshots, JSON evidence, fragment ordering, navigation and CI artifact publication
 
 ## Runtime evidence status
-- M26/M27/M28 browser validation: historical workflow infrastructure exists; successful runtime evidence must be checked from GitHub Actions.
-- M87/M90/M99: real browser test code and workflows/evidence boundaries exist; successful runtime is not assumed.
-- M100–M109: implementation contracts are stored; browser runtime is not assumed passed.
+Stored browser tests are not automatically runtime-passed. The current release gate requires an observed successful GitHub Actions run for the configured browser workflow and inspection of its evidence artifacts.
 
-## Production gates still open
-- M0 security/secret reconciliation
-- unresolved T01 ATS and T01 Simple source recovery
+## Production gates
+- unresolved T01 ATS/T01 Simple source or approved disposition
 - remaining V1 asset reconciliation
+- production credential rotation/revocation and history verification
 - Golden Baseline output fixture package
 - successful CI/browser validation
-- final V1 runtime retirement after V2 evidence
+- final V1 runtime retirement after V2 acceptance
 
 ## Rule
-Do not convert “file exists” into “feature passed”. Repository storage and runtime validation are separate states.
+Do not convert “file exists” into “feature passed”.
