@@ -192,6 +192,8 @@
     "test:m218-m227": "node --test tests/m218-m227/production-integration-evidence.test.js",
     "test:production-integration-evidence": "npm run test:m218-m227",
     "test:m238-m247": "node --test tests/m238-m247/production-smoke-record.test.js",
-    "test:production-smoke-record": "npm run test:m238-m247"
+    "test:production-smoke-record": "npm run test:m238-m247",
+    "test:m258-m267": "node --test tests/m258-m267/v2-production-entry.test.js",
+    "test:v2-production-entry": "npm run test:m258-m267"
   }
 }
