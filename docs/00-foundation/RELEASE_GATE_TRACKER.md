@@ -17,3 +17,8 @@
 - CONDITIONAL means repository work is present but an external or authoritative dependency remains.
 - PASS means evidence has actually been observed.
 - No gate is marked PASS merely because code, tests, or workflow configuration exists.
+
+## M298–M307 final-release control
+
+The repository now contains a machine-checkable final release gate in `src/release/final-release-gate.js`. It requires R1–R8 to be explicitly PASS before returning READY. It does not change the tracker statuses above or create production evidence.
+
