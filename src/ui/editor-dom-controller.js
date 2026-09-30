@@ -1,12 +1,16 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.0.0';
+export const EDITOR_DOM_VERSION = '1.1.0';
+
+function parseJson(value, fallback={}) {
+  try { return value ? JSON.parse(value) : fallback; }
+  catch { return fallback; }
+}
 
 export function bindEditorFields(root, surface, options = {}) {
   if (!root || !surface) throw new Error('Editor root and surface are required.');
-  const selector = options.selector || '[data-v2-editor-field]';
   const listeners = [];
-  root.querySelectorAll(selector).forEach(input => {
+  root.querySelectorAll(options.selector || '[data-v2-editor-field]').forEach(input => {
     const handler = () => {
       const [sectionId, fieldId] = String(input.dataset.v2EditorField || '').split(':');
       if (!sectionId || !fieldId) return;
@@ -19,6 +23,34 @@ export function bindEditorFields(root, surface, options = {}) {
     input.addEventListener('input', handler);
     listeners.push(() => input.removeEventListener('input', handler));
   });
+
+  root.querySelectorAll('[data-v2-editor-identity-field]').forEach(input => {
+    const handler = () => {
+      surface.dispatch(createEditorCommand({
+        type: 'set-identity',
+        target: { key: input.dataset.v2EditorIdentityField },
+        payload: { value: input.value }
+      }));
+    };
+    input.addEventListener('input', handler);
+    listeners.push(() => input.removeEventListener('input', handler));
+  });
+
+  root.querySelectorAll('[data-v2-editor-entry-field]').forEach(input => {
+    const handler = () => {
+      const target = parseJson(input.dataset.v2EntryTarget);
+      const key = String(input.dataset.v2EntryKey || '');
+      if (!target.sectionId || !target.entryId || !key) return;
+      surface.dispatch(createEditorCommand({
+        type: 'update-entry',
+        target,
+        payload: { values: { [key]: input.value } }
+      }));
+    };
+    input.addEventListener('input', handler);
+    listeners.push(() => input.removeEventListener('input', handler));
+  });
+
   return Object.freeze({ version: EDITOR_DOM_VERSION, destroy: () => listeners.forEach(fn => fn()) });
 }
 
@@ -28,8 +60,8 @@ export function bindEditorActions(root, surface) {
   root.querySelectorAll('[data-v2-editor-command]').forEach(element => {
     const handler = () => {
       const type = element.dataset.v2EditorCommand;
-      const target = element.dataset.v2Target ? JSON.parse(element.dataset.v2Target) : {};
-      const payload = element.dataset.v2Payload ? JSON.parse(element.dataset.v2Payload) : {};
+      const target = parseJson(element.dataset.v2Target);
+      const payload = parseJson(element.dataset.v2Payload);
       surface.dispatch({ type, target, payload });
     };
     element.addEventListener('click', handler);
