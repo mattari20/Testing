@@ -115,12 +115,21 @@ export function paginateBlocks(blockInputs, pageInput = {}) {
 
     let split = findSplit(block, page.remainingHeight);
     if (split !== null && page.remainingHeight > 0) {
-      page.blocks.push({ id: block.id, height: split, state: FLOW_STATE.SPLIT, part: 1, sourceHeight: block.measuredHeight });
-      page.usedHeight += split; page.remainingHeight -= split; flush();
-      const remainder = block.measuredHeight - split;
-      page.blocks.push({ id: block.id, height: remainder, state: FLOW_STATE.SPLIT, part: 2, sourceHeight: block.measuredHeight });
-      page.usedHeight += remainder; page.remainingHeight -= remainder;
-      continue;
+      let remainingHeight = block.measuredHeight;
+      let part = 1;
+      while (remainingHeight > 0) {
+        const available = page.remainingHeight;
+        const candidate = findSplit({ ...block, measuredHeight: remainingHeight, splitAt: block.splitAt.map(point => point - (block.measuredHeight - remainingHeight)) }, available);
+        if (candidate === null) break;
+        page.blocks.push({ id: block.id, height: candidate, state: FLOW_STATE.SPLIT, part, sourceHeight: block.measuredHeight });
+        page.usedHeight += candidate;
+        page.remainingHeight -= candidate;
+        remainingHeight -= candidate;
+        part += 1;
+        if (remainingHeight <= 0) break;
+        flush();
+      }
+      if (remainingHeight <= 0) continue;
     }
 
     if (page.blocks.length) {
@@ -134,12 +143,23 @@ export function paginateBlocks(blockInputs, pageInput = {}) {
 
     split = findSplit(block, page.remainingHeight);
     if (split !== null) {
-      page.blocks.push({ id: block.id, height: split, state: FLOW_STATE.SPLIT, part: 1, sourceHeight: block.measuredHeight });
-      page.usedHeight += split; page.remainingHeight -= split; flush();
-      const remainder = block.measuredHeight - split;
-      page.blocks.push({ id: block.id, height: remainder, state: FLOW_STATE.SPLIT, part: 2, sourceHeight: block.measuredHeight });
-      page.usedHeight += remainder; page.remainingHeight -= remainder;
-      continue;
+      let remainingHeight = block.measuredHeight;
+      let offset = 0;
+      let part = 1;
+      while (remainingHeight > 0) {
+        const available = page.remainingHeight;
+        const candidate = findSplit({ ...block, measuredHeight: remainingHeight, splitAt: block.splitAt.map(point => point - offset) }, available);
+        if (candidate === null) break;
+        page.blocks.push({ id: block.id, height: candidate, state: FLOW_STATE.SPLIT, part, sourceHeight: block.measuredHeight, offset });
+        page.usedHeight += candidate;
+        page.remainingHeight -= candidate;
+        remainingHeight -= candidate;
+        offset += candidate;
+        part += 1;
+        if (remainingHeight <= 0) break;
+        flush();
+      }
+      if (remainingHeight <= 0) continue;
     }
 
     page.blocks.push({ id: block.id, height: block.measuredHeight, state: FLOW_STATE.OVERFLOW });
