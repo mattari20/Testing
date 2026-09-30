@@ -156,3 +156,14 @@ The implementation has advanced from page-container/content association into a m
 Implementation files are under `src/ui/` and `src/validation/`, with batch documentation in `docs/03-implementation/M118-M127_CONTENT_FRAGMENTATION_AND_DISTRIBUTION.md`.
 
 **Important validation boundary:** this batch does not claim arbitrary DOM/text-node fragmentation inside an individual rendered block. A block is distributable as a measured unit unless its layout contract supplies valid split points. Actual browser-green results must only be reported after real browser execution evidence is available.
+
+
+## M128–M137 true fragmentation batch
+
+The preview architecture has advanced from measured block distribution to a declared rendered-fragment boundary. The pagination engine now supports multiple split parts when valid split points are supplied. Fragment geometry, clipping metadata, fragment planning, distribution, continuity validation, runtime integration, and long-content evidence contracts are now stored in the repository.
+
+The implementation deliberately does not invent semantic text split points. Splittable rendered blocks must provide compatible split points through the layout contract. This keeps pagination deterministic and avoids silent content mutation.
+
+Batch documentation: `docs/03-implementation/M128-M137_TRUE_FRAGMENTATION.md`.
+
+Runtime/CI status remains evidence-controlled; no browser-green result is claimed without an actual execution record.
