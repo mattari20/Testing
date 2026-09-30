@@ -2,7 +2,7 @@ import { evaluateProductionHandoff } from './production-handoff-gate.js';
 
 export const PRODUCTION_EVIDENCE_PACKAGE_VERSION = '1.0.0';
 
-const FORBIDDEN_KEY_PATTERN = /(password|passwd|secret|api[_-]?key|token|private[_-]?key|credential)/i;
+const FORBIDDEN_KEY_PATTERN = /^(password|passwd|secret|api[_-]?key|token|private[_-]?key|credential)$/i;
 
 function assertPlainObject(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -10,10 +10,19 @@ function assertPlainObject(value, label) {
   }
 }
 
+function containsForbiddenKey(value) {
+  if (!value || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return value.some(containsForbiddenKey);
+
+  return Object.entries(value).some(([key, child]) => (
+    FORBIDDEN_KEY_PATTERN.test(key) || containsForbiddenKey(child)
+  ));
+}
+
 export function createProductionEvidencePackage({ smokeRecord, productionSourceBridgeState, evidenceReferences = [] } = {}) {
   assertPlainObject(smokeRecord, 'smokeRecord');
 
-  if (FORBIDDEN_KEY_PATTERN.test(JSON.stringify(smokeRecord))) {
+  if (containsForbiddenKey(smokeRecord)) {
     throw new Error('Production evidence package cannot contain secret-like keys.');
   }
 
@@ -64,7 +73,7 @@ export function validateProductionEvidencePackage(pkg) {
     errors.push('evidenceReferences must be an array.');
   }
 
-  if (FORBIDDEN_KEY_PATTERN.test(JSON.stringify(pkg))) {
+  if (containsForbiddenKey(pkg)) {
     errors.push('Production evidence package contains secret-like keys.');
   }
 
