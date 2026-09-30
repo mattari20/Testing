@@ -1,21 +1,30 @@
 <!doctype html><html><body>
-<div id="preview"></div>
+<div id="editor">
+  <div data-v2-editor-form></div>
+  <div id="preview" data-v2-editor-preview-root></div>
+</div>
 <script type="module">
 import { mountV2EditorRuntime } from '/src/ui/editor-runtime.js';
 import { switchTemplate } from '/src/ui/template-preview-controller.js';
 
-const input={profileData:{careerData:{
-  identity:{fullName:'Preview User',jobTitle:'Engineer',email:'preview@example.com'},
-  sections:[
-    {id:'summary-1',type:'summary',title:'Summary',visibility:true,fields:[{id:'text',type:'text',label:'Summary',value:'Initial summary',visibility:true}],entries:[]},
-    {id:'experience-1',type:'experience',title:'Experience',visibility:true,fields:[],entries:[{id:'job-1',visibility:true,values:{company:'Example Company',title:'Engineer',duration:'2026',desc:'Built software'}}]},
-    {id:'education-1',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'edu-1',visibility:true,values:{institute:'Example University',year:'2025',degree:'BS',grade:'A'}}]}
-  ]
-},},cvData:{configuration:{template:{id:'t01-modern-minimalist-cv-design_modern',version:'2.0.0'}}}};
-window.editorRuntime=mountV2EditorRuntime(document.querySelector('#editor'),input);
-window.renderTemplate=async(id)=>{
-  switchTemplate(window.editorRuntime.surface,id,{templateVersion:'2.0.0'});
+const input = {
+  profileData: {
+    careerData: {
+      identity: { fullName: 'Preview User', jobTitle: 'Engineer', email: 'preview@example.com' },
+      sections: [
+        { id: 'summary-1', type: 'summary', title: 'Summary', visibility: true, fields: [{ id: 'text', type: 'text', label: 'Summary', value: 'Initial summary', visibility: true }], entries: [] },
+        { id: 'experience-1', type: 'experience', title: 'Experience', visibility: true, fields: [], entries: [{ id: 'job-1', visibility: true, values: { company: 'Example Company', title: 'Engineer', duration: '2026', desc: 'Built software' } }] },
+        { id: 'education-1', type: 'education', title: 'Education', visibility: true, fields: [], entries: [{ id: 'edu-1', visibility: true, values: { institute: 'Example University', year: '2025', degree: 'BS', grade: 'A' } }] }
+      ]
+    }
+  },
+  cvData: { configuration: { template: { id: 't01-modern-minimalist-cv-design_modern', version: '2.0.0' } } }
+};
+
+window.editorRuntime = mountV2EditorRuntime(document.querySelector('#editor'), input);
+window.renderTemplate = async id => {
+  switchTemplate(window.editorRuntime.surface, id, { templateVersion: '2.0.0' });
   return window.editorRuntime.previewRuntime?.refresh();
 };
-window.testReady=true;
+window.testReady = true;
 </script></body></html>
