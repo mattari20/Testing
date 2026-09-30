@@ -10,20 +10,28 @@ test('production entry exposes a stable V2 mount boundary without selecting depl
 });
 
 test('production entry resolves the configured root before mounting', () => {
-  let mounted = false;
   const root = {
-    ownerDocument: {
-      createElement() {
-        return { innerHTML: '', childNodes: [] };
-      }
+    querySelector(selector) {
+      assert.equal(selector, '[data-v2-editor-form]');
+      return null;
     },
-    querySelector() { return null; },
-    querySelectorAll() { return []; }
+    querySelectorAll() {
+      return [];
+    }
   };
-  const documentLike = { querySelector(selector) { assert.equal(selector, '#editor'); return root; } };
+  const documentLike = {
+    querySelector(selector) {
+      assert.equal(selector, '#editor');
+      return root;
+    }
+  };
   const entry = createV2ProductionEntry({ rootSelector: '#editor' });
-  assert.throws(() => entry.mount(documentLike), /data-v2-editor-form|mount/i);
-  assert.equal(mounted, false);
+  const mounted = entry.mount(documentLike);
+
+  assert.equal(mounted.version, '1.0.0');
+  assert.equal(typeof mounted.render, 'function');
+  assert.equal(typeof mounted.destroy, 'function');
+  mounted.destroy();
 });
 
 test('missing production root is rejected explicitly', () => {
