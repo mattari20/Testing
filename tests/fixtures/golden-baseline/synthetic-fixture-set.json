@@ -1,0 +1,466 @@
+{
+  "schemaVersion": "1.0.0",
+  "source": "synthetic-sanitized-golden-baseline-input",
+  "privacy": "no-production-personal-data",
+  "fixtures": [
+    {
+      "id": "A-minimal-cv",
+      "purpose": "Minimal CV",
+      "profile": {
+        "identity": {
+          "fullName": "Sample User",
+          "jobTitle": "Software Engineer"
+        },
+        "sections": []
+      },
+      "configuration": {
+        "hiddenSections": [],
+        "hiddenFields": []
+      }
+    },
+    {
+      "id": "B-complete-cv",
+      "purpose": "Complete CV",
+      "profile": {
+        "identity": {
+          "fullName": "Sample User",
+          "jobTitle": "Software Engineer",
+          "email": "sample@example.invalid",
+          "phone": "+0000000000",
+          "whatsapp": "+0000000000",
+          "address": "Sample Address",
+          "dateOfBirth": "1990-01-01",
+          "cnic": "00000-0000000-0",
+          "religion": "Sample",
+          "linkedin": "https://example.invalid/profile",
+          "website": "https://example.invalid"
+        },
+        "sections": [
+          {
+            "id": "summary",
+            "type": "summary",
+            "title": "Summary",
+            "visibility": true,
+            "fields": [
+              {
+                "id": "text",
+                "type": "text",
+                "label": "Summary",
+                "value": "Synthetic summary for validation.",
+                "visibility": true
+              }
+            ],
+            "entries": []
+          },
+          {
+            "id": "education",
+            "type": "education",
+            "title": "Education",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "edu-1",
+                "values": {
+                  "degree": "BSc",
+                  "institute": "Sample University",
+                  "year": "2012",
+                  "grade": "A"
+                },
+                "visibility": true
+              }
+            ]
+          },
+          {
+            "id": "experience",
+            "type": "experience",
+            "title": "Experience",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "exp-1",
+                "values": {
+                  "company": "Sample Company",
+                  "duration": "2018-2020",
+                  "title": "Engineer",
+                  "description": "Synthetic experience."
+                }
+              },
+              {
+                "id": "exp-2",
+                "values": {
+                  "company": "Sample Labs",
+                  "duration": "2020-2024",
+                  "title": "Senior Engineer",
+                  "description": "Synthetic experience."
+                }
+              }
+            ]
+          },
+          {
+            "id": "projects",
+            "type": "projects",
+            "title": "Projects",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "project-1",
+                "values": {
+                  "name": "Sample Project",
+                  "description": "Synthetic project."
+                }
+              }
+            ]
+          },
+          {
+            "id": "skills",
+            "type": "skills",
+            "title": "Skills",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "skill-1",
+                "values": {
+                  "skill": "JavaScript"
+                }
+              },
+              {
+                "id": "skill-2",
+                "values": {
+                  "skill": "Architecture"
+                }
+              }
+            ]
+          },
+          {
+            "id": "languages",
+            "type": "languages",
+            "title": "Languages",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "lang-1",
+                "values": {
+                  "language": "English"
+                }
+              },
+              {
+                "id": "lang-2",
+                "values": {
+                  "language": "Urdu"
+                }
+              }
+            ]
+          },
+          {
+            "id": "achievements",
+            "type": "achievements",
+            "title": "Achievements",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "achievement-1",
+                "values": {
+                  "title": "Sample Achievement",
+                  "description": "Synthetic achievement."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "configuration": {
+        "hiddenSections": [],
+        "hiddenFields": []
+      }
+    },
+    {
+      "id": "C-long-cv",
+      "purpose": "Long CV",
+      "profile": {
+        "identity": {
+          "fullName": "Long Profile",
+          "jobTitle": "Senior Professional"
+        },
+        "sections": [
+          {
+            "id": "experience",
+            "type": "experience",
+            "title": "Experience",
+            "visibility": true,
+            "repeatable": true,
+            "fields": [],
+            "entries": [
+              {
+                "id": "exp-1",
+                "values": {
+                  "company": "Sample Company 1",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 0
+              },
+              {
+                "id": "exp-2",
+                "values": {
+                  "company": "Sample Company 2",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 1
+              },
+              {
+                "id": "exp-3",
+                "values": {
+                  "company": "Sample Company 3",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 2
+              },
+              {
+                "id": "exp-4",
+                "values": {
+                  "company": "Sample Company 4",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 3
+              },
+              {
+                "id": "exp-5",
+                "values": {
+                  "company": "Sample Company 5",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 4
+              },
+              {
+                "id": "exp-6",
+                "values": {
+                  "company": "Sample Company 6",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 5
+              },
+              {
+                "id": "exp-7",
+                "values": {
+                  "company": "Sample Company 7",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 6
+              },
+              {
+                "id": "exp-8",
+                "values": {
+                  "company": "Sample Company 8",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 7
+              },
+              {
+                "id": "exp-9",
+                "values": {
+                  "company": "Sample Company 9",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 8
+              },
+              {
+                "id": "exp-10",
+                "values": {
+                  "company": "Sample Company 10",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 9
+              },
+              {
+                "id": "exp-11",
+                "values": {
+                  "company": "Sample Company 11",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 10
+              },
+              {
+                "id": "exp-12",
+                "values": {
+                  "company": "Sample Company 12",
+                  "duration": "2010-2020",
+                  "title": "Professional Role",
+                  "description": "Synthetic long-form experience content used only for pagination validation."
+                },
+                "visibility": true,
+                "order": 11
+              }
+            ]
+          }
+        ]
+      },
+      "configuration": {
+        "hiddenSections": [],
+        "hiddenFields": []
+      }
+    },
+    {
+      "id": "D-visibility-matrix",
+      "purpose": "Visibility Matrix",
+      "profile": {
+        "identity": {
+          "fullName": "Visibility User",
+          "jobTitle": "Engineer"
+        },
+        "sections": [
+          {
+            "id": "summary",
+            "type": "summary",
+            "title": "Summary",
+            "visibility": false,
+            "fields": [
+              {
+                "id": "text",
+                "type": "text",
+                "label": "Summary",
+                "value": "Hidden summary",
+                "visibility": false
+              }
+            ],
+            "entries": []
+          }
+        ]
+      },
+      "configuration": {
+        "hiddenSections": [
+          "summary"
+        ],
+        "hiddenFields": [
+          "summary.text"
+        ]
+      }
+    },
+    {
+      "id": "E-theme-matrix",
+      "purpose": "Theme Matrix",
+      "profile": {
+        "identity": {
+          "fullName": "Theme User",
+          "jobTitle": "Designer"
+        },
+        "sections": []
+      },
+      "configuration": {
+        "presentation": {
+          "theme": "synthetic-theme"
+        }
+      }
+    },
+    {
+      "id": "F-template-matrix",
+      "purpose": "Template Matrix",
+      "profile": {
+        "identity": {
+          "fullName": "Template User",
+          "jobTitle": "Engineer"
+        },
+        "sections": []
+      },
+      "configuration": {
+        "template": {
+          "id": "t01-modern-minimalist-cv-design_modern",
+          "version": "v1-baseline"
+        }
+      }
+    },
+    {
+      "id": "G-mobile-preview",
+      "purpose": "Mobile Preview",
+      "profile": {
+        "identity": {
+          "fullName": "Mobile User",
+          "jobTitle": "Engineer"
+        },
+        "sections": []
+      },
+      "configuration": {
+        "presentation": {
+          "viewport": "mobile"
+        }
+      }
+    },
+    {
+      "id": "H-desktop-preview",
+      "purpose": "Desktop Preview",
+      "profile": {
+        "identity": {
+          "fullName": "Desktop User",
+          "jobTitle": "Engineer"
+        },
+        "sections": []
+      },
+      "configuration": {
+        "presentation": {
+          "viewport": "desktop"
+        }
+      }
+    },
+    {
+      "id": "I-export",
+      "purpose": "Export",
+      "profile": {
+        "identity": {
+          "fullName": "Export User",
+          "jobTitle": "Engineer"
+        },
+        "sections": []
+      },
+      "configuration": {
+        "outputs": [
+          "pdf",
+          "print",
+          "docx"
+        ]
+      }
+    }
+  ]
+}
