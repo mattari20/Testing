@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {createEditorPreviewOverflowEvidence} from '../../src/validation/editor-preview-overflow-evidence.js';
+test('M126 evidence records overflow diagnostics',()=>{const r=createEditorPreviewOverflowEvidence({measured:'passed',pagination:'passed',overflowDiagnosed:'passed',overflowBlocks:1});assert.equal(r.status,'passed');assert.equal(r.overflowBlocks,1);});
