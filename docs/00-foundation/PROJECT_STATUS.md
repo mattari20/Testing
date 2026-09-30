@@ -179,3 +179,7 @@ Completed fragment runtime integration and safety hardening. Quality metadata, c
 
 ## M158–M167 Batch Record
 Completed browser pagination hardening contracts: page geometry, navigation normalization, distributed-fragment DOM integrity, repeated-header DOM semantics, runtime evidence, and browser overflow validation. Actual Chromium execution of the integrated fragmentation runtime remains required.
+
+
+## M168–M177 Batch Record
+Completed the integrated browser-fragment validation contract batch. Browser probes, navigation, fragment integrity, evidence models, executable Chromium harness, and validation documentation are now stored. The harness is present, but no actual Chromium execution result is claimed from repository writes alone.
