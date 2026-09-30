@@ -12,8 +12,8 @@ export function mountV2EditorRuntime(root, input = {}) {
   let fieldBinding = null;
   let actionBinding = null;
   let reorderBinding = null;
-  const previewRoot = root.querySelector('[data-v2-editor-preview-root]');
-  const previewRuntime = previewRoot && input.preview !== false
+  const previewRoot = input.preview === true ? root.querySelector('[data-v2-editor-preview-root]') : null;
+  const previewRuntime = previewRoot
     ? createEditorLivePreviewRuntime(mounted.surface, previewRoot, input.previewOptions || {})
     : null;
   const render = () => {
