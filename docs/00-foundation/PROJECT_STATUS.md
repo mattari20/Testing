@@ -260,3 +260,10 @@ Established the V1 production source bridge boundary. The currently observable p
 The new bridge has explicit `v1`, `v2`, and `blocked` states. V1 remains the safe default; V2 handoff requires an explicit template identifier; blocked state cannot silently fall back. Dedicated tests and CI validation were added.
 
 **R6 status remains OPEN.** The bridge is an implementation boundary, not production evidence. Live V2 execution and the nine-point smoke-test contract are still required before production integration can be accepted.
+
+
+## M278–M287 Batch Record
+
+Added the machine-checkable production handoff gate for R6. The gate requires a complete validated production smoke-test record and an explicit V2 production source bridge state before R6 can become PASS. Incomplete evidence or a V1 bridge keeps R6 OPEN.
+
+Dedicated tests and CI validation were added. This milestone does not claim that V2 is deployed or that R6 has passed; actual production execution remains the required external evidence step.
