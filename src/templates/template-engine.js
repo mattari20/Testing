@@ -17,6 +17,10 @@ export const CAPABILITY = Object.freeze({
   RETIRED: 'retired'
 });
 
+export const V1_TEMPLATE_COMPATIBILITY_STATE = Object.freeze({
+  ASSET_RECONCILIATION: 'asset-reconciliation'
+});
+
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const list = value => Array.isArray(value) ? [...new Set(value.map(String))] : [];
