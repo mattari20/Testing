@@ -48,6 +48,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   });
   return Object.freeze({
     ...mounted,
+    previewRuntime,
     render,
     destroy() {
       fieldBinding?.destroy();
