@@ -25,6 +25,9 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Validate Golden Baseline fixture inputs
+        run: npm run test:golden-fixtures
+
       - name: Run M26 Native V2 browser evidence validation
         run: npm run test:m26
 
