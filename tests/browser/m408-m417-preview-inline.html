@@ -1,0 +1,25 @@
+<!doctype html><html><body>
+<div id="preview"></div>
+<script type="module">
+import { createEditorSurface } from '/src/application/editor-surface.js';
+import { loadNativeTemplateSource } from '/src/templates/native-template-source-loader.js';
+import { mountTemplatePreview } from '/src/ui/template-preview-mounter.js';
+import { createApplicationSnapshot } from '/src/application/cv-application.js';
+import { switchTemplate } from '/src/ui/template-preview-controller.js';
+
+const input={profileData:{careerData:{
+  identity:{fullName:'Preview User',jobTitle:'Engineer',email:'preview@example.com'},
+  sections:[
+    {id:'summary-1',type:'summary',title:'Summary',visibility:true,fields:[{id:'text',type:'text',label:'Summary',value:'Initial summary',visibility:true}],entries:[]},
+    {id:'experience-1',type:'experience',title:'Experience',visibility:true,fields:[],entries:[{id:'job-1',visibility:true,values:{company:'Example Company',title:'Engineer',duration:'2026',desc:'Built software'}}]},
+    {id:'education-1',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'edu-1',visibility:true,values:{institute:'Example University',year:'2025',degree:'BS',grade:'A'}}]}
+  ]
+}}};
+window.surface=createEditorSurface(input);
+window.renderTemplate=async(id)=>{
+  switchTemplate(window.surface,id,{templateVersion:'2.0.0'});
+  const source=await loadNativeTemplateSource(id);
+  return mountTemplatePreview(document.querySelector('#preview'),source.sourceHtml,createApplicationSnapshot(window.surface.getState().session.application),{templateId:id,templateVersion:source.version,surface:window.surface});
+};
+window.testReady=true;
+</script></body></html>
