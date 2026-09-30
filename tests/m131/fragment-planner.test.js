@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {planRenderedFragments} from '../../src/ui/editor-preview-fragment-planner.js';test('M131 plans fragments from assignments',()=>{const e={};const r=planRenderedFragments([{id:'x',element:e}],[{number:1,blocks:[{id:'x',part:1,height:50,state:'split'}]}]);assert.equal(r[0].fragments[0].element,e);});
