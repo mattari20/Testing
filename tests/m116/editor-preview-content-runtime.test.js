@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {renderPreviewContent} from '../../src/ui/editor-preview-content-runtime.js';test('M116 requires a preview root',()=>{assert.throws(()=>renderPreviewContent(null,{pages:[]},'<p>x</p>'),/Preview root is required/);});
