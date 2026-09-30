@@ -1,14 +1,17 @@
 <!doctype html><html><body>
-<div id="editor" data-v2-editor-root>
-  <div data-v2-editor-form></div>
-</div>
+<div id="editor" data-v2-editor-root><div data-v2-editor-form></div></div>
 <script type="module">
-import { mountV2EditorRuntime } from '/src/ui/editor-runtime.js';
-const input={profileData:{identity:{fullName:'Browser User'},sections:[
-{id:'personal',type:'personal',title:'Personal',visibility:true,fields:[{id:'name',type:'text',label:'Name',value:'Browser User',visibility:true}],entries:[]}
-]}};
-window.editorRuntime=mountV2EditorRuntime(document.querySelector('#editor'),input);
-window.editorRuntime.render();
-window.editorRuntimeTestReady=true;
+import('/src/ui/editor-runtime.js')
+  .then(({ mountV2EditorRuntime }) => {
+    const input={profileData:{identity:{fullName:'Browser User'},sections:[
+      {id:'personal',type:'personal',title:'Personal',visibility:true,fields:[{id:'name',type:'text',label:'Name',value:'Browser User',visibility:true}],entries:[]}
+    ]}};
+    window.editorRuntime=mountV2EditorRuntime(document.querySelector('#editor'),input);
+    window.editorRuntime.render();
+    window.editorRuntimeTestReady=true;
+  })
+  .catch(error => {
+    window.editorRuntimeLoadError=String(error?.stack||error?.message||error);
+  });
 </script>
 </body></html>
