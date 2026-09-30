@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {applyFragmentSlice} from '../../src/ui/editor-preview-fragment-style.js';test('M130 applies slice metadata',()=>{const e={style:{},dataset:{}};applyFragmentSlice(e,{offset:30,height:50,part:2});assert.equal(e.style.height,'50px');assert.equal(e.dataset.v2FragmentPart,'2');});
