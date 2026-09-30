@@ -161,6 +161,17 @@
     "test:m125": "node --test tests/m125/editor-preview-block-pagination-evidence.test.js",
     "test:m126": "node --test tests/m126/editor-preview-overflow-evidence.test.js",
     "test:m127": "node --test tests/m127/content-fragmentation-batch.test.js",
-    "test:m118-m127": "npm run test:m118 && npm run test:m119 && npm run test:m120 && npm run test:m121 && npm run test:m122 && npm run test:m123 && npm run test:m124 && npm run test:m125 && npm run test:m126 && npm run test:m127"
+    "test:m118-m127": "npm run test:m118 && npm run test:m119 && npm run test:m120 && npm run test:m121 && npm run test:m122 && npm run test:m123 && npm run test:m124 && npm run test:m125 && npm run test:m126 && npm run test:m127",
+    "test:m128": "node --test tests/m128/multi-page-split.test.js",
+    "test:m129": "node --test tests/m129/fragment-geometry.test.js",
+    "test:m130": "node --test tests/m130/fragment-style.test.js",
+    "test:m131": "node --test tests/m131/fragment-planner.test.js",
+    "test:m132": "node --test tests/m132/fragment-distributor.test.js",
+    "test:m133": "node --test tests/m133/continuity.test.js",
+    "test:m134": "node --test tests/m134/fragment-runtime.test.js",
+    "test:m135": "node --test tests/m135/fragment-evidence.test.js",
+    "test:m136": "node --test tests/m136/long-content-evidence.test.js",
+    "test:m137": "node --test tests/m137/batch-contract.test.js",
+    "test:m128-m137": "npm run test:m128 && npm run test:m129 && npm run test:m130 && npm run test:m131 && npm run test:m132 && npm run test:m133 && npm run test:m134 && npm run test:m135 && npm run test:m136 && npm run test:m137"
   }
 }
