@@ -319,3 +319,8 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 ## M328–M337
 
 Added the Word-template asset readiness audit. Library evidence confirms three candidate source DOCX files for T03, T04 and T05, but they require normalization; matching source documents for T01, T02, T06 and T07 were not located. The machine-readable audit keeps all seven assets release-blocked until individually normalized, reviewed, deployed and marked READY. No binary asset is falsely marked ready.
+
+
+## M338–M347
+
+Normalized candidate DOCX assets for T03, T04 and T05 from the available source documents. All three now render as one-page A4 documents and passed an editable-text render check and package inspection. They remain REVIEW REQUIRED rather than READY until Microsoft Word/Word Online manual acceptance, longer-content checks, and repository deployment are completed. Binary assets are supplied separately because the available GitHub write interface only accepts UTF-8 text.
