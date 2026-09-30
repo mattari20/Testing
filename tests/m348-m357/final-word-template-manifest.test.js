@@ -15,4 +15,5 @@ test('final Word asset manifest contains exactly seven unique production assets'
 
 test('final Word asset manifest uses the public download base path', () => {
   assert.equal(manifest.productionBasePath, '/cv-builder/word-templates/');
+  assert.match(manifest.releasePackageSha256, /^[a-f0-9]{64}$/);
 });
