@@ -7,7 +7,7 @@ export function applyFragmentSlice(element,fragment={}){
  element.style.height=`${height}px`;
  element.style.boxSizing='border-box';
  element.style.position=element.style.position||'relative';
- element.style.transform=offset>0?`translateY(-${offset}px)`):'';
+ element.style.transform=offset>0?`translateY(-${offset}px)`:'';
  element.dataset.v2FragmentPart=String(fragment.part||1);
  element.dataset.v2FragmentOffset=String(offset);
  return element;
