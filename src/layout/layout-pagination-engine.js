@@ -116,18 +116,55 @@ export function paginateBlocks(blockInputs, pageInput = {}) {
     let split = findSplit(block, page.remainingHeight);
     if (split !== null && page.remainingHeight > 0) {
       let remainingHeight = block.measuredHeight;
+      let offset = 0;
       let part = 1;
       while (remainingHeight > 0) {
         const available = page.remainingHeight;
-        const candidate = findSplit({ ...block, measuredHeight: remainingHeight, splitAt: block.splitAt.map(point => point - (block.measuredHeight - remainingHeight)) }, available);
-        if (candidate === null) break;
-        page.blocks.push({ id: block.id, height: candidate, state: FLOW_STATE.SPLIT, part, sourceHeight: block.measuredHeight });
-        page.usedHeight += candidate;
-        page.remainingHeight -= candidate;
-        remainingHeight -= candidate;
-        part += 1;
-        if (remainingHeight <= 0) break;
-        flush();
+        const relativePoints = block.splitAt
+          .map(point => point - offset)
+          .filter(point => point > 0 && point < remainingHeight)
+          .sort((a, b) => a - b);
+        const candidate = relativePoints.filter(point => point <= available).pop() || null;
+
+        if (candidate !== null) {
+          page.blocks.push({
+            id: block.id,
+            height: candidate,
+            state: FLOW_STATE.SPLIT,
+            part,
+            sourceHeight: block.measuredHeight,
+            offset
+          });
+          page.usedHeight += candidate;
+          page.remainingHeight -= candidate;
+          remainingHeight -= candidate;
+          offset += candidate;
+          part += 1;
+          if (remainingHeight <= 0) break;
+          flush();
+          continue;
+        }
+
+        if (canFit({ ...block, measuredHeight: remainingHeight, minHeight: 0 }, page.remainingHeight)) {
+          page.blocks.push({
+            id: block.id,
+            height: remainingHeight,
+            state: FLOW_STATE.SPLIT,
+            part,
+            sourceHeight: block.measuredHeight,
+            offset
+          });
+          page.usedHeight += remainingHeight;
+          page.remainingHeight -= remainingHeight;
+          remainingHeight = 0;
+          break;
+        }
+
+        if (page.blocks.length) {
+          flush();
+          continue;
+        }
+        break;
       }
       if (remainingHeight <= 0) continue;
     }
@@ -136,28 +173,43 @@ export function paginateBlocks(blockInputs, pageInput = {}) {
       flush();
       if (canFit(block, page.remainingHeight)) {
         page.blocks.push({ id: block.id, height: block.measuredHeight, state: FLOW_STATE.MOVED });
-        page.usedHeight += block.measuredHeight; page.remainingHeight -= block.measuredHeight;
+        page.usedHeight += block.measuredHeight;
+        page.remainingHeight -= block.measuredHeight;
         continue;
       }
     }
 
     split = findSplit(block, page.remainingHeight);
-    if (split !== null) {
+    if (split !== null && page.remainingHeight > 0) {
       let remainingHeight = block.measuredHeight;
       let offset = 0;
       let part = 1;
       while (remainingHeight > 0) {
         const available = page.remainingHeight;
-        const candidate = findSplit({ ...block, measuredHeight: remainingHeight, splitAt: block.splitAt.map(point => point - offset) }, available);
-        if (candidate === null) break;
-        page.blocks.push({ id: block.id, height: candidate, state: FLOW_STATE.SPLIT, part, sourceHeight: block.measuredHeight, offset });
-        page.usedHeight += candidate;
-        page.remainingHeight -= candidate;
-        remainingHeight -= candidate;
-        offset += candidate;
-        part += 1;
-        if (remainingHeight <= 0) break;
-        flush();
+        const relativePoints = block.splitAt
+          .map(point => point - offset)
+          .filter(point => point > 0 && point < remainingHeight)
+          .sort((a, b) => a - b);
+        const candidate = relativePoints.filter(point => point <= available).pop() || null;
+        if (candidate !== null) {
+          page.blocks.push({ id: block.id, height: candidate, state: FLOW_STATE.SPLIT, part, sourceHeight: block.measuredHeight, offset });
+          page.usedHeight += candidate;
+          page.remainingHeight -= candidate;
+          remainingHeight -= candidate;
+          offset += candidate;
+          part += 1;
+          if (remainingHeight <= 0) break;
+          flush();
+          continue;
+        }
+        if (canFit({ ...block, measuredHeight: remainingHeight, minHeight: 0 }, page.remainingHeight)) {
+          page.blocks.push({ id: block.id, height: remainingHeight, state: FLOW_STATE.SPLIT, part, sourceHeight: block.measuredHeight, offset });
+          page.usedHeight += remainingHeight;
+          page.remainingHeight -= remainingHeight;
+          remainingHeight = 0;
+          break;
+        }
+        break;
       }
       if (remainingHeight <= 0) continue;
     }
