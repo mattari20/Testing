@@ -1,6 +1,7 @@
 import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js';
+import { bindPreviewInlineEditing } from './editor-preview-inline-controller.js';
 
-export const TEMPLATE_PREVIEW_MOUNTER_VERSION = '1.0.0';
+export const TEMPLATE_PREVIEW_MOUNTER_VERSION = '1.1.0';
 
 export function mountTemplatePreview(root, templateSource, documentData, options = {}) {
   if (!root) throw new Error('Preview root is required.');
@@ -12,5 +13,12 @@ export function mountTemplatePreview(root, templateSource, documentData, options
   const definition = typeof templateSource === 'string' ? createNativeRenderDefinition({ id: options.templateId || 'preview', sourceHtml: templateSource, templateVersion: options.templateVersion }) : templateSource;
   const rendered = renderNativeTemplateSource(definition, documentData, root.ownerDocument);
   if (rendered?.html) host.innerHTML = rendered.html;
-  return Object.freeze({ version: TEMPLATE_PREVIEW_MOUNTER_VERSION, rendered, host });
+  const inlineBinding = options.surface ? bindPreviewInlineEditing(host, options.surface) : null;
+  return Object.freeze({
+    version: TEMPLATE_PREVIEW_MOUNTER_VERSION,
+    rendered,
+    host,
+    inlineEditing: inlineBinding,
+    destroy() { inlineBinding?.destroy(); }
+  });
 }
