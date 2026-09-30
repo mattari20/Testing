@@ -281,3 +281,12 @@ Added the machine-checkable final release gate for R1–R8. The new gate require
 
 This batch does not close any external gate. The current release state remains R1/R2/R3 CONDITIONAL, R4/R5 PASS, R6/R7 OPEN, and R8 BLOCKED.
 
+## Current CI verification after M298–M307
+
+The current main-branch release commit `4bde21a20da081a6948da8b1bc406db64b8561cb` was validated by GitHub Actions after resolving two test defects exposed during the batch:
+
+- V2 Integration Validation run 36700733227 — SUCCESS.
+- Native V2 Browser Validation run 36700733229 — SUCCESS.
+
+The successful browser run re-establishes current R4/R5 evidence for the configured browser validation and integrated fragmentation suites. It does not close R1, R2, R3, R6, or R7, and therefore R8 remains blocked.
+
