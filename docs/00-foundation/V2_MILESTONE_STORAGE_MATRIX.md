@@ -30,6 +30,7 @@ Repository-level storage audit, not a runtime-pass certificate.
 - M208–M217: hardened browser evidence, before/after screenshots, JSON evidence, fragment ordering, navigation and CI artifact publication
 - M218–M227: production integration evidence contract and automated R6 acceptance model
 - M228–M237: controlled production smoke-test record and operator evidence template
+- M238–M247: machine-checkable production smoke-test validation and R6 contract mapping
 
 ## Runtime evidence status
 Stored browser tests are not automatically runtime-passed. The current release gate requires an observed successful GitHub Actions run for the configured browser workflow and inspection of its evidence artifacts.
