@@ -239,3 +239,10 @@ This is fixture preparation only. It does not replace authoritative V1 output ev
 Established the production-integration evidence contract for R6. The repository now has an executable nine-requirement acceptance model covering the V2 production entrypoint, real CV editing, template/live preview, multi-page pagination/fragmentation, PDF/print and DOCX export, V1 data/migration handling, V1 fallback detection, production credential/configuration review, and required smoke-test metadata.
 
 This batch intentionally does **not** claim live production integration. R6 remains OPEN until the contract is executed against the actual production deployment and the resulting evidence is recorded.
+
+
+## M228–M237 Batch Record
+
+Defined the controlled R6 production smoke-test record and a safe operator template. The record captures production URL, exact deployment commit, environment, observation time, functional V2 checks, pagination/fragmentation, export paths, V1 migration/fallback checks, and production configuration review without storing secrets.
+
+This batch prepares the final operational evidence step but does not claim production verification. R6 remains OPEN until the template is completed from an actual deployed V2 environment.
