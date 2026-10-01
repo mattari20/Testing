@@ -4,8 +4,9 @@ import { renderEditorForm } from './editor-form-renderer.js';
 import { bindEditorReorder } from './editor-reorder-controller.js';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
+import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.5.0';
+export const EDITOR_RUNTIME_VERSION = '1.6.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -26,6 +27,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   const recoveryController = persistenceAdapter
     ? createEditorRecoveryController(mounted.surface, persistenceAdapter, persistenceOptions.controller || {})
     : null;
+  const lifecycleController = createEditorLifecycleController(mounted.surface, recoveryController);
 
   const render = () => {
     fieldBinding?.destroy();
@@ -68,9 +70,20 @@ export function mountV2EditorRuntime(root, input = {}) {
     ...mounted,
     previewRuntime,
     persistence: recoveryController,
+    lifecycle: lifecycleController,
+    save() {
+      return lifecycleController.save();
+    },
+    recover() {
+      return lifecycleController.recover();
+    },
+    clearRecovery() {
+      return lifecycleController.clearRecovery();
+    },
     render,
     destroy() {
       recoveryController?.flush();
+      lifecycleController.destroy();
       recoveryController?.destroy();
       fieldBinding?.destroy();
       actionBinding?.destroy();
