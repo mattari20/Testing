@@ -1,0 +1,2 @@
+export const CV_EDITOR_ATS_PANEL_VERSION='1.0.0';
+export function createCVEditorATSPanel(options={}){const analyzer=options.analyzer;if(!analyzer)throw new Error('ATS panel requires analyzer.');function analyze(input={}){return analyzer.analyze?.(input)||analyzer(input);}return Object.freeze({version:CV_EDITOR_ATS_PANEL_VERSION,analyze});}
