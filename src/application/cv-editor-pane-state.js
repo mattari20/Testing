@@ -1,0 +1,2 @@
+export const CV_EDITOR_PANE_STATE_VERSION='1.0.0';
+export function createCVEditorPaneState(options={}){let state={form:true,preview:true,insights:false};function set(name,value){if(name in state)state={...state,[name]:!!value};return get();}function toggle(name){return set(name,!state[name]);}function get(){return Object.freeze({...state});}return Object.freeze({version:CV_EDITOR_PANE_STATE_VERSION,get,set,toggle});}
