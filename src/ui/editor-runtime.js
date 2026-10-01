@@ -29,7 +29,13 @@ export function mountV2EditorRuntime(root, input = {}) {
   const recoveryController = persistenceAdapter
     ? createEditorRecoveryController(mounted.surface, persistenceAdapter, persistenceOptions.controller || {})
     : null;
-  const lifecycleController = createEditorLifecycleController(mounted.surface, recoveryController);
+  const confirmRecovery = persistenceOptions?.confirmRecovery || ((state) => {
+    if (!state?.dirty) return true;
+    const view = root.ownerDocument?.defaultView;
+    if (typeof view?.confirm !== 'function') return false;
+    return view.confirm('You have unsaved CV changes. Recovering will replace them. Continue?');
+  });
+  const lifecycleController = createEditorLifecycleController(mounted.surface, recoveryController, { confirmRecovery });
   const sessionGuard = createEditorSessionGuard(
     lifecycleController,
     input.sessionGuard?.target || root.ownerDocument?.defaultView || null,
@@ -54,7 +60,8 @@ export function mountV2EditorRuntime(root, input = {}) {
     return state;
   };
 
-  if (recoveryController && persistenceOptions.autoRecover === true && recoveryController.hasRecovery()) {
+  if (recoveryController && persistenceOptions.autoRecover === true && recoveryController.hasRecovery()
+      && !mounted.surface.getState().session.dirty) {
     recoveryController.recover();
   }
 
