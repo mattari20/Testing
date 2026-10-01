@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_ACTIONS_VERSION='1.0.0';
+export function createCVEditorPreviewActions(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Preview actions require adapter.');function refresh(){return adapter.renderPreview?.()||null;}return Object.freeze({version:CV_EDITOR_PREVIEW_ACTIONS_VERSION,refresh,destroy(){}});}
