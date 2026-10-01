@@ -171,11 +171,25 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       savedAt,
       lastCommand: 'save'
     };
-    const record = adapter.save(cleanSession);
-    recoveryStatus = 'available';
-    recoveryError = null;
-    if (typeof surface.markSaved === 'function') surface.markSaved(record?.savedAt || savedAt);
-    return record;
+    autosaveStatus = 'saving';
+    lastAutosaveError = null;
+    emit();
+    try {
+      const record = adapter.save(cleanSession);
+      const effectiveSavedAt = record?.savedAt || savedAt;
+      lastAutosavedAt = effectiveSavedAt;
+      autosaveStatus = 'saved';
+      recoveryStatus = 'available';
+      recoveryError = null;
+      if (typeof surface.markSaved === 'function') surface.markSaved(effectiveSavedAt);
+      emit();
+      return record;
+    } catch (error) {
+      autosaveStatus = 'error';
+      lastAutosaveError = String(error?.message || error);
+      emit();
+      throw error;
+    }
   };
 
   return Object.freeze({
