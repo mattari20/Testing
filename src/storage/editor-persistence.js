@@ -147,6 +147,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryContentRelation = 'missing';
   let recoveryDecision = 'none';
   let recoveryActionRequired = false;
+  let recoveryAction = 'none';
   let recoveryLastAction = null;
   let recoveryAuditSequence = 0;
   const recoveryAudit = [];
@@ -169,6 +170,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryContentRelation,
       recoveryDecision,
       recoveryActionRequired,
+      recoveryAction,
       recoveryLastAction,
       recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
       retryCount,
@@ -224,6 +226,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const updateRecoveryActionState = () => {
     recoveryActionRequired = recoveryDecision === 'confirm' || recoveryDecision === 'stale';
+    if (!recoveryActionRequired) recoveryAction = 'none';
+    else if (recoveryAction === 'none') recoveryAction = 'pending';
   };
 
   const recordRecoveryEvent = (type, outcome, reason = null) => {
@@ -422,6 +426,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryContentRelation,
         recoveryDecision,
         recoveryActionRequired,
+        recoveryAction,
         recoveryLastAction,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         retryCount,
@@ -445,6 +450,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryContentRelation,
         recoveryDecision,
         recoveryActionRequired,
+        recoveryAction,
         recoveryLastAction,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
       });
@@ -457,6 +463,49 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     },
     hasRecovery() {
       return Boolean(inspectRecovery());
+    },
+    resolveRecovery(action, options = {}) {
+      if (destroyed) return null;
+      if (action !== 'recover' && action !== 'dismiss') {
+        throw new Error('Recovery action must be recover or dismiss.');
+      }
+      const state = this.getRecoveryState();
+      if (!state.recoveryActionRequired) return null;
+      if (action === 'recover') {
+        recoveryAction = 'recovering';
+        emit();
+        const record = this.recover(options);
+        if (record) recoveryAction = 'resolved';
+        else recoveryAction = 'pending';
+        emit();
+        return record;
+      }
+      ++operationToken;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+        retryTimer = null;
+      }
+      retryCount = 0;
+      adapter.clear?.();
+      recoveryAction = 'dismissed';
+      recoveryActionRequired = false;
+      recoveryStatus = 'missing';
+      recoverySavedAt = null;
+      recoveryRevision = null;
+      recoverySnapshotId = null;
+      recoverySnapshotContentId = null;
+      recoveryIsNewer = false;
+      recoveryRelation = 'missing';
+      recoveryContentRelation = 'missing';
+      recoveryDecision = 'none';
+      recoveryError = null;
+      recordRecoveryEvent('dismiss', 'dismissed');
+      emit();
+      return true;
     },
     recover(options = {}) {
       if (destroyed) return null;
@@ -493,6 +542,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = record.savedAt || null;
       lastAutosaveError = null;
       applyPersistedMetadata(record, 'same');
+      recoveryAction = 'resolved';
+      recordRecoveryEvent('recover', 'recovered');
       emit();
       return record;
     },
@@ -523,6 +574,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryDecision = 'none';
       recoveryError = null;
       recoveryActionRequired = false;
+      recoveryAction = 'none';
       recordRecoveryEvent('clear', 'cleared');
       emit();
     },
