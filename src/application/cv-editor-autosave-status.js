@@ -1,0 +1,2 @@
+export const CV_EDITOR_AUTOSAVE_STATUS_VERSION='1.0.0';
+export function createCVEditorAutosaveStatus(options={}){let enabled=options.enabled!==false,lastSavedAt=null;return Object.freeze({version:CV_EDITOR_AUTOSAVE_STATUS_VERSION,isEnabled:()=>enabled,setEnabled:value=>{enabled=!!value;return enabled;},markSaved:value=>{lastSavedAt=value||new Date().toISOString();return lastSavedAt;},getLastSaved:()=>lastSavedAt});}
