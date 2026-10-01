@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createCVEditorRuntime } from '../../src/application/cv-editor-runtime.js';
+import { createCVIntelligenceCoordinator } from '../../src/application/cv-intelligence-coordinator.js';
+test('M2568-M2583 coordinator analyzes current CV',()=>{const r=createCVEditorRuntime();r.refresh();const c=createCVIntelligenceCoordinator({runtime:r});const x=c.analyzeATS();assert.equal(typeof x.score,'number');});
+test('M2584-M2599 coordinator matches current CV to job input',()=>{const r=createCVEditorRuntime();r.refresh();const c=createCVIntelligenceCoordinator({runtime:r});const x=c.matchJob({keywords:['education']});assert.ok(Array.isArray(x.matched));});
+test('M2600-M2615 inspect combines ATS and job evidence',()=>{const r=createCVEditorRuntime();r.refresh();const c=createCVIntelligenceCoordinator({runtime:r});const x=c.inspect({keywords:['education']});assert.ok(x.ats);assert.ok(x.jobMatch);assert.equal(x.targetedCVId,r.getState().activeDocumentId);});
+test('M2616-M2631 coordinator reads fresh runtime after edits',()=>{const r=createCVEditorRuntime();r.refresh();const c=createCVIntelligenceCoordinator({runtime:r});const before=c.inspect({keywords:['education']});const section=r.getState().projection.sections[0];r.edit('section:'+section.id,{title:'Education'});const after=c.inspect({keywords:['education']});assert.equal(after.targetedCVId,before.targetedCVId);});
+test('M2632-M2647 destroyed coordinator is fenced',()=>{const r=createCVEditorRuntime();const c=createCVIntelligenceCoordinator({runtime:r});c.destroy();assert.equal(c.inspect(),null);});
