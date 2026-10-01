@@ -326,6 +326,9 @@
     "test:m11962-m13561": "node --test tests/m11962-m13561/editor-product-runtime.test.js",
     "test:browser-product": "npm run test:m11962-m13561",
     "test:m13562-m21561": "node --test tests/m13562-m21561/editor-100-groups.test.js",
-    "test:editor-100-groups": "npm run test:m13562-m21561"
+    "test:editor-100-groups": "npm run test:m13562-m21561",
+    "test:production-integration": "node --test tests/m21562-m29561/editor-production-integration.test.js",
+    "test:editor-production": "npm run test:production-integration",
+    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration"
   }
 }

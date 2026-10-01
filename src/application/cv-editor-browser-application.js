@@ -9,7 +9,8 @@ import {createCVEditorIntegratedShell} from './cv-editor-integrated-shell.js';
 import {createCVEditorUXAcceptance} from './cv-editor-ux-acceptance.js';
 import {createCVEditorWorkflowSurface} from './cv-editor-workflow-surface.js';
 import {createCVEditorRealBrowserSurface} from './cv-editor-real-browser-surface.js';
-export const CV_EDITOR_BROWSER_APPLICATION_VERSION='1.5.0';
+import {createCVEditorProductionGate} from './cv-editor-production-gate.js';
+export const CV_EDITOR_BROWSER_APPLICATION_VERSION='1.6.0';
 export function createCVEditorBrowserApplication(options={}){
  const coordinator=createCVEditorCoordinator(options);
  const page=createCVEditorBrowserPage({document:options.document,mount:options.mount,root:options.root,title:options.title,adapter:options.adapter});
@@ -22,8 +23,9 @@ export function createCVEditorBrowserApplication(options={}){
  const acceptance=createCVEditorUXAcceptance({application:{page,model,composition}});
  const workflows=options.adapter?createCVEditorWorkflowSurface({adapter:options.adapter,document:options.document,root:page.shell.root,documentManager:options.documentManager,saveController:options.saveController,exportController:options.exportController}):null;
  const realBrowser=options.adapter?createCVEditorRealBrowserSurface({application:{page,workflows,start:()=>page.mount()},adapter:options.adapter}):null;
+ const productionGate=options.adapter?createCVEditorProductionGate({application:{page,coordinator,model,shell,acceptance,workflows,realBrowser,composition,keyboard,announcer,zoom},adapter:options.adapter}):null;
  let destroyed=false;
- function start(){if(destroyed)return null;page.mount();const state=coordinator.refresh();composition?.start();return state;}
+ function start(){if(destroyed)return null;const gateReport=productionGate?.inspect();if(options.enforceProductionGate&&gateReport&&!gateReport.ready)productionGate.assertReady();page.mount();const state=coordinator.refresh();composition?.start();return state;}
  function stop(){if(destroyed)return;destroyed=true;composition?.stop();keyboard?.destroy();announcer?.destroy();zoom?.destroy();shell.destroy();page.destroy();coordinator.destroy();}
- return Object.freeze({version:CV_EDITOR_BROWSER_APPLICATION_VERSION,coordinator,page,keyboard,announcer,zoom,composition,model,shell,acceptance,workflows,realBrowser,start,stop});
+ return Object.freeze({version:CV_EDITOR_BROWSER_APPLICATION_VERSION,coordinator,page,keyboard,announcer,zoom,composition,model,shell,acceptance,workflows,realBrowser,productionGate,start,stop});
 }
