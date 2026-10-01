@@ -55,7 +55,7 @@ test('M596-M599: matching current and persisted content is reported as same', ()
     revision: 4,
     savedAt: '2026-10-01T04:00:00.000Z'
   });
-  const controller = createEditorRecoveryController(s, {
+  const controller = createEditorRecoveryController(changed, {
     load: () => record,
     save: state => createEditorPersistenceRecord(state, { revision: 5, savedAt: '2026-10-01T05:00:00.000Z' }),
     clear() {}
@@ -71,10 +71,14 @@ test('M600-M603: changed current content is reported as different', () => {
     revision: 4,
     savedAt: '2026-10-01T04:00:00.000Z'
   });
-  s.dispatch({
-    type: 'updateIdentity',
-    payload: { fullName: 'Changed Candidate' },
-    mutatesData: true
+  const changed = createEditorSurface({
+    profileData: {
+      careerData: {
+        identity: { fullName: 'Changed Candidate' },
+        sections: []
+      }
+    },
+    cvData: session().application.targetedCV
   });
   const controller = createEditorRecoveryController(s, {
     load: () => record,
