@@ -421,6 +421,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryRelation,
         recoveryContentRelation,
         recoveryDecision,
+        recoveryActionRequired,
+        recoveryLastAction,
+        recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         retryCount,
         maxRetries
       });
