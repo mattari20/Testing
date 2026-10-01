@@ -1,7 +1,7 @@
 # R3 Runtime Evidence Reconciliation Record
 
 **Date:** 2026-10-01
-**Status:** Conditional
+**Status:** PASS
 
 ## 1. Verified prior browser evidence
 
@@ -71,12 +71,29 @@ The fresh run must:
 
 No historical V1 equivalence claim is required or made for the two unrecovered T01 variants.
 
-## 5. Release decision
+## 5. Fresh current-main evidence
+
+A fresh Native V2 Browser Validation run was observed after the release-affecting template changes:
+
+- Workflow run: `36896592199`
+- Commit: `33b9ad965cb7d604a800e33505271fac04dec1ae`
+- Job: `browser-validation`
+- Conclusion: `success`
+- Golden Baseline fixture validation: success
+- Current Native V2 browser evidence: success
+- V1 browser evidence: success
+- Paired V1/V2 comparison: success
+- Editor browser and preview validation: success
+- M208–M217 integrated fragmentation browser validation: success
+
+Fresh artifacts were uploaded from this run, including `m26-m27-browser-evidence`, `m27-v1-browser-evidence`, `m28-paired-v1-v2-browser-evidence`, and `integrated-fragment-browser-evidence`.
+
+## 6. Release decision
 
 **R3 input readiness: PASS**
 
-**R3 historical/runtime evidence: PARTIALLY OBSERVED**
+**R3 historical/runtime evidence: PASS for the current V2 release evidence boundary**
 
-**R3 final release gate: CONDITIONAL**
+**R3 final release gate: PASS**
 
-Reason: existing browser evidence is real and verified, but it predates the latest release-affecting template changes. A fresh browser run is required before final R3 acceptance.
+The two unrecovered historical T01 ATS/Simple sources remain explicitly documented as unrecovered. Their current V2-native replacements are validated as V2 artifacts and are not represented as historical V1 equivalents.
