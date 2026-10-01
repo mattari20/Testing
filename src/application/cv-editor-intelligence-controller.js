@@ -1,0 +1,2 @@
+export const CV_EDITOR_INTELLIGENCE_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorIntelligenceController(options={}){const panel=options.panel,bus=options.bus;if(!panel)throw new Error('Intelligence controller requires panel.');function analyze(job={},ats={}){const result=panel.inspect(job,ats);bus?.emit('intelligence:updated',result);return result;}return Object.freeze({version:CV_EDITOR_INTELLIGENCE_CONTROLLER_VERSION,analyze,destroy(){}});}
