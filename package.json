@@ -324,6 +324,8 @@
     "test:m10362-m11961": "node --test tests/m10362-m11961/editor-workflow-surface.test.js",
     "test:editor-workflow": "npm run test:m10362-m11961",
     "test:m11962-m13561": "node --test tests/m11962-m13561/editor-product-runtime.test.js",
-    "test:browser-product": "npm run test:m11962-m13561"
+    "test:browser-product": "npm run test:m11962-m13561",
+    "test:m13562-m21561": "node --test tests/m13562-m21561/editor-100-groups.test.js",
+    "test:editor-100-groups": "npm run test:m13562-m21561"
   }
 }
