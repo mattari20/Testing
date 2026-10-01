@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createCVWorkspace } from '../../src/application/cv-workspace.js';
+import { createCVWorkspacePersistenceAdapter, serializeCVWorkspaceState, deserializeCVWorkspaceState } from '../../src/application/cv-workspace-persistence.js';
+const storage=()=>{const m=new Map();return{getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)}};
+const state=()=>createCVWorkspace({profileData:{careerData:{identity:{name:'Ali'}}}}).getState();
+test('M1088-M1091 serializes workspace identity',()=>{const s=state();const r=deserializeCVWorkspaceState(serializeCVWorkspaceState(s));assert.ok(r.workspaceId);assert.equal(r.activeDocumentId,s.activeDocumentId)});
+test('M1092-M1095 rejects malformed persistence',()=>{assert.throws(()=>deserializeCVWorkspaceState('{"version":"bad"}'),/Unsupported CV workspace persistence version/)});
+test('M1096-M1099 rejects invalid persisted documents',()=>{const s=state();const r=JSON.parse(serializeCVWorkspaceState(s));r.documents[0].masterProfileId='bad';assert.throws(()=>deserializeCVWorkspaceState(JSON.stringify(r)),/Persisted CV document is invalid/)});
+test('M1100-M1103 adapter saves and loads',()=>{const a=createCVWorkspacePersistenceAdapter(storage());const r=a.save(state());assert.equal(a.load().workspaceId,r.workspaceId)});
+test('M1104-M1107 adapter detects identity conflict',()=>{const a=createCVWorkspacePersistenceAdapter(storage());a.save(state());assert.throws(()=>a.save(state(),{expectedWorkspaceId:'wrong'}),/identity conflict/)});
+test('M1108-M1111 successful save verifies identity',()=>{const a=createCVWorkspacePersistenceAdapter(storage());const r=a.save(state());assert.equal(a.load().workspaceId,r.workspaceId)});
+test('M1112-M1115 clear removes workspace',()=>{const a=createCVWorkspacePersistenceAdapter(storage());a.save(state());a.clear();assert.equal(a.load(),null)});
+test('M1116-M1119 loaded state is independent',()=>{const a=createCVWorkspacePersistenceAdapter(storage());a.save(state());const r=a.load();r.activeDocumentId='bad';assert.notEqual(a.load().activeDocumentId,'bad')});
+test('M1120-M1123 identity changes after workspace mutation',()=>{const w=createCVWorkspace({profileData:{careerData:{identity:{name:'Ali'}}}});const a=createCVWorkspacePersistenceAdapter(storage());const first=a.save(w.getState());const second=a.save(w.addDocument({title:'Second'}),{expectedWorkspaceId:first.workspaceId});assert.notEqual(first.workspaceId,second.workspaceId)});
+test('M1124-M1127 serializer round trip preserves document count',()=>{const w=createCVWorkspace({profileData:{careerData:{identity:{name:'Ali'}}}});w.addDocument({title:'Second'});const r=deserializeCVWorkspaceState(serializeCVWorkspaceState(w.getState()));assert.equal(r.documents.length,2)});
