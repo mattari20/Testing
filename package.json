@@ -231,6 +231,7 @@
     "test:m588-m607": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js tests/m548-m567/editor-persistence-identity.test.js tests/m568-m587/editor-recovery-freshness.test.js tests/m588-m607/editor-snapshot-content-identity.test.js",
     "test:m608-m627": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js tests/m548-m567/editor-persistence-identity.test.js tests/m568-m587/editor-recovery-freshness.test.js tests/m588-m607/editor-snapshot-content-identity.test.js tests/m608-m627/editor-recovery-conflict-safety.test.js",
     "test:m628-m647": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js tests/m548-m567/editor-persistence-identity.test.js tests/m568-m587/editor-recovery-freshness.test.js tests/m588-m607/editor-snapshot-content-identity.test.js tests/m608-m627/editor-recovery-conflict-safety.test.js tests/m628-m647/editor-recovery-audit.test.js",
-    "test:m648-m667": "node --test tests/m608-m627/editor-recovery-conflict-safety.test.js tests/m628-m647/editor-recovery-audit.test.js tests/m648-m667/editor-recovery-resolution.test.js"
+    "test:m648-m667": "node --test tests/m608-m627/editor-recovery-conflict-safety.test.js tests/m628-m647/editor-recovery-audit.test.js tests/m648-m667/editor-recovery-resolution.test.js",
+    "test:m668-m687": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js"
   }
 }
