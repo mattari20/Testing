@@ -26,7 +26,10 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     persistenceWriteRevision: null,
     persistenceWriteSnapshotId: null,
     persistenceWriteSnapshotContentId: null,
-    persistenceWriteAt: null
+    persistenceWriteAt: null,
+    recoveryInspectionStatus: 'uninitialized',
+    recoveryInspectedAt: null,
+    recoveryInspectionSequence: 0
   });
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
   const confirmRecovery = typeof options.confirmRecovery === 'function'
@@ -128,6 +131,10 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       else if (result === true && action === 'dismiss') status = surface.getState().session.dirty ? 'dirty' : 'saved';
       emit();
       return result;
+    },
+    refreshRecovery() {
+      if (destroyed) return null;
+      return recoveryController?.refreshRecovery?.() || null;
     },
     clearRecovery() {
       if (destroyed) return;
