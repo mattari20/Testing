@@ -1,0 +1,1 @@
+export const CV_EDITOR_SHELL_MODEL_VERSION='1.0.0';export function createCVEditorShellModel(options={}){const shell=options.shell;if(!shell)throw new Error('Shell model requires shell.');return Object.freeze({version:CV_EDITOR_SHELL_MODEL_VERSION,root:shell.root,status:shell.status,form:shell.form,preview:shell.preview});}
