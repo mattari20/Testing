@@ -310,6 +310,8 @@
     "test:m5288-m5367": "node --test tests/m5288-m5367/cv-editor-session-bootstrap.test.js",
     "test:m5368-m5447": "node --test tests/m5368-m5447/cv-editor-coordinator.test.js",
     "test:m5448-m5527": "node --test tests/m5448-m5527/cv-editor-browser-application.test.js",
-    "test:m3928-m5527": "npm run test:m3928-m4007 && npm run test:m4008-m4087 && npm run test:m4088-m4167 && npm run test:m4168-m4247 && npm run test:m4248-m4327 && npm run test:m4328-m4407 && npm run test:m4408-m4487 && npm run test:m4488-m4567 && npm run test:m4568-m4647 && npm run test:m4648-m4727 && npm run test:m4728-m4807 && npm run test:m4808-m4887 && npm run test:m4888-m4967 && npm run test:m4968-m5047 && npm run test:m5048-m5127 && npm run test:m5128-m5207 && npm run test:m5208-m5287 && npm run test:m5288-m5367 && npm run test:m5368-m5447 && npm run test:m5448-m5527"
+    "test:m3928-m5527": "npm run test:m3928-m4007 && npm run test:m4008-m4087 && npm run test:m4088-m4167 && npm run test:m4168-m4247 && npm run test:m4248-m4327 && npm run test:m4328-m4407 && npm run test:m4408-m4487 && npm run test:m4488-m4567 && npm run test:m4568-m4647 && npm run test:m4648-m4727 && npm run test:m4728-m4807 && npm run test:m4808-m4887 && npm run test:m4888-m4967 && npm run test:m4968-m5047 && npm run test:m5048-m5127 && npm run test:m5128-m5207 && npm run test:m5208-m5287 && npm run test:m5288-m5367 && npm run test:m5368-m5447 && npm run test:m5448-m5527",
+    "test:m5528-m7127": "node --test tests/m5528-m7127/browser-integration.test.js",
+    "test:browser-integration": "npm run test:m5528-m7127"
   }
 }
