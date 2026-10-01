@@ -12,7 +12,7 @@ function storage(){
 }
 
 function root(){
-  const form = { replaceChildren() {} };
+  const form = { replaceChildren() {}, querySelectorAll() { return []; } };
   return {
     querySelector:selector => selector === '[data-v2-editor-form]' ? form : null,
     ownerDocument:{

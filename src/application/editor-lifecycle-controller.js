@@ -89,7 +89,6 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       try {
         const record = recoveryController.save();
         status = 'saved';
-        emit();
         return record;
       } catch (error) {
         status = surface.getState().session.dirty ? 'dirty' : 'saved';
