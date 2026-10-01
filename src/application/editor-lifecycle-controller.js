@@ -13,7 +13,10 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     lastAutosavedAt: null,
     lastAutosaveError: null,
     recoveryStatus: 'missing',
-    recoveryError: null
+    recoveryError: null,
+    recoveryActionRequired: false,
+    recoveryLastAction: null,
+    recoveryAudit: []
   });
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
   const confirmRecovery = typeof options.confirmRecovery === 'function'
