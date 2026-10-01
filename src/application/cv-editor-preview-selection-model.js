@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_SELECTION_MODEL_VERSION='1.0.0';
+export function createCVEditorPreviewSelectionModel(){let page=1,block=null;return Object.freeze({version:CV_EDITOR_PREVIEW_SELECTION_MODEL_VERSION,setPage(value){page=Math.max(1,Number(value)||1);return page;},getPage:()=>page,setBlock(id){block=id||null;return block;},getBlock:()=>block,clear(){block=null;}});}
