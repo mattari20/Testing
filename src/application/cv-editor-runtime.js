@@ -26,7 +26,7 @@ export function createCVEditorRuntime(input={}) {
     version:CV_EDITOR_RUNTIME_VERSION,
     getState:state,
     refresh(){if(destroyed)return null;return refresh();},
-    edit(blockId,patch={}){if(destroyed)return null;const before=clone({masterProfile:currentProfile,document:currentDocument});previewEditing.apply(currentProfile,blockId,patch);history.execute({label:'Preview edit',do:()=>{}});const after=clone({masterProfile:currentProfile,document:currentDocument});void before;void after;return refresh();},
+    edit(blockId,patch={}){if(destroyed)return null;history.execute({label:'Preview edit',do:()=>{previewEditing.apply(currentProfile,blockId,patch);}});return refresh();},
     undo(){if(destroyed)return null;history.undo();return refresh();},
     redo(){if(destroyed)return null;history.redo();return refresh();},
     getWorkspace(){return workspace;},
