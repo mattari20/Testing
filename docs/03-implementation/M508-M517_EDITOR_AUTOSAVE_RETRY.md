@@ -15,6 +15,7 @@ This batch makes autosave resilient to transient persistence failures while keep
 - Explicit Save cancels any pending autosave retry.
 - Recovery and Clear Recovery also cancel pending retry work.
 - Retry diagnostics expose `retryCount` and `maxRetries` through the recovery state.
+- Editor DOM can expose retry count and maximum retries through `data-v2-editor-autosave-retry` metadata.
 - Existing autosave and recovery state contracts remain intact.
 - Dedicated M508–M517 tests and CI validation are wired.
 
