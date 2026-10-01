@@ -1,0 +1,1 @@
+export const CV_EDITOR_ERROR_MODEL_VERSION='1.0.0';export function createCVEditorErrorModel(options={}){const boundary=options.boundary;if(!boundary)throw new Error('Error model requires boundary.');return Object.freeze({version:CV_EDITOR_ERROR_MODEL_VERSION,run:task=>boundary.run(task),getError:()=>boundary.getError(),clear:()=>boundary.clear()});}
