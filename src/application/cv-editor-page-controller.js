@@ -1,0 +1,2 @@
+export const CV_EDITOR_PAGE_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorPageController(options={}){const selector=options.selector;if(!selector)throw new Error('Page controller requires selector.');function select(page){const value=selector.select(page);options.bus?.emit('preview:page-changed',{page:value});return value;}return Object.freeze({version:CV_EDITOR_PAGE_CONTROLLER_VERSION,select,current:()=>selector.get(),destroy(){}});}
