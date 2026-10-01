@@ -1,0 +1,1 @@
+export const CV_EDITOR_TEMPLATE_GALLERY_ACTIONS_VERSION='1.0.0';export function createCVEditorTemplateGalleryActions(options={}){const model=options.model;if(!model)throw new Error('Template gallery actions require model.');return Object.freeze({version:CV_EDITOR_TEMPLATE_GALLERY_ACTIONS_VERSION,list:model.list,select:model.select,selected:model.selected});}
