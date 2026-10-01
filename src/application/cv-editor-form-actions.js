@@ -1,0 +1,2 @@
+export const CV_EDITOR_FORM_ACTIONS_VERSION='1.0.0';
+export function createCVEditorFormActions(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Form actions require adapter.');return Object.freeze({version:CV_EDITOR_FORM_ACTIONS_VERSION,update(id,value){return adapter.edit(id,{value});},focus(id){return adapter.focus?.(id)||null;},refresh(){return adapter.getState?.()||null;}});}
