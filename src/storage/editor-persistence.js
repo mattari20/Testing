@@ -153,6 +153,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryVerificationError = null;
   let recoveryVerificationAt = null;
   let recoveryResolvedContentId = null;
+  let persistenceRelation = 'missing';
+  let persistenceSnapshotId = null;
+  let persistenceSnapshotContentId = null;
+  let persistenceRevision = null;
+  let persistenceReconciledAt = null;
   let recoveryAuditSequence = 0;
   const recoveryAudit = [];
   const MAX_RECOVERY_AUDIT = 12;
@@ -180,6 +185,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryVerificationError,
       recoveryVerificationAt,
       recoveryResolvedContentId,
+      persistenceRelation,
+      persistenceSnapshotId,
+      persistenceSnapshotContentId,
+      persistenceRevision,
+      persistenceReconciledAt,
       recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
       retryCount,
       maxRetries
@@ -222,6 +232,23 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryVerification = 'failed';
     recoveryVerificationError = 'Recovered editor content does not match the persisted snapshot identity.';
     return false;
+  };
+
+  const reconcilePersistence = record => {
+    persistenceSnapshotId = record?.snapshotId || null;
+    persistenceSnapshotContentId = record?.snapshotContentId || null;
+    persistenceRevision = Number.isInteger(record?.revision) ? record.revision : null;
+    persistenceReconciledAt = new Date().toISOString();
+    if (!record) {
+      persistenceRelation = 'missing';
+      return persistenceRelation;
+    }
+    if (!record.snapshotContentId) {
+      persistenceRelation = 'unknown';
+      return persistenceRelation;
+    }
+    persistenceRelation = currentContentId() === record.snapshotContentId ? 'current' : 'stale';
+    return persistenceRelation;
   };
 
   const compareRecoveryFreshness = record => {
@@ -299,6 +326,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryContentRelation = compareRecoveryContent(record);
       recoveryIsNewer = recoveryRelation === 'newer';
       recoveryDecision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
+      reconcilePersistence(record);
       updateRecoveryActionState();
       recoveryError = null;
       return record;
@@ -312,6 +340,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRelation = 'unknown';
       recoveryContentRelation = 'unknown';
       recoveryDecision = 'unknown';
+      persistenceRelation = 'unknown';
+      persistenceSnapshotId = null;
+      persistenceSnapshotContentId = null;
+      persistenceRevision = null;
+      persistenceReconciledAt = new Date().toISOString();
       updateRecoveryActionState();
       recoveryError = String(error?.message || error);
       return null;
@@ -332,6 +365,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryVerificationError = null;
     recoveryVerificationAt = null;
     recoveryResolvedContentId = null;
+    reconcilePersistence(record);
     updateRecoveryActionState();
     recoveryError = null;
   };
@@ -477,6 +511,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryVerificationError,
         recoveryVerificationAt,
         recoveryResolvedContentId,
+        persistenceRelation,
+        persistenceSnapshotId,
+        persistenceSnapshotContentId,
+        persistenceRevision,
+        persistenceReconciledAt,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         retryCount,
         maxRetries
@@ -505,6 +544,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryVerificationError,
         recoveryVerificationAt,
         recoveryResolvedContentId,
+        persistenceRelation,
+        persistenceSnapshotId,
+        persistenceSnapshotContentId,
+        persistenceRevision,
+        persistenceReconciledAt,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
       });
     },
@@ -638,6 +682,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryVerificationError = null;
       recoveryVerificationAt = null;
       recoveryResolvedContentId = null;
+      persistenceRelation = 'missing';
+      persistenceSnapshotId = null;
+      persistenceSnapshotContentId = null;
+      persistenceRevision = null;
+      persistenceReconciledAt = new Date().toISOString();
       recoveryActionRequired = false;
       recoveryAction = 'none';
       recordRecoveryEvent('clear', 'cleared');
