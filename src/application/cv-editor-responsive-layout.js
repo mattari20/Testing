@@ -1,0 +1,2 @@
+export const CV_EDITOR_RESPONSIVE_LAYOUT_VERSION='1.0.0';
+export function createCVEditorResponsiveLayout(options={}){const layout=options.layout;if(!layout)throw new Error('Responsive layout requires layout controller.');function apply(width){const mode=width<700?'mobile':width<1024?'tablet':'desktop';return layout.setMode(mode);}return Object.freeze({version:CV_EDITOR_RESPONSIVE_LAYOUT_VERSION,apply});}
