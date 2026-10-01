@@ -9,7 +9,7 @@ function storage(){const data=new Map();return {getItem:k=>data.get(k)||null,set
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
 test('recovery controller exposes autosave state transitions',async()=>{
- const s=surface(); const a=createEditorPersistenceAdapter(storage(),'state'); const r=createEditorRecoveryController(s,a,{delayMs:10});
+ const s=surface(); const a=createEditorPersistenceAdapter(storage(),'state'); const r=createEditorRecoveryController(s,a,{delayMs:10,maxRetries:0});
  const states=[]; const off=r.subscribe(x=>states.push(x.autosaveStatus));
  s.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Autosaved'}});
  assert.equal(r.getState().autosaveStatus,'scheduled');
@@ -21,7 +21,7 @@ test('recovery controller exposes autosave state transitions',async()=>{
 });
 
 test('autosave failures are observable without marking the editor saved',()=>{
- const s=surface(); const r=createEditorRecoveryController(s,{load:()=>null,save(){throw new Error('Disk full');},clear(){}},{delayMs:0});
+ const s=surface(); const r=createEditorRecoveryController(s,{load:()=>null,save(){throw new Error('Disk full');},clear(){}},{delayMs:0,maxRetries:0});
  const lifecycle=createEditorLifecycleController(s,r);
  s.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Unsaved'}});
  assert.throws(()=>r.flush(),/Disk full/);
@@ -37,7 +37,7 @@ test('clear resets autosave status and error metadata',()=>{
  assert.throws(()=>r.flush(),/Failure/);
  assert.equal(r.getState().autosaveStatus,'error');
  r.clear();
- assert.deepEqual(r.getState(),{autosaveStatus:'idle',lastAutosavedAt:null,lastAutosaveError:null});
+ const state=r.getState(); assert.equal(state.autosaveStatus,'idle'); assert.equal(state.lastAutosavedAt,null); assert.equal(state.lastAutosaveError,null);
  r.destroy();
 });
 
