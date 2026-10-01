@@ -1,0 +1,1 @@
+export const CV_EDITOR_COMMAND_SURFACE_VERSION='1.0.0';export function createCVEditorCommandSurface(options={}){const entry=options.entry,section=options.section,save=options.save;if(!entry||!section)throw new Error('Command surface requires entry and section actions.');return Object.freeze({version:CV_EDITOR_COMMAND_SURFACE_VERSION,entry,section,save:save||null});}
