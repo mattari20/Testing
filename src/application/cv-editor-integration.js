@@ -1,0 +1,6 @@
+import {createCVEditorEventBus} from './cv-editor-event-bus.js';
+import {createCVEditorStateBridge} from './cv-editor-state-bridge.js';
+import {createCVEditorRenderScheduler} from './cv-editor-render-scheduler.js';
+import {createCVEditorErrorBoundary} from './cv-editor-error-boundary.js';
+export const CV_EDITOR_INTEGRATION_VERSION='1.0.0';
+export function createCVEditorIntegration(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Editor integration requires adapter.');const bus=createCVEditorEventBus();const errors=createCVEditorErrorBoundary({onError:options.onError});const scheduler=createCVEditorRenderScheduler({render:reason=>options.render?.(reason)});const bridge=createCVEditorStateBridge({adapter,bus});function sync(){return errors.run(()=>bridge.sync());}function edit(id,patch){return errors.run(()=>{const result=bridge.edit(id,patch);scheduler.request('edit');return result;});}return Object.freeze({version:CV_EDITOR_INTEGRATION_VERSION,bus,errors,scheduler,bridge,sync,edit,destroy(){scheduler.destroy();bridge.destroy();errors.destroy();bus.destroy();}});}
