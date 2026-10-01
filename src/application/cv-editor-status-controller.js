@@ -1,0 +1,2 @@
+export const CV_EDITOR_STATUS_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorStatusController(options={}){const shell=options.shell;if(!shell)throw new Error('Status controller requires shell.');function ready(){shell.setStatus('Ready','success');}function error(error){shell.setStatus(error?.message||String(error||'Error'),'error');}function info(message){shell.setStatus(message,'info');}return Object.freeze({version:CV_EDITOR_STATUS_CONTROLLER_VERSION,ready,error,info,destroy(){}});}
