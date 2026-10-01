@@ -152,6 +152,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryVerification = 'unknown';
   let recoveryVerificationError = null;
   let recoveryVerificationAt = null;
+  let recoveryResolvedContentId = null;
   let recoveryAuditSequence = 0;
   const recoveryAudit = [];
   const MAX_RECOVERY_AUDIT = 12;
@@ -178,6 +179,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryVerification,
       recoveryVerificationError,
       recoveryVerificationAt,
+      recoveryResolvedContentId,
       recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
       retryCount,
       maxRetries
@@ -251,6 +253,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const updateRecoveryActionState = () => {
     recoveryActionRequired = recoveryDecision === 'confirm' || recoveryDecision === 'stale';
+    if (recoveryAction === 'resolved' && recoveryResolvedContentId && recoveryContentRelation !== 'same') {
+      recoveryAction = 'none';
+      recoveryResolvedContentId = null;
+      recoveryVerification = 'unknown';
+      recoveryVerificationError = null;
+      recoveryVerificationAt = null;
+    }
     if (!recoveryActionRequired) {
       if (recoveryAction !== 'resolved' && recoveryAction !== 'dismissed') recoveryAction = 'none';
     } else if (recoveryAction === 'none') {
@@ -322,6 +331,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryVerification = 'unknown';
     recoveryVerificationError = null;
     recoveryVerificationAt = null;
+    recoveryResolvedContentId = null;
     updateRecoveryActionState();
     recoveryError = null;
   };
@@ -350,6 +360,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryVerification = 'unknown';
       recoveryVerificationError = null;
       recoveryVerificationAt = null;
+      recoveryResolvedContentId = null;
       updateRecoveryActionState();
       emit();
       return record;
@@ -465,6 +476,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryVerification,
         recoveryVerificationError,
         recoveryVerificationAt,
+        recoveryResolvedContentId,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         retryCount,
         maxRetries
@@ -492,6 +504,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryVerification,
         recoveryVerificationError,
         recoveryVerificationAt,
+        recoveryResolvedContentId,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
       });
     },
@@ -590,6 +603,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         return null;
       }
       recoveryAction = 'resolved';
+      recoveryResolvedContentId = record.snapshotContentId;
       recordRecoveryEvent('recover', 'recovered');
       emit();
       return record;
@@ -623,6 +637,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryVerification = 'unknown';
       recoveryVerificationError = null;
       recoveryVerificationAt = null;
+      recoveryResolvedContentId = null;
       recoveryActionRequired = false;
       recoveryAction = 'none';
       recordRecoveryEvent('clear', 'cleared');
