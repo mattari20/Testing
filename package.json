@@ -329,12 +329,14 @@
     "test:editor-100-groups": "npm run test:m13562-m21561",
     "test:production-integration": "node --test tests/m21562-m29561/editor-production-integration.test.js",
     "test:editor-production": "npm run test:production-integration",
-    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css",
+    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css && npm run test:browser-visual-qa",
     "test:e2e-contract": "node --test tests/m29562-m37561/e2e-product-completion.test.js",
     "test:e2e-release": "npm run test:e2e-contract",
     "test:all-contracts": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css",
     "test:final-productization": "node --test tests/final-productization/cv-builder-final-productization.test.js",
     "test:release-closure": "npm run test:final-productization && npm run test:e2e-contract",
-    "test:editor-css": "node --test tests/m45562-m46361/editor-css.test.js"
+    "test:editor-css": "node --test tests/m45562-m46361/editor-css.test.js",
+    "test:m47162-m47961": "node --test tests/m47162-m47961/browser-visual-qa.test.js",
+    "test:browser-visual-qa": "npm run test:m47162-m47961"
   }
 }
