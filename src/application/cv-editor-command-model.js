@@ -1,0 +1,1 @@
+export const CV_EDITOR_COMMAND_MODEL_VERSION='1.0.0';export function createCVEditorCommandModel(options={}){const router=options.router;if(!router)throw new Error('Command model requires router.');return Object.freeze({version:CV_EDITOR_COMMAND_MODEL_VERSION,execute:(name,payload)=>router.execute(name,payload),has:name=>router.has(name)});}
