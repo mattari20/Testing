@@ -1,0 +1,82 @@
+# R3 Runtime Evidence Reconciliation Record
+
+**Date:** 2026-10-01
+**Status:** Conditional
+
+## 1. Verified prior browser evidence
+
+A successful Native V2 Browser Validation workflow was verified for:
+
+- Workflow run: `36701597951`
+- Commit: `283cedf4fd2d24a5e542bcdf3db3fe73df5d69c1`
+- Job: `browser-validation`
+- Conclusion: `success`
+
+The run executed:
+
+- Golden Baseline fixture validation
+- M26 Native V2 browser evidence validation
+- M27 V1 browser evidence validation
+- M87 editor browser validation
+- M90 editor preview validation
+- M28 paired V1/V2 comparison
+- M208–M217 integrated fragmentation browser validation
+
+The associated browser artifact `m26-m27-browser-evidence` was downloaded and inspected.
+
+## 2. Observed artifact contents
+
+The artifact contains:
+
+- `native-v2-browser-evidence.json`
+- Seven Native V2 template screenshots:
+  - T01 Modern
+  - T02 Modern
+  - T03 Modern
+  - T04 Modern
+  - T05 Modern
+  - T06 Modern
+  - T07 Modern
+
+The JSON records seven successful V2 renders with collected geometry, screenshots, and one-page pagination results.
+
+The comparison status in the artifact is explicitly `insufficient-evidence` because V1 comparison evidence was still required for those records.
+
+## 3. Evidence boundary
+
+The verified artifact belongs to commit `283cedf4...`.
+
+Subsequent release-affecting changes introduced two new V2-native template sources:
+
+- `src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html`
+- `src/templates/assets/v2/t01-modern-minimalist-cv-design_simple.html`
+
+Therefore the prior browser artifact cannot be treated as runtime evidence for those two new templates.
+
+The prior seven-template evidence remains valid as historical evidence for the commit on which it was produced, subject to the normal release-evidence freshness rule.
+
+## 4. Current R3 acceptance requirement
+
+R3 remains CONDITIONAL until a fresh browser execution is observed after the release-affecting template changes.
+
+The fresh run must:
+
+1. validate the current Golden Baseline fixture;
+2. render all current Native V2 templates;
+3. collect geometry and screenshots;
+4. exercise pagination/overflow coverage;
+5. produce machine-readable evidence;
+6. include the two new V2-native T01 ATS/Simple templates;
+7. preserve the distinction between recovered historical V1 templates and new V2-native replacements.
+
+No historical V1 equivalence claim is required or made for the two unrecovered T01 variants.
+
+## 5. Release decision
+
+**R3 input readiness: PASS**
+
+**R3 historical/runtime evidence: PARTIALLY OBSERVED**
+
+**R3 final release gate: CONDITIONAL**
+
+Reason: existing browser evidence is real and verified, but it predates the latest release-affecting template changes. A fresh browser run is required before final R3 acceptance.
