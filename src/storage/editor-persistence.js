@@ -69,7 +69,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   }
 
   const delayMs = Number.isFinite(options.delayMs) ? Math.max(0, options.delayMs) : 250;
+  const maxRetries = Number.isInteger(options.maxRetries) ? Math.max(0, options.maxRetries) : 2;
+  const retryDelayMs = Number.isFinite(options.retryDelayMs) ? Math.max(0, options.retryDelayMs) : delayMs;
   let timer = null;
+  let retryTimer = null;
+  let retryCount = 0;
   let destroyed = false;
   let autosaveStatus = 'idle';
   let lastAutosavedAt = null;
@@ -126,6 +130,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     emit();
     try {
       const record = adapter.save(state.session);
+      retryCount = 0;
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
       recoveryStatus = 'available';
@@ -133,8 +138,19 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       emit();
       return record;
     } catch (error) {
-      autosaveStatus = 'error';
       lastAutosaveError = String(error?.message || error);
+      if (retryCount < maxRetries && !destroyed) {
+        retryCount += 1;
+        autosaveStatus = 'scheduled';
+        emit();
+        if (retryTimer) clearTimeout(retryTimer);
+        retryTimer = setTimeout(() => {
+          retryTimer = null;
+          try { flush(); } catch { /* error state is emitted by flush */ }
+        }, retryDelayMs * retryCount);
+        return null;
+      }
+      autosaveStatus = 'error';
       emit();
       throw error;
     }
@@ -145,6 +161,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     if (timer) clearTimeout(timer);
     autosaveStatus = 'scheduled';
     lastAutosaveError = null;
+    retryCount = 0;
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+      retryTimer = null;
+    }
     emit();
     timer = setTimeout(() => {
       timer = null;
@@ -163,6 +184,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       clearTimeout(timer);
       timer = null;
     }
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+      retryTimer = null;
+    }
+    retryCount = 0;
     const state = surface.getState();
     const savedAt = new Date().toISOString();
     const cleanSession = {
@@ -202,7 +228,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         lastAutosavedAt,
         lastAutosaveError,
         recoveryStatus,
-        recoveryError
+        recoveryError,
+        retryCount,
+        maxRetries
       });
     },
     getRecoveryState() {
@@ -224,6 +252,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         clearTimeout(timer);
         timer = null;
       }
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+        retryTimer = null;
+      }
+      retryCount = 0;
       const record = inspectRecovery();
       if (!record) {
         emit();
@@ -247,6 +280,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         clearTimeout(timer);
         timer = null;
       }
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+        retryTimer = null;
+      }
+      retryCount = 0;
       adapter.clear?.();
       autosaveStatus = 'idle';
       lastAutosavedAt = null;
@@ -259,7 +297,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       if (destroyed) return;
       destroyed = true;
       if (timer) clearTimeout(timer);
+      if (retryTimer) clearTimeout(retryTimer);
       timer = null;
+      retryTimer = null;
       unsubscribe();
       subscribers.clear();
     }
