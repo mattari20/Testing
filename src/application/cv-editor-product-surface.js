@@ -1,0 +1,3 @@
+import {createCVEditorFinalShell} from './cv-editor-final-shell.js';
+export const CV_EDITOR_PRODUCT_SURFACE_VERSION='1.0.0';
+export function createCVEditorProductSurface(options={}){const document=options.document,root=options.root;if(!document||!root)throw new Error('Product surface requires document and root.');const shell=createCVEditorFinalShell({document,root,label:options.label||'CV Builder editor'});function state(){return Object.freeze({version:CV_EDITOR_PRODUCT_SURFACE_VERSION,styled:!!shell.styles?.node,accessible:root.getAttribute?.('role')==='application'});}return Object.freeze({version:CV_EDITOR_PRODUCT_SURFACE_VERSION,shell,state,destroy(){shell.destroy();}});}
