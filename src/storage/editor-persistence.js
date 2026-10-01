@@ -313,7 +313,6 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       autosaveStatus = 'saved';
       applyPersistedMetadata(record, 'same');
       updateRecoveryActionState();
-      recordRecoveryEvent('recover', 'recovered');
       emit();
       return record;
     } catch (error) {
