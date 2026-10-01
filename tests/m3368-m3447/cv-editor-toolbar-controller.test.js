@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorToolbarController} from '../../src/application/cv-editor-toolbar-controller.js';
+class N{constructor(){this.children=[];this.textContent='';this.listeners={};}appendChild(x){this.children.push(x);return x;}setAttribute(){}addEventListener(k,f){this.listeners[k]=f;}remove(){}}
+const d={createElement:()=>new N()};
+test('creates stable undo redo refresh actions',()=>{const shell={toolbar:new N()},calls=[];const adapter={undo:()=>calls.push('u'),redo:()=>calls.push('r'),getState:()=>({})};const c=createCVEditorToolbarController({document:d,adapter,shell});assert.equal(shell.toolbar.children.length,3);shell.toolbar.children[0].listeners.click();shell.toolbar.children[1].listeners.click();assert.deepEqual(calls,['u','r']);});
