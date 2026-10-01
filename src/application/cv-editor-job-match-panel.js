@@ -1,0 +1,2 @@
+export const CV_EDITOR_JOB_MATCH_PANEL_VERSION='1.0.0';
+export function createCVEditorJobMatchPanel(options={}){const matcher=options.matcher;if(!matcher)throw new Error('Job match panel requires matcher.');function match(job={},cv={}){return matcher.match?.(job,cv)||matcher(job,cv);}return Object.freeze({version:CV_EDITOR_JOB_MATCH_PANEL_VERSION,match});}
