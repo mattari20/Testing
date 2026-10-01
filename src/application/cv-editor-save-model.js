@@ -1,0 +1,1 @@
+export const CV_EDITOR_SAVE_MODEL_VERSION='1.0.0';export function createCVEditorSaveModel(options={}){const status=options.status;if(!status)throw new Error('Save model requires status.');return Object.freeze({version:CV_EDITOR_SAVE_MODEL_VERSION,get:()=>status.getState()});}
