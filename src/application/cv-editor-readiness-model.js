@@ -1,0 +1,1 @@
+export const CV_EDITOR_READINESS_MODEL_VERSION='1.0.0';export function createCVEditorReadinessModel(options={}){const readiness=options.readiness;if(!readiness)throw new Error('Readiness model requires readiness.');return Object.freeze({version:CV_EDITOR_READINESS_MODEL_VERSION,check:()=>readiness.check()});}
