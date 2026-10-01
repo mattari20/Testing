@@ -266,6 +266,12 @@
     "test:m2088-m2167": "node --test tests/m2088-m2167/cv-ats-analysis.test.js",
     "test:m2168-m2247": "node --test tests/m2168-m2247/cv-job-matching.test.js",
     "test:m2248-m2327": "node --test tests/m2248-m2327/cv-ai-intelligence.test.js",
-    "test:m1928-m2327": "npm run test:m1928-m2007 && npm run test:m2008-m2087 && npm run test:m2088-m2167 && npm run test:m2168-m2247 && npm run test:m2248-m2327"
+    "test:m1928-m2327": "npm run test:m1928-m2007 && npm run test:m2008-m2087 && npm run test:m2088-m2167 && npm run test:m2168-m2247 && npm run test:m2248-m2327",
+    "test:m2328-m2407": "node --test tests/m2328-m2407/cv-runtime-persistence-integration.test.js",
+    "test:m2408-m2487": "node --test tests/m2408-m2487/cv-editor-document-switching.test.js",
+    "test:m2488-m2567": "node --test tests/m2488-m2567/cv-export-pipeline.test.js",
+    "test:m2568-m2647": "node --test tests/m2568-m2647/cv-intelligence-coordinator.test.js",
+    "test:m2648-m2727": "node --test tests/m2648-m2727/cv-ai-review.test.js",
+    "test:m2328-m2727": "npm run test:m2328-m2407 && npm run test:m2408-m2487 && npm run test:m2488-m2567 && npm run test:m2568-m2647 && npm run test:m2648-m2727"
   }
 }
