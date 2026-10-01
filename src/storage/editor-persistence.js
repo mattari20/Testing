@@ -100,9 +100,15 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   const save = () => {
     if (destroyed) return null;
     const state = surface.getState();
-    const record = adapter.save(state.session);
-    const savedAt = record?.savedAt || new Date().toISOString();
-    if (typeof surface.markSaved === 'function') surface.markSaved(savedAt);
+    const savedAt = new Date().toISOString();
+    const cleanSession = {
+      ...state.session,
+      dirty: false,
+      savedAt,
+      lastCommand: 'save'
+    };
+    const record = adapter.save(cleanSession);
+    if (typeof surface.markSaved === 'function') surface.markSaved(record?.savedAt || savedAt);
     return record;
   };
 
