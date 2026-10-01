@@ -215,6 +215,7 @@
     "test:m418-m427": "node --test tests/m418-m427/editor-persistence.test.js",
     "test:editor-persistence": "npm run test:m418-m427",
     "test:m428-m437": "node --test tests/m428-m437/editor-runtime-persistence.test.js",
-    "test:editor-runtime-persistence": "npm run test:m428-m437"
+    "test:editor-runtime-persistence": "npm run test:m428-m437",
+    "test:m438-m447": "node --test tests/m438-m447/editor-save-lifecycle.test.js"
   }
 }
