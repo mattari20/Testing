@@ -1,6 +1,6 @@
 export const EDITOR_LIFECYCLE_VERSION = '1.1.0';
 
-export function createEditorLifecycleController(surface, recoveryController = null) {
+export function createEditorLifecycleController(surface, recoveryController = null, options = {}) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
     throw new Error('A valid editor surface is required.');
   }
@@ -9,6 +9,9 @@ export function createEditorLifecycleController(surface, recoveryController = nu
   let status = surface.getState().session.dirty ? 'dirty' : 'saved';
   const subscribers = new Set();
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
+  const confirmRecovery = typeof options.confirmRecovery === 'function'
+    ? options.confirmRecovery
+    : () => false;
 
   const emit = () => {
     const snapshot = Object.freeze({
@@ -59,9 +62,16 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       status = 'saved';
       return record;
     },
-    recover() {
+    recover(options = {}) {
       if (destroyed) return null;
       if (!recoveryController) throw new Error('Editor persistence is required for recovery.');
+      const state = this.getState();
+      if (state.dirty && options.force !== true) {
+        const confirmed = typeof options.confirmRecovery === 'function'
+          ? options.confirmRecovery(state)
+          : confirmRecovery(state);
+        if (!confirmed) return null;
+      }
       const record = recoveryController.recover();
       if (record) status = 'recovered';
       return record;
