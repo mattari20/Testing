@@ -1,0 +1,1 @@
+export const CV_EDITOR_NAVIGATION_MODEL_VERSION='1.0.0';export function createCVEditorNavigationModel(options={}){const page=options.page;if(!page)throw new Error('Navigation model requires page.');return Object.freeze({version:CV_EDITOR_NAVIGATION_MODEL_VERSION,select:n=>page.select(n),current:()=>page.current()});}
