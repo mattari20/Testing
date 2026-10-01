@@ -1,0 +1,37 @@
+<style>
+:root{--simple-blue:#1a3365;--simple-ink:#273142;--simple-muted:#667085;--simple-line:#e4e7ec}
+.t01-modern-minimalist-cv-design-simple{width:210mm;min-height:297mm;background:#fff;color:var(--simple-ink);font-family:'Inter','Segoe UI',Arial,sans-serif;box-sizing:border-box;display:grid;grid-template-columns:64mm 1fr;overflow:hidden}
+.t01-modern-minimalist-cv-design-simple *{box-sizing:border-box}
+.t01-modern-minimalist-cv-design-simple .simple-side{background:#f5f7fb;border-right:1px solid var(--simple-line);padding:20mm 9mm 14mm}
+.t01-modern-minimalist-cv-design-simple .simple-main{padding:18mm 13mm 14mm}
+.t01-modern-minimalist-cv-design-simple .simple-photo{text-align:center;margin-bottom:14px}
+.t01-modern-minimalist-cv-design-simple .simple-photo img{width:105px;height:105px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 1px 7px rgba(0,0,0,.12)}
+.t01-modern-minimalist-cv-design-simple .simple-name{font-size:24pt;line-height:1.05;color:var(--simple-blue);margin:0 0 5px;font-weight:750}
+.t01-modern-minimalist-cv-design-simple .simple-title{font-size:11pt;color:var(--simple-muted);margin:0 0 12px;text-transform:uppercase;letter-spacing:1.2px}
+.t01-modern-minimalist-cv-design-simple .simple-side-heading,.t01-modern-minimalist-cv-design-simple .simple-heading{font-size:10.5pt;font-weight:750;color:var(--simple-blue);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--simple-line);padding-bottom:4px;margin:0 0 8px}
+.t01-modern-minimalist-cv-design-simple .simple-side-section{margin-top:18px}
+.t01-modern-minimalist-cv-design-simple .simple-contact{font-size:8.5pt;line-height:1.45;word-break:break-word;color:#475467}
+.t01-modern-minimalist-cv-design-simple .simple-tags{display:flex;flex-wrap:wrap;gap:5px}
+.t01-modern-minimalist-cv-design-simple .simple-tag{font-size:8pt;border:1px solid #d0d5dd;border-radius:12px;padding:3px 7px;background:#fff}
+.t01-modern-minimalist-cv-design-simple .simple-intro{font-size:9.5pt;color:#475467;line-height:1.5;margin-bottom:13px}
+.t01-modern-minimalist-cv-design-simple .simple-entry{margin-bottom:11px}
+.t01-modern-minimalist-cv-design-simple .simple-row{display:flex;justify-content:space-between;gap:10px}
+.t01-modern-minimalist-cv-design-simple .simple-strong{font-size:10pt;font-weight:700}
+.t01-modern-minimalist-cv-design-simple .simple-date{font-size:8.5pt;color:var(--simple-muted);white-space:nowrap}
+.t01-modern-minimalist-cv-design-simple .simple-sub{font-size:9.2pt;font-weight:600;color:var(--simple-blue);margin-top:2px}
+.t01-modern-minimalist-cv-design-simple .simple-desc{font-size:9pt;color:#475467;line-height:1.45;margin-top:2px}
+@media print{.t01-modern-minimalist-cv-design-simple{margin:0}}
+</style>
+<div class="t01-modern-minimalist-cv-design-simple" data-v2-template-root data-v2-template-id="t01-modern-minimalist-cv-design_simple" data-v2-template-version="2.1.0">
+<aside class="simple-side">
+<div class="simple-photo" data-v2-section="photo" data-v2-visible-when="section:photo" data-v2-layout-block data-v2-layout-block-id="v2-simple-photo-1" data-v2-layout-kind="image"><img data-v2-bind-src="asset:profile-photo" alt="Profile Photo"></div>
+<div class="simple-side-section" data-v2-section="contact" data-v2-layout-block data-v2-layout-block-id="v2-simple-contact-2" data-v2-layout-kind="content"><div class="simple-side-heading">Contact</div><div class="simple-contact"><div data-v2-visible-when="identity.email"><span data-v2-value="identity.email"></span></div><div data-v2-visible-when="identity.phone"><span data-v2-value="identity.phone"></span></div><div data-v2-visible-when="identity.whatsapp"><span data-v2-value="identity.whatsapp"></span></div><div data-v2-visible-when="identity.address"><span data-v2-value="identity.address"></span></div><div data-v2-visible-when="identity.linkedin"><span data-v2-value="identity.linkedin"></span></div><div data-v2-visible-when="identity.website"><span data-v2-value="identity.website"></span></div></div></div>
+<div class="simple-side-section" data-v2-section="skills" data-v2-visible-when="section:skills" data-v2-layout-block data-v2-layout-block-id="v2-simple-skills-3" data-v2-layout-kind="content"><div class="simple-side-heading">Skills</div><div class="simple-tags"><span class="simple-tag" data-v2-repeat="skills:values" data-v2-item="skill"><span data-v2-item-value="value"></span></span></div></div>
+<div class="simple-side-section" data-v2-section="languages" data-v2-visible-when="section:languages" data-v2-layout-block data-v2-layout-block-id="v2-simple-languages-4" data-v2-layout-kind="content"><div class="simple-side-heading">Languages</div><div class="simple-tags"><span class="simple-tag" data-v2-repeat="languages:values" data-v2-item="language"><span data-v2-item-value="value"></span></span></div></div>
+</aside>
+<main class="simple-main">
+<header><h1 class="simple-name" data-v2-visible-when="identity.fullName"><span data-v2-value="identity.fullName"></span></h1><p class="simple-title" data-v2-visible-when="identity.jobTitle"><span data-v2-value="identity.jobTitle"></span></p></header>
+<section class="simple-intro" data-v2-section="summary" data-v2-visible-when="section:summary" data-v2-layout-block data-v2-layout-block-id="v2-simple-summary-5" data-v2-layout-kind="section-heading"><div class="simple-heading">Profile</div><span data-v2-value="section:summary:text"></span></section>
+<section data-v2-section="experience" data-v2-visible-when="section:experience" data-v2-layout-block data-v2-layout-block-id="v2-simple-experience-6" data-v2-layout-kind="experience-entry"><div class="simple-heading">Experience</div><div class="simple-entry" data-v2-repeat="experience:entries" data-v2-item="experience-entry"><div class="simple-row"><span class="simple-strong"><span data-v2-entry-value="company"></span></span><span class="simple-date"><span data-v2-entry-value="duration"></span></span></div><div class="simple-sub"><span data-v2-entry-value="title"></span></div><div class="simple-desc"><span data-v2-entry-value="desc"></span></div></div></section>
+<section data-v2-section="education" data-v2-visible-when="section:education" data-v2-layout-block data-v2-layout-block-id="v2-simple-education-7" data-v2-layout-kind="education-entry"><div class="simple-heading">Education</div><div class="simple-entry" data-v2-repeat="education:entries" data-v2-item="education-entry"><div class="simple-row"><span class="simple-strong"><span data-v2-entry-value="institute"></span></span><span class="simple-date"><span data-v2-entry-value="year"></span></span></div><div class="simple-sub"><span data-v2-entry-value="degree"></span></div><div class="simple-desc"><span data-v2-entry-value="grade"></span></div></div></section>
+</main></div>
