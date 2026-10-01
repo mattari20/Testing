@@ -92,3 +92,76 @@ test('M684-M687: lifecycle exposes verified recovery state after explicit resolu
   lifecycle.destroy();
   recovery.destroy();
 });
+
+
+test('M688-M691: editing after recovery invalidates the resolved state',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  assert.ok(recovery.resolveRecovery('recover'));
+  assert.equal(recovery.getRecoveryState().recoveryAction,'resolved');
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Edited After Recovery'},mutatesData:true});
+  const state=recovery.getRecoveryState();
+  assert.equal(state.recoveryDecision,'confirm');
+  assert.equal(state.recoveryAction,'pending');
+  assert.equal(state.recoveryVerification,'unknown');
+  recovery.destroy();
+});
+
+test('M692-M695: a normal save clears resolved recovery state for the newly saved snapshot',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  assert.ok(recovery.resolveRecovery('recover'));
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'New Saved Version'},mutatesData:true});
+  recovery.save();
+  const state=recovery.getRecoveryState();
+  assert.equal(state.recoveryDecision,'safe');
+  assert.equal(state.recoveryAction,'none');
+  assert.equal(state.recoveryVerification,'unknown');
+  assert.equal(state.recoveryResolvedContentId,null);
+  recovery.destroy();
+});
+
+test('M696-M699: repeated recovery inspection preserves resolved state only while content identity matches',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  assert.ok(recovery.resolveRecovery('recover'));
+  assert.equal(recovery.getRecoveryState().recoveryAction,'resolved');
+  assert.equal(recovery.getRecoveryState().recoveryVerification,'verified');
+  recovery.destroy();
+});
+
+test('M700-M703: undo/redo after recovery also invalidates the resolved state',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  assert.ok(recovery.resolveRecovery('recover'));
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Changed'},mutatesData:true});
+  current.dispatch({type:'undo'});
+  const state=recovery.getRecoveryState();
+  assert.equal(state.recoveryAction,'pending');
+  assert.equal(state.recoveryDecision,'confirm');
+  recovery.destroy();
+});
+
+test('M704-M707: lifecycle reflects recovery invalidation after post-recovery editing',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  const lifecycle=createEditorLifecycleController(current,recovery);
+  assert.ok(lifecycle.resolveRecovery('recover'));
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Lifecycle Edit'},mutatesData:true});
+  const state=lifecycle.getState();
+  assert.equal(state.dirty,true);
+  assert.equal(state.recoveryAction,'pending');
+  assert.equal(state.recoveryDecision,'confirm');
+  lifecycle.destroy();
+  recovery.destroy();
+});
