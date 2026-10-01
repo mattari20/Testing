@@ -60,15 +60,15 @@ No silent recreation is permitted.
 
 ## Current R1 result
 
-**R1 Source/Asset Closure: CONDITIONAL — V2 replacement disposition completed**
+**R1 Source/Asset Closure: PASS — V2 replacement/retirement disposition completed**
 
-The seven recovered template sources are reconciled and stored. The two missing T01 sources and remaining historical asset references are still unverified.
+The seven recovered V1 template sources are reconciled and stored. The two missing T01 historical sources have explicit V2-native replacement provenance. The historical ATS preview-image and demo-image references are explicitly outside the V2 runtime and are not silently recreated.
 
 ## Required owner input
 
 Original T01 ATS/Simple V1 files are not required for V2 operation because the owner has explicitly selected new V2-native replacements. The historical V1 evidence remains marked as unrecovered; no claim of V1 equivalence is made.
 
-The remaining R1 work is limited to reconciling the historical ATS preview-image and demo-image references and documenting their final V2 disposition.
+No R1 release blocker remains. Historical V1 provenance remains documented as unrecovered; V2 uses explicit native replacements and does not claim historical equivalence.
 
 ## Next release work
 
