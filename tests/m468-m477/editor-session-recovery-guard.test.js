@@ -85,7 +85,7 @@ test('confirmed recovery replaces dirty edits safely',()=>{
   s.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Current Unsaved'}});
   const lifecycle=createEditorLifecycleController(s,recovery,{confirmRecovery:()=>true});
   assert.ok(lifecycle.recover());
-  assert.equal(s.getState().session.application.masterProfile.identity.fullName,'Recovered Name');
+  assert.equal(s.getState().session.application.masterProfile.careerData.identity.fullName,'Recovered Name');
   assert.equal(s.getState().session.dirty,false);
   assert.equal(lifecycle.getState().status,'recovered');
   lifecycle.destroy(); recovery.destroy();
