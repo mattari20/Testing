@@ -22,3 +22,13 @@ test('editor stylesheet mounts scoped responsive print CSS',()=>{
  assert.match(sheet.node.textContent,/@media print/);
  sheet.destroy();
 });
+
+test('editor CSS contract covers core interactive selectors',()=>{
+ const document=fakeDocument();const sheet=createCVEditorStyleSheet({document});
+ assert.match(sheet.node.textContent,/data-editor-entry/);
+ assert.match(sheet.node.textContent,/data-template-card/);
+ assert.match(sheet.node.textContent,/focus-visible/);
+ assert.match(sheet.node.textContent,/prefers-reduced-motion/);
+ assert.match(sheet.node.textContent,/page-break-after/);
+ sheet.destroy();
+});
