@@ -213,6 +213,8 @@
     "test:m408-m417": "node --test tests/m408-m417/preview-inline-contract.test.js",
     "test:m408-m417-browser": "node --test tests/m408-m417/preview-inline-edit.test.js",
     "test:m418-m427": "node --test tests/m418-m427/editor-persistence.test.js",
-    "test:editor-persistence": "npm run test:m418-m427"
+    "test:editor-persistence": "npm run test:m418-m427",
+    "test:m428-m437": "node --test tests/m428-m437/editor-runtime-persistence.test.js",
+    "test:editor-runtime-persistence": "npm run test:m428-m437"
   }
 }
