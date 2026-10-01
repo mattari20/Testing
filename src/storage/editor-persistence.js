@@ -5,16 +5,38 @@ export const EDITOR_PERSISTENCE_KEY = 'cv_builder_v2_editor_state';
 
 const clone = value => value == null ? value : JSON.parse(JSON.stringify(value));
 
+function fingerprint(value) {
+  const input = JSON.stringify(value);
+  let hash = 2166136261;
+  for (let index = 0; index < input.length; index += 1) {
+    hash ^= input.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
 export function createEditorPersistenceRecord(session, options = {}) {
   if (!session?.application?.masterProfile || !session?.application?.targetedCV) {
     throw new Error('A complete editor session is required for persistence.');
   }
   const validation = validateM1(session.application.masterProfile, session.application.targetedCV);
   if (!validation.valid) throw new Error('Cannot persist an invalid CV document.');
+  const savedAt = options.savedAt || new Date().toISOString();
+  const revision = Number.isInteger(options.revision) && options.revision > 0 ? options.revision : 1;
+  const application = {
+    version: session.application.version,
+    masterProfile: toSerializable(session.application.masterProfile),
+    targetedCV: toSerializable(session.application.targetedCV)
+  };
+  const sessionData = toSerializable(session.session || {});
+  const identity = fingerprint({ version: EDITOR_PERSISTENCE_VERSION, savedAt, revision, session: sessionData, application });
   return Object.freeze({
     version: EDITOR_PERSISTENCE_VERSION,
-    savedAt: options.savedAt || new Date().toISOString(),
-    revision: Number.isInteger(options.revision) && options.revision > 0 ? options.revision : 1,
+    savedAt,
+    revision,
+    snapshotId: `s-${identity}`,
+    session: sessionData,
+    application Number.isInteger(options.revision) && options.revision > 0 ? options.revision : 1,
     session: toSerializable(session.session || {}),
     application: {
       version: session.application.version,
@@ -39,6 +61,10 @@ export function deserializeEditorPersistenceRecord(serialized) {
   }
   const validation = validateM1(record.application?.masterProfile, record.application?.targetedCV);
   if (!validation.valid) throw new Error('Persisted CV document is invalid.');
+  if (record.snapshotId != null) {
+    const expected = `s-${fingerprint({ version: record.version, savedAt: record.savedAt, revision: record.revision, session: record.session, application: record.application })}`;
+    if (record.snapshotId !== expected) throw new Error('Persisted CV snapshot identity is invalid.');
+  }
   return record;
 }
 
@@ -86,6 +112,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryError = null;
   let recoverySavedAt = null;
   let recoveryRevision = null;
+  let recoverySnapshotId = null;
+  let recoveryIsNewer = false;
   const subscribers = new Set();
   const emit = () => {
     const snapshot = Object.freeze({
@@ -96,6 +124,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryError,
       recoverySavedAt,
       recoveryRevision,
+      recoverySnapshotId,
+      recoveryIsNewer,
       retryCount,
       maxRetries
     });
@@ -116,12 +146,17 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryStatus = record ? 'available' : 'missing';
       recoverySavedAt = record?.savedAt || null;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
+      recoverySnapshotId = record?.snapshotId || null;
+      const currentSavedAt = surface.getState().session.savedAt || null;
+      recoveryIsNewer = Boolean(record?.savedAt && (!currentSavedAt || new Date(record.savedAt).getTime() > new Date(currentSavedAt).getTime()));
       recoveryError = null;
       return record;
     } catch (error) {
       recoveryStatus = classifyRecoveryError(error);
       recoverySavedAt = null;
       recoveryRevision = null;
+      recoverySnapshotId = null;
+      recoveryIsNewer = false;
       recoveryError = String(error?.message || error);
       return null;
     }
@@ -150,6 +185,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryStatus = 'available';
       recoverySavedAt = record?.savedAt || null;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
+      recoverySnapshotId = record?.snapshotId || null;
+      recoveryIsNewer = true;
       recoveryError = null;
       emit();
       return record;
@@ -231,6 +268,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryStatus = 'available';
       recoverySavedAt = effectiveSavedAt;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
+      recoverySnapshotId = record?.snapshotId || null;
+      recoveryIsNewer = true;
       recoveryError = null;
       if (typeof surface.markSaved === 'function') surface.markSaved(effectiveSavedAt);
       emit();
@@ -256,13 +295,15 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryError,
         recoverySavedAt,
         recoveryRevision,
+        recoverySnapshotId,
+        recoveryIsNewer,
         retryCount,
         maxRetries
       });
     },
     getRecoveryState() {
       inspectRecovery();
-      return Object.freeze({ recoveryStatus, recoveryError, recoverySavedAt, recoveryRevision });
+      return Object.freeze({ recoveryStatus, recoveryError, recoverySavedAt, recoveryRevision, recoverySnapshotId, recoveryIsNewer });
     },
     subscribe(listener) {
       if (typeof listener !== 'function') throw new Error('Recovery subscriber must be a function.');
@@ -300,6 +341,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryStatus = 'available';
       recoverySavedAt = record.savedAt || null;
       recoveryRevision = Number.isInteger(record.revision) ? record.revision : null;
+      recoverySnapshotId = record.snapshotId || null;
+      recoveryIsNewer = true;
       recoveryError = null;
       emit();
       return record;
@@ -323,6 +366,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryStatus = 'missing';
       recoverySavedAt = null;
       recoveryRevision = null;
+      recoverySnapshotId = null;
+      recoveryIsNewer = false;
       recoveryError = null;
       emit();
     },
