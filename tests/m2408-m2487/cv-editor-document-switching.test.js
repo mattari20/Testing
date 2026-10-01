@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createCVEditorRuntime } from '../../src/application/cv-editor-runtime.js';
+import { createCVDocumentSwitchingController } from '../../src/application/cv-editor-document-switching.js';
+test('M2408-M2423 lists active and inactive CV documents',()=>{const r=createCVEditorRuntime();const w=r.getWorkspace();w.addDocument({title:'Second CV'});const c=createCVDocumentSwitchingController({runtime:r});assert.equal(c.getState().documents.length,2);assert.equal(c.getState().documents.filter(x=>x.active).length,1);});
+test('M2424-M2439 blocks dirty document switching without confirmation',()=>{const r=createCVEditorRuntime();const w=r.getWorkspace();const second=w.addDocument({title:'Second CV'});const c=createCVDocumentSwitchingController({runtime:r});c.setDirty(true);assert.throws(()=>c.switchTo(second.id));});
+test('M2440-M2455 confirmed switching refreshes runtime',()=>{const r=createCVEditorRuntime();const w=r.getWorkspace();const second=w.addDocument({title:'Second CV'});const c=createCVDocumentSwitchingController({runtime:r});c.setDirty(true);const state=c.switchTo(second.id,{confirm:true});assert.equal(state.activeDocumentId,second.id);assert.equal(c.getState().dirty,false);});
+test('M2456-M2471 switch preserves workspace document identity',()=>{const r=createCVEditorRuntime();const w=r.getWorkspace();const second=w.addDocument({title:'Second CV'});const c=createCVDocumentSwitchingController({runtime:r});c.activate(second.id);assert.equal(w.getActiveDocument().id,second.id);});
+test('M2472-M2487 destroyed controller fences switching',()=>{const r=createCVEditorRuntime();const c=createCVDocumentSwitchingController({runtime:r});c.destroy();assert.equal(c.switchTo(r.getState().activeDocumentId),null);});
