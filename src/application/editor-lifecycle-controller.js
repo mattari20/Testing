@@ -1,4 +1,4 @@
-export const EDITOR_LIFECYCLE_VERSION = '1.0.0';
+export const EDITOR_LIFECYCLE_VERSION = '1.1.0';
 
 export function createEditorLifecycleController(surface, recoveryController = null) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
@@ -8,13 +8,15 @@ export function createEditorLifecycleController(surface, recoveryController = nu
   let destroyed = false;
   let status = surface.getState().session.dirty ? 'dirty' : 'saved';
   const subscribers = new Set();
+  const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
 
   const emit = () => {
     const snapshot = Object.freeze({
       status,
       dirty: Boolean(surface.getState().session.dirty),
       savedAt: surface.getState().session.savedAt || null,
-      lastCommand: surface.getState().session.lastCommand || null
+      lastCommand: surface.getState().session.lastCommand || null,
+      recoveryAvailable: hasRecovery()
     });
     subscribers.forEach(listener => listener(snapshot));
     return snapshot;
@@ -35,7 +37,8 @@ export function createEditorLifecycleController(surface, recoveryController = nu
         status,
         dirty: Boolean(surface.getState().session.dirty),
         savedAt: surface.getState().session.savedAt || null,
-        lastCommand: surface.getState().session.lastCommand || null
+        lastCommand: surface.getState().session.lastCommand || null,
+        recoveryAvailable: hasRecovery()
       });
     },
     subscribe(listener) {
@@ -66,6 +69,7 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     clearRecovery() {
       if (destroyed) return;
       recoveryController?.clear();
+      emit();
     },
     flush() {
       if (destroyed) return null;
