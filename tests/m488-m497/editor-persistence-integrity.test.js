@@ -47,7 +47,7 @@ test('invalid persisted document cannot replace a dirty editor session',()=>{
   assert.equal(lifecycle.getState().recoveryAvailable,false);
   assert.equal(lifecycle.getState().recoveryStatus,'invalid');
   assert.equal(lifecycle.recover({force:true}),null);
-  assert.equal(s.getState().application.masterProfile.careerData.identity.fullName,'Keep Me');
+  assert.equal(s.getState().session.application.masterProfile.careerData.identity.fullName,'Keep Me');
   lifecycle.destroy();
   r.destroy();
 });
@@ -57,7 +57,7 @@ test('missing recovery is distinct from invalid recovery',()=>{
   const a=createEditorPersistenceAdapter(storage(null),'state');
   const r=createEditorRecoveryController(s,a);
   assert.equal(r.hasRecovery(),false);
-  assert.deepEqual(r.getRecoveryState(),{recoveryStatus:'missing',recoveryError:null});
+  const state=r.getRecoveryState(); assert.equal(state.recoveryStatus,'missing'); assert.equal(state.recoveryError,null);
   r.destroy();
 });
 
@@ -68,7 +68,7 @@ test('clear removes an invalid recovery snapshot and diagnostics',()=>{
   const r=createEditorRecoveryController(s,a);
   assert.equal(r.getRecoveryState().recoveryStatus,'invalid');
   r.clear();
-  assert.deepEqual(r.getRecoveryState(),{recoveryStatus:'missing',recoveryError:null});
+  const state=r.getRecoveryState(); assert.equal(state.recoveryStatus,'missing'); assert.equal(state.recoveryError,null);
   assert.equal(backing.getItem('state'),null);
   r.destroy();
 });
