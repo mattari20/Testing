@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorFormDOMRenderer} from '../../src/application/cv-editor-form-dom-renderer.js';
+class N{constructor(){this.children=[];this.firstChild=null;this.attrs={};this.value='';this.textContent='';}appendChild(x){this.children.push(x);this.firstChild=this.children[0]||null;return x;}removeChild(){this.children.shift();this.firstChild=this.children[0]||null;}setAttribute(k,v){this.attrs[k]=v;}}
+const d={createElement:()=>new N()};
+test('renders sections, fields and entries with stable block ids',()=>{const r=createCVEditorFormDOMRenderer({document:d}),c=new N();r.render(c,{sections:[{id:'experience',title:'Experience',fields:[{id:'role',label:'Role',type:'text',value:'Engineer'}],entries:[{id:'e1',values:{company:'ACME'}}]}]});assert.equal(c.children.length,1);assert.equal(c.children[0].attrs['data-section-id'],'experience');assert.equal(c.children[0].children.length,3);});
