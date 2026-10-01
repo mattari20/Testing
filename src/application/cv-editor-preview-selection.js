@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_SELECTION_VERSION='1.0.0';
+export function createCVEditorPreviewSelection(options={}){const container=options.container;if(!container)throw new Error('Preview selection requires container.');let selected=null;function select(id){selected=id;container.querySelectorAll?.('[data-preview-block-id]').forEach(n=>n.setAttribute('data-selected',String(n.getAttribute('data-preview-block-id')===id)));return selected;}return Object.freeze({version:CV_EDITOR_PREVIEW_SELECTION_VERSION,select,get:()=>selected,destroy(){selected=null;}});}
