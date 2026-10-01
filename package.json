@@ -248,6 +248,12 @@
     "test:m988-m1027": "node --test tests/m988-m1027/cv-document-versioning.test.js",
     "test:m1028-m1087": "node --test tests/m1028-m1087/cv-workspace-guard.test.js",
     "test:m1088-m1127": "node --test tests/m1088-m1127/cv-workspace-persistence.test.js",
-    "test:m888-m1127": "npm run test:m888-m987 && npm run test:m988-m1027 && npm run test:m1028-m1087 && npm run test:m1088-m1127"
+    "test:m888-m1127": "npm run test:m888-m987 && npm run test:m988-m1027 && npm run test:m1028-m1087 && npm run test:m1088-m1127",
+    "test:m1128-m1207": "node --test tests/m1128-m1207/cv-template-selection.test.js",
+    "test:m1208-m1287": "node --test tests/m1208-m1287/cv-layout-state.test.js",
+    "test:m1288-m1367": "node --test tests/m1288-m1367/cv-preview-controller.test.js",
+    "test:m1368-m1447": "node --test tests/m1368-m1447/cv-assembly-diagnostics.test.js",
+    "test:m1448-m1527": "node --test tests/m1448-m1527/cv-editor-document-facade.test.js",
+    "test:m1128-m1527": "npm run test:m1128-m1207 && npm run test:m1208-m1287 && npm run test:m1288-m1367 && npm run test:m1368-m1447 && npm run test:m1448-m1527"
   }
 }
