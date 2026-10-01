@@ -1,0 +1,2 @@
+export const CV_EDITOR_JOB_MATCH_REPORT_MODEL_VERSION='1.0.0';
+export function createCVEditorJobMatchReportModel(options={}){const panel=options.panel;if(!panel)throw new Error('Job match report model requires panel.');let report=null;return Object.freeze({version:CV_EDITOR_JOB_MATCH_REPORT_MODEL_VERSION,match:(job,cv)=>{report=panel.match?.(job,cv)||panel.inspect?.(job,cv)||null;return report;},get:()=>report,clear:()=>{report=null;}});}
