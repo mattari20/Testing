@@ -1,0 +1,2 @@
+export const CV_EDITOR_EXPORT_PANEL_VERSION='1.0.0';
+export function createCVEditorExportPanel(options={}){const controller=options.controller;if(!controller)throw new Error('Export panel requires controller.');function formats(){return ['pdf','docx','print'].map(format=>({format,available:true}));}function prepare(format){return controller.prepare(format);}return Object.freeze({version:CV_EDITOR_EXPORT_PANEL_VERSION,formats,prepare});}
