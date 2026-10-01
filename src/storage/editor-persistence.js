@@ -100,12 +100,19 @@ export function createEditorPersistenceAdapter(storage, key = EDITOR_PERSISTENCE
     load() {
       return deserializeEditorPersistenceRecord(storage.getItem(key));
     },
-    save(session) {
-      let currentRevision = 0;
+    save(session, options = {}) {
+      let currentRecord = null;
       try {
-        currentRevision = Number(deserializeEditorPersistenceRecord(storage.getItem(key))?.revision) || 0;
+        currentRecord = deserializeEditorPersistenceRecord(storage.getItem(key));
       } catch {
-        // Replace invalid snapshots with a fresh valid revision.
+        // Invalid snapshots may be replaced by a fresh valid snapshot.
+      }
+      const currentRevision = Number(currentRecord?.revision) || 0;
+      if (options.expectedRevision !== undefined && options.expectedRevision !== currentRevision) {
+        throw new Error('Persistence revision conflict: stored snapshot changed before write.');
+      }
+      if (options.expectedSnapshotId !== undefined && options.expectedSnapshotId !== (currentRecord?.snapshotId || null)) {
+        throw new Error('Persistence snapshot conflict: stored snapshot changed before write.');
       }
       const record = createEditorPersistenceRecord(session, { revision: currentRevision + 1 });
       storage.setItem(key, serializeEditorPersistenceRecord(record));
@@ -158,6 +165,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let persistenceSnapshotContentId = null;
   let persistenceRevision = null;
   let persistenceReconciledAt = null;
+  let persistenceWriteStatus = 'idle';
+  let persistenceWriteError = null;
+  let persistenceWriteRevision = null;
+  let persistenceWriteSnapshotId = null;
+  let persistenceWriteSnapshotContentId = null;
+  let persistenceWriteAt = null;
+  let persistenceWriteSequence = 0;
   let recoveryAuditSequence = 0;
   const recoveryAudit = [];
   const MAX_RECOVERY_AUDIT = 12;
@@ -190,6 +204,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       persistenceSnapshotContentId,
       persistenceRevision,
       persistenceReconciledAt,
+      persistenceWriteStatus,
+      persistenceWriteError,
+      persistenceWriteRevision,
+      persistenceWriteSnapshotId,
+      persistenceWriteSnapshotContentId,
+      persistenceWriteAt,
+      persistenceWriteSequence,
       recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
       retryCount,
       maxRetries
@@ -232,6 +253,41 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryVerification = 'failed';
     recoveryVerificationError = 'Recovered editor content does not match the persisted snapshot identity.';
     return false;
+  };
+
+  const resetPersistenceWriteState = () => {
+    persistenceWriteStatus = 'idle';
+    persistenceWriteError = null;
+    persistenceWriteRevision = null;
+    persistenceWriteSnapshotId = null;
+    persistenceWriteSnapshotContentId = null;
+    persistenceWriteAt = null;
+  };
+
+  const beginPersistenceWrite = () => {
+    persistenceWriteSequence += 1;
+    persistenceWriteStatus = 'writing';
+    persistenceWriteError = null;
+    persistenceWriteRevision = null;
+    persistenceWriteSnapshotId = null;
+    persistenceWriteSnapshotContentId = null;
+    persistenceWriteAt = new Date().toISOString();
+    return persistenceWriteSequence;
+  };
+
+  const commitPersistenceWrite = record => {
+    persistenceWriteStatus = 'saved';
+    persistenceWriteError = null;
+    persistenceWriteRevision = Number.isInteger(record?.revision) ? record.revision : null;
+    persistenceWriteSnapshotId = record?.snapshotId || null;
+    persistenceWriteSnapshotContentId = record?.snapshotContentId || null;
+    persistenceWriteAt = new Date().toISOString();
+  };
+
+  const failPersistenceWrite = error => {
+    persistenceWriteStatus = 'error';
+    persistenceWriteError = String(error?.message || error);
+    persistenceWriteAt = new Date().toISOString();
   };
 
   const reconcilePersistence = record => {
@@ -385,11 +441,17 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     autosaveStatus = 'saving';
     lastAutosaveError = null;
     emit();
+    const writeSequence = beginPersistenceWrite();
     try {
-      const record = adapter.save(state.session);
+      const record = adapter.save(state.session, {
+        expectedRevision: persistenceRevision || 0,
+        expectedSnapshotId: persistenceSnapshotId || null
+      });
+      if (writeSequence !== persistenceWriteSequence || destroyed || token !== operationToken) return null;
       retryCount = 0;
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
+      commitPersistenceWrite(record);
       applyPersistedMetadata(record, 'same');
       recoveryVerification = 'unknown';
       recoveryVerificationError = null;
@@ -399,6 +461,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       emit();
       return record;
     } catch (error) {
+      failPersistenceWrite(error);
       lastAutosaveError = String(error?.message || error);
       if (retryCount < maxRetries && !destroyed) {
         retryCount += 1;
@@ -468,16 +531,23 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     autosaveStatus = 'saving';
     lastAutosaveError = null;
     emit();
+    const writeSequence = beginPersistenceWrite();
     try {
-      const record = adapter.save(cleanSession);
+      const record = adapter.save(cleanSession, {
+        expectedRevision: persistenceRevision || 0,
+        expectedSnapshotId: persistenceSnapshotId || null
+      });
+      if (writeSequence !== persistenceWriteSequence || destroyed) return null;
       const effectiveSavedAt = record?.savedAt || savedAt;
       lastAutosavedAt = effectiveSavedAt;
       autosaveStatus = 'saved';
+      commitPersistenceWrite(record);
       applyPersistedMetadata(record, 'same');
       if (typeof surface.markSaved === 'function') surface.markSaved(effectiveSavedAt);
       emit();
       return record;
     } catch (error) {
+      failPersistenceWrite(error);
       autosaveStatus = 'error';
       lastAutosaveError = String(error?.message || error);
       emit();
@@ -516,6 +586,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         persistenceSnapshotContentId,
         persistenceRevision,
         persistenceReconciledAt,
+        persistenceWriteStatus,
+        persistenceWriteError,
+        persistenceWriteRevision,
+        persistenceWriteSnapshotId,
+        persistenceWriteSnapshotContentId,
+        persistenceWriteAt,
+        persistenceWriteSequence,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         retryCount,
         maxRetries
@@ -549,6 +626,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         persistenceSnapshotContentId,
         persistenceRevision,
         persistenceReconciledAt,
+        persistenceWriteStatus,
+        persistenceWriteError,
+        persistenceWriteRevision,
+        persistenceWriteSnapshotId,
+        persistenceWriteSnapshotContentId,
+        persistenceWriteAt,
+        persistenceWriteSequence,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
       });
     },
@@ -587,6 +671,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         retryTimer = null;
       }
       retryCount = 0;
+      persistenceWriteSequence += 1;
+      resetPersistenceWriteState();
       adapter.clear?.();
       recoveryAction = 'dismissed';
       recoveryActionRequired = false;
@@ -664,6 +750,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         retryTimer = null;
       }
       retryCount = 0;
+      persistenceWriteSequence += 1;
+      resetPersistenceWriteState();
       adapter.clear?.();
       autosaveStatus = 'idle';
       lastAutosavedAt = null;
