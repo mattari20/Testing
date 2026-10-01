@@ -182,7 +182,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       masterProfile: toSerializable(state.session.application?.masterProfile),
       targetedCV: toSerializable(state.session.application?.targetedCV)
     };
-    return createSnapshotContentId(state.session, application);
+    return createSnapshotContentId(state.session.session, application);
   };
 
   const compareRecoveryFreshness = record => {
