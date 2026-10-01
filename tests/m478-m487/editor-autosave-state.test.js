@@ -32,7 +32,7 @@ test('autosave failures are observable without marking the editor saved',()=>{
 });
 
 test('clear resets autosave status and error metadata',()=>{
- const s=surface(); const r=createEditorRecoveryController(s,{load:()=>null,save(){throw new Error('Failure');},clear(){}},{delayMs:10});
+ const s=surface(); const r=createEditorRecoveryController(s,{load:()=>null,save(){throw new Error('Failure');},clear(){}},{delayMs:10,maxRetries:0});
  s.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Unsaved'}});
  assert.throws(()=>r.flush(),/Failure/);
  assert.equal(r.getState().autosaveStatus,'error');
