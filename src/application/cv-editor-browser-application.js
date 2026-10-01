@@ -5,7 +5,9 @@ import {createCVEditorAccessibilityAnnouncer} from './cv-editor-accessibility-an
 import {createCVEditorZoomController} from './cv-editor-zoom-controller.js';
 import {createCVEditorBrowserComposition} from './cv-editor-browser-composition.js';
 import {createCVEditorBrowserModel} from './cv-editor-browser-model.js';
-export const CV_EDITOR_BROWSER_APPLICATION_VERSION='1.3.0';
+import {createCVEditorIntegratedShell} from './cv-editor-integrated-shell.js';
+import {createCVEditorUXAcceptance} from './cv-editor-ux-acceptance.js';
+export const CV_EDITOR_BROWSER_APPLICATION_VERSION='1.4.0';
 export function createCVEditorBrowserApplication(options={}){
  const coordinator=createCVEditorCoordinator(options);
  const page=createCVEditorBrowserPage({document:options.document,mount:options.mount,root:options.root,title:options.title,adapter:options.adapter});
@@ -14,8 +16,10 @@ export function createCVEditorBrowserApplication(options={}){
  const zoom=options.document?createCVEditorZoomController({container:page.shell.preview}):null;
  const composition=options.adapter?createCVEditorBrowserComposition({application:{page,start:()=>page.mount(),stop:()=>{}},adapter:options.adapter,validation:coordinator.validation}):null;
  const model=options.adapter?createCVEditorBrowserModel({adapter:options.adapter,readiness:composition?.readiness}):null;
+ const shell=createCVEditorIntegratedShell({page});
+ const acceptance=createCVEditorUXAcceptance({application:{page,model,composition}});
  let destroyed=false;
  function start(){if(destroyed)return null;page.mount();const state=coordinator.refresh();composition?.start();return state;}
- function stop(){if(destroyed)return;destroyed=true;composition?.stop();keyboard?.destroy();announcer?.destroy();zoom?.destroy();page.destroy();coordinator.destroy();}
- return Object.freeze({version:CV_EDITOR_BROWSER_APPLICATION_VERSION,coordinator,page,keyboard,announcer,zoom,composition,model,start,stop});
+ function stop(){if(destroyed)return;destroyed=true;composition?.stop();keyboard?.destroy();announcer?.destroy();zoom?.destroy();shell.destroy();page.destroy();coordinator.destroy();}
+ return Object.freeze({version:CV_EDITOR_BROWSER_APPLICATION_VERSION,coordinator,page,keyboard,announcer,zoom,composition,model,shell,acceptance,start,stop});
 }
