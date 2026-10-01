@@ -173,6 +173,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let persistenceWriteAt = null;
   let persistenceWriteSequence = 0;
   let recoveryAuditSequence = 0;
+  let recoveryInspectionStatus = 'uninitialized';
+  let recoveryInspectedAt = null;
+  let recoveryInspectionSequence = 0;
+  let recoveryInspectionValid = false;
+  let lastInspectedRecord = null;
   const recoveryAudit = [];
   const MAX_RECOVERY_AUDIT = 12;
   const subscribers = new Set();
@@ -212,6 +217,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       persistenceWriteAt,
       persistenceWriteSequence,
       recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
+      recoveryInspectionStatus,
+      recoveryInspectedAt,
+      recoveryInspectionSequence,
       retryCount,
       maxRetries
     });
@@ -370,9 +378,20 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     return event;
   };
 
-  const inspectRecovery = () => {
+  const invalidateRecoveryInspection = () => {
+    recoveryInspectionValid = false;
+  };
+
+  const inspectRecovery = (options = {}) => {
+    const force = options.force === true;
+    if (!force && recoveryInspectionValid) return lastInspectedRecord;
     try {
       const record = adapter.load();
+      lastInspectedRecord = record;
+      recoveryInspectionStatus = record ? 'ready' : 'ready';
+      recoveryInspectedAt = new Date().toISOString();
+      recoveryInspectionSequence += 1;
+      recoveryInspectionValid = true;
       recoveryStatus = record ? 'available' : 'missing';
       recoverySavedAt = record?.savedAt || null;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
@@ -387,6 +406,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryError = null;
       return record;
     } catch (error) {
+      lastInspectedRecord = null;
+      recoveryInspectionStatus = 'error';
+      recoveryInspectedAt = new Date().toISOString();
+      recoveryInspectionSequence += 1;
+      recoveryInspectionValid = true;
       recoveryStatus = classifyRecoveryError(error);
       recoverySavedAt = null;
       recoveryRevision = null;
@@ -424,6 +448,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     reconcilePersistence(record);
     updateRecoveryActionState();
     recoveryError = null;
+    lastInspectedRecord = record;
+    recoveryInspectionStatus = 'ready';
+    recoveryInspectedAt = new Date().toISOString();
+    recoveryInspectionSequence += 1;
+    recoveryInspectionValid = true;
   };
 
   const runFlush = token => {
@@ -505,7 +534,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const unsubscribe = surface.subscribe((state, command) => {
     if (command?.type === 'restore' || command?.type === 'save') return;
-    if (command?.mutatesData === true || command?.type === 'undo' || command?.type === 'redo') schedule();
+    if (command?.mutatesData === true || command?.type === 'undo' || command?.type === 'redo') {
+      invalidateRecoveryInspection();
+      schedule();
+    }
   });
 
   const save = () => {
@@ -594,6 +626,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         persistenceWriteAt,
         persistenceWriteSequence,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
+        recoveryInspectionStatus,
+        recoveryInspectedAt,
+        recoveryInspectionSequence,
         retryCount,
         maxRetries
       });
@@ -633,8 +668,15 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         persistenceWriteSnapshotContentId,
         persistenceWriteAt,
         persistenceWriteSequence,
-        recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
+        recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
+      recoveryInspectionStatus,
+      recoveryInspectedAt,
+      recoveryInspectionSequence
       });
+    },
+    refreshRecovery() {
+      if (destroyed) return null;
+      return inspectRecovery({ force: true });
     },
     subscribe(listener) {
       if (typeof listener !== 'function') throw new Error('Recovery subscriber must be a function.');
@@ -676,6 +718,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       adapter.clear?.();
       recoveryAction = 'dismissed';
       recoveryActionRequired = false;
+      lastInspectedRecord = null;
+      recoveryInspectionStatus = 'ready';
+      recoveryInspectedAt = new Date().toISOString();
+      recoveryInspectionSequence += 1;
+      recoveryInspectionValid = true;
       recoveryStatus = 'missing';
       recoverySavedAt = null;
       recoveryRevision = null;
@@ -775,6 +822,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       persistenceSnapshotContentId = null;
       persistenceRevision = null;
       persistenceReconciledAt = new Date().toISOString();
+      recoveryInspectionStatus = 'ready';
+      recoveryInspectedAt = new Date().toISOString();
+      recoveryInspectionSequence += 1;
+      recoveryInspectionValid = true;
+      lastInspectedRecord = null;
       recoveryActionRequired = false;
       recoveryAction = 'none';
       recordRecoveryEvent('clear', 'cleared');
