@@ -226,6 +226,7 @@
     "test:m508-m517": "node --test tests/m508-m517/editor-autosave-retry.test.js",
     "test:m518-m527": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js",
     "test:m528-m547": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js",
-    "test:m548-m567": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js tests/m548-m567/editor-persistence-identity.test.js"
+    "test:m548-m567": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js tests/m548-m567/editor-persistence-identity.test.js",
+    "test:m568-m587": "node --test tests/m518-m527/editor-autosave-retry-safety.test.js tests/m528-m547/editor-persistence-freshness.test.js tests/m548-m567/editor-persistence-identity.test.js tests/m568-m587/editor-recovery-freshness.test.js"
   }
 }
