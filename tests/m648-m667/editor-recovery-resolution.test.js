@@ -86,3 +86,19 @@ test('M666-M667: lifecycle delegates explicit recovery resolution',()=>{
   lifecycle.destroy();
   recovery.destroy();
 });
+
+test('M666: lifecycle resolution preserves dirty-session confirmation before recovery',()=>{
+  const current=surface('Current');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Unsaved Current'},mutatesData:true});
+  const denied=createEditorLifecycleController(current,recovery,{confirmRecovery:()=>false});
+  assert.equal(denied.resolveRecovery('recover'),null);
+  assert.equal(current.getState().session.application.masterProfile.identity.fullName,'Unsaved Current');
+  denied.destroy();
+  const allowed=createEditorLifecycleController(current,recovery,{confirmRecovery:()=>true});
+  assert.ok(allowed.resolveRecovery('recover'));
+  assert.equal(current.getState().session.application.masterProfile.identity.fullName,'Persisted');
+  allowed.destroy();
+  recovery.destroy();
+});
