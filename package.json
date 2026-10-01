@@ -322,6 +322,8 @@
     "test:m10338-m10358": "node --test tests/m10338-m10358/editor-product-ux.test.js",
     "test:product-ux": "npm run test:m10338-m10358",
     "test:m10362-m11961": "node --test tests/m10362-m11961/editor-workflow-surface.test.js",
-    "test:editor-workflow": "npm run test:m10362-m11961"
+    "test:editor-workflow": "npm run test:m10362-m11961",
+    "test:m11962-m13561": "node --test tests/m11962-m13561/editor-product-runtime.test.js",
+    "test:browser-product": "npm run test:m11962-m13561"
   }
 }
