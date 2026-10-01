@@ -3,4 +3,4 @@ test('M1928-M1943 runtime initializes projection and layout',()=>{const r=create
 test('M1944-M1959 runtime exposes active document identity',()=>{const r=createCVEditorRuntime();assert.ok(r.getState().activeDocumentId);});
 test('M1960-M1975 runtime refresh is deterministic',()=>{const r=createCVEditorRuntime();const a=r.refresh();const b=r.refresh();assert.equal(a.projection.targetedCVId,b.projection.targetedCVId);});
 test('M1976-M1991 runtime exposes command history',()=>{const r=createCVEditorRuntime();r.refresh();assert.equal(r.getState().history.canUndo,false);});
-test('M1992-M2007 runtime destroy fences refresh',()=>{const r=createCVEditorRuntime();r.destroy();assert.equal(r.refresh(),null);});
+test('M1992-M1997 runtime command history can undo preview edits',()=>{const r=createCVEditorRuntime();r.refresh();const section=r.getState().projection.sections[0];if(section){r.edit('section:'+section.id,{title:'Edited'});assert.equal(r.getState().history.canUndo,true);r.undo();assert.equal(r.getState().history.canRedo,true);}});\ntest('M1998-M2007 runtime destroy fences refresh',()=>{const r=createCVEditorRuntime();r.destroy();assert.equal(r.refresh(),null);});
