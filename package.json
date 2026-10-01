@@ -289,6 +289,27 @@
     "test:m3608-m3687": "node --test tests/m3608-m3687/cv-editor-section-controls.test.js",
     "test:m3688-m3767": "node --test tests/m3688-m3767/cv-editor-preview-navigation.test.js",
     "test:m3768-m3847": "node --test tests/m3768-m3847/cv-editor-template-dom-control.test.js",
-    "test:m3528-m3847": "npm run test:m3528-m3607 && npm run test:m3608-m3687 && npm run test:m3688-m3767 && npm run test:m3768-m3847"
+    "test:m3528-m3847": "npm run test:m3528-m3607 && npm run test:m3608-m3687 && npm run test:m3688-m3767 && npm run test:m3768-m3847",
+    "test:m3928-m4007": "node --test tests/m3928-m4007/cv-editor-document-manager.test.js",
+    "test:m4008-m4087": "node --test tests/m4008-m4087/cv-editor-save-controller.test.js",
+    "test:m4088-m4167": "node --test tests/m4088-m4167/cv-editor-autosave-controller.test.js",
+    "test:m4168-m4247": "node --test tests/m4168-m4247/cv-editor-save-status.test.js",
+    "test:m4248-m4327": "node --test tests/m4248-m4327/cv-editor-persistence-status-dom.test.js",
+    "test:m4328-m4407": "node --test tests/m4328-m4407/cv-editor-document-manager-dom.test.js",
+    "test:m4408-m4487": "node --test tests/m4408-m4487/cv-editor-export-controller.test.js",
+    "test:m4488-m4567": "node --test tests/m4488-m4567/cv-editor-export-dom.test.js",
+    "test:m4568-m4647": "node --test tests/m4568-m4647/cv-editor-intelligence-panel.test.js",
+    "test:m4648-m4727": "node --test tests/m4648-m4727/cv-editor-intelligence-dom.test.js",
+    "test:m4728-m4807": "node --test tests/m4728-m4807/cv-editor-ai-review-dom.test.js",
+    "test:m4808-m4887": "node --test tests/m4808-m4887/cv-editor-keyboard-controller.test.js",
+    "test:m4888-m4967": "node --test tests/m4888-m4967/cv-editor-accessibility-announcer.test.js",
+    "test:m4968-m5047": "node --test tests/m4968-m5047/cv-editor-zoom-controller.test.js",
+    "test:m5048-m5127": "node --test tests/m5048-m5127/cv-editor-preview-page-selector.test.js",
+    "test:m5128-m5207": "node --test tests/m5128-m5207/cv-editor-template-preview-list.test.js",
+    "test:m5208-m5287": "node --test tests/m5208-m5287/cv-editor-validation-summary.test.js",
+    "test:m5288-m5367": "node --test tests/m5288-m5367/cv-editor-session-bootstrap.test.js",
+    "test:m5368-m5447": "node --test tests/m5368-m5447/cv-editor-coordinator.test.js",
+    "test:m5448-m5527": "node --test tests/m5448-m5527/cv-editor-browser-application.test.js",
+    "test:m3928-m5527": "npm run test:m3928-m4007 && npm run test:m4008-m4087 && npm run test:m4088-m4167 && npm run test:m4168-m4247 && npm run test:m4248-m4327 && npm run test:m4328-m4407 && npm run test:m4408-m4487 && npm run test:m4488-m4567 && npm run test:m4568-m4647 && npm run test:m4648-m4727 && npm run test:m4728-m4807 && npm run test:m4808-m4887 && npm run test:m4888-m4967 && npm run test:m4968-m5047 && npm run test:m5048-m5127 && npm run test:m5128-m5207 && npm run test:m5208-m5287 && npm run test:m5288-m5367 && npm run test:m5368-m5447 && npm run test:m5448-m5527"
   }
 }
