@@ -93,12 +93,22 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   };
 
   const unsubscribe = surface.subscribe((state, command) => {
-    if (command?.type === 'restore') return;
+    if (command?.type === 'restore' || command?.type === 'save') return;
     if (command?.mutatesData === true || command?.type === 'undo' || command?.type === 'redo') schedule();
   });
 
+  const save = () => {
+    if (destroyed) return null;
+    const state = surface.getState();
+    const record = adapter.save(state.session);
+    const savedAt = record?.savedAt || new Date().toISOString();
+    if (typeof surface.markSaved === 'function') surface.markSaved(savedAt);
+    return record;
+  };
+
   return Object.freeze({
     flush,
+    save,
     hasRecovery() {
       return Boolean(adapter.load());
     },
