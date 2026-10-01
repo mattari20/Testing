@@ -1,0 +1,2 @@
+export const CV_EDITOR_COMMAND_ROUTER_VERSION='1.0.0';
+export function createCVEditorCommandRouter(options={}){const commands=new Map();function register(name,handler){if(!name||typeof handler!=='function')throw new TypeError('Command requires name and handler.');commands.set(name,handler);return()=>commands.delete(name);}function execute(name,payload){const handler=commands.get(name);if(!handler)return null;return handler(payload);}return Object.freeze({version:CV_EDITOR_COMMAND_ROUTER_VERSION,register,execute,has:name=>commands.has(name),destroy(){commands.clear();}});}
