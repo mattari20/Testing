@@ -1,0 +1,2 @@
+export const CV_EDITOR_LIFECYCLE_VERSION='1.0.0';
+export function createCVEditorLifecycle(options={}){const start=options.start||(()=>{}),stop=options.stop||(()=>{});let state='idle';function boot(){if(state!=='idle')return state;start();state='running';return state;}function shutdown(){if(state==='stopped')return state;stop();state='stopped';return state;}return Object.freeze({version:CV_EDITOR_LIFECYCLE_VERSION,boot,shutdown,getState:()=>state});}
