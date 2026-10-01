@@ -1,4 +1,4 @@
-export const EDITOR_LIFECYCLE_VERSION = '1.1.0';
+export const EDITOR_LIFECYCLE_VERSION = '1.2.0';
 
 export function createEditorLifecycleController(surface, recoveryController = null, options = {}) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
@@ -8,7 +8,13 @@ export function createEditorLifecycleController(surface, recoveryController = nu
   let destroyed = false;
   let status = surface.getState().session.dirty ? 'dirty' : 'saved';
   const subscribers = new Set();
-  const getAutosaveState = () => recoveryController?.getState?.() || Object.freeze({ autosaveStatus: 'idle', lastAutosavedAt: null, lastAutosaveError: null });
+  const getAutosaveState = () => recoveryController?.getState?.() || Object.freeze({
+    autosaveStatus: 'idle',
+    lastAutosavedAt: null,
+    lastAutosaveError: null,
+    recoveryStatus: 'missing',
+    recoveryError: null
+  });
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
   const confirmRecovery = typeof options.confirmRecovery === 'function'
     ? options.confirmRecovery
