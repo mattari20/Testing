@@ -1,0 +1,2 @@
+export const CV_EDITOR_DOCUMENT_COMMANDS_VERSION='1.0.0';
+export function createCVEditorDocumentCommands(options={}){const manager=options.manager;if(!manager)throw new Error('Document commands require manager.');return Object.freeze({version:CV_EDITOR_DOCUMENT_COMMANDS_VERSION,activate:manager.activate,add:manager.add,duplicate:manager.duplicate,rename:manager.rename,archive:manager.archive,list:manager.list});}
