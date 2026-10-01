@@ -364,3 +364,10 @@ The concrete Native V2 preview path now exposes editable identity, section-field
 ### M408–M417 observed validation
 
 M408–M417 is repository/browser validated on the current main sequence. V2 Integration Validation run **565** and Native V2 Browser Validation run **732** both completed successfully. The live preview path is opt-in at the editor-runtime mount via the preview root, preserving existing production-entry/editor mounts when preview is not requested. Production deployment and final release gates remain open.
+
+
+## M418–M427 — Editor Persistence and Recovery
+
+The V2 editor now has a provider-neutral persistence and recovery boundary. A validated, versioned record stores the Master Profile and Targeted CV, a storage adapter provides save/load/clear operations, and a debounced recovery controller provides autosave with an immediate flush path. Persisted state can be restored into the editor surface with stale undo/redo history cleared. The feature remains opt-in and does not couple the editor to a specific browser storage technology.
+
+Repository-side validation is wired into V2 Integration Validation through `test:m418-m427`. Production deployment and final release gates remain open.
