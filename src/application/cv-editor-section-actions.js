@@ -1,0 +1,2 @@
+export const CV_EDITOR_SECTION_ACTIONS_VERSION='1.0.0';
+export function createCVEditorSectionActions(options={}){const editor=options.editor;if(!editor)throw new Error('Section actions require editor.');return Object.freeze({version:CV_EDITOR_SECTION_ACTIONS_VERSION,list:editor.list,toggle:editor.toggle,remove:editor.remove,move:editor.move});}
