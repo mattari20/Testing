@@ -1,0 +1,2 @@
+export const CV_EDITOR_SAVE_LIFECYCLE_VERSION='1.0.0';
+export function createCVEditorSaveLifecycle(options={}){const save=options.save;if(!save)throw new Error('Save lifecycle requires save controller.');let state='idle';function persist(){state='saving';try{const result=save.save();state='saved';return result;}catch(error){state='error';throw error;}}return Object.freeze({version:CV_EDITOR_SAVE_LIFECYCLE_VERSION,persist,getState:()=>state,reset:()=>{state='idle';}});}
