@@ -1,0 +1,1 @@
+export const CV_EDITOR_EXPORT_MODEL_VERSION='1.0.0';export function createCVEditorExportModel(options={}){const controller=options.controller;if(!controller)throw new Error('Export model requires controller.');return Object.freeze({version:CV_EDITOR_EXPORT_MODEL_VERSION,prepare:format=>controller.prepare(format)});}
