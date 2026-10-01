@@ -14,6 +14,7 @@ export function createCVEditorBrowserAdapter(options={}) {
   version:CV_EDITOR_BROWSER_ADAPTER_VERSION,
   getState(){if(destroyed)return null;return Object.freeze({version:CV_EDITOR_BROWSER_ADAPTER_VERSION,editor:surface.getState(),form:form.getState(),template:templates?.getState()||null});},
   edit(blockId,patch){if(destroyed)return null;return form.edit(blockId,patch);},
+  listTemplates(){return destroyed||!templates?null:templates.list();},
   undo(){return destroyed?null:surface.undo();},
   redo(){return destroyed?null:surface.redo();},
   selectTemplate(id){return destroyed||!templates?null:templates.select(id);},
