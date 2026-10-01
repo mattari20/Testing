@@ -222,6 +222,7 @@
     "test:m468-m477": "node --test tests/m468-m477/editor-session-recovery-guard.test.js",
     "test:m478-m487": "node --test tests/m478-m487/editor-autosave-state.test.js",
     "test:m488-m497": "node --test tests/m488-m497/editor-persistence-integrity.test.js",
-    "test:m498-m507": "node --test tests/m498-m507/editor-save-autosave-consistency.test.js"
+    "test:m498-m507": "node --test tests/m498-m507/editor-save-autosave-consistency.test.js",
+    "test:m508-m517": "node --test tests/m508-m517/editor-autosave-retry.test.js"
   }
 }
