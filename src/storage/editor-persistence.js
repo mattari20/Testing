@@ -149,6 +149,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryActionRequired = false;
   let recoveryAction = 'none';
   let recoveryLastAction = null;
+  let recoveryVerification = 'unknown';
+  let recoveryVerificationError = null;
+  let recoveryVerificationAt = null;
   let recoveryAuditSequence = 0;
   const recoveryAudit = [];
   const MAX_RECOVERY_AUDIT = 12;
@@ -172,6 +175,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryActionRequired,
       recoveryAction,
       recoveryLastAction,
+      recoveryVerification,
+      recoveryVerificationError,
+      recoveryVerificationAt,
       recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
       retryCount,
       maxRetries
@@ -195,6 +201,25 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       targetedCV: toSerializable(state.session.application?.targetedCV)
     };
     return createSnapshotContentId(state.session.session, application);
+  };
+
+  const verifyRecoveredContent = record => {
+    if (!record?.snapshotContentId) {
+      recoveryVerification = 'unknown';
+      recoveryVerificationError = 'Persisted snapshot has no content identity.';
+      recoveryVerificationAt = new Date().toISOString();
+      return false;
+    }
+    const currentId = currentContentId();
+    recoveryVerificationAt = new Date().toISOString();
+    if (currentId === record.snapshotContentId) {
+      recoveryVerification = 'verified';
+      recoveryVerificationError = null;
+      return true;
+    }
+    recoveryVerification = 'failed';
+    recoveryVerificationError = 'Recovered editor content does not match the persisted snapshot identity.';
+    return false;
   };
 
   const compareRecoveryFreshness = record => {
@@ -294,6 +319,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryContentRelation = record?.snapshotContentId ? 'same' : 'unknown';
     recoveryIsNewer = relation === 'newer';
     recoveryDecision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
+    recoveryVerification = 'unknown';
+    recoveryVerificationError = null;
+    recoveryVerificationAt = null;
     updateRecoveryActionState();
     recoveryError = null;
   };
@@ -319,6 +347,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
       applyPersistedMetadata(record, 'same');
+      recoveryVerification = 'unknown';
+      recoveryVerificationError = null;
+      recoveryVerificationAt = null;
       updateRecoveryActionState();
       emit();
       return record;
@@ -431,6 +462,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryActionRequired,
         recoveryAction,
         recoveryLastAction,
+        recoveryVerification,
+        recoveryVerificationError,
+        recoveryVerificationAt,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         retryCount,
         maxRetries
@@ -455,6 +489,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryActionRequired,
         recoveryAction,
         recoveryLastAction,
+        recoveryVerification,
+        recoveryVerificationError,
+        recoveryVerificationAt,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
       });
     },
@@ -478,7 +515,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryAction = 'recovering';
         emit();
         const record = this.recover(options);
-        if (record) recoveryAction = 'resolved';
+        if (record && recoveryVerification === 'verified') recoveryAction = 'resolved';
         else recoveryAction = 'pending';
         emit();
         return record;
@@ -545,6 +582,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = record.savedAt || null;
       lastAutosaveError = null;
       applyPersistedMetadata(record, 'same');
+      if (!verifyRecoveredContent(record)) {
+        recoveryError = recoveryVerificationError;
+        recoveryAction = 'pending';
+        recordRecoveryEvent('recover', 'verification-failed', recoveryVerificationError);
+        emit();
+        return null;
+      }
       recoveryAction = 'resolved';
       recordRecoveryEvent('recover', 'recovered');
       emit();
@@ -576,6 +620,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryContentRelation = 'missing';
       recoveryDecision = 'none';
       recoveryError = null;
+      recoveryVerification = 'unknown';
+      recoveryVerificationError = null;
+      recoveryVerificationAt = null;
       recoveryActionRequired = false;
       recoveryAction = 'none';
       recordRecoveryEvent('clear', 'cleared');
