@@ -1,0 +1,2 @@
+export const CV_EDITOR_TOOLBAR_STATE_VERSION='1.0.0';
+export function createCVEditorToolbarState(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Toolbar state requires adapter.');function getState(){const s=adapter.getState?.()||{};return Object.freeze({canUndo:!!s.canUndo,canRedo:!!s.canRedo,activeDocumentId:s.activeDocumentId||null});}return Object.freeze({version:CV_EDITOR_TOOLBAR_STATE_VERSION,getState,destroy(){}});}
