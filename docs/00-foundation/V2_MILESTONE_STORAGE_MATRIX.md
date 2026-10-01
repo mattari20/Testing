@@ -75,3 +75,6 @@ Word Template Download Layer added. The repository now has a machine-checkable c
 
 
 - M408–M417: concrete Native V2 live-preview editing targets, preview-mount inline-edit binding, stale-safe live-preview runtime, seven-template compatibility coverage and browser round-trip validation
+
+
+- M418–M427: editor persistence and recovery — versioned CV-state persistence, storage adapter boundary, debounced autosave, persisted-state recovery, stale history reset, validation and CI coverage
