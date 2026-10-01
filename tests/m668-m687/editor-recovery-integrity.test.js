@@ -14,7 +14,17 @@ function adapter(record) {
   let current=record;
   return {
     load:()=>current,
-    save:state=>state,
+    save:(state, options={})=>{
+      const currentRevision=Number(current?.revision)||0;
+      if(options.expectedRevision !== undefined && options.expectedRevision !== currentRevision) {
+        throw new Error('Persistence revision conflict: stored snapshot changed before write.');
+      }
+      if(options.expectedSnapshotId !== undefined && options.expectedSnapshotId !== (current?.snapshotId || null)) {
+        throw new Error('Persistence snapshot conflict: stored snapshot changed before write.');
+      }
+      current=createEditorPersistenceRecord(state,{revision:currentRevision+1});
+      return current;
+    },
     clear(){current=null;}
   };
 }
