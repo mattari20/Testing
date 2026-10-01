@@ -5,7 +5,7 @@
 
 ## 1. Objective
 
-Establish the sanitized Golden Baseline input set and identify which output/runtime evidence is still required before V2 can be declared equivalent to the approved V1 behavior.
+Establish the sanitized Golden Baseline input set and identify the runtime/output evidence required for V2 release acceptance, while keeping historical V1 provenance separate from new V2-native replacements.
 
 ## 2. Existing baseline input coverage
 
@@ -39,12 +39,12 @@ Seven authoritative V1 HTML template sources are currently available:
 - T06 Modern
 - T07 Modern
 
-Two historical V1 variants remain unavailable:
+Two historical V1 variants remain unavailable as original V1 source artifacts:
 
 - T01 ATS
 - T01 Simple
 
-Therefore the complete historical template-output baseline cannot yet be closed.
+These are **not silently recreated**. They now have explicit V2-native replacement templates in `src/templates/assets/v2/`. The historical V1 baseline for those two variants therefore remains unrecoverable, while the V2-native product baseline may proceed independently.
 
 ## 4. Evidence required
 
@@ -75,19 +75,17 @@ Repository test definitions are not themselves proof that these runtime artifact
 - paired V1/V2 browser comparison infrastructure exists.
 
 ### Still open
-- authoritative V1 runtime output package;
-- final paired evidence package for the seven templates;
-- T01 ATS source/output;
-- T01 Simple source/output;
+- authoritative V1 runtime output package for the seven recovered historical templates;
+- final paired V1/V2 evidence package for the seven recovered templates;
+- observed runtime/output evidence for the two new V2-native T01 ATS/Simple replacements;
 - final export artifacts where runtime evidence is still pending;
-- authoritative V1 historical source/output gaps for T01 ATS/Simple;
-- final export artifacts where runtime evidence is still pending.
+- authoritative historical V1 source/output for T01 ATS/Simple remains unavailable and is tracked as provenance, not as a silent reconstruction target.
 
 ## 6. Governance rule
 
 A test definition, fixture, source file, or configured CI workflow is not treated as runtime evidence until the corresponding execution/artifact is actually observed.
 
-No visual equivalence claim is made from source inspection alone.
+No visual equivalence claim is made from source inspection alone. New V2-native replacement templates are accepted on their own V2 contracts and are not represented as historically equivalent V1 artifacts.
 
 ## 7. R3 result
 
@@ -99,4 +97,4 @@ The input fixture foundation is present. Final Golden Baseline closure remains d
 
 ## 8. Next action
 
-Browser/CI execution gate is now observed PASS for the configured suites. Proceed to the remaining source/asset and final historical baseline closure gates. Missing historical T01 sources remain a separate source gate and must not be silently substituted.
+Browser/CI execution remains an evidence gate for release-affecting changes. Proceed with observed V2-native runtime evidence for all current templates and paired historical evidence for the seven recovered V1 templates. Missing historical T01 sources remain documented as unrecovered provenance and must not be silently substituted.
