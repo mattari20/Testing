@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorZoomController} from '../../src/application/cv-editor-zoom-controller.js';class N{setAttribute(){}}test('clamps zoom',()=>{const z=createCVEditorZoomController({container:new N()});assert.equal(z.set(3),2);assert.equal(z.set(.1),.5);});
