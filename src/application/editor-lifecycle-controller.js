@@ -1,4 +1,4 @@
-export const EDITOR_LIFECYCLE_VERSION = '1.4.0';
+export const EDITOR_LIFECYCLE_VERSION = '1.5.0';
 
 export function createEditorLifecycleController(surface, recoveryController = null, options = {}) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
@@ -131,6 +131,10 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       else if (result === true && action === 'dismiss') status = surface.getState().session.dirty ? 'dirty' : 'saved';
       emit();
       return result;
+    },
+    initializeRecovery() {
+      if (destroyed) return null;
+      return recoveryController?.initialize?.() || null;
     },
     refreshRecovery() {
       if (destroyed) return null;
