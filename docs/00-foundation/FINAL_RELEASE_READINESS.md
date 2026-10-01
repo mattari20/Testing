@@ -10,7 +10,7 @@ The following are present on `main`:
 
 - V1 functional preservation inventory and UI/CSS preservation contract.
 - V1 source/security audit and V1→V2 master reconciliation.
-- Seven authoritative V1 HTML template sources supplied/recovered by the project owner.
+- Seven authoritative V1 HTML template sources supplied/recovered by the project owner; two missing historical T01 variants now have explicitly documented new V2-native replacements.
 - Seven Native V2 templates and native template contract.
 - V2 document, lifecycle, template, layout, preview, export, import, intelligence, security and application layers.
 - Editor runtime, form/section/template controllers, live preview and pagination infrastructure.
@@ -38,8 +38,8 @@ This is a repository-content scan only. It does not prove that historical V1 pro
 
 The following cannot be truthfully closed from repository writes alone:
 
-1. **V1 T01 ATS source:** not supplied/recovered.
-2. **V1 T01 Simple source:** not supplied/recovered.
+1. **Historical V1 T01 ATS source:** not supplied/recovered; V2 replacement is now documented and implemented.
+2. **Historical V1 T01 Simple source:** not supplied/recovered; V2 replacement is now documented and implemented.
 3. **Historical V1 asset reconciliation:** remaining archive-reference gaps require authoritative source/production verification.
 4. **Production credential rotation/revocation:** requires action in the production environment.
 5. **V1 repository-history secret verification:** requires authoritative history/security review.
