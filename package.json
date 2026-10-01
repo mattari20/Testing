@@ -329,10 +329,10 @@
     "test:editor-100-groups": "npm run test:m13562-m21561",
     "test:production-integration": "node --test tests/m21562-m29561/editor-production-integration.test.js",
     "test:editor-production": "npm run test:production-integration",
-    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css && npm run test:browser-visual-qa",
+    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css && npm run test:browser-visual-qa && npm run test:m48762-m49561",
     "test:e2e-contract": "node --test tests/m29562-m37561/e2e-product-completion.test.js",
     "test:e2e-release": "npm run test:e2e-contract",
-    "test:all-contracts": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css",
+    "test:all-contracts": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization && npm run test:editor-css && npm run test:m48762-m49561",
     "test:final-productization": "node --test tests/final-productization/cv-builder-final-productization.test.js",
     "test:release-closure": "npm run test:final-productization && npm run test:e2e-contract",
     "test:editor-css": "node --test tests/m45562-m46361/editor-css.test.js",
@@ -340,6 +340,8 @@
     "test:browser-visual-qa": "npm run test:m47162-m47961 && npm run test:real-browser-visual-qa && npm run test:real-browser-workflow",
     "test:real-browser-visual-qa": "node --test tests/m47162-m47961/real-browser-visual-qa.test.js",
     "test:m47962-m48761": "node --test tests/m47962-m48761/real-browser-editor-workflow.test.js",
-    "test:real-browser-workflow": "npm run test:m47962-m48761"
+    "test:real-browser-workflow": "npm run test:m47962-m48761",
+    "test:m48762-m49561": "node --test tests/m48762-m49561/full-v2-runtime-acceptance.test.js",
+    "test:full-v2-runtime": "npm run test:m48762-m49561"
   }
 }
