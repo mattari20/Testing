@@ -15,6 +15,14 @@ function fingerprint(value) {
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
+function createSnapshotContentId(session, application) {
+  const sessionData = clone(session || {});
+  delete sessionData.savedAt;
+  delete sessionData.lastCommand;
+  delete sessionData.dirty;
+  return `c-${fingerprint({ session: sessionData, application })}`;
+}
+
 export function createEditorPersistenceRecord(session, options = {}) {
   if (!session?.application?.masterProfile || !session?.application?.targetedCV) {
     throw new Error('A complete editor session is required for persistence.');
@@ -29,12 +37,21 @@ export function createEditorPersistenceRecord(session, options = {}) {
     targetedCV: toSerializable(session.application.targetedCV)
   };
   const sessionData = toSerializable(session.session || {});
-  const identity = fingerprint({ version: EDITOR_PERSISTENCE_VERSION, savedAt, revision, session: sessionData, application });
+  const snapshotContentId = createSnapshotContentId(sessionData, application);
+  const identity = fingerprint({
+    version: EDITOR_PERSISTENCE_VERSION,
+    savedAt,
+    revision,
+    snapshotContentId,
+    session: sessionData,
+    application
+  });
   return Object.freeze({
     version: EDITOR_PERSISTENCE_VERSION,
     savedAt,
     revision,
     snapshotId: `s-${identity}`,
+    snapshotContentId,
     session: sessionData,
     application
   });
@@ -56,8 +73,21 @@ export function deserializeEditorPersistenceRecord(serialized) {
   const validation = validateM1(record.application?.masterProfile, record.application?.targetedCV);
   if (!validation.valid) throw new Error('Persisted CV document is invalid.');
   if (record.snapshotId != null) {
-    const expected = `s-${fingerprint({ version: record.version, savedAt: record.savedAt, revision: record.revision, session: record.session, application: record.application })}`;
+    const expected = `s-${fingerprint({
+      version: record.version,
+      savedAt: record.savedAt,
+      revision: record.revision,
+      snapshotContentId: record.snapshotContentId,
+      session: record.session,
+      application: record.application
+    })}`;
     if (record.snapshotId !== expected) throw new Error('Persisted CV snapshot identity is invalid.');
+  }
+  if (record.snapshotContentId != null) {
+    const expectedContentId = createSnapshotContentId(record.session, record.application);
+    if (record.snapshotContentId !== expectedContentId) {
+      throw new Error('Persisted CV snapshot content identity is invalid.');
+    }
   }
   return record;
 }
@@ -111,8 +141,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoverySavedAt = null;
   let recoveryRevision = null;
   let recoverySnapshotId = null;
+  let recoverySnapshotContentId = null;
   let recoveryIsNewer = false;
   let recoveryRelation = 'missing';
+  let recoveryContentRelation = 'missing';
   const subscribers = new Set();
 
   const emit = () => {
@@ -125,8 +157,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoverySavedAt,
       recoveryRevision,
       recoverySnapshotId,
+      recoverySnapshotContentId,
       recoveryIsNewer,
       recoveryRelation,
+      recoveryContentRelation,
       retryCount,
       maxRetries
     });
@@ -137,8 +171,18 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   const classifyRecoveryError = error => {
     const message = String(error?.message || error);
     const invalid = error instanceof SyntaxError
-      || /Unsupported editor persistence|Persisted CV document is invalid|Persisted CV snapshot identity is invalid/i.test(message);
+      || /Unsupported editor persistence|Persisted CV document is invalid|Persisted CV snapshot identity is invalid|Persisted CV snapshot content identity is invalid/i.test(message);
     return invalid ? 'invalid' : 'error';
+  };
+
+  const currentContentId = () => {
+    const state = surface.getState();
+    const application = {
+      version: state.session.application?.version,
+      masterProfile: toSerializable(state.session.application?.masterProfile),
+      targetedCV: toSerializable(state.session.application?.targetedCV)
+    };
+    return createSnapshotContentId(state.session, application);
   };
 
   const compareRecoveryFreshness = record => {
@@ -153,6 +197,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     return 'same';
   };
 
+  const compareRecoveryContent = record => {
+    if (!record?.snapshotContentId) return 'unknown';
+    const currentId = currentContentId();
+    if (!currentId) return 'unknown';
+    return currentId === record.snapshotContentId ? 'same' : 'different';
+  };
+
   const inspectRecovery = () => {
     try {
       const record = adapter.load();
@@ -160,7 +211,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoverySavedAt = record?.savedAt || null;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
       recoverySnapshotId = record?.snapshotId || null;
+      recoverySnapshotContentId = record?.snapshotContentId || null;
       recoveryRelation = compareRecoveryFreshness(record);
+      recoveryContentRelation = compareRecoveryContent(record);
       recoveryIsNewer = recoveryRelation === 'newer';
       recoveryError = null;
       return record;
@@ -169,8 +222,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoverySavedAt = null;
       recoveryRevision = null;
       recoverySnapshotId = null;
+      recoverySnapshotContentId = null;
       recoveryIsNewer = false;
       recoveryRelation = 'unknown';
+      recoveryContentRelation = 'unknown';
       recoveryError = String(error?.message || error);
       return null;
     }
@@ -181,7 +236,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoverySavedAt = record?.savedAt || null;
     recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
     recoverySnapshotId = record?.snapshotId || null;
+    recoverySnapshotContentId = record?.snapshotContentId || null;
     recoveryRelation = relation;
+    recoveryContentRelation = record?.snapshotContentId ? 'same' : 'unknown';
     recoveryIsNewer = relation === 'newer';
     recoveryError = null;
   };
@@ -310,8 +367,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoverySavedAt,
         recoveryRevision,
         recoverySnapshotId,
+        recoverySnapshotContentId,
         recoveryIsNewer,
         recoveryRelation,
+        recoveryContentRelation,
         retryCount,
         maxRetries
       });
@@ -324,8 +383,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoverySavedAt,
         recoveryRevision,
         recoverySnapshotId,
+        recoverySnapshotContentId,
         recoveryIsNewer,
-        recoveryRelation
+        recoveryRelation,
+        recoveryContentRelation
       });
     },
     subscribe(listener) {
@@ -385,8 +446,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoverySavedAt = null;
       recoveryRevision = null;
       recoverySnapshotId = null;
+      recoverySnapshotContentId = null;
       recoveryIsNewer = false;
       recoveryRelation = 'missing';
+      recoveryContentRelation = 'missing';
       recoveryError = null;
       emit();
     },
