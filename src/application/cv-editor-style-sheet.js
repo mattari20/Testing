@@ -28,4 +28,23 @@ export function createCVEditorStyleSheet(options={}){const document=options.docu
 @media(max-width:600px){[data-cv-editor-toolbar]{position:relative;flex-wrap:wrap;padding:${t.spacing.sm}}[data-cv-editor-toolbar] h1{width:100%;flex-basis:100%}[data-toolbar-group]{border-left:0;border-top:1px solid var(--cv-border);padding:6px 0 0}[data-cv-editor-main]{padding:${t.spacing.sm};gap:${t.spacing.sm}}[data-cv-editor-form],[data-cv-editor-preview]{padding:${t.spacing.md};border-radius:${t.radius.md}}[data-cv-editor-form] input,[data-cv-editor-form] textarea,[data-cv-editor-form] select{min-height:44px;font-size:16px}[data-cv-editor-preview]{padding:${t.spacing.sm}}[data-cv-editor-preview] article{width:100%;min-height:auto;padding:8mm}}
 @media(prefers-reduced-motion:reduce){[data-cv-editor="v2"] *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 @media print{[data-cv-editor-toolbar],[data-cv-editor-form],[data-cv-editor-status]{display:none!important}[data-cv-editor-main]{display:block;width:auto;padding:0;margin:0}[data-cv-editor-preview]{padding:0;background:#fff;border:0;box-shadow:none;overflow:visible}[data-cv-editor-preview] article{width:210mm;min-height:297mm;margin:0;padding:18mm;border:0;box-shadow:none;page-break-after:always}[data-cv-editor-preview] article:last-child{page-break-after:auto}}
+[data-cv-editor-form] [data-section-visible="false"],[data-cv-editor-form] [data-entry-visible="false"],[data-cv-editor-form] [data-field-visibility="hidden"]{display:none}
+[data-cv-editor-form] [data-field-id]>span,[data-cv-editor-form] [data-entry-field]>span{display:block;margin-bottom:4px;color:var(--cv-text-muted);font-size:.78rem;font-weight:650}
+[data-cv-editor-form] [data-entry-field]{display:block}
+[data-cv-editor-form] [data-section-id]>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:8px}
+[data-preview-root]{display:flex;flex-direction:column;align-items:center}
+[data-preview-block-id]{cursor:text;outline:none;border-radius:4px;transition:background ${t.motion.fast} ease,box-shadow ${t.motion.fast} ease}
+[data-preview-block-id]:hover{background:rgba(36,87,214,.04)}
+[data-preview-block-id]:focus-visible{box-shadow:0 0 0 3px rgba(36,87,214,.15)}
+[data-template-card]{display:flex;flex-direction:column;align-items:flex-start;width:100%;min-height:86px;text-align:left;padding:12px;margin:0 0 8px;background:var(--cv-surface);border-color:var(--cv-border)}
+[data-template-card][aria-selected="true"],[data-template-card][data-selected="true"]{border-color:var(--cv-accent);background:var(--cv-accent-soft);box-shadow:0 0 0 2px rgba(36,87,214,.1)}
+[data-export-result="error"],[data-ats-result="error"],[data-job-match-result="error"]{border:1px solid var(--cv-danger);background:var(--cv-danger-soft);color:var(--cv-danger)}
+[data-export-result="ready"],[data-ats-result="ready"],[data-job-match-result="ready"]{border:1px solid var(--cv-border);background:var(--cv-surface-muted)}
+[data-cv-editor="v2"] button[data-action="danger"]{color:var(--cv-danger);border-color:#e5b4ae}
+[data-cv-editor="v2"] button[data-action="success"]{color:var(--cv-success);border-color:#a9d8c2}
+[data-cv-editor="v2"] button[data-action="ghost"]{border-color:transparent;background:transparent}
+[data-cv-editor="v2"] button[data-action="ghost"]:hover{background:var(--cv-surface-muted);border-color:var(--cv-border)}
+[data-cv-editor="v2"] input[aria-invalid="true"],[data-cv-editor="v2"] textarea[aria-invalid="true"],[data-cv-editor="v2"] select[aria-invalid="true"]{border-color:var(--cv-danger);box-shadow:0 0 0 3px rgba(180,35,24,.1)}
+@media(max-width:900px){[data-preview-root]{align-items:stretch}[data-cv-editor-preview] article{align-self:center;max-width:100%;overflow:hidden}}
+@media(max-width:600px){[data-cv-editor-form] [data-entry-field]{margin-bottom:4px}[data-template-card]{min-height:72px}}
 `;document.head.appendChild(node);return Object.freeze({version:CV_EDITOR_STYLE_SHEET_VERSION,node,destroy(){node.remove?.();}});}
