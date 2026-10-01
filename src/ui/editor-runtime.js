@@ -3,8 +3,9 @@ import { bindEditorFields, bindEditorActions } from './editor-dom-controller.js'
 import { renderEditorForm } from './editor-form-renderer.js';
 import { bindEditorReorder } from './editor-reorder-controller.js';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js';
+import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.4.0';
+export const EDITOR_RUNTIME_VERSION = '1.5.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -16,6 +17,16 @@ export function mountV2EditorRuntime(root, input = {}) {
   const previewRuntime = previewRoot
     ? createEditorLivePreviewRuntime(mounted.surface, previewRoot, input.previewOptions || {})
     : null;
+
+  const persistenceOptions = input.persistence || null;
+  const persistenceAdapter = persistenceOptions?.adapter
+    || (persistenceOptions?.storage
+      ? createEditorPersistenceAdapter(persistenceOptions.storage, persistenceOptions.key)
+      : null);
+  const recoveryController = persistenceAdapter
+    ? createEditorRecoveryController(mounted.surface, persistenceAdapter, persistenceOptions.controller || {})
+    : null;
+
   const render = () => {
     fieldBinding?.destroy();
     actionBinding?.destroy();
@@ -33,12 +44,18 @@ export function mountV2EditorRuntime(root, input = {}) {
     }
     return state;
   };
+
+  if (recoveryController && persistenceOptions.autoRecover === true && recoveryController.hasRecovery()) {
+    recoveryController.recover();
+  }
+
   render();
   previewRuntime?.refresh().catch(() => {});
+
   const rerenderTypes = new Set([
     'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
-    'upload-asset','remove-asset','undo','redo'
+    'upload-asset','remove-asset','undo','redo','restore'
   ]);
   const unsubscribe = mounted.surface.subscribe((state, command) => {
     if (rerenderTypes.has(command?.type)) {
@@ -46,11 +63,15 @@ export function mountV2EditorRuntime(root, input = {}) {
       previewRuntime?.refresh().catch(() => {});
     }
   });
+
   return Object.freeze({
     ...mounted,
     previewRuntime,
+    persistence: recoveryController,
     render,
     destroy() {
+      recoveryController?.flush();
+      recoveryController?.destroy();
       fieldBinding?.destroy();
       actionBinding?.destroy();
       reorderBinding?.destroy();
