@@ -145,6 +145,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryIsNewer = false;
   let recoveryRelation = 'missing';
   let recoveryContentRelation = 'missing';
+  let recoveryDecision = 'none';
   const subscribers = new Set();
 
   const emit = () => {
@@ -161,6 +162,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryIsNewer,
       recoveryRelation,
       recoveryContentRelation,
+      recoveryDecision,
       retryCount,
       maxRetries
     });
@@ -204,6 +206,14 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     return currentId === record.snapshotContentId ? 'same' : 'different';
   };
 
+  const deriveRecoveryDecision = (record, contentRelation = recoveryContentRelation, freshness = recoveryRelation) => {
+    if (!record) return 'none';
+    if (contentRelation === 'same') return 'safe';
+    if (contentRelation === 'different' && freshness === 'older') return 'stale';
+    if (contentRelation === 'different') return 'confirm';
+    return 'unknown';
+  };
+
   const inspectRecovery = () => {
     try {
       const record = adapter.load();
@@ -215,6 +225,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRelation = compareRecoveryFreshness(record);
       recoveryContentRelation = compareRecoveryContent(record);
       recoveryIsNewer = recoveryRelation === 'newer';
+      recoveryDecision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
       recoveryError = null;
       return record;
     } catch (error) {
@@ -226,6 +237,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryIsNewer = false;
       recoveryRelation = 'unknown';
       recoveryContentRelation = 'unknown';
+      recoveryDecision = 'unknown';
       recoveryError = String(error?.message || error);
       return null;
     }
@@ -240,6 +252,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryRelation = relation;
     recoveryContentRelation = record?.snapshotContentId ? 'same' : 'unknown';
     recoveryIsNewer = relation === 'newer';
+    recoveryDecision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
     recoveryError = null;
   };
 
@@ -371,6 +384,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryIsNewer,
         recoveryRelation,
         recoveryContentRelation,
+        recoveryDecision,
         retryCount,
         maxRetries
       });
@@ -386,7 +400,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoverySnapshotContentId,
         recoveryIsNewer,
         recoveryRelation,
-        recoveryContentRelation
+        recoveryContentRelation,
+        recoveryDecision
       });
     },
     subscribe(listener) {
@@ -398,7 +413,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     hasRecovery() {
       return Boolean(inspectRecovery());
     },
-    recover() {
+    recover(options = {}) {
       if (destroyed) return null;
       ++operationToken;
       if (timer) {
@@ -412,6 +427,13 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       retryCount = 0;
       const record = inspectRecovery();
       if (!record) {
+        emit();
+        return null;
+      }
+      const decision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
+      if (decision === 'stale' && options.allowStale !== true) {
+        recoveryDecision = 'stale';
+        recoveryError = 'Persisted CV snapshot is older than the current editor content.';
         emit();
         return null;
       }
@@ -450,6 +472,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryIsNewer = false;
       recoveryRelation = 'missing';
       recoveryContentRelation = 'missing';
+      recoveryDecision = 'none';
       recoveryError = null;
       emit();
     },
