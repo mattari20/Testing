@@ -102,6 +102,11 @@ export function bindEditorLifecycle(root, lifecycle) {
       element.textContent = String(state.recoveryError || '');
       element.dataset.v2EditorRecoveryError = String(state.recoveryError || '');
     });
+    root.querySelectorAll('[data-v2-editor-autosave-retry]').forEach(element => {
+      element.textContent = String(state.retryCount || 0);
+      element.dataset.v2EditorAutosaveRetry = String(state.retryCount || 0);
+      element.dataset.v2EditorAutosaveMaxRetries = String(state.maxRetries ?? 0);
+    });
     root.querySelectorAll('[data-v2-editor-save]').forEach(element => {
       element.disabled = state.status === 'saved' || state.status === 'saving';
       element.dataset.v2EditorDirty = String(Boolean(state.dirty));
