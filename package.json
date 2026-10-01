@@ -258,6 +258,8 @@
     "test:m1528-m1607": "node --test tests/m1528-m1607/cv-template-capability-resolution.test.js",
     "test:m1608-m1687": "node --test tests/m1608-m1687/cv-section-field-projection.test.js",
     "test:m1688-m1767": "node --test tests/m1688-m1767/cv-pagination-runtime.test.js",
-    "test:m1768-m1847": "node --test tests/m1768-m1847/cv-preview-editing.test.js"
+    "test:m1768-m1847": "node --test tests/m1768-m1847/cv-preview-editing.test.js",
+    "test:m1848-m1927": "node --test tests/m1848-m1927/cv-editor-command-history.test.js",
+    "test:m1528-m1927": "npm run test:m1528-m1607 && npm run test:m1608-m1687 && npm run test:m1688-m1767 && npm run test:m1768-m1847 && npm run test:m1848-m1927"
   }
 }
