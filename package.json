@@ -218,6 +218,7 @@
     "test:editor-runtime-persistence": "npm run test:m428-m437",
     "test:m438-m447": "node --test tests/m438-m447/editor-save-lifecycle.test.js",
     "test:m448-m457": "node --test tests/m448-m457/editor-lifecycle-controller.test.js tests/m448-m457/editor-runtime-lifecycle.test.js",
-    "test:m458-m467": "node --test tests/m458-m467/editor-lifecycle-dom.test.js"
+    "test:m458-m467": "node --test tests/m458-m467/editor-lifecycle-dom.test.js",
+    "test:m468-m477": "node --test tests/m468-m477/editor-session-recovery-guard.test.js"
   }
 }
