@@ -1,0 +1,2 @@
+export const CV_EDITOR_INTERACTION_ORCHESTRATOR_VERSION='1.0.0';
+export function createCVEditorInteractionOrchestrator(options={}){const form=options.form,sections=options.sections,entries=options.entries;if(!form||!sections||!entries)throw new Error('Interaction orchestrator requires form, sections and entries.');return Object.freeze({version:CV_EDITOR_INTERACTION_ORCHESTRATOR_VERSION,form,sections,entries,refresh:()=>form.refresh?.()||null});}
