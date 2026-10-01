@@ -82,6 +82,18 @@ export function bindEditorLifecycle(root, lifecycle) {
       element.dataset.v2EditorLifecycleStatus = String(state.status || '');
       if ('ariaBusy' in element) element.ariaBusy = state.status === 'saving' ? 'true' : 'false';
     });
+    root.querySelectorAll('[data-v2-editor-autosave-status]').forEach(element => {
+      element.textContent = String(state.autosaveStatus || 'idle');
+      element.dataset.v2EditorAutosaveStatus = String(state.autosaveStatus || 'idle');
+    });
+    root.querySelectorAll('[data-v2-editor-autosave-error]').forEach(element => {
+      element.textContent = String(state.lastAutosaveError || '');
+      element.dataset.v2EditorAutosaveError = String(state.lastAutosaveError || '');
+    });
+    root.querySelectorAll('[data-v2-editor-last-autosaved]').forEach(element => {
+      element.textContent = String(state.lastAutosavedAt || '');
+      element.dataset.v2EditorLastAutosaved = String(state.lastAutosavedAt || '');
+    });
     root.querySelectorAll('[data-v2-editor-save]').forEach(element => {
       element.disabled = state.status === 'saved' || state.status === 'saving';
       element.dataset.v2EditorDirty = String(Boolean(state.dirty));
