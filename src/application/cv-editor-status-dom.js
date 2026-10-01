@@ -1,0 +1,2 @@
+export const CV_EDITOR_STATUS_DOM_VERSION='1.0.0';
+export function createCVEditorStatusDOM(options={}){const document=options.document,status=options.status;if(!document||!status)throw new Error('Status DOM requires document and status.');function render(){const s=status.getState?.()||{};const node=options.node||document.createElement('span');node.setAttribute('data-editor-save-status',s.status||'unknown');node.textContent=s.status||'';return node;}return Object.freeze({version:CV_EDITOR_STATUS_DOM_VERSION,render});}
