@@ -1,0 +1,2 @@
+export const CV_EDITOR_MOBILE_CONTROLS_VERSION='1.0.0';
+export function createCVEditorMobileControls(options={}){const document=options.document,layout=options.layout,shell=options.shell;if(!document||!layout||!shell)throw new Error('Mobile controls require document, layout and shell.');const button=document.createElement('button');button.textContent='Preview';button.setAttribute('data-mobile-preview-toggle','');button.onclick=()=>layout.setMode('mobile');shell.toolbar.appendChild(button);return Object.freeze({version:CV_EDITOR_MOBILE_CONTROLS_VERSION,button});}
