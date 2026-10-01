@@ -3,7 +3,7 @@ import { createEditorCommand } from './editor-command-contract.js';
 import { executeEditorCommand } from './editor-command-executor.js';
 import { createEditorPreview } from './editor-preview-controller.js';
 
-export const EDITOR_SURFACE_VERSION = '1.1.0';
+export const EDITOR_SURFACE_VERSION = '1.2.0';
 
 function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -75,6 +75,26 @@ export function createEditorSurface(input={}) {
         history:{past,future:[]}
       });
       notify(command);
+      return state;
+    },
+    restorePersistedState(record){
+      if (!record?.application?.masterProfile || !record?.application?.targetedCV) {
+        throw new Error('Persisted editor application is required.');
+      }
+      const session=createEditorSession({
+        masterProfile:clone(record.application.masterProfile),
+        targetedCV:clone(record.application.targetedCV)
+      });
+      session.session = clone(record.session || session.session);
+      session.dirty = false;
+      session.savedAt = record.savedAt || null;
+      session.lastCommand = 'restore';
+      state=Object.freeze({
+        session:Object.freeze(session),
+        preview:null,
+        history:{past:[],future:[]}
+      });
+      notify(Object.freeze({ type:'restore', mutatesData:false }));
       return state;
     },
     preview(options={}){
