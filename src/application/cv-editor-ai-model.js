@@ -1,0 +1,1 @@
+export const CV_EDITOR_AI_MODEL_VERSION='1.0.0';export function createCVEditorAIModel(options={}){const controller=options.controller;if(!controller)throw new Error('AI model requires controller.');return Object.freeze({version:CV_EDITOR_AI_MODEL_VERSION,state:()=>controller.state?.(),accept:i=>controller.accept(i),reject:i=>controller.reject(i)});}
