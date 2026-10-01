@@ -1,0 +1,2 @@
+export const CV_EDITOR_MASTER_PROFILE_TARGETING_VERSION='1.0.0';
+export function createCVEditorMasterProfileTargeting(options={}){const workspace=options.workspace;if(!workspace)throw new Error('Master profile targeting requires workspace.');return Object.freeze({version:CV_EDITOR_MASTER_PROFILE_TARGETING_VERSION,list:()=>workspace.getState().documents.map(d=>({id:d.id,title:d.title||'',masterProfileId:d.masterProfileId||null})),create:input=>workspace.addDocument(input),duplicate:(id,input={})=>workspace.duplicateDocument(id,input)});}
