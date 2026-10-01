@@ -1,0 +1,2 @@
+export const CV_EDITOR_RUNTIME_HEALTH_VERSION='1.0.0';
+export function createCVEditorRuntimeHealth(options={}){const adapter=options.adapter;function inspect(){try{const state=adapter?.getState?.();return Object.freeze({healthy:!!state,hasAdapter:!!adapter});}catch(error){return Object.freeze({healthy:false,hasAdapter:true,error:String(error?.message||error)});}}return Object.freeze({version:CV_EDITOR_RUNTIME_HEALTH_VERSION,inspect,destroy(){}});}
