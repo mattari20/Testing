@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorIntelligencePanel} from '../../src/application/cv-editor-intelligence-panel.js';test('stores intelligence result',()=>{const p=createCVEditorIntelligencePanel({coordinator:{inspect:()=>({ats:{}})}});assert.ok(p.inspect().ats);});
