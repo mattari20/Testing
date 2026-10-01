@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorInteractionController} from '../../src/application/cv-editor-interaction-controller.js';
+class N{constructor(){this.listeners={};}addEventListener(k,f){this.listeners[k]=f;}getAttribute(k){return k==='data-block-id'?'name':null;}}
+test('delegates form input to adapter',()=>{const target=new N();target.value='Ali';const page={shell:{form:new N(),preview:new N(),setStatus(){}}},calls=[];const c=createCVEditorInteractionController({document:{},adapter:{edit:(...a)=>calls.push(a)},page});page.shell.form.listeners.input({target});assert.equal(calls[0][0],'name');c.destroy();});
