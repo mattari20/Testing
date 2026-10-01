@@ -1,0 +1,1 @@
+export const CV_EDITOR_ACCESSIBILITY_MODEL_VERSION='1.0.0';export function createCVEditorAccessibilityModel(options={}){const announcer=options.announcer;if(!announcer)throw new Error('Accessibility model requires announcer.');return Object.freeze({version:CV_EDITOR_ACCESSIBILITY_MODEL_VERSION,announce:m=>announcer.announce?.(m)});}
