@@ -1,0 +1,2 @@
+export const CV_EDITOR_DIRTY_GUARD_VERSION='1.0.0';
+export function createCVEditorDirtyGuard(options={}){const workspace=options.workspace;if(!workspace)throw new Error('Dirty guard requires workspace.');function isDirty(){return !!workspace.getState?.().dirty;}function canLeave(confirmLeave=()=>true){return !isDirty()||!!confirmLeave();}return Object.freeze({version:CV_EDITOR_DIRTY_GUARD_VERSION,isDirty,canLeave,destroy(){}});}
