@@ -1,0 +1,1 @@
+export const CV_EDITOR_EXPORT_ACTIONS_VERSION='1.0.0';export function createCVEditorExportActions(options={}){const flow=options.flow;if(!flow)throw new Error('Export actions require flow.');return Object.freeze({version:CV_EDITOR_EXPORT_ACTIONS_VERSION,prepare:flow.prepare,validate:flow.validate,run:flow.run});}
