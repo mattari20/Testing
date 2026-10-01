@@ -1,0 +1,2 @@
+export const CV_EDITOR_TEMPLATE_PREVIEW_MODEL_VERSION='1.0.0';
+export function createCVEditorTemplatePreviewModel(options={}){const controller=options.controller;if(!controller)throw new Error('Template preview model requires controller.');let selected=null;return Object.freeze({version:CV_EDITOR_TEMPLATE_PREVIEW_MODEL_VERSION,list:()=>controller.listTemplates?.()||[],select:id=>{selected=id;return controller.select?.(id)||id;},selected:()=>selected});}
