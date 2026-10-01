@@ -1,0 +1,2 @@
+export const CV_EDITOR_DOCUMENT_STATE_VERSION='1.0.0';
+export function createCVEditorDocumentState(options={}){const manager=options.manager;if(!manager)throw new Error('Document state requires manager.');function getState(){return Object.freeze({documents:[...(manager.list?.()||[])],activeDocumentId:manager.active?.()?.id||manager.getActiveId?.()||null});}return Object.freeze({version:CV_EDITOR_DOCUMENT_STATE_VERSION,getState,destroy(){}});}
