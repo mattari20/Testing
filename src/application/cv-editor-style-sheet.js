@@ -47,4 +47,23 @@ export function createCVEditorStyleSheet(options={}){const document=options.docu
 [data-cv-editor="v2"] input[aria-invalid="true"],[data-cv-editor="v2"] textarea[aria-invalid="true"],[data-cv-editor="v2"] select[aria-invalid="true"]{border-color:var(--cv-danger);box-shadow:0 0 0 3px rgba(180,35,24,.1)}
 @media(max-width:900px){[data-preview-root]{align-items:stretch}[data-cv-editor-preview] article{align-self:center;max-width:100%;overflow:hidden}}
 @media(max-width:600px){[data-cv-editor-form] [data-entry-field]{margin-bottom:4px}[data-template-card]{min-height:72px}}
+[data-cv-editor-toolbar] select{height:38px;border:1px solid var(--cv-border-strong);border-radius:${t.radius.sm};padding:0 10px;background:var(--cv-surface);color:var(--cv-text);font:600 .84rem inherit}
+[data-cv-editor-toolbar] button{white-space:nowrap}
+[data-cv-editor-main]>*{min-width:0}
+[data-cv-editor-form]{scroll-margin-top:72px}
+[data-cv-editor-form] section:last-child{padding-bottom:0}
+[data-cv-editor-form] label[data-field-id]{position:relative}
+[data-cv-editor-form] label[data-field-id]>input,[data-cv-editor-form] label[data-field-id]>textarea,[data-cv-editor-form] label[data-field-id]>select{display:block}
+[data-cv-editor-form] input::placeholder,[data-cv-editor-form] textarea::placeholder{color:#8a94a6}
+[data-cv-editor-form] button+button{margin-left:6px}
+[data-cv-editor-preview]{scroll-behavior:smooth}
+[data-cv-editor-preview] article [data-preview-block-id]{min-height:1px}
+[data-cv-editor-preview] article [data-preview-block-id]:empty{min-height:12px}
+[data-cv-editor-preview] article:focus-within{box-shadow:${t.shadow.raised}}
+[data-cv-editor-status]:empty{display:none}
+[data-cv-editor="v2"] [aria-live]{outline:none}
+[data-cv-editor="v2"] :focus-visible{outline:2px solid var(--cv-focus);outline-offset:2px}
+[data-cv-editor="v2"] button:focus-visible,[data-cv-editor="v2"] input:focus-visible,[data-cv-editor="v2"] textarea:focus-visible,[data-cv-editor="v2"] select:focus-visible{outline:0}
+@media(max-width:900px){[data-cv-editor-main]{width:100%}[data-cv-editor-form],[data-cv-editor-preview]{width:100%}}
+@media(max-width:600px){[data-cv-editor-toolbar] button,[data-cv-editor-toolbar] select{min-height:42px}[data-cv-editor-status]{padding-left:${t.spacing.md};padding-right:${t.spacing.md}}}
 `;document.head.appendChild(node);return Object.freeze({version:CV_EDITOR_STYLE_SHEET_VERSION,node,destroy(){node.remove?.();}});}
