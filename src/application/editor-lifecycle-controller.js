@@ -8,6 +8,7 @@ export function createEditorLifecycleController(surface, recoveryController = nu
   let destroyed = false;
   let status = surface.getState().session.dirty ? 'dirty' : 'saved';
   const subscribers = new Set();
+  let lastEmittedKey = null;
   const getAutosaveState = () => recoveryController?.getState?.() || Object.freeze({
     autosaveStatus: 'idle',
     lastAutosavedAt: null,
@@ -46,6 +47,14 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       recoveryAvailable: hasRecovery(),
       ...getAutosaveState()
     });
+    const key = JSON.stringify({
+      status:snapshot.status,dirty:snapshot.dirty,savedAt:snapshot.savedAt,lastCommand:snapshot.lastCommand,
+      autosaveStatus:snapshot.autosaveStatus,recoveryStatus:snapshot.recoveryStatus,
+      recoveryDecision:snapshot.recoveryDecision,persistenceWriteStatus:snapshot.persistenceWriteStatus,
+      persistenceRevision:snapshot.persistenceRevision
+    });
+    if (key === lastEmittedKey) return snapshot;
+    lastEmittedKey = key;
     subscribers.forEach(listener => listener(snapshot));
     return snapshot;
   };
