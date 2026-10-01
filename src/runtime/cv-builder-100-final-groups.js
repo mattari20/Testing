@@ -1,0 +1,2 @@
+export const CV_BUILDER_FINAL_GROUPS=Object.freeze(Array.from({length:100},(_,i)=>{const n=i+1;const domains=['runtime','editing','preview','templates','persistence','export','intelligence','accessibility','security','release'];return Object.freeze({group:n,id:'F'+String(n).padStart(3,'0'),domain:domains[Math.floor(i/10)],name:'Final productization group '+n,acceptance:'Executable contract or observed evidence required.'});}));
+export const listCVBuilderFinalGroups=()=>CV_BUILDER_FINAL_GROUPS.slice();

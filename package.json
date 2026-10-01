@@ -332,6 +332,8 @@
     "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract",
     "test:e2e-contract": "node --test tests/m29562-m37561/e2e-product-completion.test.js",
     "test:e2e-release": "npm run test:e2e-contract",
-    "test:all-contracts": "npm run test:production-integration && npm run test:e2e-contract"
+    "test:all-contracts": "npm run test:production-integration && npm run test:e2e-contract && npm run test:final-productization",
+    "test:final-productization": "node --test tests/final-productization/cv-builder-final-productization.test.js",
+    "test:release-closure": "npm run test:final-productization && npm run test:e2e-contract"
   }
 }
