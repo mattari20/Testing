@@ -1,0 +1,2 @@
+export const CV_EDITOR_SESSION_STATE_VERSION='1.0.0';
+export function createCVEditorSessionState(options={}){const bootstrap=options.bootstrap;if(!bootstrap)throw new Error('Session state requires bootstrap.');function getState(){return Object.freeze(bootstrap.getState?.()||{loaded:false});}return Object.freeze({version:CV_EDITOR_SESSION_STATE_VERSION,getState,destroy(){}});}
