@@ -1,0 +1,2 @@
+export const CV_EDITOR_ACCESSIBILITY_SURFACE_VERSION='1.0.0';
+export function createCVEditorAccessibilitySurface(options={}){const controller=options.controller;if(!controller)throw new Error('Accessibility surface requires controller.');function announce(message){return controller.announce(message);}return Object.freeze({version:CV_EDITOR_ACCESSIBILITY_SURFACE_VERSION,announce});}
