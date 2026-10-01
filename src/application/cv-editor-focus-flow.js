@@ -1,0 +1,2 @@
+export const CV_EDITOR_FOCUS_FLOW_VERSION='1.0.0';
+export function createCVEditorFocusFlow(options={}){const focus=options.focus;if(!focus)throw new Error('Focus flow requires focus manager.');function first(){return focus.focusFirst('[data-cv-focus]');}function modal(container){return focus.trap(container);}return Object.freeze({version:CV_EDITOR_FOCUS_FLOW_VERSION,first,modal});}
