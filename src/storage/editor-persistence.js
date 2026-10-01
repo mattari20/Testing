@@ -74,11 +74,39 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let autosaveStatus = 'idle';
   let lastAutosavedAt = null;
   let lastAutosaveError = null;
+  let recoveryStatus = 'missing';
+  let recoveryError = null;
   const subscribers = new Set();
   const emit = () => {
-    const snapshot = Object.freeze({ autosaveStatus, lastAutosavedAt, lastAutosaveError });
+    const snapshot = Object.freeze({
+      autosaveStatus,
+      lastAutosavedAt,
+      lastAutosaveError,
+      recoveryStatus,
+      recoveryError
+    });
     subscribers.forEach(listener => listener(snapshot));
     return snapshot;
+  };
+
+  const classifyRecoveryError = error => {
+    const message = String(error?.message || error);
+    const invalid = error instanceof SyntaxError
+      || /Unsupported editor persistence|Persisted CV document is invalid/i.test(message);
+    return invalid ? 'invalid' : 'error';
+  };
+
+  const inspectRecovery = () => {
+    try {
+      const record = adapter.load();
+      recoveryStatus = record ? 'available' : 'missing';
+      recoveryError = null;
+      return record;
+    } catch (error) {
+      recoveryStatus = classifyRecoveryError(error);
+      recoveryError = String(error?.message || error);
+      return null;
+    }
   };
 
   const flush = () => {
@@ -100,6 +128,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       const record = adapter.save(state.session);
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
+      recoveryStatus = 'available';
+      recoveryError = null;
       emit();
       return record;
     } catch (error) {
@@ -142,6 +172,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastCommand: 'save'
     };
     const record = adapter.save(cleanSession);
+    recoveryStatus = 'available';
+    recoveryError = null;
     if (typeof surface.markSaved === 'function') surface.markSaved(record?.savedAt || savedAt);
     return record;
   };
@@ -150,7 +182,18 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     flush,
     save,
     getState() {
-      return Object.freeze({ autosaveStatus, lastAutosavedAt, lastAutosaveError });
+      inspectRecovery();
+      return Object.freeze({
+        autosaveStatus,
+        lastAutosavedAt,
+        lastAutosaveError,
+        recoveryStatus,
+        recoveryError
+      });
+    },
+    getRecoveryState() {
+      inspectRecovery();
+      return Object.freeze({ recoveryStatus, recoveryError });
     },
     subscribe(listener) {
       if (typeof listener !== 'function') throw new Error('Recovery subscriber must be a function.');
@@ -159,7 +202,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       return () => subscribers.delete(listener);
     },
     hasRecovery() {
-      return Boolean(adapter.load());
+      return Boolean(inspectRecovery());
     },
     recover() {
       if (destroyed) return null;
@@ -167,7 +210,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         clearTimeout(timer);
         timer = null;
       }
-      const record = adapter.load();
+      const record = inspectRecovery();
       if (!record) return null;
       if (typeof surface.restorePersistedState !== 'function') {
         throw new Error('Editor surface does not support persisted-state recovery.');
@@ -176,6 +219,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       autosaveStatus = 'idle';
       lastAutosavedAt = record.savedAt || null;
       lastAutosaveError = null;
+      recoveryStatus = 'available';
+      recoveryError = null;
       emit();
       return record;
     },
@@ -189,6 +234,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       autosaveStatus = 'idle';
       lastAutosavedAt = null;
       lastAutosaveError = null;
+      recoveryStatus = 'missing';
+      recoveryError = null;
       emit();
     },
     destroy() {
