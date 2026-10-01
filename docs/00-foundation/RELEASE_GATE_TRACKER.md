@@ -4,7 +4,7 @@
 |---|---|---|---|
 | R1 V1 source/asset closure | PASS | Seven historical V1 sources reconciled; missing T01 ATS/Simple explicitly dispositioned as new V2-native replacements; historical preview/demo asset references explicitly excluded from V2 runtime | No remaining R1 blocker; historical V1 provenance remains documented as unrecovered, not silently recreated |
 | R2 Security closure | CONDITIONAL | Current-main indicator scan clean | Rotate/revoke production credentials; verify repository history |
-| R3 Golden Baseline package | CONDITIONAL | Sanitized 9-fixture input set plus observed browser execution; V2-native template set is now expanding | Complete final V2-native baseline output evidence and acceptance |
+| R3 Golden Baseline package | CONDITIONAL | Sanitized 9-fixture input set; seven recovered V1 templates; seven Native V2 templates; two explicit new V2-native T01 ATS/Simple replacements | Observe final V2-native runtime/output evidence and paired evidence for the seven recovered V1 templates; historical T01 ATS/Simple provenance remains unrecovered |
 | R4 Browser CI | PASS | Observed successful main-branch Native V2 Browser Validation run `36700733229` on current release commit | Re-establish evidence after future release-affecting changes |
 | R5 Pagination/fragmentation acceptance | PASS | Current main-branch Native V2 Browser Validation run `36700733229` passed the M208–M217 integrated fragmentation suite | Re-establish evidence after future release-affecting changes |
 | R6 Production integration | OPEN | V2 editor/application architecture exists; M218–M227 now provides an explicit nine-point evidence contract | Execute the contract against the actual production deployment and record live evidence |
