@@ -174,7 +174,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       }
       surface.restorePersistedState(record);
       autosaveStatus = 'idle';
-      lastAutosavedAt = null;
+      lastAutosavedAt = record.savedAt || null;
       lastAutosaveError = null;
       emit();
       return record;
@@ -187,6 +187,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       }
       adapter.clear?.();
       autosaveStatus = 'idle';
+      lastAutosavedAt = null;
       lastAutosaveError = null;
       emit();
     },
