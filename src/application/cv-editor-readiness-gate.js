@@ -1,0 +1,2 @@
+export const CV_EDITOR_READINESS_GATE_VERSION='1.0.0';
+export function createCVEditorReadinessGate(options={}){const health=options.health,validation=options.validation;if(!health)throw new Error('Readiness gate requires health.');function check(){const h=health.inspect();const v=validation?.getState?.();return Object.freeze({ready:!!h.healthy&&(!v||v.valid!==false),health:h,validation:v});}return Object.freeze({version:CV_EDITOR_READINESS_GATE_VERSION,check,destroy(){}});}
