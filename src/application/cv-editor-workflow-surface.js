@@ -1,0 +1,38 @@
+import {createCVEditorFormActions} from './cv-editor-form-actions.js';
+import {createCVEditorFieldTypes} from './cv-editor-field-types.js';
+import {createCVEditorEntryEditor} from './cv-editor-entry-editor.js';
+import {createCVEditorSectionEditor} from './cv-editor-section-editor.js';
+import {createCVEditorEntryActions} from './cv-editor-entry-actions.js';
+import {createCVEditorSectionActions} from './cv-editor-section-actions.js';
+import {createCVEditorPreviewEditModel} from './cv-editor-preview-edit-model.js';
+import {createCVEditorPreviewSelectionModel} from './cv-editor-preview-selection-model.js';
+import {createCVEditorPreviewPageActions} from './cv-editor-preview-page-actions.js';
+import {createCVEditorPreviewZoomState} from './cv-editor-preview-zoom-state.js';
+import {createCVEditorDocumentCommands} from './cv-editor-document-commands.js';
+import {createCVEditorSaveLifecycle} from './cv-editor-save-lifecycle.js';
+import {createCVEditorAutosaveStatus} from './cv-editor-autosave-status.js';
+import {createCVEditorExportFlow} from './cv-editor-export-flow.js';
+import {createCVEditorInteractionOrchestrator} from './cv-editor-interaction-orchestrator.js';
+import {createCVEditorMobileSurface} from './cv-editor-mobile-surface.js';
+export const CV_EDITOR_WORKFLOW_SURFACE_VERSION='1.0.0';
+export function createCVEditorWorkflowSurface(options={}){
+ const adapter=options.adapter;
+ if(!adapter)throw new Error('Workflow surface requires adapter.');
+ const entryEditor=createCVEditorEntryEditor({adapter});
+ const sectionEditor=createCVEditorSectionEditor({adapter});
+ const form=createCVEditorFormActions({adapter});
+ const fieldTypes=createCVEditorFieldTypes();
+ const entryActions=createCVEditorEntryActions({editor:entryEditor});
+ const sectionActions=createCVEditorSectionActions({editor:sectionEditor});
+ const previewSelection=createCVEditorPreviewSelectionModel();
+ const previewEdit=createCVEditorPreviewEditModel({adapter});
+ const previewPages=createCVEditorPreviewPageActions({selection:previewSelection});
+ const zoom=createCVEditorPreviewZoomState();
+ const documents=options.documentManager?createCVEditorDocumentCommands({manager:options.documentManager}):null;
+ const save=options.saveController?createCVEditorSaveLifecycle({save:options.saveController}):null;
+ const autosave=createCVEditorAutosaveStatus();
+ const exportFlow=options.exportController?createCVEditorExportFlow({controller:options.exportController}):null;
+ const interaction=createCVEditorInteractionOrchestrator({form,sections:sectionActions,entries:entryActions});
+ const mobile=options.document&&options.root?createCVEditorMobileSurface({document:options.document,root:options.root}):null;
+ return Object.freeze({version:CV_EDITOR_WORKFLOW_SURFACE_VERSION,form,fieldTypes,entries:entryActions,sections:sectionActions,preview:{edit:previewEdit,selection:previewSelection,pages:previewPages,zoom},documents,save,autosave,exportFlow,interaction,mobile});
+}
