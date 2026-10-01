@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorValidationSummary} from '../../src/application/cv-editor-validation-summary.js';test('validates runtime surface',()=>{const v=createCVEditorValidationSummary({runtime:{getState:()=>({activeDocumentId:'a',projection:{}})}});assert.equal(v.inspect().valid,true);});
