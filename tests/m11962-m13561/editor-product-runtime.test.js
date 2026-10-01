@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorProductRuntime} from '../../src/application/cv-editor-product-runtime.js';
+test('product runtime coordinates live rendering',async()=>{let renders=0;const adapter={getState:()=>({})};const runtime=createCVEditorProductRuntime({adapter,render:()=>{renders++;}});runtime.binding.sync('test');await new Promise(r=>setTimeout(r,0));assert.equal(renders,1);});
