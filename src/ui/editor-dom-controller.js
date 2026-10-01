@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.3.0';
+export const EDITOR_DOM_VERSION = '1.4.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -87,7 +87,12 @@ export function bindEditorLifecycle(root, lifecycle) {
       element.dataset.v2EditorDirty = String(Boolean(state.dirty));
     });
     root.querySelectorAll('[data-v2-editor-recover]').forEach(element => {
-      element.disabled = false;
+      element.disabled = !state.recoveryAvailable;
+      element.dataset.v2EditorRecoveryAvailable = String(Boolean(state.recoveryAvailable));
+    });
+    root.querySelectorAll('[data-v2-editor-clear-recovery]').forEach(element => {
+      element.disabled = !state.recoveryAvailable;
+      element.dataset.v2EditorRecoveryAvailable = String(Boolean(state.recoveryAvailable));
     });
   };
 
