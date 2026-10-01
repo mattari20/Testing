@@ -71,6 +71,15 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   const delayMs = Number.isFinite(options.delayMs) ? Math.max(0, options.delayMs) : 250;
   let timer = null;
   let destroyed = false;
+  let autosaveStatus = 'idle';
+  let lastAutosavedAt = null;
+  let lastAutosaveError = null;
+  const subscribers = new Set();
+  const emit = () => {
+    const snapshot = Object.freeze({ autosaveStatus, lastAutosavedAt, lastAutosaveError });
+    subscribers.forEach(listener => listener(snapshot));
+    return snapshot;
+  };
 
   const flush = () => {
     if (destroyed) return null;
@@ -79,16 +88,37 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       timer = null;
     }
     const state = surface.getState();
-    if (!state.session.dirty) return null;
-    return adapter.save(state.session);
+    if (!state.session.dirty) {
+      autosaveStatus = 'idle';
+      emit();
+      return null;
+    }
+    autosaveStatus = 'saving';
+    lastAutosaveError = null;
+    emit();
+    try {
+      const record = adapter.save(state.session);
+      lastAutosavedAt = record?.savedAt || new Date().toISOString();
+      autosaveStatus = 'saved';
+      emit();
+      return record;
+    } catch (error) {
+      autosaveStatus = 'error';
+      lastAutosaveError = String(error?.message || error);
+      emit();
+      throw error;
+    }
   };
 
   const schedule = () => {
     if (destroyed) return;
     if (timer) clearTimeout(timer);
+    autosaveStatus = 'scheduled';
+    lastAutosaveError = null;
+    emit();
     timer = setTimeout(() => {
       timer = null;
-      flush();
+      try { flush(); } catch { /* error state is emitted by flush */ }
     }, delayMs);
   };
 
@@ -119,6 +149,15 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   return Object.freeze({
     flush,
     save,
+    getState() {
+      return Object.freeze({ autosaveStatus, lastAutosavedAt, lastAutosaveError });
+    },
+    subscribe(listener) {
+      if (typeof listener !== 'function') throw new Error('Recovery subscriber must be a function.');
+      subscribers.add(listener);
+      listener(this.getState());
+      return () => subscribers.delete(listener);
+    },
     hasRecovery() {
       return Boolean(adapter.load());
     },
@@ -143,6 +182,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         timer = null;
       }
       adapter.clear?.();
+      autosaveStatus = 'idle';
+      lastAutosaveError = null;
+      emit();
     },
     destroy() {
       if (destroyed) return;
@@ -150,6 +192,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       if (timer) clearTimeout(timer);
       timer = null;
       unsubscribe();
+      subscribers.clear();
     }
   });
 }
