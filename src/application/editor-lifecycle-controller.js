@@ -135,11 +135,18 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     },
     initializeRecovery() {
       if (destroyed) return null;
-      return recoveryController?.initialize?.() || null;
+      const result = recoveryController?.initialize?.() || null;
+      emit();
+      return result;
     },
     refreshRecovery() {
       if (destroyed) return null;
-      return recoveryController?.refreshRecovery?.() || null;
+      const result = recoveryController?.refreshRecovery?.() || null;
+      emit();
+      return result;
+    },
+    getRecoveryAudit() {
+      return recoveryController?.getRecoveryAudit?.() || [];
     },
     clearRecovery() {
       if (destroyed) return;
