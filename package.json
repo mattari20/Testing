@@ -329,6 +329,9 @@
     "test:editor-100-groups": "npm run test:m13562-m21561",
     "test:production-integration": "node --test tests/m21562-m29561/editor-production-integration.test.js",
     "test:editor-production": "npm run test:production-integration",
-    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration"
+    "test": "npm run test:core && npm run test:m13562-m21561 && npm run test:production-integration && npm run test:e2e-contract",
+    "test:e2e-contract": "node --test tests/m29562-m37561/e2e-product-completion.test.js",
+    "test:e2e-release": "npm run test:e2e-contract",
+    "test:all-contracts": "npm run test:production-integration && npm run test:e2e-contract"
   }
 }

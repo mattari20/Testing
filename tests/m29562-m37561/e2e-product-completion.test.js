@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {CV_EDITOR_E2E_100_GROUPS} from '../../src/application/cv-editor-e2e-100-group-registry.js';
+import {createCVEditorE2EEvidenceCollector} from '../../src/application/cv-editor-e2e-evidence.js';
+import {inspectCVEditorProductContracts} from '../../src/application/cv-editor-product-contracts.js';
+import {runCVEditorE2EWorkflow} from '../../src/application/cv-editor-e2e-runner.js';
+import {createCVEditorE2ERelease} from '../../src/application/cv-editor-e2e-release.js';
+test('exactly 100 integrated groups exist',()=>{assert.equal(CV_EDITOR_E2E_100_GROUPS.length,100);assert.equal(new Set(CV_EDITOR_E2E_100_GROUPS.map(x=>x.group)).size,100);});
+test('evidence collector summarizes results',()=>{const e=createCVEditorE2EEvidenceCollector();e.record(1,'passed');e.record(2,'blocked');assert.equal(e.summary().blocked,1);});
+test('product contracts distinguish callable and object requirements',()=>{const r=inspectCVEditorProductContracts({application:{page:{render(){}},model:{},composition:{},realBrowser:{},workflows:{exportFlow:{}},keyboard:{},productionGate:{}},adapter:{getState(){},edit(){},undo(){},redo(){}}});assert.equal(r.valid,true);});
+test('e2e workflow executes state and reversible edit path',()=>{const state={projection:{blocks:[{id:'x'}]}};const a={getState:()=>state,refresh:()=>state,edit:()=>state,undo:()=>state,redo:()=>state};assert.equal(runCVEditorE2EWorkflow({adapter:a}).passed,true);});
+test('release gate remains closed without a real adapter',()=>{const r=createCVEditorE2ERelease({application:{}}).inspect();assert.equal(r.ready,false);});
