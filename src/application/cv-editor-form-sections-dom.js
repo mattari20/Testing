@@ -1,0 +1,2 @@
+export const CV_EDITOR_FORM_SECTIONS_DOM_VERSION='1.0.0';
+export function createCVEditorFormSectionsDOM(options={}){const document=options.document;if(!document)throw new Error('Form sections DOM requires document.');function decorate(container){for(const section of container.querySelectorAll?.('[data-section-id]')||[]){section.setAttribute('data-editor-section','');}return container;}return Object.freeze({version:CV_EDITOR_FORM_SECTIONS_DOM_VERSION,decorate});}
