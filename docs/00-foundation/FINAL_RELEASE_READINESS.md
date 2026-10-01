@@ -38,10 +38,10 @@ This is a repository-content scan only. It does not prove that historical V1 pro
 
 The current `main` commit has fresh automated validation evidence:
 
-- V2 Integration Validation: SUCCESS — run `36896592171` on commit `33b9ad965cb7d604a800e33505271fac04dec1ae`.
-- Native V2 Browser Validation: SUCCESS — run `36896592199` on commit `33b9ad965cb7d604a800e33505271fac04dec1ae`.
+- V2 Integration Validation: SUCCESS — run `36898954934` on release code commit `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+- Native V2 Browser Validation: SUCCESS — run `36898954976` on release code commit `274707d57edd69a840274fbdb5eb4eace80be4fb`.
 - Browser job completed Golden Baseline, Native V2, V1, paired comparison, editor preview, and integrated fragmentation validation successfully.
-- R3, R4 and R5 are now closed at the evidence level for the current V2 release boundary.
+- R3, R4 and R5 are now closed at the evidence level for the current V2 release boundary. Full repository validation and E2E contract validation are also green.
 
 ## Remaining release gates
 
