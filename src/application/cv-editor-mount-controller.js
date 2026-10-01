@@ -1,0 +1,2 @@
+export const CV_EDITOR_MOUNT_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorMountController(options={}){const root=options.root,mount=options.mount;if(!root)throw new Error('Mount controller requires root.');function mountNow(){if(mount&&root.parentNode!==mount)mount.appendChild(root);return root;}function unmount(){root.remove?.();}return Object.freeze({version:CV_EDITOR_MOUNT_CONTROLLER_VERSION,mount:mountNow,unmount,destroy(){}});}
