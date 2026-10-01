@@ -1,0 +1,1 @@
+export const CV_EDITOR_DOCUMENT_MODEL_VERSION='1.0.0';export function createCVEditorDocumentModel(options={}){const manager=options.manager;if(!manager)throw new Error('Document model requires manager.');return Object.freeze({version:CV_EDITOR_DOCUMENT_MODEL_VERSION,list:()=>[...(manager.list?.()||[])]});}
