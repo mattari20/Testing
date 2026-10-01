@@ -12,11 +12,12 @@ export function createCVEditorBrowserPage(options={}) {
   if(destroyed)return null;const state=adapter.getState();if(!state)return null;
   formRenderer.render(shell.form,state.form);
   if(adapter.renderPreview){try{previewRenderer.render(shell.preview,adapter.renderPreview());}catch(error){shell.setStatus(error.message,'error');return state;}}
-  shell.form.addEventListener?.('change',onFormChange);shell.setStatus('Ready','success');return state;
+  shell.setStatus('Ready','success');return state;
  }
  function onFormChange(event){if(destroyed)return;const target=event.target;if(!target?.getAttribute)return;const id=target.getAttribute('data-block-id');if(!id)return;adapter.edit(id,{value:target.value});render();}
  const toolbar=createCVEditorToolbarController({document,adapter,shell,onChange:render});
- function mount(){if(!shell.root.parentNode&&options.mount)options.mount.appendChild(shell.root);return render();}
+ shell.form.addEventListener?.('change',onFormChange);
+ function mount(){if(options.mount&&shell.root!==options.mount&&shell.root.parentNode!==options.mount)options.mount.appendChild(shell.root);return render();}
  function destroy(){if(destroyed)return;destroyed=true;toolbar.destroy();formRenderer.destroy();previewRenderer.destroy();adapter.destroy?.();}
  return Object.freeze({version:CV_EDITOR_BROWSER_PAGE_VERSION,shell,mount,render,destroy});
 }
