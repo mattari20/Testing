@@ -1,0 +1,2 @@
+export const CV_EDITOR_FIELD_CONTROLS_DOM_VERSION='1.0.0';
+export function createCVEditorFieldControlsDOM(options={}){const document=options.document;if(!document)throw new Error('Field controls DOM requires document.');function decorate(container){for(const input of container.querySelectorAll?.('[data-block-id]')||[]){input.setAttribute('autocomplete','off');input.setAttribute('data-editor-field','');}return container;}return Object.freeze({version:CV_EDITOR_FIELD_CONTROLS_DOM_VERSION,decorate});}
