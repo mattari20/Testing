@@ -337,7 +337,9 @@
     "test:release-closure": "npm run test:final-productization && npm run test:e2e-contract",
     "test:editor-css": "node --test tests/m45562-m46361/editor-css.test.js",
     "test:m47162-m47961": "node --test tests/m47162-m47961/browser-visual-qa.test.js",
-    "test:browser-visual-qa": "npm run test:m47162-m47961 && npm run test:real-browser-visual-qa",
-    "test:real-browser-visual-qa": "node --test tests/m47162-m47961/real-browser-visual-qa.test.js"
+    "test:browser-visual-qa": "npm run test:m47162-m47961 && npm run test:real-browser-visual-qa && npm run test:real-browser-workflow",
+    "test:real-browser-visual-qa": "node --test tests/m47162-m47961/real-browser-visual-qa.test.js",
+    "test:m47962-m48761": "node --test tests/m47962-m48761/real-browser-editor-workflow.test.js",
+    "test:real-browser-workflow": "npm run test:m47962-m48761"
   }
 }
