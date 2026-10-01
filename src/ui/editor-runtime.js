@@ -1,5 +1,5 @@
 import { mountEditorPage } from './editor-page-controller.js';
-import { bindEditorFields, bindEditorActions } from './editor-dom-controller.js';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js';
 import { renderEditorForm } from './editor-form-renderer.js';
 import { bindEditorReorder } from './editor-reorder-controller.js';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js';
@@ -14,6 +14,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   let fieldBinding = null;
   let actionBinding = null;
   let reorderBinding = null;
+  let lifecycleBinding = null;
   const previewRoot = input.preview === true ? root.querySelector('[data-v2-editor-preview-root]') : null;
   const previewRuntime = previewRoot
     ? createEditorLivePreviewRuntime(mounted.surface, previewRoot, input.previewOptions || {})
@@ -52,6 +53,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   }
 
   render();
+  lifecycleBinding = bindEditorLifecycle(root, lifecycleController);
   previewRuntime?.refresh().catch(() => {});
 
   const rerenderTypes = new Set([
@@ -88,6 +90,7 @@ export function mountV2EditorRuntime(root, input = {}) {
       fieldBinding?.destroy();
       actionBinding?.destroy();
       reorderBinding?.destroy();
+      lifecycleBinding?.destroy();
       previewRuntime?.destroy();
       unsubscribe();
       mounted.destroy();
