@@ -25,7 +25,18 @@ The V1 catalog defines nine logical template IDs. Two source files remain unavai
 - `t01-modern-minimalist-cv-design_ats.html`
 - `t01-modern-minimalist-cv-design_simple.html`
 
-These files must not be recreated from the V2 implementation or from assumptions.
+These historical files are not being recreated. Per owner direction, the project will use new V2-native replacement templates with explicit provenance; the new files are not represented as recovered V1 originals.
+
+## V2 replacement disposition
+
+The missing historical T01 ATS and T01 Simple variants are now **Authoritatively replaced for V2** by newly designed native V2 templates:
+
+- `src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html` — V2 template version `2.1.0`; single-column ATS-oriented layout.
+- `src/templates/assets/v2/t01-modern-minimalist-cv-design_simple.html` — V2 template version `2.1.0`; clean two-column simple layout.
+
+These replacements are intentionally distinct from the unrecovered V1 sources. They use the V2 native template contract, V2 data bindings and V2 layout-block metadata.
+
+The historical V1 source gaps therefore no longer block **V2 template availability**, but they remain historical provenance gaps and must not be described as recovered V1 evidence.
 
 ## Other historical asset references
 
@@ -49,18 +60,15 @@ No silent recreation is permitted.
 
 ## Current R1 result
 
-**R1 Source/Asset Closure: CONDITIONAL**
+**R1 Source/Asset Closure: CONDITIONAL — V2 replacement disposition completed**
 
 The seven recovered template sources are reconciled and stored. The two missing T01 sources and remaining historical asset references are still unverified.
 
 ## Required owner input
 
-To move the two missing template items from conditional to recovered, the project owner must provide either:
+Original T01 ATS/Simple V1 files are not required for V2 operation because the owner has explicitly selected new V2-native replacements. The historical V1 evidence remains marked as unrecovered; no claim of V1 equivalence is made.
 
-- the original T01 ATS and T01 Simple HTML files; or
-- an authoritative V1 copy/archive containing them.
-
-If those files cannot be recovered, an explicit retirement/replacement decision is required before final release.
+The remaining R1 work is limited to reconciling the historical ATS preview-image and demo-image references and documenting their final V2 disposition.
 
 ## Next release work
 
