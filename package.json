@@ -243,6 +243,11 @@
     "test:m828-m847": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js tests/m728-m747/persistence-write-safety.test.js tests/m748-m767/persistence-lifecycle.test.js tests/m768-m787/recovery-inspection-readiness.test.js tests/m788-m807/recovery-initialization.test.js tests/m808-m827/recovery-inspection-faults.test.js tests/m828-m847/lifecycle-recovery-state-sync.test.js",
     "test:m848-m867": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js tests/m728-m747/persistence-write-safety.test.js tests/m748-m767/persistence-lifecycle.test.js tests/m768-m787/recovery-inspection-readiness.test.js tests/m788-m807/recovery-initialization.test.js tests/m808-m827/recovery-inspection-faults.test.js tests/m828-m847/lifecycle-recovery-state-sync.test.js tests/m848-m867/persistence-write-verification.test.js",
     "test:m868-m887": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js tests/m728-m747/persistence-write-safety.test.js tests/m748-m767/persistence-lifecycle.test.js tests/m768-m787/recovery-inspection-readiness.test.js tests/m788-m807/recovery-initialization.test.js tests/m808-m827/recovery-inspection-faults.test.js tests/m828-m847/lifecycle-recovery-state-sync.test.js tests/m848-m867/persistence-write-verification.test.js tests/m868-m887/persistence-diagnostics-contract.test.js",
-    "test:m788-m887": "npm run test:m788-m807 && npm run test:m808-m827 && npm run test:m828-m847 && npm run test:m848-m867 && npm run test:m868-m887"
+    "test:m788-m887": "npm run test:m788-m807 && npm run test:m808-m827 && npm run test:m828-m847 && npm run test:m848-m867 && npm run test:m868-m887",
+    "test:m888-m987": "node --test tests/m888-m987/cv-workspace.test.js",
+    "test:m988-m1027": "node --test tests/m988-m1027/cv-document-versioning.test.js",
+    "test:m1028-m1087": "node --test tests/m1028-m1087/cv-workspace-guard.test.js",
+    "test:m1088-m1127": "node --test tests/m1088-m1127/cv-workspace-persistence.test.js",
+    "test:m888-m1127": "npm run test:m888-m987 && npm run test:m988-m1027 && npm run test:m1028-m1087 && npm run test:m1088-m1127"
   }
 }
