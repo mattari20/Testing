@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorSectionControls} from '../../src/application/cv-editor-section-controls.js';
+class N{constructor(){this.children=[];this.listeners={};}appendChild(x){this.children.push(x);}setAttribute(){}addEventListener(k,f){this.listeners[k]=f;}}
+const d={createElement:()=>new N()};
+test('exposes section visibility action',()=>{const bar=new N(),page={shell:{toolbar:bar}},calls=[];const adapter={getState:()=>({form:{sections:[{id:'s',visibility:true}]}}),edit:(...a)=>calls.push(a)};const c=createCVEditorSectionControls({document:d,adapter,page});bar.children[0].listeners.click();assert.deepEqual(calls,[['s',{visibility:false}]]);});
