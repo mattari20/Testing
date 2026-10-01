@@ -320,6 +320,8 @@
     "test:m10332-m10333": "node --test tests/m10332-m10333/editor-ux-surface.test.js",
     "test:editor-ux": "npm run test:m10332-m10333",
     "test:m10338-m10358": "node --test tests/m10338-m10358/editor-product-ux.test.js",
-    "test:product-ux": "npm run test:m10338-m10358"
+    "test:product-ux": "npm run test:m10338-m10358",
+    "test:m10362-m11961": "node --test tests/m10362-m11961/editor-workflow-surface.test.js",
+    "test:editor-workflow": "npm run test:m10362-m11961"
   }
 }
