@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_STATE_VERSION='1.0.0';
+export function createCVEditorPreviewState(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Preview state requires adapter.');function getState(){const s=adapter.getState?.()||{};return Object.freeze({hasPreview:!!s.preview,activePage:s.preview?.page||1});}return Object.freeze({version:CV_EDITOR_PREVIEW_STATE_VERSION,getState,destroy(){}});}
