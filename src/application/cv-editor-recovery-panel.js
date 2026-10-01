@@ -1,0 +1,2 @@
+export const CV_EDITOR_RECOVERY_PANEL_VERSION='1.0.0';
+export function createCVEditorRecoveryPanel(options={}){const session=options.session;if(!session)throw new Error('Recovery panel requires session.');function inspect(){return session.inspect?.()||session.state?.()||null;}function restore(){return session.restore?.()||null;}function dismiss(){return session.dismiss?.()||null;}return Object.freeze({version:CV_EDITOR_RECOVERY_PANEL_VERSION,inspect,restore,dismiss});}
