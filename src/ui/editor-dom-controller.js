@@ -94,6 +94,14 @@ export function bindEditorLifecycle(root, lifecycle) {
       element.textContent = String(state.lastAutosavedAt || '');
       element.dataset.v2EditorLastAutosaved = String(state.lastAutosavedAt || '');
     });
+    root.querySelectorAll('[data-v2-editor-recovery-status]').forEach(element => {
+      element.textContent = String(state.recoveryStatus || 'missing');
+      element.dataset.v2EditorRecoveryStatus = String(state.recoveryStatus || 'missing');
+    });
+    root.querySelectorAll('[data-v2-editor-recovery-error]').forEach(element => {
+      element.textContent = String(state.recoveryError || '');
+      element.dataset.v2EditorRecoveryError = String(state.recoveryError || '');
+    });
     root.querySelectorAll('[data-v2-editor-save]').forEach(element => {
       element.disabled = state.status === 'saved' || state.status === 'saving';
       element.dataset.v2EditorDirty = String(Boolean(state.dirty));
