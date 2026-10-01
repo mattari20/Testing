@@ -11,98 +11,98 @@ const nativeTemplates = [
     id: 't01-modern-minimalist-cv-design_ats',
     name: 'T01 Modern Minimalist CV — ATS V2',
     version: '2.1.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html',
     supportedSections: ["summary","experience","education","skills","languages"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't01-modern-minimalist-cv-design_simple',
     name: 'T01 Modern Minimalist CV — Simple V2',
     version: '2.1.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_simple.html',
     supportedSections: ["photo","contact","skills","languages","summary","experience","education"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't01-modern-minimalist-cv-design_modern',
     name: 'T01 Modern Minimalist CV — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't01-modern-minimalist-cv-design_modern',
     sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_modern.html',
     supportedSections: ["photo","contact","summary","experience","education"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't02-professional-cv-design_modern',
     name: 'T02 Professional CV — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't02-professional-cv-design_modern',
     sourcePath: 'src/templates/assets/v2/t02-professional-cv-design_modern.html',
     supportedSections: ["photo","skills","languages","summary","experience","education","achievements","projects"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't03-professional-cv-design_modern',
     name: 'T03 Professional CV — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't03-professional-cv-design_modern',
     sourcePath: 'src/templates/assets/v2/t03-professional-cv-design_modern.html',
     supportedSections: ["photo","summary","education","experience","projects","skills","languages","achievements"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't04-modern-blue-corporate_modern',
     name: 'T04 Modern Blue Corporate — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't04-modern-blue-corporate_modern',
     sourcePath: 'src/templates/assets/v2/t04-modern-blue-corporate_modern.html',
     supportedSections: ["summary","photo","experience","education","projects","skills","languages","achievements"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't05-simple-cv-graphic-web-designer_modern',
     name: 'T05 Simple CV Graphic Web Designer — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't05-simple-cv-graphic-web-designer_modern',
     sourcePath: 'src/templates/assets/v2/t05-simple-cv-graphic-web-designer_modern.html',
     supportedSections: ["photo","summary","skills","languages","education","experience","projects"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't06-professional-cv-graphic-designer_modern',
     name: 'T06 Professional CV Graphic Designer — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't06-professional-cv-graphic-designer_modern',
     sourcePath: 'src/templates/assets/v2/t06-professional-cv-graphic-designer_modern.html',
     supportedSections: ["photo","skills","achievements","languages","summary","education","experience"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   },
   {
     id: 't07-professional-cv-store-manager-incharge_modern',
     name: 'T07 Professional CV Store Manager/Incharge — Native V2',
     version: '2.0.0',
-    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
-    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    status: TEMPLATE_STATUS.PUBLISHED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.COMPATIBLE,
     v1BaselineId: 't07-professional-cv-store-manager-incharge_modern',
     sourcePath: 'src/templates/assets/v2/t07-professional-cv-store-manager-incharge_modern.html',
     supportedSections: ["photo","summary","experience","education","skills","languages"],
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' }
   }
 ];
 
