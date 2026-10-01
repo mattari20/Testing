@@ -1,0 +1,1 @@
+export const CV_EDITOR_SECTION_MODEL_VERSION='1.0.0';export function createCVEditorSectionModel(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Section model requires adapter.');function list(){return [...(adapter.getState?.().form?.sections||[])];}return Object.freeze({version:CV_EDITOR_SECTION_MODEL_VERSION,list});}
