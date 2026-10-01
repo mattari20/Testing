@@ -1,0 +1,2 @@
+export const CV_EDITOR_TEMPLATE_COMPATIBILITY_VERSION='1.0.0';
+export function createCVEditorTemplateCompatibility(options={}){const resolver=options.resolver;if(!resolver)throw new Error('Template compatibility requires resolver.');function resolve(templateId){return resolver.resolve?.(templateId)||resolver(templateId)||null;}function canUse(templateId){const r=resolve(templateId);return !!r&&r.status!=='unsupported';}return Object.freeze({version:CV_EDITOR_TEMPLATE_COMPATIBILITY_VERSION,resolve,canUse});}
