@@ -42,12 +42,13 @@ test('M672-M675: verification failure cannot silently resolve recovery',()=>{
   current.markSaved('2026-10-01T07:00:00.000Z');
   const persisted=surface('Persisted');
   const record=snapshot(persisted,'2026-10-01T08:00:00.000Z');
-  const originalRestore=current.restorePersistedState;
-  current.restorePersistedState = undefined;
-  const recovery=createEditorRecoveryController(current,adapter(record));
-  assert.throws(()=>recovery.resolveRecovery('recover'),/persisted-state recovery/);
-  assert.equal(recovery.getRecoveryState().recoveryAction,'pending');
-  current.restorePersistedState = originalRestore;
+  const conflictingRecord={...record,snapshotContentId:'c-deadbeef'};
+  const recovery=createEditorRecoveryController(current,adapter(conflictingRecord));
+  assert.equal(recovery.resolveRecovery('recover'),null);
+  const state=recovery.getRecoveryState();
+  assert.equal(state.recoveryVerification,'failed');
+  assert.equal(state.recoveryAction,'pending');
+  assert.match(state.recoveryVerificationError,/does not match/);
   recovery.destroy();
 });
 
