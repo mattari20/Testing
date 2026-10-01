@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createCVEditorWorkflowSurface} from '../../src/application/cv-editor-workflow-surface.js';
+
+function adapter(){let state={form:{sections:[]}};return {getState:()=>state,edit:(id,values)=>({id,values}),addEntry:(id,v)=>({id,v}),removeEntry:(s,e)=>({s,e}),moveEntry:(s,e,d)=>({s,e,d})};}
+test('workflow surface exposes editor interaction primitives',()=>{const a=adapter();const w=createCVEditorWorkflowSurface({adapter:a});assert.equal(w.version,'1.0.0');assert.equal(w.fieldTypes.supports('textarea'),true);assert.equal(w.fieldTypes.supports('unknown'),false);assert.equal(w.preview.selection.getPage(),1);assert.equal(w.preview.pages.next(),2);assert.equal(w.preview.zoom.increase(),1.1);assert.equal(w.entries.add('experience',{title:'Engineer'}).id,'experience');});
+test('workflow surface wires optional persistence and export controllers',()=>{const a=adapter();const save={save:()=>({workspaceId:'w1',updatedAt:'now'})};const exportController={prepare:(f,m)=>({format:f,metadata:m}),validate:r=>({valid:!!r})};const w=createCVEditorWorkflowSurface({adapter:a,saveController:save,exportController});assert.equal(w.save.persist().status,'saved');assert.equal(w.exportFlow.run('pdf').valid,true);});
