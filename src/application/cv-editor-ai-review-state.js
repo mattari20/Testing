@@ -1,0 +1,2 @@
+export const CV_EDITOR_AI_REVIEW_STATE_VERSION='1.0.0';
+export function createCVEditorAIReviewState(options={}){const review=options.review;if(!review)throw new Error('AI review state requires review.');return Object.freeze({version:CV_EDITOR_AI_REVIEW_STATE_VERSION,getState:()=>review.getState(),destroy(){}});}
