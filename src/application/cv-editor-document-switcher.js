@@ -1,0 +1,2 @@
+export const CV_EDITOR_DOCUMENT_SWITCHER_VERSION='1.0.0';
+export function createCVEditorDocumentSwitcher(options={}){const manager=options.manager;if(!manager)throw new Error('Document switcher requires manager.');function list(){return [...(manager.list?.()||[])];}function activate(id){return manager.activate?.(id)||null;}function current(){return manager.current?.()||manager.getActive?.()||null;}return Object.freeze({version:CV_EDITOR_DOCUMENT_SWITCHER_VERSION,list,activate,current});}
