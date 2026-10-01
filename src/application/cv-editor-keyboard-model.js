@@ -1,0 +1,1 @@
+export const CV_EDITOR_KEYBOARD_MODEL_VERSION='1.0.0';export function createCVEditorKeyboardModel(options={}){const controller=options.controller;if(!controller)throw new Error('Keyboard model requires controller.');return Object.freeze({version:CV_EDITOR_KEYBOARD_MODEL_VERSION,controller});}
