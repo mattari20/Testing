@@ -1,0 +1,2 @@
+export const CV_EDITOR_PERSISTENCE_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorPersistenceController(options={}){const save=options.saveController,status=options.status;if(!save||!status)throw new Error('Persistence controller requires save and status.');function saveNow(){status.markSaving();try{const result=save.save();status.markSaved();return result;}catch(error){status.markError(error);throw error;}}return Object.freeze({version:CV_EDITOR_PERSISTENCE_CONTROLLER_VERSION,saveNow,destroy(){}});}
