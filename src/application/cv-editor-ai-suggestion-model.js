@@ -1,0 +1,2 @@
+export const CV_EDITOR_AI_SUGGESTION_MODEL_VERSION='1.0.0';
+export function createCVEditorAISuggestionModel(options={}){const panel=options.panel;if(!panel)throw new Error('AI suggestion model requires panel.');let suggestions=[];return Object.freeze({version:CV_EDITOR_AI_SUGGESTION_MODEL_VERSION,review:input=>{const result=panel.review?.(input)||panel.inspect?.(input)||[];suggestions=Array.isArray(result)?result:[result];return suggestions;},list:()=>[...suggestions],clear:()=>{suggestions=[];}});}
