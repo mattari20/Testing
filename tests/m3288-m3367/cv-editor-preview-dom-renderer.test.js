@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorPreviewDOMRenderer} from '../../src/application/cv-editor-preview-dom-renderer.js';
+class N{constructor(){this.children=[];this.firstChild=null;this.attrs={};this.textContent='';}appendChild(x){this.children.push(x);this.firstChild=this.children[0]||null;return x;}removeChild(){this.children.shift();this.firstChild=this.children[0]||null;}setAttribute(k,v){this.attrs[k]=v;}}
+const d={createElement:()=>new N()};
+test('renders paginated preview pages and blocks',()=>{const r=createCVEditorPreviewDOMRenderer({document:d}),c=new N();const out=r.render(c,{pages:[{blocks:[{id:'name',text:'Ali'}]},{blocks:[]}],hasOverflow:false});assert.equal(out.pageCount,2);assert.equal(c.children[0].children.length,2);assert.equal(c.children[0].children[0].attrs['data-page-number'],'1');});
