@@ -674,6 +674,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryInspectionSequence
       });
     },
+    initialize() {
+      if (destroyed) return null;
+      return inspectRecovery();
+    },
     refreshRecovery() {
       if (destroyed) return null;
       return inspectRecovery({ force: true });
