@@ -211,6 +211,8 @@
     "test:m388-m397": "node --test tests/m388-m397/section-field-management.test.js",
     "test:m398-m407": "node --test tests/m398-m407/editor-interaction-layer.test.js",
     "test:m408-m417": "node --test tests/m408-m417/preview-inline-contract.test.js",
-    "test:m408-m417-browser": "node --test tests/m408-m417/preview-inline-edit.test.js"
+    "test:m408-m417-browser": "node --test tests/m408-m417/preview-inline-edit.test.js",
+    "test:m418-m427": "node --test tests/m418-m427/editor-persistence.test.js",
+    "test:editor-persistence": "npm run test:m418-m427"
   }
 }
