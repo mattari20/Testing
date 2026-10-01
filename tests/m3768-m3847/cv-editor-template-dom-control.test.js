@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorTemplateDOMControl} from '../../src/application/cv-editor-template-dom-control.js';
+class N{constructor(){this.children=[];this.listeners={};this.value='';}appendChild(x){this.children.push(x);return x;}setAttribute(){}addEventListener(k,f){this.listeners[k]=f;}}
+const d={createElement:()=>new N()};
+test('creates template selector from adapter templates',()=>{const bar=new N(),page={shell:{toolbar:bar}},c=createCVEditorTemplateDOMControl({document:d,page,adapter:{listTemplates:()=>[{id:'classic',name:'Classic'}],selectTemplate:()=>{}}});assert.equal(c.select.children.length,1);assert.equal(bar.children.length,1);});
