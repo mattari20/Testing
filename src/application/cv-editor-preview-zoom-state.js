@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_ZOOM_STATE_VERSION='1.0.0';
+export function createCVEditorPreviewZoomState(options={}){let zoom=Number(options.initial)||1;const clamp=v=>Math.min(2,Math.max(.5,Number(v)||1));return Object.freeze({version:CV_EDITOR_PREVIEW_ZOOM_STATE_VERSION,get:()=>zoom,increase:()=>{zoom=clamp(zoom+.1);return zoom;},decrease:()=>{zoom=clamp(zoom-.1);return zoom;},set:value=>{zoom=clamp(value);return zoom;},reset:()=>{zoom=1;return zoom;}});}
