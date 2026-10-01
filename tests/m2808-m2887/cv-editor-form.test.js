@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorRuntime} from '../../src/application/cv-editor-runtime.js';import {createCVEditorFormModel} from '../../src/application/cv-editor-form.js';
+test('M2808-M2823 form model projects sections and fields',()=>{const r=createCVEditorRuntime();r.refresh();const f=createCVEditorFormModel({runtime:r});assert.ok(Array.isArray(f.getState().sections));});
+test('M2824-M2839 form model preserves section identity',()=>{const r=createCVEditorRuntime();r.refresh();const f=createCVEditorFormModel({runtime:r});assert.equal(f.getState().sections[0].id,r.getState().projection.sections[0].id);});
+test('M2840-M2855 form model routes edits through runtime',()=>{const r=createCVEditorRuntime();r.refresh();const f=createCVEditorFormModel({runtime:r});const s=f.getState().sections[0];f.edit('section:'+s.id,{title:'Form Edited'});assert.equal(f.getState().sections[0].title,'Form Edited');});
+test('M2856-M2871 form model preserves targeted CV identity',()=>{const r=createCVEditorRuntime();r.refresh();const f=createCVEditorFormModel({runtime:r});assert.equal(f.getState().targetedCVId,r.getState().activeDocumentId);});
+test('M2872-M2887 destroyed form is fenced',()=>{const r=createCVEditorRuntime();const f=createCVEditorFormModel({runtime:r});f.destroy();assert.equal(f.refresh(),null);});
