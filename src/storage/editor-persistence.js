@@ -677,7 +677,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryInspectionStatus,
         recoveryInspectedAt,
         recoveryInspectionSequence,
-      recoveryInspectionRetryable
+        recoveryInspectionRetryable
       });
     },
     initialize() {
