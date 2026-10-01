@@ -75,6 +75,7 @@ export function bindEditorActions(root, surface) {
 export function bindEditorLifecycle(root, lifecycle) {
   if (!root || !lifecycle) throw new Error('Editor root and lifecycle controller are required.');
   const listeners = [];
+  if (typeof root.querySelectorAll !== 'function') return Object.freeze({destroy(){}});
   const update = state => {
     root.querySelectorAll('[data-v2-editor-save-status]').forEach(element => {
       element.textContent = String(state.status || '');
