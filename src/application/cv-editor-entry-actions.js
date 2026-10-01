@@ -1,0 +1,2 @@
+export const CV_EDITOR_ENTRY_ACTIONS_VERSION='1.0.0';
+export function createCVEditorEntryActions(options={}){const editor=options.editor;if(!editor)throw new Error('Entry actions require editor.');return Object.freeze({version:CV_EDITOR_ENTRY_ACTIONS_VERSION,add:(sectionId,values={})=>editor.add(sectionId,values),remove:(sectionId,id)=>editor.remove(sectionId,id),move:(sectionId,id,direction)=>editor.move(sectionId,id,direction),update:(id,values)=>editor.update(id,values)});}
