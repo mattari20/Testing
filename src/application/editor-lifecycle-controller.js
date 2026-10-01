@@ -1,4 +1,4 @@
-export const EDITOR_LIFECYCLE_VERSION = '1.3.0';
+export const EDITOR_LIFECYCLE_VERSION = '1.4.0';
 
 export function createEditorLifecycleController(surface, recoveryController = null, options = {}) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
@@ -16,7 +16,17 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     recoveryError: null,
     recoveryActionRequired: false,
     recoveryLastAction: null,
-    recoveryAudit: []
+    recoveryAudit: [],
+    persistenceRelation: 'missing',
+    persistenceSnapshotId: null,
+    persistenceSnapshotContentId: null,
+    persistenceRevision: null,
+    persistenceWriteStatus: 'idle',
+    persistenceWriteError: null,
+    persistenceWriteRevision: null,
+    persistenceWriteSnapshotId: null,
+    persistenceWriteSnapshotContentId: null,
+    persistenceWriteAt: null
   });
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
   const confirmRecovery = typeof options.confirmRecovery === 'function'
@@ -72,9 +82,16 @@ export function createEditorLifecycleController(surface, recoveryController = nu
         status = 'saved';
         return state;
       }
-      const record = recoveryController.save();
-      status = 'saved';
-      return record;
+      try {
+        const record = recoveryController.save();
+        status = 'saved';
+        emit();
+        return record;
+      } catch (error) {
+        status = surface.getState().session.dirty ? 'dirty' : 'saved';
+        emit();
+        throw error;
+      }
     },
     recover(options = {}) {
       if (destroyed) return null;
