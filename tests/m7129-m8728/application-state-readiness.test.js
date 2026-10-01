@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {createCVEditorRuntimeHealth} from '../../src/application/cv-editor-runtime-health.js';
+import {createCVEditorReadinessGate} from '../../src/application/cv-editor-readiness-gate.js';
+import {createCVEditorCommandRouter} from '../../src/application/cv-editor-command-router.js';
+import {createCVEditorFormBinding} from '../../src/application/cv-editor-form-binding.js';
+test('M7129-M8728 editor application state and readiness contracts',()=>{const adapter={getState:()=>({activeDocumentId:'cv-1'})};const health=createCVEditorRuntimeHealth({adapter});assert.equal(health.inspect().healthy,true);const gate=createCVEditorReadinessGate({health});assert.equal(gate.check().ready,true);const router=createCVEditorCommandRouter();router.register('x',()=>7);assert.equal(router.execute('x'),7);const container={addEventListener(){},removeEventListener(){}};const binding=createCVEditorFormBinding({document:{},adapter,container});assert.ok(binding);binding.destroy();gate.destroy();health.destroy();router.destroy();});
