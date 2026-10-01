@@ -1,0 +1,1 @@
+export const CV_EDITOR_TEMPLATE_MODEL_VERSION='1.0.0';export function createCVEditorTemplateModel(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Template model requires adapter.');return Object.freeze({version:CV_EDITOR_TEMPLATE_MODEL_VERSION,list:()=>[...(adapter.listTemplates?.()||[])]});}
