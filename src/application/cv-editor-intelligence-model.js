@@ -1,0 +1,1 @@
+export const CV_EDITOR_INTELLIGENCE_MODEL_VERSION='1.0.0';export function createCVEditorIntelligenceModel(options={}){const controller=options.controller;if(!controller)throw new Error('Intelligence model requires controller.');return Object.freeze({version:CV_EDITOR_INTELLIGENCE_MODEL_VERSION,analyze:(job={},ats={})=>controller.analyze(job,ats)});}
