@@ -3,7 +3,7 @@ import { createEditorCommand } from './editor-command-contract.js';
 import { executeEditorCommand } from './editor-command-executor.js';
 import { createEditorPreview } from './editor-preview-controller.js';
 
-export const EDITOR_SURFACE_VERSION = '1.2.0';
+export const EDITOR_SURFACE_VERSION = '1.3.0';
 
 function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -98,6 +98,11 @@ export function createEditorSurface(input={}) {
         history:{past:[],future:[]}
       });
       notify(Object.freeze({ type:'restore', mutatesData:false }));
+      return state;
+    },
+    markSaved(savedAt = new Date().toISOString()) {
+      state=Object.freeze({...state,session:Object.freeze({...state.session,dirty:false,savedAt,lastCommand:'save'})});
+      notify(Object.freeze({type:'save',mutatesData:false}));
       return state;
     },
     preview(options={}){
