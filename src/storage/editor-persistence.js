@@ -226,8 +226,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const updateRecoveryActionState = () => {
     recoveryActionRequired = recoveryDecision === 'confirm' || recoveryDecision === 'stale';
-    if (!recoveryActionRequired) recoveryAction = 'none';
-    else if (recoveryAction === 'none') recoveryAction = 'pending';
+    if (!recoveryActionRequired) {
+      if (recoveryAction !== 'resolved' && recoveryAction !== 'dismissed') recoveryAction = 'none';
+    } else if (recoveryAction === 'none') {
+      recoveryAction = 'pending';
+    }
   };
 
   const recordRecoveryEvent = (type, outcome, reason = null) => {
