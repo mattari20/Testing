@@ -234,6 +234,7 @@
     "test:m648-m667": "node --test tests/m608-m627/editor-recovery-conflict-safety.test.js tests/m628-m647/editor-recovery-audit.test.js tests/m648-m667/editor-recovery-resolution.test.js",
     "test:m668-m687": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js",
     "test:m688-m707": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js",
-    "test:m708-m727": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js"
+    "test:m708-m727": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js",
+    "test:m728-m747": "node --test tests/m648-m667/editor-recovery-resolution.test.js tests/m668-m687/editor-recovery-integrity.test.js tests/m728-m747/persistence-write-safety.test.js"
   }
 }
