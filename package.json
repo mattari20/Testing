@@ -318,6 +318,8 @@
     "test:m8731-m10330": "node --test tests/m8731-m10330/application-model.test.js",
     "test:application-model": "npm run test:m8731-m10330",
     "test:m10332-m10333": "node --test tests/m10332-m10333/editor-ux-surface.test.js",
-    "test:editor-ux": "npm run test:m10332-m10333"
+    "test:editor-ux": "npm run test:m10332-m10333",
+    "test:m10338-m10358": "node --test tests/m10338-m10358/editor-product-ux.test.js",
+    "test:product-ux": "npm run test:m10338-m10358"
   }
 }
