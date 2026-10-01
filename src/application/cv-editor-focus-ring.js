@@ -1,0 +1,1 @@
+export const CV_EDITOR_FOCUS_RING_VERSION='1.0.0';export function createCVEditorFocusRing(options={}){const document=options.document;if(!document)throw new Error('Focus ring requires document.');function focus(node){node?.focus?.({preventScroll:true});node?.scrollIntoView?.({block:'nearest'});return node||null;}return Object.freeze({version:CV_EDITOR_FOCUS_RING_VERSION,focus});}
