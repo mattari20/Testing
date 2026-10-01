@@ -1,0 +1,2 @@
+export const CV_EDITOR_APPLICATION_CONTRACT_VERSION='1.0.0';
+export function createCVEditorApplicationContract(options={}){const application=options.application;if(!application)throw new Error('Application contract requires application.');function getState(){return Object.freeze({version:application.version,running:!!application.composition?.lifecycle?.getState?.()==='running'});}return Object.freeze({version:CV_EDITOR_APPLICATION_CONTRACT_VERSION,getState,start:()=>application.start(),stop:()=>application.stop(),destroy(){}});}
