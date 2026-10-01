@@ -1,4 +1,4 @@
-export const EDITOR_LIFECYCLE_VERSION = '1.5.0';
+export const EDITOR_LIFECYCLE_VERSION = '1.6.0';
 
 export function createEditorLifecycleController(surface, recoveryController = null, options = {}) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
@@ -147,6 +147,25 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     },
     getRecoveryAudit() {
       return recoveryController?.getRecoveryAudit?.() || [];
+    },
+    getPersistenceState() {
+      const state = getAutosaveState();
+      return Object.freeze({
+        persistenceRelation: state.persistenceRelation,
+        persistenceSnapshotId: state.persistenceSnapshotId,
+        persistenceSnapshotContentId: state.persistenceSnapshotContentId,
+        persistenceRevision: state.persistenceRevision,
+        persistenceWriteStatus: state.persistenceWriteStatus,
+        persistenceWriteError: state.persistenceWriteError,
+        persistenceWriteRevision: state.persistenceWriteRevision,
+        persistenceWriteSnapshotId: state.persistenceWriteSnapshotId,
+        persistenceWriteSnapshotContentId: state.persistenceWriteSnapshotContentId,
+        persistenceWriteAt: state.persistenceWriteAt,
+        recoveryInspectionStatus: state.recoveryInspectionStatus,
+        recoveryInspectionRetryable: state.recoveryInspectionRetryable,
+        recoveryInspectedAt: state.recoveryInspectedAt,
+        recoveryInspectionSequence: state.recoveryInspectionSequence
+      });
     },
     clearRecovery() {
       if (destroyed) return;
