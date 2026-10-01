@@ -1,0 +1,2 @@
+# M3928–M4007 — Editor Document Manager
+Provides browser-facing lifecycle operations for CV documents: list, activate, add, duplicate, rename, and archive. All mutations remain delegated to the workspace.
