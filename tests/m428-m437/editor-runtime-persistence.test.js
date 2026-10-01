@@ -18,6 +18,7 @@ function createRoot() {
       if (selector === '[data-v2-editor-form]') return form;
       return null;
     },
+    querySelectorAll() { return []; },
     ownerDocument: {
       createElement() {
         return {
