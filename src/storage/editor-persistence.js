@@ -388,7 +388,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     try {
       const record = adapter.load();
       lastInspectedRecord = record;
-      recoveryInspectionStatus = record ? 'ready' : 'ready';
+      recoveryInspectionStatus = 'ready';
       recoveryInspectedAt = new Date().toISOString();
       recoveryInspectionSequence += 1;
       recoveryInspectionValid = true;
@@ -669,9 +669,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         persistenceWriteAt,
         persistenceWriteSequence,
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
-      recoveryInspectionStatus,
-      recoveryInspectedAt,
-      recoveryInspectionSequence
+        recoveryInspectionStatus,
+        recoveryInspectedAt,
+        recoveryInspectionSequence
       });
     },
     refreshRecovery() {
