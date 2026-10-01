@@ -1,0 +1,2 @@
+export const CV_EDITOR_TEMPLATE_GALLERY_VERSION='1.0.0';
+export function createCVEditorTemplateGallery(options={}){const model=options.model||options.adapter;if(!model)throw new Error('Template gallery requires model.');function list(){return [...(model.list?.()||model.listTemplates?.()||[])];}function select(id){return options.adapter?.selectTemplate?.(id)||null;}return Object.freeze({version:CV_EDITOR_TEMPLATE_GALLERY_VERSION,list,select});}
