@@ -29,7 +29,8 @@ export function createEditorLifecycleController(surface, recoveryController = nu
     persistenceWriteAt: null,
     recoveryInspectionStatus: 'uninitialized',
     recoveryInspectedAt: null,
-    recoveryInspectionSequence: 0
+    recoveryInspectionSequence: 0,
+    recoveryInspectionRetryable: false
   });
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
   const confirmRecovery = typeof options.confirmRecovery === 'function'
