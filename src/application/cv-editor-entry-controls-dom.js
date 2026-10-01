@@ -1,0 +1,2 @@
+export const CV_EDITOR_ENTRY_CONTROLS_DOM_VERSION='1.0.0';
+export function createCVEditorEntryControlsDOM(options={}){const document=options.document;if(!document)throw new Error('Entry controls DOM requires document.');function decorate(container){for(const entry of container.querySelectorAll?.('[data-entry-id]')||[]){entry.setAttribute('data-editor-entry','');}return container;}return Object.freeze({version:CV_EDITOR_ENTRY_CONTROLS_DOM_VERSION,decorate});}
