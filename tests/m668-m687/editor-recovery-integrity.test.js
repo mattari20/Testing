@@ -165,3 +165,78 @@ test('M704-M707: lifecycle reflects recovery invalidation after post-recovery ed
   lifecycle.destroy();
   recovery.destroy();
 });
+
+
+test('M708-M711: persistence reconciliation exposes the current persisted snapshot identity',()=>{
+  const current=surface('Current');
+  const persisted=surface('Persisted');
+  const record=snapshot(persisted,'2026-10-01T08:00:00.000Z');
+  const recovery=createEditorRecoveryController(current,adapter(record));
+  const state=recovery.getState();
+  assert.equal(state.persistenceRelation,'stale');
+  assert.equal(state.persistenceSnapshotId,record.snapshotId);
+  assert.equal(state.persistenceSnapshotContentId,record.snapshotContentId);
+  assert.equal(state.persistenceRevision,record.revision);
+  assert.ok(state.persistenceReconciledAt);
+  recovery.destroy();
+});
+
+test('M712-M715: autosave reconciles persistence to current editor content',()=>{
+  const current=surface('Current');
+  const storage=adapter(null);
+  const recovery=createEditorRecoveryController(current,storage);
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Autosaved'},mutatesData:true});
+  const record=recovery.flush();
+  const state=recovery.getState();
+  assert.ok(record);
+  assert.equal(state.persistenceRelation,'current');
+  assert.equal(state.persistenceSnapshotId,record.snapshotId);
+  assert.equal(state.persistenceSnapshotContentId,record.snapshotContentId);
+  recovery.destroy();
+});
+
+test('M716-M719: post-recovery editing marks persisted snapshot stale without losing its identity',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const record=snapshot(persisted,'2026-10-01T08:00:00.000Z');
+  const recovery=createEditorRecoveryController(current,adapter(record));
+  assert.ok(recovery.resolveRecovery('recover'));
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Changed'},mutatesData:true});
+  const state=recovery.getState();
+  assert.equal(state.persistenceRelation,'stale');
+  assert.equal(state.persistenceSnapshotId,record.snapshotId);
+  assert.equal(state.recoveryAction,'pending');
+  recovery.destroy();
+});
+
+test('M720-M723: explicit save replaces the reconciled persistence identity',()=>{
+  const current=surface('Current');
+  const storage=adapter(null);
+  const recovery=createEditorRecoveryController(current,storage);
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Saved'},mutatesData:true});
+  const first=recovery.save();
+  current.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Saved Again'},mutatesData:true});
+  const second=recovery.save();
+  const state=recovery.getState();
+  assert.ok(second);
+  assert.notEqual(second.snapshotId,first.snapshotId);
+  assert.equal(state.persistenceSnapshotId,second.snapshotId);
+  assert.equal(state.persistenceRevision,second.revision);
+  assert.equal(state.persistenceRelation,'current');
+  recovery.destroy();
+});
+
+test('M724-M727: dismiss clears the persisted reconciliation marker',()=>{
+  const current=surface('Current');
+  current.markSaved('2026-10-01T07:00:00.000Z');
+  const persisted=surface('Persisted');
+  const recovery=createEditorRecoveryController(current,adapter(snapshot(persisted,'2026-10-01T08:00:00.000Z')));
+  assert.equal(recovery.resolveRecovery('dismiss'),true);
+  const state=recovery.getState();
+  assert.equal(state.persistenceRelation,'missing');
+  assert.equal(state.persistenceSnapshotId,null);
+  assert.equal(state.persistenceSnapshotContentId,null);
+  assert.equal(state.persistenceRevision,null);
+  recovery.destroy();
+});
