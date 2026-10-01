@@ -1,0 +1,2 @@
+export const CV_EDITOR_ATS_REPORT_MODEL_VERSION='1.0.0';
+export function createCVEditorATSReportModel(options={}){const panel=options.panel;if(!panel)throw new Error('ATS report model requires panel.');let report=null;return Object.freeze({version:CV_EDITOR_ATS_REPORT_MODEL_VERSION,analyze:input=>{report=panel.analyze?.(input)||panel.inspect?.(input)||null;return report;},get:()=>report,clear:()=>{report=null;}});}
