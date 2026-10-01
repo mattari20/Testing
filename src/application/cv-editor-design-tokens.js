@@ -1,0 +1,2 @@
+export const CV_EDITOR_DESIGN_TOKENS_VERSION='1.0.0';
+export const CV_EDITOR_DESIGN_TOKENS=Object.freeze({spacing:{xs:'4px',sm:'8px',md:'12px',lg:'16px',xl:'24px'},radius:{sm:'6px',md:'10px',lg:'14px'},shadow:{card:'0 2px 10px rgba(0,0,0,.08)'},font:{body:'system-ui,sans-serif',heading:'system-ui,sans-serif'}});
