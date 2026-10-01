@@ -37,6 +37,7 @@ jobs:
       - run: npm run test:m388-m397
       - run: npm run test:m398-m407
       - run: npm run test:m408-m417
+      - run: npm run test:m418-m427
       - run: npm test
         continue-on-error: true
       - name: Upload validation metadata
