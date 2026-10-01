@@ -1,4 +1,4 @@
-export const EDITOR_LIFECYCLE_VERSION = '1.2.0';
+export const EDITOR_LIFECYCLE_VERSION = '1.3.0';
 
 export function createEditorLifecycleController(surface, recoveryController = null, options = {}) {
   if (!surface || typeof surface.getState !== 'function' || typeof surface.subscribe !== 'function') {
@@ -83,7 +83,7 @@ export function createEditorLifecycleController(surface, recoveryController = nu
           : confirmRecovery(state);
         if (!confirmed) return null;
       }
-      const record = recoveryController.recover();
+      const record = recoveryController.recover({ allowStale: options.force === true || state.recoveryDecision === 'stale' });
       if (record) status = 'recovered';
       return record;
     },
