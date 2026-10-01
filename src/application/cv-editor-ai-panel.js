@@ -1,0 +1,2 @@
+export const CV_EDITOR_AI_PANEL_VERSION='1.0.0';
+export function createCVEditorAIPanel(options={}){const review=options.review;if(!review)throw new Error('AI panel requires review.');function state(){return review.getState?.()||null;}function accept(index){return review.accept?.(index);}function reject(index){return review.reject?.(index);}return Object.freeze({version:CV_EDITOR_AI_PANEL_VERSION,state,accept,reject});}
