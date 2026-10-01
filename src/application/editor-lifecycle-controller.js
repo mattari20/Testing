@@ -90,6 +90,17 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       if (record) status = 'recovered';
       return record;
     },
+    resolveRecovery(action, options = {}) {
+      if (destroyed) return null;
+      if (!recoveryController?.resolveRecovery) {
+        throw new Error('Editor persistence does not support recovery resolution.');
+      }
+      const result = recoveryController.resolveRecovery(action, options);
+      if (result && action === 'recover') status = 'recovered';
+      else if (result === true && action === 'dismiss') status = surface.getState().session.dirty ? 'dirty' : 'saved';
+      emit();
+      return result;
+    },
     clearRecovery() {
       if (destroyed) return;
       recoveryController?.clear();
