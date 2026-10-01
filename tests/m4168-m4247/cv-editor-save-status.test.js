@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorSaveStatus} from '../../src/application/cv-editor-save-status.js';test('tracks save lifecycle',()=>{const s=createCVEditorSaveStatus({saveController:{save:()=>({})}});assert.equal(s.getState().status,'unsaved');s.save();assert.equal(s.getState().status,'saved');});
