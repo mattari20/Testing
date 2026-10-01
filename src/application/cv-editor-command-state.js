@@ -1,0 +1,2 @@
+export const CV_EDITOR_COMMAND_STATE_VERSION='1.0.0';
+export function createCVEditorCommandState(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Command state requires adapter.');function getState(){const s=adapter.getState?.()||{};return Object.freeze({canUndo:typeof adapter.undo==='function',canRedo:typeof adapter.redo==='function',activeDocumentId:s.activeDocumentId||null});}return Object.freeze({version:CV_EDITOR_COMMAND_STATE_VERSION,getState,destroy(){}});}
