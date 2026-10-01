@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {createCVEditorApplicationModel} from '../../src/application/cv-editor-application-model.js';
+import {createCVEditorBrowserModel} from '../../src/application/cv-editor-browser-model.js';
+test('M8731-M10330 application models expose stable projections',()=>{const adapter={getState:()=>({activeDocumentId:'cv-1',form:{sections:[{id:'summary'}]}}),listTemplates:()=>[{id:'classic'}],undo(){},redo(){}};const model=createCVEditorApplicationModel({adapter});assert.equal(model.preview.get().documentId,'cv-1');assert.equal(model.sections.list()[0].id,'summary');assert.equal(model.templates.list()[0].id,'classic');const browser=createCVEditorBrowserModel({adapter});assert.equal(browser.application.version,'1.0.0');});
