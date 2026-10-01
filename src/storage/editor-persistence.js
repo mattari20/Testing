@@ -211,7 +211,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         timer = null;
       }
       const record = inspectRecovery();
-      if (!record) return null;
+      if (!record) {
+        emit();
+        return null;
+      }
       if (typeof surface.restorePersistedState !== 'function') {
         throw new Error('Editor surface does not support persisted-state recovery.');
       }
