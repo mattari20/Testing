@@ -14,6 +14,7 @@ export function createEditorPersistenceRecord(session, options = {}) {
   return Object.freeze({
     version: EDITOR_PERSISTENCE_VERSION,
     savedAt: options.savedAt || new Date().toISOString(),
+    revision: Number.isInteger(options.revision) && options.revision > 0 ? options.revision : 1,
     session: toSerializable(session.session || {}),
     application: {
       version: session.application.version,
@@ -50,7 +51,9 @@ export function createEditorPersistenceAdapter(storage, key = EDITOR_PERSISTENCE
       return deserializeEditorPersistenceRecord(storage.getItem(key));
     },
     save(session) {
-      const record = createEditorPersistenceRecord(session);
+      let currentRevision = 0;
+      try { currentRevision = Number(deserializeEditorPersistenceRecord(storage.getItem(key))?.revision) || 0; } catch { /* replace invalid snapshots with a fresh valid revision */ }
+      const record = createEditorPersistenceRecord(session, { revision: currentRevision + 1 });
       storage.setItem(key, serializeEditorPersistenceRecord(record));
       return record;
     },
@@ -81,6 +84,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let lastAutosaveError = null;
   let recoveryStatus = 'missing';
   let recoveryError = null;
+  let recoverySavedAt = null;
+  let recoveryRevision = null;
   const subscribers = new Set();
   const emit = () => {
     const snapshot = Object.freeze({
@@ -89,6 +94,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosaveError,
       recoveryStatus,
       recoveryError,
+      recoverySavedAt,
+      recoveryRevision,
       retryCount,
       maxRetries
     });
@@ -107,10 +114,14 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     try {
       const record = adapter.load();
       recoveryStatus = record ? 'available' : 'missing';
+      recoverySavedAt = record?.savedAt || null;
+      recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
       recoveryError = null;
       return record;
     } catch (error) {
       recoveryStatus = classifyRecoveryError(error);
+      recoverySavedAt = null;
+      recoveryRevision = null;
       recoveryError = String(error?.message || error);
       return null;
     }
@@ -137,6 +148,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
       recoveryStatus = 'available';
+      recoverySavedAt = record?.savedAt || null;
+      recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
       recoveryError = null;
       emit();
       return record;
@@ -216,6 +229,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = effectiveSavedAt;
       autosaveStatus = 'saved';
       recoveryStatus = 'available';
+      recoverySavedAt = effectiveSavedAt;
+      recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
       recoveryError = null;
       if (typeof surface.markSaved === 'function') surface.markSaved(effectiveSavedAt);
       emit();
@@ -239,13 +254,15 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         lastAutosaveError,
         recoveryStatus,
         recoveryError,
+        recoverySavedAt,
+        recoveryRevision,
         retryCount,
         maxRetries
       });
     },
     getRecoveryState() {
       inspectRecovery();
-      return Object.freeze({ recoveryStatus, recoveryError });
+      return Object.freeze({ recoveryStatus, recoveryError, recoverySavedAt, recoveryRevision });
     },
     subscribe(listener) {
       if (typeof listener !== 'function') throw new Error('Recovery subscriber must be a function.');
@@ -281,6 +298,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = record.savedAt || null;
       lastAutosaveError = null;
       recoveryStatus = 'available';
+      recoverySavedAt = record.savedAt || null;
+      recoveryRevision = Number.isInteger(record.revision) ? record.revision : null;
       recoveryError = null;
       emit();
       return record;
@@ -302,6 +321,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = null;
       lastAutosaveError = null;
       recoveryStatus = 'missing';
+      recoverySavedAt = null;
+      recoveryRevision = null;
       recoveryError = null;
       emit();
     },
