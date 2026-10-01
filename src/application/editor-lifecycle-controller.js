@@ -8,6 +8,7 @@ export function createEditorLifecycleController(surface, recoveryController = nu
   let destroyed = false;
   let status = surface.getState().session.dirty ? 'dirty' : 'saved';
   const subscribers = new Set();
+  const getAutosaveState = () => recoveryController?.getState?.() || Object.freeze({ autosaveStatus: 'idle', lastAutosavedAt: null, lastAutosaveError: null });
   const hasRecovery = () => Boolean(recoveryController?.hasRecovery?.());
   const confirmRecovery = typeof options.confirmRecovery === 'function'
     ? options.confirmRecovery
@@ -19,11 +20,14 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       dirty: Boolean(surface.getState().session.dirty),
       savedAt: surface.getState().session.savedAt || null,
       lastCommand: surface.getState().session.lastCommand || null,
-      recoveryAvailable: hasRecovery()
+      recoveryAvailable: hasRecovery(),
+      ...getAutosaveState()
     });
     subscribers.forEach(listener => listener(snapshot));
     return snapshot;
   };
+
+  const unsubscribeRecovery = recoveryController?.subscribe?.(() => { if (!destroyed) emit(); });
 
   const unsubscribeSurface = surface.subscribe((state, command) => {
     if (destroyed) return;
@@ -41,7 +45,8 @@ export function createEditorLifecycleController(surface, recoveryController = nu
         dirty: Boolean(surface.getState().session.dirty),
         savedAt: surface.getState().session.savedAt || null,
         lastCommand: surface.getState().session.lastCommand || null,
-        recoveryAvailable: hasRecovery()
+        recoveryAvailable: hasRecovery(),
+        ...getAutosaveState()
       });
     },
     subscribe(listener) {
@@ -89,6 +94,7 @@ export function createEditorLifecycleController(surface, recoveryController = nu
       if (destroyed) return;
       destroyed = true;
       unsubscribeSurface();
+      unsubscribeRecovery?.();
       subscribers.clear();
     }
   });
