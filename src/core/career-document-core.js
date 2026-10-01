@@ -115,6 +115,14 @@ export function duplicateEntry(profile, sectionId, entryId) {
 }
 export function setSectionVisibility(profile, sectionId, visible) { const s = getSection(profile, sectionId); assert(s, 'Section not found: ' + sectionId); s.visibility = Boolean(visible); touch(profile); }
 export function setFieldVisibility(profile, sectionId, fieldId, visible) { const f = getField(profile, sectionId, fieldId); assert(f, 'Field not found: ' + fieldId); f.visibility = Boolean(visible); touch(profile); }
+export function setEntryValues(profile, sectionId, entryId, values = {}) {
+  const entry = getEntry(profile, sectionId, entryId);
+  assert(entry, 'Entry not found: ' + entryId);
+  assert(isObject(values), 'Entry values must be an object.');
+  entry.values = clone(values);
+  touch(profile);
+  return entry;
+}
 export function setEntryVisibility(profile, sectionId, entryId, visible) { const e = getEntry(profile, sectionId, entryId); assert(e, 'Entry not found: ' + entryId); e.visibility = Boolean(visible); touch(profile); }
 export function setTargetedSectionVisibility(cv, sectionId, visible) {
   const id = String(sectionId);
