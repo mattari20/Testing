@@ -12,7 +12,7 @@ function createMemoryStorage() {
 }
 
 function createRoot() {
-  const form = { replaceChildren() {} };
+  const form = { replaceChildren() {}, querySelectorAll() { return []; } };
   return {
     querySelector(selector) {
       if (selector === '[data-v2-editor-form]') return form;
