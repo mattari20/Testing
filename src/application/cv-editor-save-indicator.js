@@ -1,0 +1,2 @@
+export const CV_EDITOR_SAVE_INDICATOR_VERSION='1.0.0';
+export function createCVEditorSaveIndicator(options={}){const status=options.status;if(!status)throw new Error('Save indicator requires status.');function state(){return status.getState();}function label(){const s=state().status;return ({unsaved:'Unsaved changes',saving:'Saving…',saved:'Saved',error:'Save error',destroyed:'Unavailable'})[s]||s;}return Object.freeze({version:CV_EDITOR_SAVE_INDICATOR_VERSION,state,label});}
