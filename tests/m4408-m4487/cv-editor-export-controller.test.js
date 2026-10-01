@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorExportController} from '../../src/application/cv-editor-export-controller.js';test('delegates export',()=>{const c=createCVEditorExportController({pipeline:{prepare:f=>({format:f}),validate:()=>({valid:true})}});assert.equal(c.prepare('pdf').format,'pdf');});
