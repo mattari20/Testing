@@ -1,0 +1,2 @@
+export const CV_EDITOR_ATS_PANEL_DOM_VERSION='1.0.0';
+export function createCVEditorATSPanelDOM(options={}){const document=options.document,panel=options.panel,container=options.container;if(!document||!panel||!container)throw new Error('ATS panel DOM requires document, panel and container.');const button=document.createElement('button');button.textContent='Check ATS';button.onclick=()=>{const r=panel.analyze(options.input||{});container.textContent=JSON.stringify(r);};container.appendChild(button);return Object.freeze({version:CV_EDITOR_ATS_PANEL_DOM_VERSION,button});}
