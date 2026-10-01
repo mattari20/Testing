@@ -1,0 +1,2 @@
+export const CV_EDITOR_ACCESSIBILITY_DOM_VERSION='1.0.0';
+export function createCVEditorAccessibilityDOM(options={}){const document=options.document,root=options.root;if(!document||!root)throw new Error('Accessibility DOM requires document and root.');root.setAttribute('role','application');root.setAttribute('aria-label',options.label||'CV Builder editor');return Object.freeze({version:CV_EDITOR_ACCESSIBILITY_DOM_VERSION,root});}
