@@ -173,6 +173,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         throw new Error('Editor surface does not support persisted-state recovery.');
       }
       surface.restorePersistedState(record);
+      autosaveStatus = 'idle';
+      lastAutosavedAt = null;
+      lastAutosaveError = null;
+      emit();
       return record;
     },
     clear() {
