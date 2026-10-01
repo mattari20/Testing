@@ -114,8 +114,27 @@ export function createEditorPersistenceAdapter(storage, key = EDITOR_PERSISTENCE
       if (options.expectedSnapshotId !== undefined && options.expectedSnapshotId !== (currentRecord?.snapshotId || null)) {
         throw new Error('Persistence snapshot conflict: stored snapshot changed before write.');
       }
+      const previousSerialized = storage.getItem(key);
       const record = createEditorPersistenceRecord(session, { revision: currentRevision + 1 });
-      storage.setItem(key, serializeEditorPersistenceRecord(record));
+      const serialized = serializeEditorPersistenceRecord(record);
+      try {
+        storage.setItem(key, serialized);
+        const verified = deserializeEditorPersistenceRecord(storage.getItem(key));
+        if (!verified || verified.snapshotId !== record.snapshotId) {
+          throw new Error('Persistence write verification failed: stored snapshot identity changed during write.');
+        }
+      } catch (error) {
+        try {
+          if (previousSerialized == null) {
+            storage.removeItem?.(key);
+          } else {
+            storage.setItem(key, previousSerialized);
+          }
+        } catch {
+          // Best-effort rollback; preserve the original write/verification error.
+        }
+        throw error;
+      }
       return record;
     },
     clear() {
