@@ -99,6 +99,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const save = () => {
     if (destroyed) return null;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
     const state = surface.getState();
     const savedAt = new Date().toISOString();
     const cleanSession = {
@@ -119,6 +123,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       return Boolean(adapter.load());
     },
     recover() {
+      if (destroyed) return null;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
       const record = adapter.load();
       if (!record) return null;
       if (typeof surface.restorePersistedState !== 'function') {
@@ -128,6 +137,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       return record;
     },
     clear() {
+      if (destroyed) return;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
       adapter.clear?.();
     },
     destroy() {
