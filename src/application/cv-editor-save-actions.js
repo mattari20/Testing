@@ -1,0 +1,1 @@
+export const CV_EDITOR_SAVE_ACTIONS_VERSION='1.0.0';export function createCVEditorSaveActions(options={}){const lifecycle=options.lifecycle;if(!lifecycle)throw new Error('Save actions require lifecycle.');return Object.freeze({version:CV_EDITOR_SAVE_ACTIONS_VERSION,save:lifecycle.persist,status:lifecycle.getState,reset:lifecycle.reset});}
