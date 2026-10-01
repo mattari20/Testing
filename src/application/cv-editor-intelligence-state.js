@@ -1,0 +1,2 @@
+export const CV_EDITOR_INTELLIGENCE_STATE_VERSION='1.0.0';
+export function createCVEditorIntelligenceState(options={}){const panel=options.panel;if(!panel)throw new Error('Intelligence state requires panel.');return Object.freeze({version:CV_EDITOR_INTELLIGENCE_STATE_VERSION,inspect:(job={},ats={})=>panel.inspect(job,ats),destroy(){}});}
