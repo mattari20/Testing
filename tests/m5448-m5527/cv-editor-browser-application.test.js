@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorBrowserApplication} from '../../src/application/cv-editor-browser-application.js';test('composes page and coordinator',()=>{const app=createCVEditorBrowserApplication({document:{},adapter:{getState:()=>({}),destroy(){}}});assert.ok(app.page);app.stop();});
