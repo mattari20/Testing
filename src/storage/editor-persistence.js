@@ -74,6 +74,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let timer = null;
   let retryTimer = null;
   let retryCount = 0;
+  let operationToken = 0;
   let destroyed = false;
   let autosaveStatus = 'idle';
   let lastAutosavedAt = null;
@@ -115,8 +116,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     }
   };
 
-  const flush = () => {
-    if (destroyed) return null;
+  const runFlush = token => {
+    if (destroyed || token !== operationToken) return null;
     if (timer) {
       clearTimeout(timer);
       timer = null;
@@ -146,9 +147,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         autosaveStatus = 'scheduled';
         emit();
         if (retryTimer) clearTimeout(retryTimer);
+        const retryToken = operationToken;
         retryTimer = setTimeout(() => {
           retryTimer = null;
-          try { flush(); } catch { /* error state is emitted by flush */ }
+          if (retryToken !== operationToken || destroyed) return;
+          try { runFlush(retryToken); } catch { /* error state is emitted by runFlush */ }
         }, retryDelayMs * retryCount);
         return null;
       }
@@ -160,6 +163,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const schedule = () => {
     if (destroyed) return;
+    const scheduleToken = ++operationToken;
     if (timer) clearTimeout(timer);
     autosaveStatus = 'scheduled';
     lastAutosaveError = null;
@@ -171,9 +175,12 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     emit();
     timer = setTimeout(() => {
       timer = null;
-      try { flush(); } catch { /* error state is emitted by flush */ }
+      if (scheduleToken !== operationToken || destroyed) return;
+      try { runFlush(scheduleToken); } catch { /* error state is emitted by runFlush */ }
     }, delayMs);
   };
+
+  const flush = () => runFlush(++operationToken);
 
   const unsubscribe = surface.subscribe((state, command) => {
     if (command?.type === 'restore' || command?.type === 'save') return;
@@ -182,6 +189,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
 
   const save = () => {
     if (destroyed) return null;
+    ++operationToken;
     if (timer) {
       clearTimeout(timer);
       timer = null;
@@ -250,6 +258,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     },
     recover() {
       if (destroyed) return null;
+      ++operationToken;
       if (timer) {
         clearTimeout(timer);
         timer = null;
@@ -278,6 +287,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     },
     clear() {
       if (destroyed) return;
+      ++operationToken;
       if (timer) {
         clearTimeout(timer);
         timer = null;
@@ -297,6 +307,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     },
     destroy() {
       if (destroyed) return;
+      ++operationToken;
       destroyed = true;
       if (timer) clearTimeout(timer);
       if (retryTimer) clearTimeout(retryTimer);
