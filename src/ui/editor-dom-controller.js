@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.2.0';
+export const EDITOR_DOM_VERSION = '1.3.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -70,4 +70,62 @@ export function bindEditorActions(root, surface) {
     listeners.push(() => element.removeEventListener('click', handler));
   });
   return Object.freeze({destroy:()=>listeners.forEach(fn=>fn())});
+}
+
+export function bindEditorLifecycle(root, lifecycle) {
+  if (!root || !lifecycle) throw new Error('Editor root and lifecycle controller are required.');
+  const listeners = [];
+  const update = state => {
+    root.querySelectorAll('[data-v2-editor-save-status]').forEach(element => {
+      element.textContent = String(state.status || '');
+      element.dataset.v2EditorLifecycleStatus = String(state.status || '');
+      if ('ariaBusy' in element) element.ariaBusy = state.status === 'saving' ? 'true' : 'false';
+    });
+    root.querySelectorAll('[data-v2-editor-save]').forEach(element => {
+      element.disabled = state.status === 'saved' || state.status === 'saving';
+      element.dataset.v2EditorDirty = String(Boolean(state.dirty));
+    });
+    root.querySelectorAll('[data-v2-editor-recover]').forEach(element => {
+      element.disabled = false;
+    });
+  };
+
+  root.querySelectorAll('[data-v2-editor-save]').forEach(element => {
+    const handler = event => {
+      event?.preventDefault?.();
+      try { lifecycle.save(); } catch (error) {
+        element.dataset.v2EditorLifecycleError = String(error?.message || error);
+      }
+    };
+    element.addEventListener('click', handler);
+    listeners.push(() => element.removeEventListener('click', handler));
+  });
+
+  root.querySelectorAll('[data-v2-editor-recover]').forEach(element => {
+    const handler = event => {
+      event?.preventDefault?.();
+      try { lifecycle.recover(); } catch (error) {
+        element.dataset.v2EditorLifecycleError = String(error?.message || error);
+      }
+    };
+    element.addEventListener('click', handler);
+    listeners.push(() => element.removeEventListener('click', handler));
+  });
+
+  root.querySelectorAll('[data-v2-editor-clear-recovery]').forEach(element => {
+    const handler = event => {
+      event?.preventDefault?.();
+      lifecycle.clearRecovery();
+    };
+    element.addEventListener('click', handler);
+    listeners.push(() => element.removeEventListener('click', handler));
+  });
+
+  const unsubscribe = lifecycle.subscribe(update);
+  return Object.freeze({
+    destroy() {
+      unsubscribe();
+      listeners.forEach(fn => fn());
+    }
+  });
 }
