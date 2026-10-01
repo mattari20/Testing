@@ -87,7 +87,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt,
       lastAutosaveError,
       recoveryStatus,
-      recoveryError
+      recoveryError,
+      retryCount,
+      maxRetries
     });
     subscribers.forEach(listener => listener(snapshot));
     return snapshot;
