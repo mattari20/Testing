@@ -1,0 +1,2 @@
+export const CV_EDITOR_VALIDATION_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorValidationController(options={}){const validation=options.validation,bus=options.bus;if(!validation)throw new Error('Validation controller requires validation.');function inspect(){const result=validation.inspect();bus?.emit('validation:updated',result);return result;}return Object.freeze({version:CV_EDITOR_VALIDATION_CONTROLLER_VERSION,inspect,state:()=>validation.getState(),destroy(){}});}
