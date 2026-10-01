@@ -1,0 +1,2 @@
+export const CV_EDITOR_SESSION_CONTROLLER_VERSION='1.0.0';
+export function createCVEditorSessionController(options={}){const bootstrap=options.bootstrap,bus=options.bus;if(!bootstrap)throw new Error('Session controller requires bootstrap.');function restore(){const result=bootstrap.restore();bus?.emit('session:restored',result);return result;}return Object.freeze({version:CV_EDITOR_SESSION_CONTROLLER_VERSION,restore,state:()=>bootstrap.getState(),destroy(){}});}
