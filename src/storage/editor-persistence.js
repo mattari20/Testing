@@ -146,6 +146,11 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryRelation = 'missing';
   let recoveryContentRelation = 'missing';
   let recoveryDecision = 'none';
+  let recoveryActionRequired = false;
+  let recoveryLastAction = null;
+  let recoveryAuditSequence = 0;
+  const recoveryAudit = [];
+  const MAX_RECOVERY_AUDIT = 12;
   const subscribers = new Set();
 
   const emit = () => {
@@ -163,6 +168,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRelation,
       recoveryContentRelation,
       recoveryDecision,
+      recoveryActionRequired,
+      recoveryLastAction,
+      recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
       retryCount,
       maxRetries
     });
@@ -214,6 +222,30 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     return 'unknown';
   };
 
+  const updateRecoveryActionState = () => {
+    recoveryActionRequired = recoveryDecision === 'confirm' || recoveryDecision === 'stale';
+  };
+
+  const recordRecoveryEvent = (type, outcome, reason = null) => {
+    recoveryAuditSequence += 1;
+    const event = Object.freeze({
+      id: `ra-${recoveryAuditSequence}`,
+      type,
+      at: new Date().toISOString(),
+      decision: recoveryDecision,
+      relation: recoveryRelation,
+      contentRelation: recoveryContentRelation,
+      snapshotId: recoverySnapshotId,
+      revision: recoveryRevision,
+      outcome,
+      reason
+    });
+    recoveryAudit.push(event);
+    while (recoveryAudit.length > MAX_RECOVERY_AUDIT) recoveryAudit.shift();
+    recoveryLastAction = event;
+    return event;
+  };
+
   const inspectRecovery = () => {
     try {
       const record = adapter.load();
@@ -226,6 +258,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryContentRelation = compareRecoveryContent(record);
       recoveryIsNewer = recoveryRelation === 'newer';
       recoveryDecision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
+      updateRecoveryActionState();
       recoveryError = null;
       return record;
     } catch (error) {
@@ -238,6 +271,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRelation = 'unknown';
       recoveryContentRelation = 'unknown';
       recoveryDecision = 'unknown';
+      updateRecoveryActionState();
       recoveryError = String(error?.message || error);
       return null;
     }
@@ -253,6 +287,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryContentRelation = record?.snapshotContentId ? 'same' : 'unknown';
     recoveryIsNewer = relation === 'newer';
     recoveryDecision = deriveRecoveryDecision(record, recoveryContentRelation, recoveryRelation);
+    updateRecoveryActionState();
     recoveryError = null;
   };
 
@@ -277,6 +312,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
       applyPersistedMetadata(record, 'same');
+      updateRecoveryActionState();
+      recordRecoveryEvent('recover', 'recovered');
       emit();
       return record;
     } catch (error) {
@@ -389,6 +426,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         maxRetries
       });
     },
+    getRecoveryAudit() {
+      return recoveryAudit.map(entry => ({ ...entry }));
+    },
     getRecoveryState() {
       inspectRecovery();
       return Object.freeze({
@@ -401,7 +441,10 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryIsNewer,
         recoveryRelation,
         recoveryContentRelation,
-        recoveryDecision
+        recoveryDecision,
+        recoveryActionRequired,
+        recoveryLastAction,
+        recoveryAudit: recoveryAudit.map(entry => ({ ...entry }))
       });
     },
     subscribe(listener) {
@@ -427,6 +470,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       retryCount = 0;
       const record = inspectRecovery();
       if (!record) {
+        recordRecoveryEvent('recover', 'missing', 'No persisted recovery snapshot is available.');
         emit();
         return null;
       }
@@ -434,6 +478,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       if (decision === 'stale' && options.allowStale !== true) {
         recoveryDecision = 'stale';
         recoveryError = 'Persisted CV snapshot is older than the current editor content.';
+        updateRecoveryActionState();
+        recordRecoveryEvent('recover', 'blocked', recoveryError);
         emit();
         return null;
       }
@@ -474,6 +520,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryContentRelation = 'missing';
       recoveryDecision = 'none';
       recoveryError = null;
+      recoveryActionRequired = false;
+      recordRecoveryEvent('clear', 'cleared');
       emit();
     },
     destroy() {
