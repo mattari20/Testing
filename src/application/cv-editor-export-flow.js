@@ -1,0 +1,2 @@
+export const CV_EDITOR_EXPORT_FLOW_VERSION='1.0.0';
+export function createCVEditorExportFlow(options={}){const controller=options.controller;if(!controller)throw new Error('Export flow requires controller.');return Object.freeze({version:CV_EDITOR_EXPORT_FLOW_VERSION,prepare:(format,metadata={})=>controller.prepare(format,metadata),validate:request=>controller.validate(request),run:(format,metadata={})=>{const request=controller.prepare(format,metadata);return controller.validate(request);}});}
