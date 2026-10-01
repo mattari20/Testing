@@ -1,0 +1,7 @@
+export const CV_TEMPLATE_SELECTION_VERSION='1.0.0';
+const clone=v=>v==null?v:JSON.parse(JSON.stringify(v));
+const freeze=v=>Object.freeze(clone(v));
+export function createTemplateSelectionState(input={}){return freeze({version:CV_TEMPLATE_SELECTION_VERSION,templateId:input.templateId?String(input.templateId):null,source:input.source||'default',changedAt:input.changedAt||new Date().toISOString(),fallbackUsed:input.fallbackUsed===true});}
+export function resolveTemplateSelection(registry,requestedId,options={}){if(!registry||typeof registry.get!=='function')throw new Error('Template registry is required.');const requested=requestedId?registry.get(requestedId):null;if(requested)return createTemplateSelectionState({templateId:requested.id,source:'requested'});const candidates=registry.list({status:options.status});const candidate=candidates[0]||null;if(!candidate)throw new Error('No template is available.');return createTemplateSelectionState({templateId:candidate.id,source:'fallback',fallbackUsed:true});}
+export function validateTemplateSelection(registry,state){const errors=[];if(!state?.templateId)errors.push('Template selection is required.');else if(!registry.get(state.templateId))errors.push('Selected template is not registered.');return Object.freeze({valid:errors.length===0,errors});}
+export function applyTemplateSelection(configuration,state){const next=clone(configuration||{});next.template={...(next.template||{}),id:state.templateId,selectionVersion:CV_TEMPLATE_SELECTION_VERSION};return freeze(next);}
