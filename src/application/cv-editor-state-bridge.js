@@ -1,0 +1,2 @@
+export const CV_EDITOR_STATE_BRIDGE_VERSION='1.0.0';
+export function createCVEditorStateBridge(options={}){const adapter=options.adapter,bus=options.bus;if(!adapter||!bus)throw new Error('State bridge requires adapter and bus.');let last=null;function sync(){const state=adapter.getState();last=state;bus.emit('state:changed',state);return state;}function edit(id,patch){const result=adapter.edit(id,patch);sync();return result;}return Object.freeze({version:CV_EDITOR_STATE_BRIDGE_VERSION,sync,edit,getLastState:()=>last,destroy(){last=null;}});}
