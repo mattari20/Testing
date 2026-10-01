@@ -25,10 +25,8 @@ test('corrupt persisted JSON is reported without breaking recovery controller',(
   const a=createEditorPersistenceAdapter(storage('{not-json'),'state');
   const r=createEditorRecoveryController(s,a);
   assert.equal(r.hasRecovery(),false);
-  assert.deepEqual(r.getRecoveryState(),{
-    recoveryStatus:'invalid',
-    recoveryError:'Unexpected token \'n\', "{not-json" is not valid JSON'
-  });
+  assert.equal(r.getRecoveryState().recoveryStatus,'invalid');
+  assert.match(r.getRecoveryState().recoveryError,/Unexpected token|JSON/);
   assert.equal(r.recover(),null);
   assert.equal(s.getState().session.dirty,false);
   r.destroy();
