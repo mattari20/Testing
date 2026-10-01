@@ -1,0 +1,2 @@
+export const CV_EDITOR_FIELD_CONTROL_VERSION='1.0.0';
+export function createCVEditorFieldControl(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Field control requires adapter.');function update(fieldId,value){return adapter.edit(fieldId,{value});}function visibility(fieldId,value){return adapter.edit(fieldId,{visibility:!!value});}function type(fieldId,value){return adapter.edit(fieldId,{type:value});}return Object.freeze({version:CV_EDITOR_FIELD_CONTROL_VERSION,update,visibility,type});}
