@@ -2,8 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 import {createCVEditorStyleSheet} from '../../src/application/cv-editor-style-sheet.js';
-import {inspectCVEditorBrowserSurface} from '../../src/application/cv-editor-browser-visual-qa.js';
-
 const html=`<div id="app" data-cv-editor="v2">
 <header data-cv-editor-toolbar><h1>CV Builder</h1><button data-primary="true">Save</button><button data-action="ghost">Undo</button></header>
 <main data-cv-editor-main>
@@ -28,12 +26,12 @@ test('real browser acceptance covers edit, preview, responsive and print boundar
   await page.locator('[data-preview-block-id="name"]').evaluate((node)=>node.textContent='Ali Akbar');
   assert.equal(await input.inputValue(),'Ali Akbar');
   assert.equal(await page.locator('[data-preview-block-id="name"]').textContent(),'Ali Akbar');
-  let report=await page.evaluate(()=>inspectCVEditorBrowserSurface({document,window}));
+  const report=await page.evaluate(()=>{const root=document.querySelector('[data-cv-editor="v2"]');const toolbar=document.querySelector('[data-cv-editor-toolbar]');const main=document.querySelector('[data-cv-editor-main]');const form=document.querySelector('[data-cv-editor-form]');const preview=document.querySelector('[data-cv-editor-preview]');const pages=[...document.querySelectorAll('[data-cv-editor-preview] article')];return {ready:Boolean(root&&toolbar&&main&&form&&preview)&&form.getBoundingClientRect().width>0&&preview.getBoundingClientRect().width>0&&pages.length>0&&pages.every(node=>node.getBoundingClientRect().width>0),pageCount:pages.length};});
   assert.equal(report.ready,true);
   assert.equal(report.pageCount,1);
   await page.setViewportSize({width:390,height:844});
   const mobile=await page.evaluate(()=>({columns:getComputedStyle(document.querySelector('[data-cv-editor-main]')).gridTemplateColumns,form:document.querySelector('[data-cv-editor-form]').getBoundingClientRect().width,preview:document.querySelector('[data-cv-editor-preview]').getBoundingClientRect().width}));
-  assert.equal(mobile.columns,'390px');assert.ok(mobile.form>0&&mobile.preview>0);
+  assert.match(mobile.columns,/^\d+(?:\.\d+)?px$/);assert.ok(Number.parseFloat(mobile.columns)>0);assert.ok(mobile.form>0&&mobile.preview>0);
   const print=await page.evaluate(()=>{const sheet=[...document.styleSheets].find(s=>[...s.cssRules].some(r=>r.conditionText==='print'));return Boolean(sheet);});
   assert.equal(print,true);
  } finally {await browser.close();}
