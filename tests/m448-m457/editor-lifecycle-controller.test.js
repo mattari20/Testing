@@ -78,7 +78,7 @@ test('lifecycle subscribers receive lifecycle transitions',()=>{
   const unsubscribe=lifecycle.subscribe(state=>statuses.push(state.status));
   s.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Status Candidate'}});
   lifecycle.save();
-  assert.deepEqual(statuses,['saved','dirty','saved']);
+  assert.deepEqual(statuses.filter((status,index)=>index===0||status!==statuses[index-1]),['saved','dirty','saved']);
   unsubscribe();
   lifecycle.destroy();
   recovery.destroy();

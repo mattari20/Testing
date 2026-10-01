@@ -15,6 +15,7 @@ function root(){
   const form = { replaceChildren() {}, querySelectorAll() { return []; } };
   return {
     querySelector:selector => selector === '[data-v2-editor-form]' ? form : null,
+    querySelectorAll:() => [],
     ownerDocument:{
       createElement(){
         return { childNodes:[], set innerHTML(value){ this.childNodes=[]; } };
