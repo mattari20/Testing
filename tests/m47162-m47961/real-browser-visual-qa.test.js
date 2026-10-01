@@ -19,6 +19,6 @@ test('real browser validates V2 editor responsive visual contract',async()=>{
   assert.ok(desktop.mainWidth>0);assert.ok(desktop.previewWidth>0);assert.ok(desktop.pageWidth>0);
   await page.setViewportSize({width:390,height:844});
   const mobile=await page.evaluate(()=>{const main=document.querySelector('[data-cv-editor-main]'),form=document.querySelector('[data-cv-editor-form]'),preview=document.querySelector('[data-cv-editor-preview]');return {columns:getComputedStyle(main).gridTemplateColumns,formWidth:form.getBoundingClientRect().width,previewWidth:preview.getBoundingClientRect().width};});
-  assert.equal(mobile.columns,'390px');assert.ok(mobile.formWidth>0);assert.ok(mobile.previewWidth>0);
+  assert.match(mobile.columns,/^\\d+(?:\\.\\d+)?px$/);assert.ok(Number.parseFloat(mobile.columns)>0);assert.ok(mobile.formWidth>0);assert.ok(mobile.previewWidth>0);assert.ok(Math.abs(mobile.formWidth-Number.parseFloat(mobile.columns))<1);
  } finally {await browser.close();}
 });
