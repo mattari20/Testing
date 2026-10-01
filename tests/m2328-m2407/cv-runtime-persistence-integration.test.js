@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createCVEditorRuntime } from '../../src/application/cv-editor-runtime.js';
+test('M2328-M2343 runtime edits are committed to workspace',()=>{const r=createCVEditorRuntime();r.refresh();const section=r.getState().projection.sections[0];assert.ok(section);r.edit('section:'+section.id,{title:'Integrated'});assert.equal(r.getWorkspace().getActiveDocument().sections.find(s=>s.id===section.id).title,'Integrated');});
+test('M2344-M2359 undo restores workspace content',()=>{const r=createCVEditorRuntime();r.refresh();const s=r.getState().projection.sections[0];const original=s.title;r.edit('section:'+s.id,{title:'Changed'});r.undo();assert.equal(r.getWorkspace().getActiveDocument().sections.find(x=>x.id===s.id).title,original);});
+test('M2360-M2375 redo reapplies workspace content',()=>{const r=createCVEditorRuntime();r.refresh();const s=r.getState().projection.sections[0];r.edit('section:'+s.id,{title:'Changed'});r.undo();r.redo();assert.equal(r.getWorkspace().getActiveDocument().sections.find(x=>x.id===s.id).title,'Changed');});
+test('M2376-M2391 runtime exposes workspace diagnostics',()=>{const r=createCVEditorRuntime();assert.equal(r.getState().workspace.activeDocumentExists,true);});
+test('M2392-M2407 workspace replacement rejects invalid state',()=>{const r=createCVEditorRuntime();assert.throws(()=>r.getWorkspace().replaceState({masterProfile:{},documents:[],activeDocumentId:'x'}));});
