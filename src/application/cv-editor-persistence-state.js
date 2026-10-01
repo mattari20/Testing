@@ -1,0 +1,2 @@
+export const CV_EDITOR_PERSISTENCE_STATE_VERSION='1.0.0';
+export function createCVEditorPersistenceState(options={}){const status=options.status;if(!status)throw new Error('Persistence state requires status.');return Object.freeze({version:CV_EDITOR_PERSISTENCE_STATE_VERSION,getState:()=>status.getState(),destroy(){}});}
