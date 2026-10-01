@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_EDIT_MODEL_VERSION='1.0.0';
+export function createCVEditorPreviewEditModel(options={}){const adapter=options.adapter;if(!adapter)throw new Error('Preview edit model requires adapter.');let selected=null;return Object.freeze({version:CV_EDITOR_PREVIEW_EDIT_MODEL_VERSION,select(id){selected=id;return id;},selected:()=>selected,update(values={}){return selected?adapter.edit(selected,values):null;},clear(){selected=null;}});}
