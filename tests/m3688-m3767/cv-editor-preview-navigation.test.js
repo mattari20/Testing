@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorPreviewNavigation} from '../../src/application/cv-editor-preview-navigation.js';
+class N{constructor(){this.children=[];this.attrs={};this.listeners={};}appendChild(x){this.children.push(x);}setAttribute(k,v){this.attrs[k]=v;}getAttribute(k){return this.attrs[k]||null;}addEventListener(k,f){this.listeners[k]=f;}}
+const d={createElement:()=>new N()};
+test('creates previous/next navigation controls',()=>{const c=new N();const n=createCVEditorPreviewNavigation({document:d,previewContainer:c});assert.equal(n.controls.children.length,2);assert.equal(n.getCurrentPage(),1);});
