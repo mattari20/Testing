@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_EMPTY_STATE_VERSION='1.0.0';
+export function createCVEditorPreviewEmptyState(options={}){const document=options.document;if(!document)throw new Error('Preview empty state requires document.');function render(container,message='Preview will appear here.'){const n=document.createElement('div');n.setAttribute('data-preview-empty','');n.textContent=message;container.appendChild(n);return n;}return Object.freeze({version:CV_EDITOR_PREVIEW_EMPTY_STATE_VERSION,render});}
