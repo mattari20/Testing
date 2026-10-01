@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorDOMShell} from '../../src/application/cv-editor-dom-shell.js';
+class N{constructor(){this.children=[];this.firstChild=null;this.attrs={};this.textContent='';}appendChild(x){this.children.push(x);this.firstChild=this.children[0]||null;return x;}removeChild(){this.children.shift();this.firstChild=this.children[0]||null;}setAttribute(k,v){this.attrs[k]=v;}}
+const d={createElement:()=>new N(),createTextNode:v=>({textContent:String(v)})};
+test('creates editor shell regions and status API',()=>{const s=createCVEditorDOMShell({document:d,title:'Test CV'});assert.equal(s.version,'1.0.0');assert.equal(s.main.children.length,2);s.setStatus('Ready','success');assert.equal(s.status.textContent,'Ready');assert.equal(s.status.attrs['data-status-type'],'success');});
