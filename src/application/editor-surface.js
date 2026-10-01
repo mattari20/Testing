@@ -85,12 +85,15 @@ export function createEditorSurface(input={}) {
         masterProfile:clone(record.application.masterProfile),
         targetedCV:clone(record.application.targetedCV)
       });
-      session.session = clone(record.session || session.session);
-      session.dirty = false;
-      session.savedAt = record.savedAt || null;
-      session.lastCommand = 'restore';
+      const restoredSession = Object.freeze({
+        ...session,
+        session:clone(record.session || session.session),
+        dirty:false,
+        savedAt:record.savedAt || null,
+        lastCommand:'restore'
+      });
       state=Object.freeze({
-        session:Object.freeze(session),
+        session:restoredSession,
         preview:null,
         history:{past:[],future:[]}
       });
