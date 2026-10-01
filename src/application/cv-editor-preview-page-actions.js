@@ -1,0 +1,2 @@
+export const CV_EDITOR_PREVIEW_PAGE_ACTIONS_VERSION='1.0.0';
+export function createCVEditorPreviewPageActions(options={}){const selection=options.selection;if(!selection)throw new Error('Preview page actions require selection.');return Object.freeze({version:CV_EDITOR_PREVIEW_PAGE_ACTIONS_VERSION,first:()=>selection.setPage(1),next:()=>selection.setPage(selection.getPage()+1),previous:()=>selection.setPage(selection.getPage()-1),goTo:page=>selection.setPage(page)});}
