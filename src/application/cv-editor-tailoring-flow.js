@@ -1,0 +1,2 @@
+export const CV_EDITOR_TAILORING_FLOW_VERSION='1.0.0';
+export function createCVEditorTailoringFlow(options={}){const matcher=options.matcher,editor=options.editor;if(!matcher||!editor)throw new Error('Tailoring flow requires matcher and editor.');return Object.freeze({version:CV_EDITOR_TAILORING_FLOW_VERSION,analyze:(job,cv)=>matcher.match?.(job,cv)||matcher.inspect?.(job,cv)||null,apply:(entryId,values)=>editor.update(entryId,values)});}
