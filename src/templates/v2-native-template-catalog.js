@@ -8,6 +8,26 @@ export const V2_NATIVE_TEMPLATE_STATUS = Object.freeze({
 
 const nativeTemplates = [
   {
+    id: 't01-modern-minimalist-cv-design_ats',
+    name: 'T01 Modern Minimalist CV — ATS V2',
+    version: '2.1.0',
+    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html',
+    supportedSections: ["summary","experience","education","skills","languages"],
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+  },
+  {
+    id: 't01-modern-minimalist-cv-design_simple',
+    name: 'T01 Modern Minimalist CV — Simple V2',
+    version: '2.1.0',
+    status: V2_NATIVE_TEMPLATE_STATUS.SOURCE_CONVERTED,
+    compatibility: V2_NATIVE_TEMPLATE_STATUS.VALIDATION_PENDING,
+    sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_simple.html',
+    supportedSections: ["photo","contact","skills","languages","summary","experience","education"],
+    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'pending', paginationEvidence: 'pending', exportEvidence: 'pending' }
+  },
+  {
     id: 't01-modern-minimalist-cv-design_modern',
     name: 'T01 Modern Minimalist CV — Native V2',
     version: '2.0.0',
