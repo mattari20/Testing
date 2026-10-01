@@ -75,8 +75,8 @@ No historical V1 equivalence claim is required or made for the two unrecovered T
 
 A fresh Native V2 Browser Validation run was observed after the release-affecting template changes:
 
-- Workflow run: `36896592199`
-- Commit: `33b9ad965cb7d604a800e33505271fac04dec1ae`
+- Workflow run: `36898954976`
+- Commit: `274707d57edd69a840274fbdb5eb4eace80be4fb`
 - Job: `browser-validation`
 - Conclusion: `success`
 - Golden Baseline fixture validation: success
@@ -96,4 +96,6 @@ Fresh artifacts were uploaded from this run, including `m26-m27-browser-evidence
 
 **R3 final release gate: PASS**
 
-The two unrecovered historical T01 ATS/Simple sources remain explicitly documented as unrecovered. Their current V2-native replacements are validated as V2 artifacts and are not represented as historical V1 equivalents.
+The two unrecovered historical T01 ATS/Simple sources remain explicitly documented as unrecovered. Their current V2-native replacements are registered, published as V2-compatible templates, and validated as current V2 artifacts; they are not represented as historical V1 equivalents.
+
+The fresh M26 artifact was independently inspected and contains 9 template results: both new T01 variants at version 2.1.0 plus the seven recovered V2 variants, all with ready render status and collected pagination.
