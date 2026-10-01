@@ -1,0 +1,2 @@
+export const CV_EDITOR_FORM_FOCUS_VERSION='1.0.0';
+export function createCVEditorFormFocus(options={}){const container=options.container;if(!container)throw new Error('Form focus requires container.');function focusField(id){const node=container.querySelector?.('[data-block-id="'+id+'"]');node?.focus?.();return !!node;}return Object.freeze({version:CV_EDITOR_FORM_FOCUS_VERSION,focusField,destroy(){}});}
