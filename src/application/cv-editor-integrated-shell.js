@@ -1,0 +1,4 @@
+import {createCVEditorWorkspaceLayout} from './cv-editor-workspace-layout.js';
+import {createCVEditorPaneState} from './cv-editor-pane-state.js';
+export const CV_EDITOR_INTEGRATED_SHELL_VERSION='1.0.0';
+export function createCVEditorIntegratedShell(options={}){const page=options.page;if(!page)throw new Error('Integrated shell requires page.');const layout=createCVEditorWorkspaceLayout({root:page.shell.root});const panes=createCVEditorPaneState();function state(){return Object.freeze({layout:layout.state(),panes:panes.get()});}return Object.freeze({version:CV_EDITOR_INTEGRATED_SHELL_VERSION,layout,panes,state,destroy(){layout.destroy();}});}
