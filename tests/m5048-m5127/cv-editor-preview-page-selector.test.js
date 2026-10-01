@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createCVEditorPreviewPageSelector} from '../../src/application/cv-editor-preview-page-selector.js';test('selects bounded page',()=>{const s=createCVEditorPreviewPageSelector({container:{querySelectorAll:()=>[]}});assert.equal(s.select(4),1);});
