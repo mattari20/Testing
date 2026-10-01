@@ -36,13 +36,7 @@ export function createEditorPersistenceRecord(session, options = {}) {
     revision,
     snapshotId: `s-${identity}`,
     session: sessionData,
-    application Number.isInteger(options.revision) && options.revision > 0 ? options.revision : 1,
-    session: toSerializable(session.session || {}),
-    application: {
-      version: session.application.version,
-      masterProfile: toSerializable(session.application.masterProfile),
-      targetedCV: toSerializable(session.application.targetedCV)
-    }
+    application
   });
 }
 
@@ -78,7 +72,11 @@ export function createEditorPersistenceAdapter(storage, key = EDITOR_PERSISTENCE
     },
     save(session) {
       let currentRevision = 0;
-      try { currentRevision = Number(deserializeEditorPersistenceRecord(storage.getItem(key))?.revision) || 0; } catch { /* replace invalid snapshots with a fresh valid revision */ }
+      try {
+        currentRevision = Number(deserializeEditorPersistenceRecord(storage.getItem(key))?.revision) || 0;
+      } catch {
+        // Replace invalid snapshots with a fresh valid revision.
+      }
       const record = createEditorPersistenceRecord(session, { revision: currentRevision + 1 });
       storage.setItem(key, serializeEditorPersistenceRecord(record));
       return record;
@@ -114,7 +112,9 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryRevision = null;
   let recoverySnapshotId = null;
   let recoveryIsNewer = false;
+  let recoveryRelation = 'missing';
   const subscribers = new Set();
+
   const emit = () => {
     const snapshot = Object.freeze({
       autosaveStatus,
@@ -126,6 +126,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRevision,
       recoverySnapshotId,
       recoveryIsNewer,
+      recoveryRelation,
       retryCount,
       maxRetries
     });
@@ -136,8 +137,20 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   const classifyRecoveryError = error => {
     const message = String(error?.message || error);
     const invalid = error instanceof SyntaxError
-      || /Unsupported editor persistence|Persisted CV document is invalid/i.test(message);
+      || /Unsupported editor persistence|Persisted CV document is invalid|Persisted CV snapshot identity is invalid/i.test(message);
     return invalid ? 'invalid' : 'error';
+  };
+
+  const compareRecoveryFreshness = record => {
+    if (!record?.savedAt) return 'unknown';
+    const currentSavedAt = surface.getState().session.savedAt || null;
+    if (!currentSavedAt) return 'newer';
+    const persistedTime = new Date(record.savedAt).getTime();
+    const currentTime = new Date(currentSavedAt).getTime();
+    if (!Number.isFinite(persistedTime) || !Number.isFinite(currentTime)) return 'unknown';
+    if (persistedTime > currentTime) return 'newer';
+    if (persistedTime < currentTime) return 'older';
+    return 'same';
   };
 
   const inspectRecovery = () => {
@@ -147,8 +160,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoverySavedAt = record?.savedAt || null;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
       recoverySnapshotId = record?.snapshotId || null;
-      const currentSavedAt = surface.getState().session.savedAt || null;
-      recoveryIsNewer = Boolean(record?.savedAt && (!currentSavedAt || new Date(record.savedAt).getTime() > new Date(currentSavedAt).getTime()));
+      recoveryRelation = compareRecoveryFreshness(record);
+      recoveryIsNewer = recoveryRelation === 'newer';
       recoveryError = null;
       return record;
     } catch (error) {
@@ -157,9 +170,20 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRevision = null;
       recoverySnapshotId = null;
       recoveryIsNewer = false;
+      recoveryRelation = 'unknown';
       recoveryError = String(error?.message || error);
       return null;
     }
+  };
+
+  const applyPersistedMetadata = (record, relation = 'same') => {
+    recoveryStatus = record ? 'available' : 'missing';
+    recoverySavedAt = record?.savedAt || null;
+    recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
+    recoverySnapshotId = record?.snapshotId || null;
+    recoveryRelation = relation;
+    recoveryIsNewer = relation === 'newer';
+    recoveryError = null;
   };
 
   const runFlush = token => {
@@ -182,12 +206,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       retryCount = 0;
       lastAutosavedAt = record?.savedAt || new Date().toISOString();
       autosaveStatus = 'saved';
-      recoveryStatus = 'available';
-      recoverySavedAt = record?.savedAt || null;
-      recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
-      recoverySnapshotId = record?.snapshotId || null;
-      recoveryIsNewer = true;
-      recoveryError = null;
+      applyPersistedMetadata(record, 'same');
       emit();
       return record;
     } catch (error) {
@@ -265,12 +284,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       const effectiveSavedAt = record?.savedAt || savedAt;
       lastAutosavedAt = effectiveSavedAt;
       autosaveStatus = 'saved';
-      recoveryStatus = 'available';
-      recoverySavedAt = effectiveSavedAt;
-      recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
-      recoverySnapshotId = record?.snapshotId || null;
-      recoveryIsNewer = true;
-      recoveryError = null;
+      applyPersistedMetadata(record, 'same');
       if (typeof surface.markSaved === 'function') surface.markSaved(effectiveSavedAt);
       emit();
       return record;
@@ -297,13 +311,22 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryRevision,
         recoverySnapshotId,
         recoveryIsNewer,
+        recoveryRelation,
         retryCount,
         maxRetries
       });
     },
     getRecoveryState() {
       inspectRecovery();
-      return Object.freeze({ recoveryStatus, recoveryError, recoverySavedAt, recoveryRevision, recoverySnapshotId, recoveryIsNewer });
+      return Object.freeze({
+        recoveryStatus,
+        recoveryError,
+        recoverySavedAt,
+        recoveryRevision,
+        recoverySnapshotId,
+        recoveryIsNewer,
+        recoveryRelation
+      });
     },
     subscribe(listener) {
       if (typeof listener !== 'function') throw new Error('Recovery subscriber must be a function.');
@@ -338,12 +361,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       autosaveStatus = 'idle';
       lastAutosavedAt = record.savedAt || null;
       lastAutosaveError = null;
-      recoveryStatus = 'available';
-      recoverySavedAt = record.savedAt || null;
-      recoveryRevision = Number.isInteger(record.revision) ? record.revision : null;
-      recoverySnapshotId = record.snapshotId || null;
-      recoveryIsNewer = true;
-      recoveryError = null;
+      applyPersistedMetadata(record, 'same');
       emit();
       return record;
     },
@@ -368,6 +386,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryRevision = null;
       recoverySnapshotId = null;
       recoveryIsNewer = false;
+      recoveryRelation = 'missing';
       recoveryError = null;
       emit();
     },
