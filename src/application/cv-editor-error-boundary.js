@@ -1,0 +1,2 @@
+export const CV_EDITOR_ERROR_BOUNDARY_VERSION='1.0.0';
+export function createCVEditorErrorBoundary(options={}){const onError=options.onError||(()=>{});let lastError=null;function run(task){try{return task();}catch(error){lastError=error;onError(error);return null;}}function getError(){return lastError;}function clear(){lastError=null;}return Object.freeze({version:CV_EDITOR_ERROR_BOUNDARY_VERSION,run,getError,clear,destroy(){clear();}});}
