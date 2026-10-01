@@ -274,7 +274,13 @@ export function classifyLoss(input = {}) {
 }
 
 export function migrationFingerprint(source) {
-  return fingerprint(normalizeV1Source(source));
+  const normalized = normalizeV1Source(source);
+  return fingerprint({
+    cv: normalized.cv,
+    visibility: normalized.visibility,
+    themeColor: normalized.themeColor,
+    templateId: normalized.templateId
+  });
 }
 
 export function isAlreadyMigrated(source, existingRecords = []) {

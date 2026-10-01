@@ -1,40 +1,13 @@
 import assert from 'node:assert/strict';
-import {
-  analyzeV1TemplateSource,
-  compileV1TemplateSource,
-  createT01ModernAdapter,
-  createT01Visibility
-} from '../../src/templates/v1-template-normalizer.js';
-
-const source = '<div>{{#NAME}}<h1>{{NAME}}</h1>{{/NAME}}{{#toggle_exp_visible}}{{EXPERIENCE_LIST}}<p>{{company}} - {{title}}</p>{{/EXPERIENCE_LIST}}{{/toggle_exp_visible}}</div>';
-const analysis = analyzeV1TemplateSource(source);
-assert.ok(analysis.tokens.includes('NAME'));
-assert.ok(analysis.objectLoops.some(x => x.name === 'EXPERIENCE_LIST'));
-assert.ok(analysis.visibilityConditions.includes('toggle_exp_visible'));
-
-const profile = {
-  careerData: {
-    sections: [
-      { type: 'experience', entries: [
-        { values: { company: 'Acme', title: 'Engineer', duration: '2024', description: 'Built systems' } }
-      ]
-    ]
-  }
-};
-
-const adapter = createT01ModernAdapter();
-adapter.bindings.NAME = 'identity.fullName';
-const snapshot = { ...profile, identity: { fullName: '<Ali>' } };
-const compiled = compileV1TemplateSource(source, snapshot, adapter, {
-  visibility: createT01Visibility({})
-});
-assert.match(compiled.html, /&lt;Ali&gt;/);
-assert.match(compiled.html, /Acme - Engineer/);
-
-const hidden = compileV1TemplateSource(source, snapshot, adapter, {
-  visibility: createT01Visibility({ hiddenSections: ['experience'] })
-});
-assert.doesNotMatch(hidden.html, /Acme - Engineer/);
-assert.equal(hidden.diagnostics.length, 0);
-
+import { analyzeV1TemplateSource, compileV1TemplateSource, createT01ModernAdapter, createT01Visibility } from '../../src/templates/v1-template-normalizer.js';
+const source='<div>{{#NAME}}<h1>{{NAME}}</h1>{{/NAME}}{{#toggle_exp_visible}}{{EXPERIENCE_LIST}}<p>{{company}} - {{title}}</p>{{/EXPERIENCE_LIST}}{{/toggle_exp_visible}}</div>';
+const analysis=analyzeV1TemplateSource(source);
+assert.ok(analysis.tokens.includes('NAME')); assert.ok(analysis.objectLoops.some(x=>x.name==='EXPERIENCE_LIST')); assert.ok(analysis.visibilityConditions.includes('toggle_exp_visible'));
+const profile={careerData:{sections:[{type:'experience',entries:[{values:{company:'Acme',title:'Engineer',duration:'2024',description:'Built systems'}}]}]}};
+const adapter=createT01ModernAdapter(); adapter.bindings.NAME='identity.fullName';
+const snapshot={...profile,identity:{fullName:'<Ali>'}};
+const compiled=compileV1TemplateSource(source,snapshot,adapter,{visibility:createT01Visibility({})});
+assert.match(compiled.html,/&lt;Ali&gt;/); assert.match(compiled.html,/Acme - Engineer/);
+const hidden=compileV1TemplateSource(source,snapshot,adapter,{visibility:createT01Visibility({hiddenSections:['experience']})});
+assert.doesNotMatch(hidden.html,/Acme - Engineer/); assert.equal(hidden.diagnostics.length,0);
 console.log('M13 V1 template normalization tests passed.');
