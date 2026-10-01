@@ -8,16 +8,16 @@ function fakeDocument(){
  return {head,createElement(){return {attributes:{},setAttribute(k,v){this.attributes[k]=v;},remove(){},textContent:''};}};
 }
 test('editor CSS tokens define the production visual system',()=>{
- assert.equal(CV_EDITOR_DESIGN_TOKENS_VERSION,'2.0.0');
- assert.equal(CV_EDITOR_DESIGN_TOKENS.colors.accent,'#2457d6');
+ assert.equal(CV_EDITOR_DESIGN_TOKENS_VERSION,'2.1.0');
+ assert.equal(CV_EDITOR_DESIGN_TOKENS.colors.accent,'#2457d6');assert.equal(CV_EDITOR_DESIGN_TOKENS.brand.primary,'#2457d6');
  assert.equal(CV_EDITOR_DESIGN_TOKENS.layout.pageWidth,'210mm');
- assert.ok(CV_EDITOR_DESIGN_TOKENS.spacing.xxl);
+ assert.ok(CV_EDITOR_DESIGN_TOKENS.spacing.xxl);assert.equal(CV_EDITOR_DESIGN_TOKENS.radius.sm,'6px');
 });
 test('editor stylesheet mounts scoped responsive print CSS',()=>{
  const document=fakeDocument();const sheet=createCVEditorStyleSheet({document});
- assert.equal(CV_EDITOR_STYLE_SHEET_VERSION,'2.0.0');assert.equal(document.head.nodes.length,1);
+ assert.equal(CV_EDITOR_STYLE_SHEET_VERSION,'2.1.0');assert.equal(document.head.nodes.length,1);
  assert.equal(sheet.node.attributes['data-cv-editor-style'],'v2');
- assert.match(sheet.node.textContent,/data-cv-editor-main/);
+ assert.match(sheet.node.textContent,/data-cv-editor-main/);assert.match(sheet.node.textContent,/--cv-radius-sm/);
  assert.match(sheet.node.textContent,/@media\(max-width:600px\)/);
  assert.match(sheet.node.textContent,/@media print/);
  sheet.destroy();
