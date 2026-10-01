@@ -176,6 +176,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
   let recoveryInspectionStatus = 'uninitialized';
   let recoveryInspectedAt = null;
   let recoveryInspectionSequence = 0;
+  let recoveryInspectionRetryable = false;
   let recoveryInspectionValid = false;
   let lastInspectedRecord = null;
   const recoveryAudit = [];
@@ -220,6 +221,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryInspectionStatus,
       recoveryInspectedAt,
       recoveryInspectionSequence,
+      recoveryInspectionRetryable,
       retryCount,
       maxRetries
     });
@@ -392,6 +394,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryInspectedAt = new Date().toISOString();
       recoveryInspectionSequence += 1;
       recoveryInspectionValid = true;
+      recoveryInspectionRetryable = false;
       recoveryStatus = record ? 'available' : 'missing';
       recoverySavedAt = record?.savedAt || null;
       recoveryRevision = Number.isInteger(record?.revision) ? record.revision : null;
@@ -412,6 +415,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryInspectionSequence += 1;
       recoveryInspectionValid = true;
       recoveryStatus = classifyRecoveryError(error);
+      recoveryInspectionRetryable = recoveryStatus === 'error';
       recoverySavedAt = null;
       recoveryRevision = null;
       recoverySnapshotId = null;
@@ -453,6 +457,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
     recoveryInspectedAt = new Date().toISOString();
     recoveryInspectionSequence += 1;
     recoveryInspectionValid = true;
+    recoveryInspectionRetryable = false;
   };
 
   const runFlush = token => {
@@ -671,7 +676,8 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
         recoveryAudit: recoveryAudit.map(entry => ({ ...entry })),
         recoveryInspectionStatus,
         recoveryInspectedAt,
-        recoveryInspectionSequence
+        recoveryInspectionSequence,
+      recoveryInspectionRetryable
       });
     },
     initialize() {
@@ -727,6 +733,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryInspectedAt = new Date().toISOString();
       recoveryInspectionSequence += 1;
       recoveryInspectionValid = true;
+      recoveryInspectionRetryable = false;
       recoveryStatus = 'missing';
       recoverySavedAt = null;
       recoveryRevision = null;
@@ -830,6 +837,7 @@ export function createEditorRecoveryController(surface, adapter, options = {}) {
       recoveryInspectedAt = new Date().toISOString();
       recoveryInspectionSequence += 1;
       recoveryInspectionValid = true;
+      recoveryInspectionRetryable = false;
       lastInspectedRecord = null;
       recoveryActionRequired = false;
       recoveryAction = 'none';
