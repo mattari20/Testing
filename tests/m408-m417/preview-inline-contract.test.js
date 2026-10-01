@@ -10,11 +10,11 @@ test('M408-M417 live preview runtime exposes the concrete integration boundary',
   assert.throws(() => createEditorLivePreviewRuntime(null, {}), /editor surface/i);
 });
 
-test('all seven Native V2 templates participate in the preview compatibility contract', () => {
+test('all registered Native V2 templates participate in the preview compatibility contract', () => {
   const templates = listNativeV2Templates();
-  assert.equal(templates.length, 7);
+  assert.equal(templates.length, 9);
   for (const template of templates) {
-    assert.equal(template.version, '2.0.0');
+    assert.ok(['2.0.0', '2.1.0'].includes(template.version));
     assert.match(template.sourcePath, /^src\/templates\/assets\/v2\//);
     assert.ok(template.supportedSections.length > 0);
     assert.equal(template.capabilities.nativeContract, true);
