@@ -1,0 +1,2 @@
+export const CV_EDITOR_MOBILE_SURFACE_VERSION='1.0.0';
+export function createCVEditorMobileSurface(options={}){const document=options.document,root=options.root;if(!document||!root)throw new Error('Mobile surface requires document and root.');function setMode(mode){root.setAttribute('data-editor-mode',mode==='mobile'?'mobile':'desktop');return root.getAttribute('data-editor-mode');}return Object.freeze({version:CV_EDITOR_MOBILE_SURFACE_VERSION,setMode,getMode:()=>root.getAttribute('data-editor-mode')||'desktop'});}
