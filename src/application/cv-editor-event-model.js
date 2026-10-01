@@ -1,0 +1,1 @@
+export const CV_EDITOR_EVENT_MODEL_VERSION='1.0.0';export function createCVEditorEventModel(options={}){const bus=options.bus;if(!bus)throw new Error('Event model requires bus.');return Object.freeze({version:CV_EDITOR_EVENT_MODEL_VERSION,on:(type,handler)=>bus.on(type,handler),emit:(type,payload)=>bus.emit(type,payload)});}
