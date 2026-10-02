@@ -534,3 +534,30 @@ The newly identified product-surface gaps are now captured in this master work l
 No Future-only capability is being silently promoted into the current release. Conversely, no explicitly planned V2 release capability is being silently skipped.
 
 **This document becomes the final checklist for product-scope closure before R6/R7/R8.**
+
+
+## Batch 2 — CV Workspace / Multiple CV Product Layer
+
+Status: IMPLEMENTED — repository integration complete; real-browser acceptance remains part of final external release evidence.
+
+Implemented:
+- Production editor integration with the existing CV workspace foundation.
+- One shared Master Profile across CV documents.
+- Multiple CV document workspace surface.
+- New CV creation.
+- CV duplication/clone with existing lineage model.
+- CV rename.
+- CV archive with deterministic active-document fallback.
+- Active CV switching through the existing editor persisted-state restoration boundary.
+- Local workspace persistence and reload.
+- Bounded CV version-history snapshots.
+- Previous-version restoration.
+- Workspace diagnostics and existing document lifecycle remain available.
+- Dedicated workspace controller test suite.
+- Production editor workspace controls and eStudent visual styling.
+
+Release evidence still required:
+- Real browser verification of create/duplicate/rename/archive/switch flows.
+- Real browser verification that edits remain isolated to the selected CV while the Master Profile remains shared.
+- Reload/recovery interaction verification.
+- Version restore browser verification.
