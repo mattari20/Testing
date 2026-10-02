@@ -583,3 +583,27 @@ Release evidence still required:
 - Multi-page CV verification with genuinely long content.
 - Print/PDF artifact inspection at multiple zoom/page states.
 - Final mobile and desktop UX sign-off.
+
+
+## Batch 4 — Resume Intelligence UI
+
+Status: IMPLEMENTED — repository/UI integration complete; real-browser and production evidence remain pending.
+
+Implemented:
+- Production Resume Intelligence surface inside the V2 editor.
+- ATS Readiness analysis using the existing `cv-ats-analysis.js` engine.
+- Job Match analysis using the existing `cv-job-matching.js` engine.
+- Explainable Skill / Keyword Evidence showing matched and missing requested terms.
+- Resume Health baseline showing core structural checks and failed areas.
+- Job keyword / job-description input for targeted analysis.
+- Explicit heuristic guidance so the panel does not present analysis as a hiring decision.
+- Integration through the existing CV intelligence coordinator rather than duplicating analysis logic.
+- Dedicated browser acceptance coverage for ATS, Resume Health, Job Match, and Skill Evidence.
+- CI workflow extended to execute the Resume Intelligence browser acceptance.
+
+Release evidence still required:
+- Real deployed-browser verification on Hostinger.
+- Validation with short, complete, and long CVs.
+- Validation against realistic job descriptions.
+- Final UX/accessibility sign-off.
+- Production evidence before R6 can move to PASS.
