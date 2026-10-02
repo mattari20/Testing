@@ -82,9 +82,9 @@ export function createCVWorkspaceController(options = {}) {
     }, { type: 'sync-active-document', documentId: current.activeDocumentId });
   };
 
-  const restoreDocument = documentId => {
+  const restoreDocument = (documentId, options = {}) => {
     if (destroyed) return null;
-    syncActive();
+    if (options.sync !== false) syncActive();
     const document = workspace.getDocument(documentId);
     if (!document) throw new Error('CV document not found: ' + documentId);
     workspace.setActiveDocument(documentId);
@@ -153,7 +153,7 @@ export function createCVWorkspaceController(options = {}) {
       activeDocumentId: documentId
     }, { type: 'restore-version', documentId, versionId });
     versions[documentId] = [...list, createVersionSnapshot(version.targetedCV, version.masterProfile)].slice(-20);
-    restoreDocument(documentId);
+    restoreDocument(documentId, { sync: false });
     saveState();
     return version;
   };
