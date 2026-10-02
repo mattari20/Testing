@@ -23,6 +23,8 @@ jobs:
       - run: npm run test:cv-workspace-controller
       - run: node --test tests/m1000-m1059/cv-workspace.browser.test.js
       - run: node --test tests/m1000-m1059/cv-builder-ux.browser.test.js
+      - name: Production V2 boot regression test
+        run: node --test tests/m1000-m1059/cv-production-entry.browser.test.js
       - name: Resume intelligence browser acceptance
         run: node --test tests/m1000-m1059/cv-resume-intelligence.browser.test.js
       - name: Final product closure browser acceptance
