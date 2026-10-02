@@ -1,0 +1,28 @@
+name: CV Builder V2 Template Gallery Validation
+
+on:
+  push:
+    branches:
+      - release/cv-builder-v2-production
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  template-gallery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install browser test dependency
+        run: npm install --no-save playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run template gallery contract tests
+        run: node --test tests/m30/template-library.test.js tests/m30/template-gallery.test.js tests/m31/template-preview.test.js tests/m32/build-online.test.js
+      - name: Run template gallery browser test
+        run: node --test tests/m31/template-gallery.browser.test.js
