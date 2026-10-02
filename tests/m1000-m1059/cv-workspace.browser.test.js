@@ -43,7 +43,9 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     await page.waitForTimeout(200);
     assert.equal(await page.locator('#cv-version-history').getAttribute('hidden'),null);
 
+    page.once('dialog',dialog=>dialog.accept());
     await page.locator('#archive-cv-btn').click();
+    await page.waitForTimeout(100);
     const dialog=page.locator('body');
     assert.ok(await dialog.textContent().then(text=>text.includes('My CV') || text.includes('Second CV') || text.includes('Renamed CV')));
 
