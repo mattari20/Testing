@@ -50,7 +50,7 @@
     .cv-version-history{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
     .cv-version-item{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px}
     .cv-version-item button{font-size:11px;padding:5px 8px}
-    .intelligence-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.cv-intelligence-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.cv-intelligence-head strong{font-size:16px}.cv-intelligence-head span{font-size:12px;color:var(--muted)}.cv-intelligence-controls{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:12px}.cv-intelligence-controls label{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--muted)}.cv-intelligence-controls textarea{width:100%;resize:vertical;padding:10px;border:1px solid var(--border);border-radius:9px}.cv-intelligence-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.cv-intelligence-summary{grid-column:1/-1}.cv-intelligence-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}.cv-intelligence-card h4{margin:0 0 7px;font-size:12px;color:var(--muted)}.cv-intelligence-card strong{display:block;font-size:21px}.cv-intelligence-card p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}@media(max-width:1000px){.cv-intelligence-results{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-intelligence-summary{grid-column:1/-1}}@media(max-width:650px){.cv-intelligence-controls{grid-template-columns:1fr}.cv-intelligence-results{grid-template-columns:1fr}}
+    .intelligence-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.cv-intelligence-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.cv-intelligence-head strong{font-size:16px}.cv-intelligence-head span{font-size:12px;color:var(--muted)}.cv-intelligence-controls{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:12px}.cv-intelligence-controls label{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--muted)}.cv-intelligence-controls textarea{width:100%;resize:vertical;padding:10px;border:1px solid var(--border);border-radius:9px}.cv-intelligence-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.cv-intelligence-summary{grid-column:1/-1}.cv-intelligence-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}.cv-intelligence-card h4{margin:0 0 7px;font-size:12px;color:var(--muted)}.cv-intelligence-card strong{display:block;font-size:21px}.cv-intelligence-card p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}.final-product-hub{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.final-product-tabs{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--border);padding-bottom:10px}.final-product-tabs button{white-space:nowrap;font-size:12px}.final-product-tabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}.final-product-body{padding-top:12px}.final-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:#fff;margin-bottom:10px}.final-card h3{margin:0 0 8px;font-size:15px}.final-card p{font-size:12px;color:var(--muted);line-height:1.5}.final-card input,.final-card textarea,.final-card select{display:block;width:100%;margin:7px 0;padding:9px;border:1px solid var(--border);border-radius:8px}.final-card button{margin:5px 6px 0 0}.final-results{margin-top:12px}@media(max-width:1000px){.cv-intelligence-results{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-intelligence-summary{grid-column:1/-1}}@media(max-width:650px){.cv-intelligence-controls{grid-template-columns:1fr}.cv-intelligence-results{grid-template-columns:1fr}}
     .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
     [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
     .preview-tools{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:-2px 0 12px}
@@ -116,7 +116,7 @@
       <div id="cv-version-history" class="cv-version-history" hidden></div>
     </section>
 
-    <section class="intelligence-panel" aria-label="Resume Intelligence"><div id="cv-intelligence-root"></div></section>\n\n    <div id="v2-editor" data-v2-editor-root>
+    <section class="intelligence-panel" aria-label="Resume Intelligence"><div id="cv-intelligence-root"></div></section>\n\n    <div id="cv-final-product-root"></div>\n\n    <div id="v2-editor" data-v2-editor-root>
       <section>
         <div class="preview-title">CV Editor</div>
         <div data-v2-editor-form></div>
@@ -156,6 +156,7 @@
     import { createCVEditorZoomController } from './src/application/cv-editor-zoom-controller.js';
     import { createCVEditorAccessibilityAnnouncer } from './src/application/cv-editor-accessibility-announcer.js';
     import { createCVEditorIntelligenceProduct } from './src/ui/cv-editor-intelligence-product.js';
+    import { createCVFinalProductHub } from './src/ui/cv-final-product-hub.js';
 
     const templates = listNativeV2Templates();
     const initialProfile = {
@@ -199,6 +200,7 @@
     });
 
     const intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
+    const finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
 
     const previewNavigation = createCVEditorPreviewNavigation({
       document,
