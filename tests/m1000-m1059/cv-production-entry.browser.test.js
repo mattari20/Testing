@@ -21,7 +21,9 @@ test('production V2 entry boots the editor, template catalog and live preview', 
   try {
     const page=await browser.newPage({viewport:{width:1440,height:1000}});
     const pageErrors=[];
+    const consoleErrors=[];
     page.on('pageerror', error => pageErrors.push(String(error?.stack || error?.message || error)));
+    page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 
     await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
     await page.waitForTimeout(3000);
@@ -32,7 +34,9 @@ test('production V2 entry boots the editor, template catalog and live preview', 
     assert.equal(await page.locator('#app-status').textContent(), 'V2 editor ready.');
     assert.ok((await page.locator('#template-select option').count()) >= 9);
     assert.ok((await page.locator('[data-v2-editor-form]').innerText()).includes('Personal Information'));
-    await page.waitForSelector('[data-v2-editor-preview-root] [data-v2-template-root]');
+    if ((await page.locator('[data-v2-editor-preview-root] [data-v2-template-root]').count()) < 1) {
+      throw new Error('V2 preview did not render. pageErrors=' + JSON.stringify(pageErrors) + ' consoleErrors=' + JSON.stringify(consoleErrors));
+    }
     assert.ok((await page.locator('[data-v2-editor-preview-root] [data-v2-template-root]').count()) >= 1);
     assert.deepEqual(pageErrors, []);
   } finally {
