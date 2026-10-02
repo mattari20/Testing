@@ -110,7 +110,6 @@ export function createCVWorkspaceController(options = {}) {
     // The workspace already contains the newly created document; do not sync
     // the old editor document over it before restoring the new active document.
     restoreDocument(next.activeDocumentId, { sync: false });
-    recordVersion();
     return next;
   };
 
@@ -122,7 +121,6 @@ export function createCVWorkspaceController(options = {}) {
     // The duplicate is already in workspace state; restore it without syncing
     // the previous editor document back over the duplicate.
     restoreDocument(copy.id, { sync: false });
-    recordVersion();
     return copy;
   };
 
@@ -169,6 +167,7 @@ export function createCVWorkspaceController(options = {}) {
     getState: () => workspace.getState(),
     getDiagnostics: () => workspace.getDiagnostics(),
     getActiveDocument: () => workspace.getActiveDocument(),
+    getDocument: documentId => workspace.getDocument(documentId),
     getVersions: documentId => Object.freeze([...(versions[documentId] || [])].reverse()),
     hasStoredWorkspace: () => Boolean(storage?.getItem?.(storageKey)),
     createDocument,
