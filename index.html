@@ -285,15 +285,15 @@
     const versionHistory = document.querySelector('#cv-version-history');
     const renderWorkspace = () => {
       const state = workspace.getState();
-      documentList.replaceChildren(...state.documents.map(document => {
+      documentList.replaceChildren(...state.documents.map(cvDocument => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'cv-document' + (document.id === state.activeDocumentId ? ' active' : '') + (document.status === 'archived' ? ' archived' : '');
+        button.className = 'cv-document' + (cvDocument.id === state.activeDocumentId ? ' active' : '') + (cvDocument.status === 'archived' ? ' archived' : '');
         button.innerHTML = '<div class="cv-document-title"></div><div class="cv-document-meta"></div>';
-        button.querySelector('.cv-document-title').textContent = document.title || 'Untitled CV';
-        button.querySelector('.cv-document-meta').textContent = document.status === 'archived' ? 'Archived' : 'Active CV';
+        button.querySelector('.cv-document-title').textContent = cvDocument.title || 'Untitled CV';
+        button.querySelector('.cv-document-meta').textContent = cvDocument.status === 'archived' ? 'Archived' : 'Active CV';
         button.addEventListener('click', () => {
-          try { workspace.switchDocument(document.id); renderWorkspace(); renderVersions(document.id); status.textContent = 'CV switched.'; }
+          try { workspace.switchDocument(cvDocument.id); renderWorkspace(); renderVersions(cvDocument.id); status.textContent = 'CV switched.'; }
           catch (error) { status.textContent = 'Switch failed: ' + (error?.message || error); }
         });
         return button;
