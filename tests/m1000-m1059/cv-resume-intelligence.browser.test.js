@@ -6,9 +6,10 @@ import { chromium } from 'playwright';
 
 test('resume intelligence product renders ATS, health, job match and skill evidence', async () => {
   const server = spawn('python3',['-m','http.server','4176'],{stdio:'ignore'});
+  let browser=null;
   try {
     await delay(500);
-    const browser = await chromium.launch({headless:true});
+    browser = await chromium.launch({headless:true});
     const page = await browser.newPage();
     await page.goto('http://127.0.0.1:4176/index.html', {waitUntil:'networkidle'});
     await page.locator('#cv-intelligence-job').fill('communication problem solving microsoft office');
@@ -21,7 +22,7 @@ test('resume intelligence product renders ATS, health, job match and skill evide
     assert.match(text,/Resume Health/);
     assert.match(text,/100/);
   } finally {
-    await browser.close();
+    await browser?.close();
     server.kill();
   }
 });
