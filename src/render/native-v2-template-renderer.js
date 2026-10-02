@@ -211,10 +211,24 @@ function applyRepeats(root, snapshot) {
     const mode = parts[1] || 'entries';
     const section = findCanonicalSection(snapshot, sectionType);
     const entries = mode === 'values'
-      ? ((Array.isArray(section?.entries) ? section.entries : [])
-        .filter(entry => entry?.visibility !== false)
-        .map(entry => entry.values || entry)
-        .filter(Boolean))
+      ? (() => {
+          const entryValues = (Array.isArray(section?.entries) ? section.entries : [])
+            .filter(entry => entry?.visibility !== false)
+            .map(entry => entry.values || entry)
+            .filter(Boolean);
+          if (entryValues.length) return entryValues;
+          const fields = Array.isArray(section?.fields) ? section.fields : [];
+          return fields
+            .filter(field => field?.visibility !== false)
+            .flatMap(field => {
+              const raw = field?.value;
+              if (raw == null) return [];
+              if (sectionType === 'skills' || sectionType === 'languages') {
+                return String(raw).split(/[,\n]+/).map(value => value.trim()).filter(Boolean).map(value => ({ value }));
+              }
+              return [{ value: raw }];
+            });
+        })()
       : getVisibleEntries(snapshot, section);
 
     if (!section || !isCanonicalSectionVisible(snapshot, section)) {
