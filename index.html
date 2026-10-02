@@ -226,6 +226,10 @@
     previewNavigation.controls.querySelectorAll('button').forEach(button => button.style.display = 'none');
 
     const refreshPreviewControls = () => {
+      const templateRoot = previewRoot.querySelector('[data-v2-template-root]');
+      if (templateRoot && !previewRoot.querySelector('[data-page-number]')) {
+        templateRoot.setAttribute('data-page-number', '1');
+      }
       const pages = [...previewRoot.querySelectorAll('[data-page-number]')];
       const current = previewSelector.get();
       previewPageSelect.replaceChildren(...pages.map(page => {
