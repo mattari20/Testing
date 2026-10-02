@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Browse eStudent CV Builder V2 templates by career level, industry and style. Preview a template and build your CV online.">
+<meta name="theme-color" content="#0d6efd">
+<title>CV Templates — eStudent.pk</title>
+<style>
+:root{--brand:#0d6efd;--brand-dark:#084298;--ink:#172033;--muted:#667085;--surface:#fff;--soft:#f5f8fc;--border:#dfe5ee;--radius:14px;--shadow:0 10px 30px rgba(16,24,40,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.site-header{background:linear-gradient(135deg,#0d6efd,#084298);color:#fff;padding:22px 24px}.header-inner{max-width:1500px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-weight:800;font-size:21px}.subbrand{opacity:.86;font-size:13px;margin-top:3px}
+main{max-width:1500px;margin:22px auto;padding:0 16px}.hero,.filters,.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.hero{padding:22px;margin-bottom:16px}.hero h1{margin:0 0 7px;font-size:28px}.hero p{margin:0;color:var(--muted);max-width:850px;line-height:1.55}
+.filters{padding:14px;display:grid;grid-template-columns:2fr repeat(3,1fr) auto;gap:10px;margin-bottom:18px}.filters input,.filters select{width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--ink)}button{font:inherit;border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px;font-weight:700;cursor:pointer}button.primary{background:var(--brand);border-color:var(--brand);color:#fff}button:hover{filter:brightness(.97)}
+.results{display:flex;justify-content:space-between;align-items:center;margin:0 2px 12px;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{overflow:hidden;display:flex;flex-direction:column}.preview{height:310px;background:#eef3f9;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;padding:16px}.preview .mini-page{width:240px;transform-origin:top center;box-shadow:0 6px 22px rgba(16,24,40,.15);background:#fff}.preview .mini-page>*{max-width:100%}
+.body{padding:16px}.title{font-size:17px;font-weight:800;margin-bottom:7px}.meta{font-size:12px;color:var(--muted);line-height:1.55}.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chip{font-size:11px;padding:4px 7px;border-radius:999px;background:#edf4ff;color:#245a9c}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.empty{padding:30px;text-align:center;background:#fff;border:1px solid var(--border);border-radius:var(--radius);color:var(--muted)}
+dialog{border:0;border-radius:16px;padding:0;width:min(980px,94vw);max-height:92vh;box-shadow:0 20px 70px rgba(16,24,40,.28)}dialog::backdrop{background:rgba(15,23,42,.55)}.dialog-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px}.dialog-title{font-weight:800}.dialog-body{padding:18px;overflow:auto}.detail-grid{display:grid;grid-template-columns:minmax(300px,1fr) minmax(260px,.7fr);gap:18px}.large-preview{background:#eef3f9;min-height:650px;padding:18px;display:flex;justify-content:center;overflow:auto}.large-preview>div{width:700px;max-width:100%;background:#fff;box-shadow:0 8px 28px rgba(16,24,40,.12);align-self:flex-start}.detail-list{margin:0;padding-left:18px;line-height:1.7;color:var(--muted)}.detail-section{margin-bottom:18px}.detail-section h3{margin:0 0 7px;font-size:14px}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:1fr 1fr 1fr}.filters input{grid-column:1/-1}}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.header-inner{align-items:flex-start;flex-direction:column}.hero h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="header-inner"><div><div class="brand">eStudent.pk — CV Templates</div><div class="subbrand">Choose a professional V2 template and build your CV online.</div></div><button id="builder-btn">Open CV Builder</button></div></header>
+<main>
+<section class="hero"><h1>CV Template Library</h1><p>Browse the current native V2 template collection. Filter by career level, industry or style, preview with a controlled demo profile, then open the builder with your selected template.</p></section>
+<section class="filters" aria-label="Template filters">
+<input id="search" type="search" placeholder="Search templates, roles or styles…" aria-label="Search templates">
+<select id="level" aria-label="Career level"><option value="">All career levels</option></select>
+<select id="industry" aria-label="Industry"><option value="">All industries</option></select>
+<select id="style" aria-label="Style"><option value="">All styles</option></select>
+<button id="reset">Reset</button>
+</section>
+<div class="results"><span id="count"></span><span>All listed templates are currently free.</span></div>
+<section id="grid" class="grid" aria-live="polite"></section>
+<div id="empty" class="empty" hidden>No templates match the current filters.</div>
+</main>
+
+<dialog id="dialog">
+<div class="dialog-head"><div class="dialog-title" id="dialog-title"></div><button id="close-dialog" aria-label="Close preview">Close</button></div>
+<div class="dialog-body"><div class="detail-grid"><div class="large-preview" id="large-preview"></div><div id="details"></div></div></div>
+</dialog>
+
+<script type="module">
+import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
+import { createTemplateLibraryPlan } from './src/templates/template-library.js';
+import { createTemplatePreviewRequest, createDemoProfile } from './src/templates/template-preview.js';
+import { createBuildOnlineRequest } from './src/templates/build-online.js';
+import { loadNativeTemplateSource } from './src/templates/native-template-source-loader.js';
+import { renderNativeTemplateSource } from './src/render/native-v2-template-renderer.js';
+
+const templates=listNativeV2Templates();
+const library=createTemplateLibraryPlan(templates);
+const grid=document.querySelector('#grid');
+const empty=document.querySelector('#empty');
+const count=document.querySelector('#count');
+const search=document.querySelector('#search');
+const level=document.querySelector('#level');
+const industry=document.querySelector('#industry');
+const style=document.querySelector('#style');
+const dialog=document.querySelector('#dialog');
+const largePreview=document.querySelector('#large-preview');
+const details=document.querySelector('#details');
+const dialogTitle=document.querySelector('#dialog-title');
+const previewCache=new Map();
+
+const values=(key)=>[...new Set(templates.flatMap(t=>Array.isArray(t[key])?t[key]:[]))].sort();
+for(const v of values('careerLevel')) level.add(new Option(v,v));
+for(const v of values('industry')) industry.add(new Option(v,v));
+for(const v of values('style')) style.add(new Option(v,v));
+
+const demoSections=[
+{id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Results-focused professional with strong communication, problem-solving and project delivery skills.',visibility:true}],entries:[],repeatable:false},
+{id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[{id:'exp1',values:{role:'Software Engineer',company:'Example Company',employer:'Example Company',dates:'2024 — Present',startDate:'2024',endDate:'Present',description:'Delivered reliable digital solutions and collaborated across teams.'},visibility:true,order:0},{id:'exp2',values:{role:'Junior Developer',company:'Previous Company',employer:'Previous Company',dates:'2022 — 2024',startDate:'2022',endDate:'2024',description:'Built features, fixed issues and supported product releases.'},visibility:true,order:1}],repeatable:true},
+{id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'edu1',values:{degree:'Bachelor of Computer Science',institution:'Example University',dates:'2018 — 2022',field:'Computer Science',description:'Focused on software engineering and information systems.'},visibility:true,order:0}],repeatable:true},
+{id:'projects',type:'projects',title:'Projects',visibility:true,fields:[],entries:[{id:'pr1',values:{name:'Student Platform',title:'Student Platform',description:'Designed and delivered a responsive learning platform.',url:'https://example.com'},visibility:true,order:0}],repeatable:true},
+{id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'JavaScript, Web Development, Problem Solving, Communication',visibility:true}],entries:[],repeatable:false},
+{id:'languages',type:'languages',title:'Languages',visibility:true,fields:[{id:'languagesText',type:'text',label:'Languages',value:'English, Urdu',visibility:true}],entries:[],repeatable:false},
+{id:'achievements',type:'achievements',title:'Achievements',visibility:true,fields:[],entries:[{id:'ach1',values:{title:'Professional Achievement',name:'Professional Achievement',description:'Recognized for dependable project delivery and teamwork.'},visibility:true,order:0}],repeatable:true}
+];
+const demoProfile={careerData:{identity:{fullName:'Alex Morgan',name:'Alex Morgan',jobTitle:'Software Engineer',job:'Software Engineer',email:'alex@example.com',phone:'+92 300 0000000',location:'Lahore, Pakistan',website:'example.com'},sections:demoSections,assets:[]}};
+const demoSnapshot={schemaVersion:'2.0.0',snapshotType:'template-demo',careerData:demoProfile.careerData,configuration:{hiddenSections:[],hiddenFields:[],hiddenEntries:[],template:null,presentation:{}}};
+
+const fetcher=async path=>fetch(new URL('./'+String(path).replace(/^\/+/,''),document.baseURI));
+
+async function renderTemplate(template,target,large=false){
+ const cacheKey=template.id;
+ let rendered=previewCache.get(cacheKey);
+ if(!rendered){
+   const source=await loadNativeTemplateSource(template.id,{fetcher});
+   rendered=renderNativeTemplateSource({id:template.id,templateVersion:template.version,sourceHtml:source.sourceHtml},demoSnapshot,document);
+   previewCache.set(cacheKey,rendered);
+ }
+ target.replaceChildren(rendered.root.cloneNode(true));
+ const root=target.firstElementChild;
+ if(!large){root.classList.add('mini-page');}
+}
+
+function chips(template){
+ const all=[...(template.style||[]).slice(0,2),...(template.careerLevel||[]).slice(0,1)];
+ return all.map(v=>'<span class="chip">'+escapeHtml(v)+'</span>').join('');
+}
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function matches(t){
+ const q=search.value.trim().toLowerCase();
+ return (!q || [t.name,...(t.style||[]),...(t.industry||[]),...(t.discovery?.tags||[])].join(' ').toLowerCase().includes(q))
+ &&(!level.value || t.careerLevel?.includes(level.value))
+ &&(!industry.value || t.industry?.includes(industry.value))
+ &&(!style.value || t.style?.includes(style.value));
+}
+function card(t){
+ const article=document.createElement('article');article.className='card';
+ article.innerHTML='<div class="preview"><div class="mini-page" data-preview></div></div><div class="body"><div class="title">'+escapeHtml(t.name)+'</div><div class="meta">'+escapeHtml(t.ats?.profile||'Native V2 template')+' · '+(t.photo?.supported?'Photo supported':'No photo')+'</div><div class="chips">'+chips(t)+'</div><div class="meta">'+escapeHtml((t.supportedSections||[]).length+' supported content sections')+'</div><div class="actions"><button data-preview-btn>Preview</button><button class="primary" data-build>Build Online</button></div></div>';
+ article.querySelector('[data-preview-btn]').addEventListener('click',()=>openDetails(t));
+ article.querySelector('[data-build]').addEventListener('click',()=>build(t));
+ renderTemplate(t,article.querySelector('[data-preview]')).catch(e=>article.querySelector('[data-preview]').textContent='Preview unavailable');
+ return article;
+}
+function render(){
+ grid.replaceChildren();
+ const found=templates.filter(matches);
+ count.textContent=found.length+' template'+(found.length===1?'':'s');
+ empty.hidden=found.length>0;
+ found.forEach(t=>grid.appendChild(card(t)));
+}
+function build(t){
+ const request=createBuildOnlineRequest(t.id,{templates,mode:'new'});
+ if(!request?.templateId) return;
+ location.href='./?template='+encodeURIComponent(t.id);
+}
+async function openDetails(t){
+ dialogTitle.textContent=t.name;
+ details.innerHTML='<div class="detail-section"><h3>Template</h3><ul class="detail-list"><li>Career levels: '+escapeHtml((t.careerLevel||[]).join(', '))+'</li><li>Industries: '+escapeHtml((t.industry||[]).join(', '))+'</li><li>Styles: '+escapeHtml((t.style||[]).join(', '))+'</li><li>Photo: '+(t.photo?.supported?'Supported':'Not used')+'</li><li>ATS profile: '+escapeHtml(t.ats?.profile||'Standard')+'</li><li>Online CV: '+(t.outputs?.onlineCV?'Available':'Not listed')+'</li><li>DOCX: '+(t.outputs?.docx?'Available':'Not listed')+'</li></ul></div><div class="detail-section"><h3>Supported sections</h3><ul class="detail-list">'+(t.supportedSections||[]).map(s=>'<li>'+escapeHtml(s)+'</li>').join('')+'</ul></div><div class="actions"><button class="primary" id="detail-build">Build Online</button><button id="detail-my-data">Try with My Data</button></div>';
+ largePreview.textContent='Loading preview…';
+ try{const previewRequest=createTemplatePreviewRequest(t.id,{templates,mode:'demo'});if(previewRequest.privateDataAuthorized)throw new Error('Demo preview must not authorize private data.');await renderTemplate(t,largePreview,true);}
+ catch(e){largePreview.textContent='Preview unavailable: '+(e?.message||e);}
+ details.querySelector('#detail-build').onclick=()=>build(t);
+ details.querySelector('#detail-my-data').onclick=()=>build(t);
+ dialog.showModal();
+}
+document.querySelector('#close-dialog').onclick=()=>dialog.close();
+document.querySelector('#builder-btn').onclick=()=>location.href='./';
+document.querySelector('#reset').onclick=()=>{search.value='';level.value='';industry.value='';style.value='';render();};
+[search,level,industry,style].forEach(el=>el.addEventListener('input',render));
+render();
+window.eStudentCVTemplateLibrary={version:library.libraryVersion,count:library.templateCount};
+</script>
+</body>
+</html>
