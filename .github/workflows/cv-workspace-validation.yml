@@ -1,0 +1,24 @@
+name: CV Workspace Validation
+
+on:
+  push:
+    branches:
+      - release/cv-builder-v2-production
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:cv-workspace-controller
+      - run: node --test tests/m1000-m1059/cv-workspace.browser.test.js
