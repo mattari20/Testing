@@ -348,6 +348,8 @@
     "test:cv-workspace-browser": "node --test tests/m1000-m1059/cv-workspace.browser.test.js",
     "test:cv-workspace": "npm run test:cv-workspace-controller && npm run test:cv-workspace-browser",
     "test:cv-builder-ux-browser": "node --test tests/m1000-m1059/cv-builder-ux.browser.test.js",
-    "test:builder-ux": "npm run test:cv-workspace && npm run test:cv-builder-ux-browser"
+    "test:builder-ux": "npm run test:cv-workspace && npm run test:cv-builder-ux-browser",
+    "test:resume-intelligence-browser": "node --test tests/m1000-m1059/cv-resume-intelligence.browser.test.js",
+    "test:resume-intelligence": "npm run test:resume-intelligence-browser"
   }
 }
