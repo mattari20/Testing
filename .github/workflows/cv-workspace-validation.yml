@@ -23,3 +23,5 @@ jobs:
       - run: npm run test:cv-workspace-controller
       - run: node --test tests/m1000-m1059/cv-workspace.browser.test.js
       - run: node --test tests/m1000-m1059/cv-builder-ux.browser.test.js
+      - name: Resume intelligence browser acceptance
+        run: node --test tests/m1000-m1059/cv-resume-intelligence.browser.test.js
