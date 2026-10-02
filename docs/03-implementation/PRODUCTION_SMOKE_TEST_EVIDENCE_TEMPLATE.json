@@ -1,0 +1,18 @@
+{
+  "productionUrl": "",
+  "deploymentCommitSha": "274707d57edd69a840274fbdb5eb4eace80be4fb",
+  "environment": "production",
+  "observedAt": "",
+  "v2Entrypoint": false,
+  "cvCreateEdit": false,
+  "templateLivePreview": false,
+  "multiPagePaginationFragmentation": false,
+  "pdfPrintExport": false,
+  "docxExport": false,
+  "v1DataMigration": false,
+  "unexpectedV1Fallback": false,
+  "productionCredentialConfigurationReview": false,
+  "bridgeState": "blocked",
+  "evidenceReferences": [],
+  "notes": ""
+}
