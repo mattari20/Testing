@@ -159,7 +159,6 @@
       storage: window.localStorage,
       storageKey: 'estudent_cv_workspace_v2'
     });
-    window.eStudentCVBuilderV2.workspace = workspace;
 
     const documentList = document.querySelector('#cv-document-list');
     const versionHistory = document.querySelector('#cv-version-history');
@@ -267,6 +266,10 @@
 
     document.querySelector('#print-btn').addEventListener('click', () => window.print());
 
+    const initialActive = workspace.getState().activeDocumentId;
+    if (workspace.hasStoredWorkspace() && initialActive !== runtime.surface.getState().session.application.targetedCV.id) {
+      try { workspace.switchDocument(initialActive); } catch { /* fall back to current editor state */ }
+    }
     renderWorkspace();
     renderVersions(workspace.getState().activeDocumentId);
     status.textContent = 'V2 editor ready.';
