@@ -1,0 +1,47 @@
+name: Deploy CV Builder V2 to Hostinger
+
+on:
+  push:
+    branches:
+      - release/cv-builder-v2-production
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cv-builder-v2-production-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy production V2
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout production branch
+        uses: actions/checkout@v4
+
+      - name: Deploy to Hostinger via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          security: strict
+          local-dir: ./
+          server-dir: ./
+          log-level: standard
+          timeout: 120000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/docs/**
+            **/tests/**
+            package.json
+            package-lock.json
