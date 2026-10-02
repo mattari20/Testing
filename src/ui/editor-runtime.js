@@ -83,7 +83,8 @@ export function mountV2EditorRuntime(root, input = {}) {
 
   render();
   lifecycleBinding = bindEditorLifecycle(root, lifecycleController);
-  previewRuntime?.refresh().catch(() => {});
+  const refreshPreview = () => previewRuntime?.refresh().catch(error => { console.error('[CV Builder V2] preview refresh failed:', error); });
+  refreshPreview();
 
   const rerenderTypes = new Set([
     'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition',
@@ -93,7 +94,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   const unsubscribe = mounted.surface.subscribe((state, command) => {
     if (rerenderTypes.has(command?.type)) {
       render();
-      previewRuntime?.refresh().catch(() => {});
+      refreshPreview();
     }
   });
 
