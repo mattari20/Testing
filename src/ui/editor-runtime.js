@@ -62,7 +62,23 @@ export function mountV2EditorRuntime(root, input = {}) {
 
   if (recoveryController && persistenceOptions.autoRecover === true && recoveryController.hasRecovery()
       && !mounted.surface.getState().session.dirty) {
-    recoveryController.recover();
+    const initialSession = mounted.surface.getState().session;
+    try {
+      recoveryController.recover();
+    } catch (error) {
+      // A broken recovery snapshot must never prevent the editor itself from booting.
+      console.warn('[CV Builder V2] automatic recovery was skipped:', error);
+      try {
+        mounted.surface.restorePersistedState({
+          version: '1.0.0',
+          savedAt: initialSession.savedAt || null,
+          application: initialSession.application,
+          session: initialSession.session
+        });
+      } catch (restoreError) {
+        console.warn('[CV Builder V2] initial editor state restore failed:', restoreError);
+      }
+    }
   }
 
   render();
