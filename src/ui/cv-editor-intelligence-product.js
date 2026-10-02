@@ -31,9 +31,9 @@ export function createCVEditorIntelligenceProduct(options={}){
   input.id='cv-intelligence-job';
   input.rows=4;
   input.placeholder='Paste job keywords or a short job description…';
-  const analyze=el(document,'button','Analyze CV','primary');
-  analyze.type='button';
-  controls.append(keywordsLabel,input,analyze);
+  const analyzeButton=el(document,'button','Analyze CV','primary');
+  analyzeButton.type='button';
+  controls.append(keywordsLabel,input,analyzeButton);
 
   const results=el(document,'div','','cv-intelligence-results');
   const summary=el(document,'div','','cv-intelligence-summary');
@@ -51,7 +51,7 @@ export function createCVEditorIntelligenceProduct(options={}){
   function renderCard(node,title,value,detail){
     node.replaceChildren(el(document,'h4',title),el(document,'strong',value),el(document,'p',detail));
   }
-  function analyze(){
+  function runAnalysis(){
     const words=[...new Set(terms())];
     const result=coordinator.inspect({keywords:words,description:input.value},{keywords:words,metadata:{source:'editor-intelligence'}});
     const a=result.ats;
@@ -68,8 +68,8 @@ export function createCVEditorIntelligenceProduct(options={}){
     renderCard(health,'Resume Health',failed.length?'Needs attention':'Healthy baseline',failed.length?'Review: '+failed.join(', ')+'.':'Identity, sections, fields and entries are present.');
     results.hidden=false;
   }
-  analyze.addEventListener('click',()=>{try{analyze();}catch(error){results.replaceChildren(el(document,'p','Analysis failed: '+(error?.message||error)));}});
+  analyzeButton.addEventListener('click',()=>{try{runAnalysis();}catch(error){results.replaceChildren(el(document,'p','Analysis failed: '+(error?.message||error)));}});
   results.hidden=true;
 
-  return Object.freeze({version:CV_EDITOR_INTELLIGENCE_PRODUCT_VERSION,coordinator,panel,input,analyze,destroy(){panel.remove();coordinator.destroy();}});
+  return Object.freeze({version:CV_EDITOR_INTELLIGENCE_PRODUCT_VERSION,coordinator,panel,input,analyze:analyzeButton,destroy(){panel.remove();coordinator.destroy();}});
 }
