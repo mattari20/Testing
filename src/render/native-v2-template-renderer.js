@@ -158,7 +158,7 @@ function findSectionField(section, fieldKey) {
     String(field.id) === String(fieldKey) ||
     String(field.metadata?.semanticKey || '') === String(fieldKey) ||
     String(field.label || '').toLowerCase() === String(fieldKey).toLowerCase()
-  ) || null;
+  ) || (String(fieldKey).toLowerCase() === 'text' ? fields.find(field => field?.visibility !== false) || null : null);
 }
 
 function applyPreviewEditTargets(root, snapshot) {
