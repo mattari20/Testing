@@ -4,16 +4,17 @@
 
 This is the single operational handoff record for the remaining production release work.
 
-Repository implementation and automated validation are complete through the current release-gate boundary. This document does **not** claim that production deployment, external credential rotation, historical source recovery, or V1 retirement has occurred.
+Repository implementation and automated validation are complete through the current release-gate boundary, with the application-code deployment candidate frozen separately from the latest test-only evidence commit. This document does **not** claim that production deployment, external credential rotation, historical source recovery, or V1 retirement has occurred.
 
 ## Current verified repository state
 
-- Accepted release code commit: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
-- V2 Integration Validation: SUCCESS — run `36898954934`.
-- Native V2 Browser Validation: SUCCESS — run `36898954976`.
-- CV Builder V2 Validation: SUCCESS — run `36898954974`.
-- CV Builder V2 E2E Contract: SUCCESS — run `36898954947`.
-- Fresh browser evidence covers all 9 current V2 templates, including T01 ATS `2.1.0` and T01 Simple `2.1.0`.
+- Accepted application-code deployment candidate: `36e5e174bec8e2445ac54daebe31d7956075eb31`.
+- Fresh evidence commit: `ee7ca4f595906dd284dbaba07453fa0f757004cc` (test-only change after the deployment candidate).
+- V2 Integration Validation: SUCCESS — run `36952569986`.
+- Native V2 Browser Validation: SUCCESS — run `36952570025`.
+- CV Builder V2 Validation: SUCCESS — run `36952570166`.
+- CV Builder V2 E2E Contract: SUCCESS — run `36952570015`.
+- Fresh browser evidence covers the current V2 application/template tree, including the production entry surface, editor preview, inline preview editing, and integrated fragmentation.
 - R1 Source/asset closure: PASS.
 - R3 Golden Baseline: PASS.
 - R4 Browser CI: PASS.
@@ -29,9 +30,9 @@ Repository implementation and automated validation are complete through the curr
 
 Before uploading anything to production:
 
-- freeze the deployment target at commit `274707d57edd69a840274fbdb5eb4eace80be4fb`;
+- freeze the deployment target at application-code commit `36e5e174bec8e2445ac54daebe31d7956075eb31`;
 - do not deploy an unverified later application-code commit;
-- confirm the fresh validation runs above remain the authoritative evidence for this release boundary;
+- confirm the fresh validation runs above remain the authoritative evidence for this release boundary; the evidence run uses `ee7ca4f...`, which differs from the deployment candidate only by test-only changes;
 - ensure the seven Word-template assets and their manifest are included in the production upload plan;
 - keep V1 available until R6 is PASS.
 
