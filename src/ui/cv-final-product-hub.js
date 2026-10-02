@@ -8,7 +8,6 @@ export function createCVFinalProductHub(options={}){
  const document=options.document,runtime=options.runtime,container=options.container;
  if(!document||!runtime||!container) throw new Error('Final product hub requires document, runtime and container.');
  const surface=runtime.surface;
- const getRuntimeState=()=>typeof runtime.getState==='function' ? getRuntimeState() : runtime.surface?.getState?.();
  let aiResult=null;
  const root=document.createElement('section'); root.className='final-product-hub'; root.setAttribute('data-final-product-hub','true');
  const tabs=document.createElement('div'); tabs.className='final-product-tabs';
@@ -33,7 +32,7 @@ export function createCVFinalProductHub(options={}){
   const task=document.createElement('select'); Object.values(AI_TASK).forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;task.append(o);});
   const run=document.createElement('button');run.textContent='Generate Review';run.className='primary';
   const out=document.createElement('div');out.className='final-results';
-  run.onclick=()=>{const state=runtime.getState();const profile=state.session.application.masterProfile;const sections=profile?.careerData?.sections||[];const summary=sections.find(s=>s.id==='summary');const field=summary?.fields?.[0];const suggestions=[];
+  run.onclick=()=>{const state=surface.getState();const profile=state.session.application.masterProfile;const sections=profile?.careerData?.sections||[];const summary=sections.find(s=>s.id==='summary');const field=summary?.fields?.[0];const suggestions=[];
    if(field&&String(field.value||'').length<80)suggestions.push({id:'summary-improve',title:'Strengthen professional summary',explanation:'The current summary is short. Consider adding role, strengths and measurable value.',blockType:'field',target:{sectionId:'summary',fieldId:field.id},suggestedValue:'Experienced professional focused on delivering measurable results, collaborating effectively, and continuously improving processes.'});
    if(!sections.some(s=>s.id==='skills'))suggestions.push({id:'skills-add',title:'Add a Skills section',explanation:'A dedicated skills section improves discoverability for structured screening.',blockType:'section',target:{sectionId:'skills'},suggestedValue:''});
    aiResult=createAIResult({version:'1.0.0',task:task.value,documentSnapshot:clone(state),jobContext:null},{status:'ready',suggestions,explanation:'Deterministic local review suggestions. External AI provider is optional and never applied without user approval.',requiresReview:true});
