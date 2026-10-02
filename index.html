@@ -110,7 +110,8 @@
     const runtime = mountV2ProductionEntry(document, {
       rootSelector:'#v2-editor',
       input:{
-        profileData:initialProfile.careerData,
+        profileData:{careerData:initialProfile.careerData},
+        cvData:initialProfile.cvData,
         targetedCV:initialProfile.targetedCV,
         preview:true,
         previewOptions:{fetcher:previewFetcher},
