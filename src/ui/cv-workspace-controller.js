@@ -107,7 +107,9 @@ export function createCVWorkspaceController(options = {}) {
     if (destroyed) return null;
     syncActive();
     const next = workspace.addDocument({ title: title || 'New CV' });
-    restoreDocument(next.activeDocumentId);
+    // The workspace already contains the newly created document; do not sync
+    // the old editor document over it before restoring the new active document.
+    restoreDocument(next.activeDocumentId, { sync: false });
     recordVersion();
     return next;
   };
@@ -117,7 +119,9 @@ export function createCVWorkspaceController(options = {}) {
     syncActive();
     const active = workspace.getActiveDocument();
     const copy = workspace.duplicateDocument(active.id, { title: (active.title || 'CV') + ' Copy' });
-    restoreDocument(copy.id);
+    // The duplicate is already in workspace state; restore it without syncing
+    // the previous editor document back over the duplicate.
+    restoreDocument(copy.id, { sync: false });
     recordVersion();
     return copy;
   };
@@ -135,7 +139,8 @@ export function createCVWorkspaceController(options = {}) {
     const active = workspace.getActiveDocument();
     workspace.archiveDocument(active.id);
     const nextId = workspace.getState().activeDocumentId;
-    restoreDocument(nextId);
+    // The archived document must not be synced into the replacement active CV.
+    restoreDocument(nextId, { sync: false });
     saveState();
     return workspace.getState();
   };
