@@ -11,6 +11,8 @@ test('final product closure surface exposes remaining product workflows', async 
   const browser=await chromium.launch({headless:true});
   const page=await browser.newPage();
   await page.goto('http://127.0.0.1:4177/index.html',{waitUntil:'networkidle'});
+  await page.locator('#career-tools-btn').click();
+  await page.locator('#career-tools-modal').waitFor({state:'visible'});
   const tabs=await page.locator('.final-product-tabs button').allTextContents();
   assert.equal(tabs.length,7);
   for(const name of ['AI Review','Career Mode','Cover Letter','Import / Migration','Online CV','Portfolio','Plans & Privacy']) assert.ok(tabs.includes(name));
