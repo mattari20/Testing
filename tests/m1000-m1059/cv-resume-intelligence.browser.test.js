@@ -20,8 +20,8 @@ test('resume intelligence product renders ATS, health, job match and skill evide
     assert.match(text,/Skill \/ Keyword Evidence/);
     assert.match(text,/Resume Health/);
     assert.match(text,/100/);
-    await browser.close();
   } finally {
+    await browser.close();
     server.kill();
   }
 });
