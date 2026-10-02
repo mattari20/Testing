@@ -24,7 +24,11 @@ test('production V2 entry boots the editor, template catalog and live preview', 
     page.on('pageerror', error => pageErrors.push(String(error?.stack || error?.message || error)));
 
     await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
-    await page.waitForFunction(() => window.v2ProductionReady === true, null, {timeout:10000});
+    await page.waitForTimeout(3000);
+    if (!(await page.evaluate(() => window.v2ProductionReady === true))) {
+      const status = await page.locator('#app-status').textContent();
+      throw new Error('V2 boot did not complete. status=' + JSON.stringify(status) + ' pageErrors=' + JSON.stringify(pageErrors));
+    }
     assert.equal(await page.locator('#app-status').textContent(), 'V2 editor ready.');
     assert.ok((await page.locator('#template-select option').count()) >= 9);
     assert.ok((await page.locator('[data-v2-editor-form]').innerText()).includes('Personal Information'));
