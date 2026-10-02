@@ -561,3 +561,25 @@ Release evidence still required:
 - Real browser verification that edits remain isolated to the selected CV while the Master Profile remains shared.
 - Reload/recovery interaction verification.
 - Version restore browser verification.
+
+
+## Batch 3 — Builder UX Layer
+
+Status: IMPLEMENTED — repository/UI integration complete; real-browser acceptance remains part of final external release evidence.
+
+Implemented:
+- Preview previous/next page controls.
+- Preview page selector.
+- Current page / total page indicator.
+- Preview zoom controls with bounded 50%–200% range.
+- Presentation variant selector using the existing `set-variant` command boundary.
+- Accessibility live announcer for preview navigation and zoom actions.
+- Responsive controls integrated into the production editor surface.
+- Dedicated browser acceptance coverage for navigation, zoom, presentation variant state, and accessibility surface.
+- CI workflow extended to execute the new browser acceptance.
+
+Release evidence still required:
+- Real deployed-browser verification on Hostinger.
+- Multi-page CV verification with genuinely long content.
+- Print/PDF artifact inspection at multiple zoom/page states.
+- Final mobile and desktop UX sign-off.
