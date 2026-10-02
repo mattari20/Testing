@@ -12,6 +12,8 @@ test('resume intelligence product renders ATS, health, job match and skill evide
     browser = await chromium.launch({headless:true});
     const page = await browser.newPage();
     await page.goto('http://127.0.0.1:4176/index.html', {waitUntil:'networkidle'});
+    await page.locator('#resume-intelligence-btn').click();
+    await page.locator('#resume-intelligence-modal').waitFor({state:'visible'});
     await page.locator('#cv-intelligence-job').fill('communication problem solving microsoft office');
     await page.locator('[data-cv-intelligence-product] button').click();
     await page.locator('.cv-intelligence-results').waitFor({state:'visible'});
