@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
+      - run: npm install
       - run: npx playwright install --with-deps chromium
       - run: npm run test:cv-workspace-controller
       - run: node --test tests/m1000-m1059/cv-workspace.browser.test.js
