@@ -178,6 +178,17 @@
 
     const root = document.querySelector('#v2-editor');
     const status = document.querySelector('#app-status');
+    const reportBootError = error => {
+      const message = String(error?.message || error || 'Unknown startup error');
+      status.textContent = 'V2 startup error: ' + message;
+      console.error('[CV Builder V2] startup error:', error);
+    };
+    window.addEventListener('error', event => {
+      if (event?.error) reportBootError(event.error);
+    });
+    window.addEventListener('unhandledrejection', event => {
+      if (event?.reason) reportBootError(event.reason);
+    });
     const previewRoot = document.querySelector('[data-v2-editor-preview-root]');
     const previewPageSelect = document.querySelector('#preview-page-select');
     const previewPageLabel = document.querySelector('#preview-page-label');
