@@ -8,15 +8,32 @@ Repository implementation and automated validation are complete through the curr
 
 ## Current verified repository state
 
-- V2 Integration Validation: successful on release commit `4bde21a20da081a6948da8b1bc406db64b8561cb`.
-- Native V2 Browser Validation: successful on the same release commit.
+- Accepted release code commit: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+- V2 Integration Validation: SUCCESS — run `36898954934`.
+- Native V2 Browser Validation: SUCCESS — run `36898954976`.
+- CV Builder V2 Validation: SUCCESS — run `36898954974`.
+- CV Builder V2 E2E Contract: SUCCESS — run `36898954947`.
+- Fresh browser evidence covers all 9 current V2 templates, including T01 ATS `2.1.0` and T01 Simple `2.1.0`.
+- R1 Source/asset closure: PASS.
+- R3 Golden Baseline: PASS.
 - R4 Browser CI: PASS.
 - R5 Pagination/fragmentation: PASS.
+- R2 Security closure: CONDITIONAL — production credential rotation/revocation and authoritative history verification remain external actions.
 - R6 Production Integration: OPEN.
 - R7 V1 Retirement: OPEN.
 - R8 Final Release: BLOCKED until all preceding gates are PASS.
 
 ## Production execution order
+
+### Step 0 — Pre-deployment release lock
+
+Before uploading anything to production:
+
+- freeze the deployment target at commit `274707d57edd69a840274fbdb5eb4eace80be4fb`;
+- do not deploy an unverified later application-code commit;
+- confirm the fresh validation runs above remain the authoritative evidence for this release boundary;
+- ensure the seven Word-template assets and their manifest are included in the production upload plan;
+- keep V1 available until R6 is PASS.
 
 ### Step 1 — Deploy the exact accepted commit
 
@@ -171,6 +188,22 @@ Run the machine-checkable final release gate:
 
 R8 is READY only when R1–R7 are explicitly PASS.
 
+## Production evidence minimums
+
+For the production deployment, capture one evidence item for each required R6 observation. At minimum the evidence set must contain:
+
+1. V2 entrypoint screenshot;
+2. CV create/edit screenshot or recording;
+3. template switch + live preview screenshot;
+4. long-CV multi-page pagination screenshots;
+5. PDF/print artifact plus page-count evidence;
+6. DOCX artifact plus successful-open evidence;
+7. V1 controlled-fixture migration evidence;
+8. negative V1-fallback evidence;
+9. production configuration/security review record.
+
+Do not put passwords, API keys, tokens, database credentials, or private keys into any evidence artifact.
+
 ## Evidence record template
 
 ```text
@@ -197,16 +230,18 @@ Evidence references:
 Notes:
 ```
 
-## Release blockers that cannot be fabricated in repository code
+## Remaining external release blockers
 
-1. Missing authoritative T01 ATS source.
-2. Missing authoritative T01 Simple source.
-3. Remaining historical V1 asset reconciliation.
-4. Production credential rotation/revocation.
-5. Historical repository secret verification.
-6. Authoritative Golden Baseline runtime/output evidence.
-7. Actual production deployment and smoke-test evidence.
-8. V1 retirement after R6 acceptance.
+The repository-side implementation and current automated evidence are complete through R5. The remaining blockers are operational/external:
+
+1. Production credential rotation/revocation.
+2. Authoritative Git-history secret verification.
+3. Actual Hostinger deployment of the accepted release commit.
+4. Live nine-point R6 smoke-test evidence.
+5. Production availability/integrity verification of the seven Word-template downloads.
+6. V1 retirement after R6 acceptance.
+
+The two historical T01 ATS/Simple V1 sources remain unrecovered by design, but their new V2-native replacements are implemented and covered by the fresh nine-template browser evidence. They are not a remaining production deployment blocker.
 
 ## Important rule
 
