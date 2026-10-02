@@ -57,6 +57,7 @@ function normalizeMetadata(input = {}) {
     id: String(source.id || ''),
     name: String(source.name || ''),
     version: String(source.version || '1.0.0'),
+    sourcePath: source.sourcePath ? String(source.sourcePath) : null,
     status: Object.values(TEMPLATE_STATUS).includes(source.status) ? source.status : TEMPLATE_STATUS.DRAFT,
     sourceLineage: source.sourceLineage ? String(source.sourceLineage) : null,
     careerLevel: list(source.careerLevel),
