@@ -267,8 +267,11 @@
     document.querySelector('#print-btn').addEventListener('click', () => window.print());
 
     const initialActive = workspace.getState().activeDocumentId;
-    if (workspace.hasStoredWorkspace() && initialActive !== runtime.surface.getState().session.application.targetedCV.id) {
-      try { workspace.switchDocument(initialActive); } catch { /* fall back to current editor state */ }
+    if (workspace.hasStoredWorkspace()) {
+      try {
+        if (!runtime.persistence?.hasRecovery?.()) workspace.switchDocument(initialActive);
+        else workspace.save();
+      } catch { /* preserve the current editor/recovery state */ }
     }
     renderWorkspace();
     renderVersions(workspace.getState().activeDocumentId);
