@@ -346,6 +346,8 @@
     "test:cv-workspace-controller": "node --test tests/m1000-m1059/cv-workspace-controller.test.js",
     "test:workspace-product": "npm run test:m888-m1127 && npm run test:cv-workspace-controller",
     "test:cv-workspace-browser": "node --test tests/m1000-m1059/cv-workspace.browser.test.js",
-    "test:cv-workspace": "npm run test:cv-workspace-controller && npm run test:cv-workspace-browser"
+    "test:cv-workspace": "npm run test:cv-workspace-controller && npm run test:cv-workspace-browser",
+    "test:cv-builder-ux-browser": "node --test tests/m1000-m1059/cv-builder-ux.browser.test.js",
+    "test:builder-ux": "npm run test:cv-workspace && npm run test:cv-builder-ux-browser"
   }
 }
