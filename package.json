@@ -344,6 +344,8 @@
     "test:m48762-m49561": "node --test tests/m48762-m49561/full-v2-runtime-acceptance.test.js",
     "test:full-v2-runtime": "npm run test:m48762-m49561",
     "test:cv-workspace-controller": "node --test tests/m1000-m1059/cv-workspace-controller.test.js",
-    "test:workspace-product": "npm run test:m888-m1127 && npm run test:cv-workspace-controller"
+    "test:workspace-product": "npm run test:m888-m1127 && npm run test:cv-workspace-controller",
+    "test:cv-workspace-browser": "node --test tests/m1000-m1059/cv-workspace.browser.test.js",
+    "test:cv-workspace": "npm run test:cv-workspace-controller && npm run test:cv-workspace-browser"
   }
 }
