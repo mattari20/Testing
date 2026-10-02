@@ -1,6 +1,6 @@
 # R3 Runtime Evidence Reconciliation Record
 
-**Date:** 2026-10-01
+**Date:** 2026-10-02
 **Status:** PASS
 
 ## 1. Verified prior browser evidence
@@ -73,20 +73,24 @@ No historical V1 equivalence claim is required or made for the two unrecovered T
 
 ## 5. Fresh current-main evidence
 
-A fresh Native V2 Browser Validation run was observed after the release-affecting template changes:
+A fresh Native V2 Browser Validation run was completed after the production entry layer was added.
 
-- Workflow run: `36898954976`
-- Commit: `274707d57edd69a840274fbdb5eb4eace80be4fb`
+- Workflow run: `36952570025`
+- Evidence commit: `ee7ca4f595906dd284dbaba07453fa0f757004cc`
 - Job: `browser-validation`
 - Conclusion: `success`
 - Golden Baseline fixture validation: success
-- Current Native V2 browser evidence: success
-- V1 browser evidence: success
-- Paired V1/V2 comparison: success
-- Editor browser and preview validation: success
+- M26 Native V2 browser evidence validation: success
+- M27 V1 browser evidence validation: success
+- M87 editor browser validation: success
+- M90 editor preview validation: success
+- M28 paired V1/V2 comparison: success
+- M408–M417 live preview inline-edit browser validation: success
 - M208–M217 integrated fragmentation browser validation: success
 
-Fresh artifacts were uploaded from this run, including `m26-m27-browser-evidence`, `m27-v1-browser-evidence`, `m28-paired-v1-v2-browser-evidence`, and `integrated-fragment-browser-evidence`.
+The evidence commit is two commits ahead of the V2 production-entry application-code candidate `36e5e174bec8e2445ac54daebe31d7956075eb31`, and the only changed file in that interval is `tests/m408-m417/preview-inline-edit.test.js`. No application/runtime/template production source changed between the deployment candidate and the fresh evidence run.
+
+Fresh artifacts were uploaded from run `36952570025`, including `m26-m27-browser-evidence`, `m27-v1-browser-evidence`, `m28-paired-v1-v2-browser-evidence`, `m87-editor-browser-evidence`, `m90-editor-preview-evidence`, and `integrated-fragment-browser-evidence`.
 
 ## 6. Release decision
 
@@ -96,6 +100,6 @@ Fresh artifacts were uploaded from this run, including `m26-m27-browser-evidence
 
 **R3 final release gate: PASS**
 
-The two unrecovered historical T01 ATS/Simple sources remain explicitly documented as unrecovered. Their current V2-native replacements are registered, published as V2-compatible templates, and validated as current V2 artifacts; they are not represented as historical V1 equivalents.
+The deployment candidate remains `36e5e174bec8e2445ac54daebe31d7956075eb31`. The fresh browser evidence is valid for that candidate's application/runtime/template tree because the intervening commits changed only the browser-test diagnostic/assertion code.
 
-The fresh M26 artifact was independently inspected and contains 9 template results: both new T01 variants at version 2.1.0 plus the seven recovered V2 variants, all with ready render status and collected pagination.
+The two unrecovered historical T01 ATS/Simple sources remain explicitly documented as unrecovered. Their current V2-native replacements are registered, published as V2-compatible templates, and validated as current V2 artifacts; they are not represented as historical V1 equivalents.
