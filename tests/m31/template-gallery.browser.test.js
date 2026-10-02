@@ -20,7 +20,8 @@ test('template gallery renders the native V2 collection and Build Online handoff
     await page.waitForSelector('.card');
     assert.equal(await page.locator('.card').count(),9);
     assert.equal(await page.locator('[data-preview]').count(),9);
-    assert.ok(await page.locator('[data-preview] [data-v2-template-root]').count() >= 9);
+    await page.locator('[data-preview] [data-v2-template-root]').first().waitFor({state:'attached',timeout:10000});
+    await page.waitForFunction(() => document.querySelectorAll('[data-preview] [data-v2-template-root]').length >= 9);
 
     await page.locator('#industry').selectOption({label:'Design'});
     assert.ok((await page.locator('.card').count()) >= 1);
