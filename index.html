@@ -61,7 +61,7 @@
 
   <main class="app-shell">
     <div class="toolbar">
-      <label for="template-select">Template</label>
+      <a href="./templates.html" style="font-weight:700;color:#0d6efd;text-decoration:none">Template Gallery</a><label for="template-select">Template</label>
       <select id="template-select" aria-label="CV template"></select>
       <button type="button" class="primary" id="save-btn">Save CV</button>
       <button type="button" id="recover-btn">Recover</button>
@@ -136,6 +136,14 @@
       templateSelect.appendChild(option);
     });
 
+    const requestedTemplateId = new URLSearchParams(window.location.search).get('template');
+    if (requestedTemplateId && templates.some(item => item.id === requestedTemplateId)) {
+      runtime.surface.dispatch({
+        type:'set-template',
+        target:{},
+        payload:{templateId:requestedTemplateId,version:templates.find(item => item.id === requestedTemplateId).version}
+      });
+    }
     const currentTemplate = runtime.surface.getState().session.application.targetedCV.configuration.template?.id;
     templateSelect.value = currentTemplate || templates[0]?.id || '';
 
