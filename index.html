@@ -39,6 +39,17 @@
     [data-v2-editor-form] button{margin:4px 4px 0 0;font-size:12px}
     [data-v2-editor-form] article{border-top:1px dashed var(--border);padding-top:12px;margin-top:12px}
     [data-v2-editor-form] [data-v2-editor-field-wrapper]{padding:10px;background:var(--soft);border-radius:9px;margin:8px 0}
+    .workspace-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:16px}
+    .workspace-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .workspace-head strong{font-size:15px}.workspace-head span{font-size:12px;color:var(--muted);margin-left:10px}
+    .workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{font-size:12px}
+    .cv-document-list{display:flex;gap:8px;overflow:auto;padding-top:12px}
+    .cv-document{min-width:180px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer}
+    .cv-document.active{border-color:var(--brand);box-shadow:0 0 0 2px rgba(13,110,253,.12)}
+    .cv-document.archived{opacity:.6}.cv-document-title{font-weight:750;font-size:13px}.cv-document-meta{font-size:11px;color:var(--muted);margin-top:4px}
+    .cv-version-history{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
+    .cv-version-item{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px}
+    .cv-version-item button{font-size:11px;padding:5px 8px}
     .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
     [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
     @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
@@ -70,6 +81,20 @@
       <span class="status" id="app-status" aria-live="polite">Starting V2…</span>
     </div>
 
+    <section class="workspace-panel" aria-label="CV Workspace">
+      <div class="workspace-head">
+        <div><strong>My CV Workspace</strong><span id="workspace-profile-status">One Master Profile</span></div>
+        <div class="workspace-actions">
+          <button type="button" id="new-cv-btn" class="primary">New CV</button>
+          <button type="button" id="duplicate-cv-btn">Duplicate</button>
+          <button type="button" id="rename-cv-btn">Rename</button>
+          <button type="button" id="archive-cv-btn">Archive</button>
+        </div>
+      </div>
+      <div id="cv-document-list" class="cv-document-list"></div>
+      <div id="cv-version-history" class="cv-version-history" hidden></div>
+    </section>
+
     <div id="v2-editor" data-v2-editor-root>
       <section>
         <div class="preview-title">CV Editor</div>
@@ -88,6 +113,7 @@
   <script type="module">
     import { mountV2ProductionEntry } from './src/application/v2-production-entry.js';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
+    import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
 
     const templates = listNativeV2Templates();
     const initialProfile = {
@@ -128,6 +154,72 @@
     });
 
     window.eStudentCVBuilderV2 = runtime;
+    const workspace = createCVWorkspaceController({
+      surface: runtime.surface,
+      storage: window.localStorage,
+      storageKey: 'estudent_cv_workspace_v2'
+    });
+    window.eStudentCVBuilderV2.workspace = workspace;
+
+    const documentList = document.querySelector('#cv-document-list');
+    const versionHistory = document.querySelector('#cv-version-history');
+    const renderWorkspace = () => {
+      const state = workspace.getState();
+      documentList.replaceChildren(...state.documents.map(document => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cv-document' + (document.id === state.activeDocumentId ? ' active' : '') + (document.status === 'archived' ? ' archived' : '');
+        button.innerHTML = '<div class="cv-document-title"></div><div class="cv-document-meta"></div>';
+        button.querySelector('.cv-document-title').textContent = document.title || 'Untitled CV';
+        button.querySelector('.cv-document-meta').textContent = document.status === 'archived' ? 'Archived' : 'Active CV';
+        button.addEventListener('click', () => {
+          try { workspace.switchDocument(document.id); renderWorkspace(); renderVersions(document.id); status.textContent = 'CV switched.'; }
+          catch (error) { status.textContent = 'Switch failed: ' + (error?.message || error); }
+        });
+        return button;
+      }));
+    };
+    const renderVersions = (documentId) => {
+      const versions = workspace.getVersions(documentId);
+      versionHistory.hidden = versions.length === 0;
+      versionHistory.innerHTML = '<strong>Version History</strong>';
+      versions.slice(0,10).forEach(version => {
+        const row = document.createElement('div');
+        row.className = 'cv-version-item';
+        const label = document.createElement('span');
+        label.textContent = (version.title || 'CV') + ' — ' + new Date(version.createdAt).toLocaleString();
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = 'Restore';
+        button.addEventListener('click', () => {
+          try { workspace.restoreVersion(documentId, version.id); renderWorkspace(); renderVersions(documentId); status.textContent = 'Previous CV version restored.'; }
+          catch (error) { status.textContent = 'Version restore failed: ' + (error?.message || error); }
+        });
+        row.append(label, button); versionHistory.appendChild(row);
+      });
+    };
+    document.querySelector('#new-cv-btn').addEventListener('click', () => {
+      const title = window.prompt('CV name', 'New CV');
+      if (title === null) return;
+      try { workspace.createDocument(title.trim() || 'New CV'); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'New CV created.'; }
+      catch (error) { status.textContent = 'Create failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#duplicate-cv-btn').addEventListener('click', () => {
+      try { workspace.duplicateDocument(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV duplicated.'; }
+      catch (error) { status.textContent = 'Duplicate failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#rename-cv-btn').addEventListener('click', () => {
+      const current = workspace.getActiveDocument()?.title || 'CV';
+      const title = window.prompt('CV name', current);
+      if (title === null) return;
+      try { workspace.renameActive(title.trim() || current); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV renamed.'; }
+      catch (error) { status.textContent = 'Rename failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#archive-cv-btn').addEventListener('click', () => {
+      if (!window.confirm('Archive the active CV?')) return;
+      try { workspace.archiveActive(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV archived.'; }
+      catch (error) { status.textContent = 'Archive failed: ' + (error?.message || error); }
+    });
+
 
     templates.forEach(template => {
       const option = document.createElement('option');
@@ -159,7 +251,7 @@
     });
 
     document.querySelector('#save-btn').addEventListener('click', () => {
-      try { runtime.save(); status.textContent = 'CV saved locally.'; }
+      try { runtime.save(); workspace.save(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV saved locally.'; }
       catch (error) { status.textContent = 'Save failed: ' + (error?.message || error); }
     });
 
@@ -175,6 +267,8 @@
 
     document.querySelector('#print-btn').addEventListener('click', () => window.print());
 
+    renderWorkspace();
+    renderVersions(workspace.getState().activeDocumentId);
     status.textContent = 'V2 editor ready.';
     window.v2ProductionReady = true;
   </script>
