@@ -36,12 +36,17 @@ This is a repository-content scan only. It does not prove that historical V1 pro
 
 ## Current release gate status
 
-The current `main` commit has fresh automated validation evidence:
+The current V2 release boundary has fresh automated validation evidence:
 
-- V2 Integration Validation: SUCCESS — run `36898954934` on release code commit `274707d57edd69a840274fbdb5eb4eace80be4fb`.
-- Native V2 Browser Validation: SUCCESS — run `36898954976` on release code commit `274707d57edd69a840274fbdb5eb4eace80be4fb`.
-- Browser job completed Golden Baseline, Native V2, V1, paired comparison, editor preview, and integrated fragmentation validation successfully.
-- R3, R4 and R5 are now closed at the evidence level for the current V2 release boundary. Full repository validation and E2E contract validation are also green.
+- Application-code deployment candidate: `36e5e174bec8e2445ac54daebe31d7956075eb31`.
+- Fresh evidence commit: `ee7ca4f595906dd284dbaba07453fa0f757004cc`.
+- The only change between those two commits is test-only work in `tests/m408-m417/preview-inline-edit.test.js`; no application/runtime/template production source changed.
+- V2 Integration Validation: SUCCESS — run `36952569986`.
+- Native V2 Browser Validation: SUCCESS — run `36952570025`.
+- CV Builder V2 Validation: SUCCESS — run `36952570166`.
+- CV Builder V2 E2E Contract: SUCCESS — run `36952570015`.
+- Browser job completed Golden Baseline, Native V2, V1, paired comparison, editor preview, M408–M417 inline preview editing, and integrated fragmentation validation successfully.
+- R3, R4 and R5 are closed at the evidence level for the current V2 release boundary.
 
 ## Remaining release gates
 
