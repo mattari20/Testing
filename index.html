@@ -74,6 +74,26 @@
     [data-v2-editor-preview-root][data-preview-zoom="1.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.9)}
     [data-v2-editor-preview-root][data-preview-zoom="2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(2)}
     @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
+
+    .header-product-label{font-size:13px;font-weight:700;opacity:.95}
+    .mobile-view-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .mobile-view-switch button{flex:1;border:0;background:transparent;font-size:13px;padding:9px}.mobile-view-switch button.active{background:var(--brand);color:#fff}
+    .tool-modal{position:fixed;inset:0;z-index:1000;background:rgba(23,32,51,.48);display:flex;align-items:center;justify-content:center;padding:18px}
+    .tool-modal[hidden]{display:none}.tool-modal-card{width:min(760px,100%);max-height:min(88vh,900px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(16,24,40,.24);padding:16px}.tool-modal-wide{width:min(1100px,100%)}
+    .tool-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;position:sticky;top:0;background:var(--surface);z-index:2;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    .tool-modal-head strong{font-size:17px}.tool-modal-head button{font-size:22px;line-height:1;padding:4px 10px;border:0;background:transparent}
+    .editor-section-head,.editor-entry-head,.editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.editor-section-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.editor-section-title input{flex:1;min-width:120px}.editor-section-title span{font-size:11px;color:var(--muted);white-space:nowrap}.editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}.editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}
+    @media(max-width:760px){
+      .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
+      #v2-editor{grid-template-columns:1fr}
+      #v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}
+      #v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}
+      [data-v2-editor-form]{max-height:none;padding:12px}
+      .toolbar{padding:10px;gap:7px}.toolbar label{display:none}.toolbar select{flex:1;min-width:180px}.status{width:100%;margin-left:0}
+      .workspace-actions{width:100%}.workspace-actions button{flex:1}.header-product-label{display:none}
+      .editor-section-head,.editor-entry-head,.editor-field-head{align-items:flex-start}.editor-section-title{flex-direction:column;align-items:stretch}.editor-section-title span{white-space:normal}.editor-inline-actions{flex-shrink:0}
+      .editor-inline-action{padding:5px 6px!important}
+    }
     @media print{
   .site-header,.toolbar,[data-v2-editor-form],.preview-title{display:none!important}
   body{background:#fff}.app-shell{margin:0;padding:0}
@@ -87,7 +107,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div><div class="brand">eStudent.pk — CV Builder V2</div><div class="subbrand">Local-first professional CV editor</div></div>
-      <div>V2 Production Candidate</div>
+      <div class="header-product-label">Professional CV Builder</div>
     </div>
   </header>
 
@@ -97,7 +117,9 @@
       <select id="template-select" aria-label="CV template"></select>
       <button type="button" class="primary" id="save-btn">Save CV</button>
       <button type="button" id="recover-btn">Recover</button>
-      <button type="button" id="clear-recovery-btn">Clear Recovery</button>
+      <button type="button" id="clear-recovery-btn" class="secondary-action">Clear Recovery</button>
+      <button type="button" id="resume-intelligence-btn">Resume Intelligence</button>
+      <button type="button" id="career-tools-btn">Career Tools</button>
       <button type="button" id="print-btn">Print / PDF</button>
       <span class="status" id="app-status" aria-live="polite">Starting V2…</span>
     </div>
@@ -116,9 +138,10 @@
       <div id="cv-version-history" class="cv-version-history" hidden></div>
     </section>
 
-    <section class="intelligence-panel" aria-label="Resume Intelligence"><div id="cv-intelligence-root"></div></section>
-
-    <div id="cv-final-product-root"></div>
+    <div class="mobile-view-switch" role="tablist" aria-label="CV workspace view">
+      <button type="button" class="active" id="mobile-edit-tab" role="tab" aria-selected="true">Edit CV</button>
+      <button type="button" id="mobile-preview-tab" role="tab" aria-selected="false">Preview CV</button>
+    </div>
 
     <div id="v2-editor" data-v2-editor-root>
       <section>
@@ -148,6 +171,19 @@
         </div>
         <div data-v2-editor-preview-root></div>
       </section>
+    </div>
+
+    <div class="tool-modal" id="resume-intelligence-modal" hidden role="dialog" aria-modal="true" aria-labelledby="resume-intelligence-title">
+      <div class="tool-modal-card">
+        <div class="tool-modal-head"><strong id="resume-intelligence-title">Resume Intelligence</strong><button type="button" data-close-tool-modal="resume-intelligence-modal" aria-label="Close">×</button></div>
+        <div id="cv-intelligence-root"></div>
+      </div>
+    </div>
+    <div class="tool-modal" id="career-tools-modal" hidden role="dialog" aria-modal="true" aria-labelledby="career-tools-title">
+      <div class="tool-modal-card tool-modal-wide">
+        <div class="tool-modal-head"><strong id="career-tools-title">Career Tools</strong><button type="button" data-close-tool-modal="career-tools-modal" aria-label="Close">×</button></div>
+        <div id="cv-final-product-root"></div>
+      </div>
     </div>
   </main>
 
@@ -277,34 +313,47 @@
     });
     const previewObserver = new MutationObserver(() => refreshPreviewControls());
     previewObserver.observe(previewRoot,{childList:true,subtree:true});
+    const mobileEditTab=document.querySelector('#mobile-edit-tab');
+    const mobilePreviewTab=document.querySelector('#mobile-preview-tab');
+    const setMobileView=view=>{
+      document.querySelector('#v2-editor').setAttribute('data-mobile-view',view);
+      mobileEditTab.classList.toggle('active',view==='edit'); mobilePreviewTab.classList.toggle('active',view==='preview');
+      mobileEditTab.setAttribute('aria-selected',String(view==='edit')); mobilePreviewTab.setAttribute('aria-selected',String(view==='preview'));
+      if(view==='preview') refreshPreviewControls();
+    };
+    mobileEditTab.addEventListener('click',()=>setMobileView('edit'));
+    mobilePreviewTab.addEventListener('click',()=>setMobileView('preview'));
+    setMobileView('edit');
+
 
     window.eStudentCVBuilderV2 = runtime;
 
-    // Product-layer modules are loaded after the core editor has booted so an
-    // optional product surface can never prevent the editor itself from starting.
-    const loadProductSurfaces = async () => {
+    // Secondary tools are lazy-loaded only when opened, keeping the main editor compact and reducing boot work.
+    let intelligenceLoaded=false, careerToolsLoaded=false;
+    const openModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=false; document.body.style.overflow='hidden'; } };
+    const closeModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=true; if(!document.querySelector('.tool-modal:not([hidden])')) document.body.style.overflow=''; } };
+    document.querySelector('#resume-intelligence-btn').addEventListener('click', async () => {
+      openModal('resume-intelligence-modal');
+      if(intelligenceLoaded) return;
       try {
         const { createCVEditorIntelligenceProduct } = await import('./src/ui/cv-editor-intelligence-product.js');
-        window.eStudentCVBuilderV2.intelligenceProduct = createCVEditorIntelligenceProduct({
-          document,
-          runtime,
-          container:document.querySelector('#cv-intelligence-root')
-        });
-      } catch (error) {
-        console.error('[CV Builder V2] Resume Intelligence failed to load:', error);
-      }
+        window.eStudentCVBuilderV2.intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
+        intelligenceLoaded=true;
+      } catch(error){ console.error('[CV Builder V2] Resume Intelligence failed to load:',error); }
+    });
+    document.querySelector('#career-tools-btn').addEventListener('click', async () => {
+      openModal('career-tools-modal');
+      if(careerToolsLoaded) return;
       try {
         const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
-        window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({
-          document,
-          runtime,
-          container:document.querySelector('#cv-final-product-root')
-        });
-      } catch (error) {
-        console.error('[CV Builder V2] Final Product Hub failed to load:', error);
-      }
-    };
-    loadProductSurfaces();
+        window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
+        careerToolsLoaded=true;
+      } catch(error){ console.error('[CV Builder V2] Career Tools failed to load:',error); }
+    });
+    document.querySelectorAll('[data-close-tool-modal]').forEach(button => button.addEventListener('click',()=>closeModal(button.getAttribute('data-close-tool-modal'))));
+    document.querySelectorAll('.tool-modal').forEach(modal => modal.addEventListener('click',event=>{ if(event.target===modal) closeModal(modal.id); }));
+    document.addEventListener('keydown',event=>{ if(event.key==='Escape') document.querySelectorAll('.tool-modal:not([hidden])').forEach(modal=>closeModal(modal.id)); });
+
     const workspace = createCVWorkspaceController({
       surface: runtime.surface,
       storage: window.localStorage,

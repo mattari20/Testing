@@ -295,6 +295,10 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   const host = documentRef.createElement('div');
   host.innerHTML = definition.sourceHtml;
   const root = host.querySelector('[data-v2-template-root]') || host.querySelector('[data-v2-template-id]') || host.firstElementChild || host;
+  // Native templates may ship their presentation CSS in an inline <style> block.
+  // Keep that style with the rendered preview instead of dropping it when selecting the root element.
+  const templateStyles = [...host.querySelectorAll('style')];
+  templateStyles.forEach(style => root.prepend(style.cloneNode(true)));
 
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);

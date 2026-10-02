@@ -1,4 +1,13 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.4.1';
+export const EDITOR_FORM_RENDERER_VERSION = '1.5.0';
+
+const LABELS = Object.freeze({
+  fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
+  role:'Role', company:'Company', dates:'Dates', description:'Description', degree:'Degree / Qualification', institution:'Institution'
+});
+function labelFor(key){ return LABELS[String(key)] || String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase()); }
+function actionButton(label, command, target, payload, extra='') {
+  return '<button type="button" class="editor-inline-action '+extra+'" title="'+esc(label)+'" aria-label="'+esc(label)+'" data-v2-editor-command="'+esc(command)+'" data-v2-target="'+attr(target)+'"'+(payload ? ' data-v2-payload="'+attr(payload)+'"' : '')+'>'+esc(label === 'Move Up' ? '↑' : label === 'Move Down' ? '↓' : label)+'</button>';
+}
 
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -41,12 +50,11 @@ function renderField(sectionId, field, index, fieldIds, visible = true) {
     ? '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">'
     : '<span data-v2-editor-field-hidden-state="true">Hidden in this CV</span>';
   return '<div data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">' +
-    '<div><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.label || field.id)+'">' +
-    '<select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'">'+typeOptions+'</select></div>' +
+    '<div class="editor-field-head"><div class="editor-field-definition"><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field label" value="'+esc(field.label || labelFor(field.id))+'">' +
+    '<select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field type">'+typeOptions+'</select></div><div class="editor-inline-actions">' +
+    actionButton('Remove','remove-field',{sectionId,fieldId:field.id}) + actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up}) + actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down}) + '</div></div>' +
     valueControl +
-    '<button type="button" data-v2-editor-command="remove-field" data-v2-target="'+attr({sectionId,fieldId:field.id})+'">Remove</button>' +
-    '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:up})+'">Move Up</button>' +
-    '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:down})+'">Move Down</button>' +
+
     '</div>';
 }
 function renderEntry(sectionId, entry, index, entryIds, visible = true) {
@@ -56,17 +64,15 @@ function renderEntry(sectionId, entry, index, entryIds, visible = true) {
   const down = moveOrder(entryIds,index,1);
   const fields = entryVisible ? Object.keys(values).map(key =>
     '<label data-v2-editor-entry-field-wrapper="'+esc(sectionId)+':'+esc(entry.id)+':'+esc(key)+'">' +
-    '<span>'+esc(key)+'</span>' +
+    '<span>'+esc(labelFor(key))+'</span>' +
     '<input data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(values[key])+'">' +
     '</label>'
   ).join('') : '<span data-v2-editor-entry-hidden-state="true">Hidden in this CV</span>';
   return '<article data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">' +
-    '<h4>'+esc('Entry '+(index+1))+'</h4>'+fields +
-    visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible) +
-    '<button type="button" data-v2-editor-command="duplicate-entry" data-v2-target="'+attr({sectionId,entryId:entry.id})+'">Duplicate</button>' +
-    '<button type="button" data-v2-editor-command="remove-entry" data-v2-target="'+attr({sectionId,entryId:entry.id})+'">Remove</button>' +
-    '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'entry',sectionId})+'" data-v2-payload="'+attr({order:up})+'">Move Up</button>' +
-    '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'entry',sectionId})+'" data-v2-payload="'+attr({order:down})+'">Move Down</button>' +
+    '<div class="editor-entry-head"><h4>'+esc('Entry '+(index+1))+'</h4><div class="editor-inline-actions">' +
+    actionButton(entryVisible ? 'Hide' : 'Show','set-visibility',{kind:'entry',sectionId,entryId:entry.id},{visible:!entryVisible}) +
+    actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id}) + actionButton('Remove','remove-entry',{sectionId,entryId:entry.id}) +
+    actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up}) + actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}) + '</div></div>'+fields +
     '</article>';
 }
 
@@ -94,12 +100,8 @@ export function renderEditorForm(surface, documentData, options = {}) {
     const sectionUp = moveOrder(sectionIds,sectionIndex,-1);
     const sectionDown = moveOrder(sectionIds,sectionIndex,1);
     return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
-      '<header><input data-v2-editor-section-title="'+esc(section.id)+'" value="'+esc(section.title || section.type)+'">' +
-      '<span>'+esc(sectionHidden ? 'Hidden in this CV' : 'Visible in this CV')+'</span></header>' +
-      visibilityButton('section',{sectionId:section.id},!sectionHidden) +
-      '<button type="button" data-v2-editor-command="remove-section" data-v2-target="'+attr({sectionId:section.id})+'">Remove Section</button>' +
-      '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'section'})+'" data-v2-payload="'+attr({order:sectionUp})+'">Move Up</button>' +
-      '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'section'})+'" data-v2-payload="'+attr({order:sectionDown})+'">Move Down</button>' +
+      '<header class="editor-section-head"><div class="editor-section-title"><input data-v2-editor-section-title="'+esc(section.id)+'" aria-label="Section title" value="'+esc(section.title || labelFor(section.type))+'"><span>'+esc(sectionHidden ? 'Hidden in this CV' : 'Visible in this CV')+'</span></div>' +
+      '<div class="editor-inline-actions">' + actionButton(sectionHidden ? 'Show' : 'Hide','set-visibility',{kind:'section',sectionId:section.id},{visible:!sectionHidden}) + actionButton('Remove','remove-section',{sectionId:section.id}) + actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp}) + actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown}) + '</div></header>' +
       '<div data-v2-editor-fields>'+fieldHtml+'</div>' +
       '<button type="button" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:section.id})+'" data-v2-payload="'+attr({type:'text',label:'New Field',value:''})+'">Add Field</button>' +
       '<div data-v2-editor-entries>'+entryHtml+'</div>' +
