@@ -52,6 +52,26 @@
     .cv-version-item button{font-size:11px;padding:5px 8px}
     .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
     [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
+    .preview-tools{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:-2px 0 12px}
+    .preview-tools button,.preview-tools select{font-size:12px;padding:7px 9px}
+    .preview-tools .preview-page-label{font-size:12px;font-weight:700;color:var(--muted);margin-left:auto}
+    .preview-tools [data-preview-zoom]{display:inline-block}
+    [data-v2-editor-preview-root][data-preview-zoom="0.5"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.5)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.6"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.6)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.7"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.7)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.8)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.9)}
+    [data-v2-editor-preview-root][data-preview-zoom="1"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.1"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.1)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.2)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.3"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.3)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.4"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.4)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.5"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.5)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.6"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.6)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.7"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.7)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.8)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.9)}
+    [data-v2-editor-preview-root][data-preview-zoom="2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(2)}
     @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
     @media print{
   .site-header,.toolbar,[data-v2-editor-form],.preview-title{display:none!important}
@@ -105,6 +125,22 @@
       </section>
       <section>
         <div class="preview-title">Live A4 Preview</div>
+        <div class="preview-tools" aria-label="Preview controls">
+          <button type="button" id="preview-prev">Previous</button>
+          <button type="button" id="preview-next">Next</button>
+          <select id="preview-page-select" aria-label="Preview page"></select>
+          <span class="preview-page-label" id="preview-page-label">Page 1</span>
+          <button type="button" id="zoom-out">−</button>
+          <button type="button" id="zoom-reset">100%</button>
+          <button type="button" id="zoom-in">+</button>
+          <select id="variant-select" aria-label="Presentation variant">
+            <option value="">Default presentation</option>
+            <option value="compact">Compact</option>
+            <option value="classic">Classic</option>
+            <option value="academic">Academic</option>
+            <option value="creative">Creative</option>
+          </select>
+        </div>
         <div data-v2-editor-preview-root></div>
       </section>
     </div>
@@ -114,6 +150,10 @@
     import { mountV2ProductionEntry } from './src/application/v2-production-entry.js';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
+    import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
+    import { createCVEditorPreviewPageSelector } from './src/application/cv-editor-preview-page-selector.js';
+    import { createCVEditorZoomController } from './src/application/cv-editor-zoom-controller.js';
+    import { createCVEditorAccessibilityAnnouncer } from './src/application/cv-editor-accessibility-announcer.js';
 
     const templates = listNativeV2Templates();
     const initialProfile = {
@@ -135,6 +175,9 @@
 
     const root = document.querySelector('#v2-editor');
     const status = document.querySelector('#app-status');
+    const previewRoot = document.querySelector('[data-v2-editor-preview-root]');
+    const previewPageSelect = document.querySelector('#preview-page-select');
+    const previewPageLabel = document.querySelector('#preview-page-label');
     const templateSelect = document.querySelector('#template-select');
     const previewFetcher = async (requestPath) => {
       const localPath = String(requestPath).replace(/^\/+/, '');
@@ -152,6 +195,67 @@
         persistence:{storage:window.localStorage,key:'estudent_cv_builder_v2_production',autoRecover:true}
       }
     });
+
+    const previewNavigation = createCVEditorPreviewNavigation({
+      document,
+      previewContainer: previewRoot
+    });
+    const previewSelector = createCVEditorPreviewPageSelector({container: previewRoot});
+    const zoomController = createCVEditorZoomController({container: previewRoot});
+    const accessibilityAnnouncer = createCVEditorAccessibilityAnnouncer({document});
+    document.body.appendChild(accessibilityAnnouncer.node);
+    const previewTools = document.querySelector('.preview-tools');
+    previewTools.insertBefore(previewNavigation.controls, previewPageSelect);
+    previewNavigation.controls.querySelectorAll('button').forEach(button => button.style.display = 'none');
+
+    const refreshPreviewControls = () => {
+      const pages = [...previewRoot.querySelectorAll('[data-page-number]')];
+      const current = previewSelector.get();
+      previewPageSelect.replaceChildren(...pages.map(page => {
+        const option = document.createElement('option');
+        option.value = page.getAttribute('data-page-number');
+        option.textContent = 'Page ' + option.value;
+        option.selected = Number(option.value) === current;
+        return option;
+      }));
+      previewPageLabel.textContent = 'Page ' + current + (pages.length ? ' of ' + pages.length : '');
+    };
+    const showPage = page => {
+      previewSelector.select(page);
+      previewNavigation.show(page);
+      refreshPreviewControls();
+      accessibilityAnnouncer.announce('Preview page ' + previewSelector.get() + ' selected.');
+    };
+    document.querySelector('#preview-prev').addEventListener('click', () => showPage(previewSelector.get()-1));
+    document.querySelector('#preview-next').addEventListener('click', () => showPage(previewSelector.get()+1));
+    previewPageSelect.addEventListener('change', () => showPage(Number(previewPageSelect.value)));
+    document.querySelector('#zoom-out').addEventListener('click', () => {
+      zoomController.zoomOut();
+      document.querySelector('#zoom-reset').textContent = Math.round(zoomController.get()*100) + '%';
+      accessibilityAnnouncer.announce('Preview zoom ' + Math.round(zoomController.get()*100) + ' percent.');
+    });
+    document.querySelector('#zoom-in').addEventListener('click', () => {
+      zoomController.zoomIn();
+      document.querySelector('#zoom-reset').textContent = Math.round(zoomController.get()*100) + '%';
+      accessibilityAnnouncer.announce('Preview zoom ' + Math.round(zoomController.get()*100) + ' percent.');
+    });
+    document.querySelector('#zoom-reset').addEventListener('click', () => {
+      zoomController.reset();
+      document.querySelector('#zoom-reset').textContent = '100%';
+      accessibilityAnnouncer.announce('Preview zoom reset to 100 percent.');
+    });
+    document.querySelector('#variant-select').addEventListener('change', event => {
+      const variant = event.target.value || null;
+      runtime.surface.dispatch({
+        type:'set-variant',
+        target:{},
+        payload:{variant}
+      });
+      status.textContent = variant ? 'Presentation variant updated.' : 'Default presentation restored.';
+      accessibilityAnnouncer.announce(status.textContent);
+    });
+    const previewObserver = new MutationObserver(() => refreshPreviewControls());
+    previewObserver.observe(previewRoot,{childList:true,subtree:true});
 
     window.eStudentCVBuilderV2 = runtime;
     const workspace = createCVWorkspaceController({
@@ -275,6 +379,7 @@
     }
     renderWorkspace();
     renderVersions(workspace.getState().activeDocumentId);
+    refreshPreviewControls();
     status.textContent = 'V2 editor ready.';
     window.v2ProductionReady = true;
   </script>
