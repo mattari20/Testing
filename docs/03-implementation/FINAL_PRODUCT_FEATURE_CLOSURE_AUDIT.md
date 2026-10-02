@@ -494,7 +494,28 @@ These must remain documented and architecturally supported, but they should only
 43. R7 V1 retirement
 44. R8 final release
 
-## 21. Scope rule
+## 21. Batch execution record
+
+### Batch 1 — Template Product Layer foundation — IMPLEMENTED
+
+Completed in the release branch:
+- catalog-driven career level / industry / style metadata;
+- Template Gallery page;
+- live native-template demo rendering;
+- search and three metadata filters;
+- template detail dialog;
+- controlled demo-profile preview contract;
+- Build Online handoff;
+- Try with My Data entry point;
+- builder Template Gallery navigation;
+- URL-based template selection in the production builder;
+- automated gallery contract tests;
+- real-browser gallery test;
+- dedicated GitHub Actions validation workflow.
+
+Still external/pending in this workstream: production Word asset gate, live sample-PDF artifacts, final production browser evidence, and any premium/entitlement surface.
+
+## 22. Scope rule
 
 A capability is not considered complete merely because a contract, engine, test, or documentation file exists.
 
@@ -504,7 +525,7 @@ For a user-facing V2 release capability, completion requires:
 
 This rule is especially important for Template Library, Intelligence, Import, Word, Online CV, Accessibility and Monetization.
 
-## 22. Final audit conclusion
+## 23. Final audit conclusion
 
 The documentation was significantly ahead of the current visible product surface. The audit confirms that several apparently missing features were already designed and have foundation code, while several other approved V2 capabilities still require integration.
 
