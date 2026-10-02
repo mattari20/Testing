@@ -8,6 +8,7 @@ export function createCVFinalProductHub(options={}){
  const document=options.document,runtime=options.runtime,container=options.container;
  if(!document||!runtime||!container) throw new Error('Final product hub requires document, runtime and container.');
  const surface=runtime.surface;
+ const getRuntimeState=()=>typeof runtime.getState==='function' ? getRuntimeState() : runtime.surface?.getState?.();
  let aiResult=null;
  const root=document.createElement('section'); root.className='final-product-hub'; root.setAttribute('data-final-product-hub','true');
  const tabs=document.createElement('div'); tabs.className='final-product-tabs';
