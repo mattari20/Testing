@@ -74,3 +74,16 @@ test('restore previous version returns a stored snapshot',()=>{
   assert.equal(restored.id,version.id);
   assert.equal(w.getState().activeDocumentId,id);
 });
+
+
+test('restore version actually rolls the editor content back',()=>{
+  const store=storage(); const s=surface(); const w=createCVWorkspaceController({surface:s,storage:store});
+  w.save();
+  const id=w.getActiveDocument().id;
+  const firstVersion=w.getVersions(id)[0];
+  s.dispatch({type:'set-identity',target:{key:'fullName'},payload:{value:'Changed Name'}});
+  w.save();
+  assert.equal(s.getState().session.application.masterProfile.careerData.identity.fullName,'Changed Name');
+  w.restoreVersion(id,firstVersion.id);
+  assert.equal(s.getState().session.application.masterProfile.careerData.identity.fullName,'Ali Akbar');
+});
