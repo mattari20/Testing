@@ -24,7 +24,28 @@ export function createEditorLivePreviewRuntime(surface, root, options = {}) {
 
   let revision = 0;
   let inlineBinding = null;
+  let resizeObserver = null;
   let destroyed = false;
+
+  function fitPreviewPage(stage, page) {
+    if (!stage || !page) return;
+    const naturalWidth = page.offsetWidth || page.getBoundingClientRect().width || 794;
+    const naturalHeight = page.offsetHeight || page.getBoundingClientRect().height || 1123;
+    const availableWidth = Math.max(1, stage.clientWidth);
+    const scale = Math.min(1, availableWidth / naturalWidth);
+    page.style.transformOrigin = 'top center';
+    page.style.transform = `scale(${scale})`;
+    stage.style.height = `${Math.ceil(naturalHeight * scale)}px`;
+    stage.dataset.previewScale = scale.toFixed(4);
+  }
+
+  function createPreviewStage(page) {
+    const stage = root.ownerDocument.createElement('div');
+    stage.className = 'v2-preview-stage';
+    stage.setAttribute('data-v2-preview-stage', 'true');
+    stage.appendChild(page);
+    return stage;
+  }
 
   async function refresh() {
     const token = ++revision;
@@ -50,7 +71,21 @@ export function createEditorLivePreviewRuntime(surface, root, options = {}) {
     if (destroyed || token !== revision) return { stale: true };
 
     inlineBinding?.destroy();
-    root.replaceChildren(rendered.root);
+    resizeObserver?.disconnect();
+
+    const stage = createPreviewStage(rendered.root);
+    root.replaceChildren(stage);
+
+    const fit = () => fitPreviewPage(stage, rendered.root);
+    requestAnimationFrame(fit);
+
+    if (typeof ResizeObserver === 'function') {
+      resizeObserver = new ResizeObserver(fit);
+      resizeObserver.observe(stage);
+    } else {
+      resizeObserver = null;
+    }
+
     inlineBinding = bindPreviewInlineEditing(root, surface);
 
     return Object.freeze({
@@ -77,6 +112,8 @@ export function createEditorLivePreviewRuntime(surface, root, options = {}) {
       revision += 1;
       inlineBinding?.destroy();
       inlineBinding = null;
+      resizeObserver?.disconnect();
+      resizeObserver = null;
       unsubscribe();
     }
   });
