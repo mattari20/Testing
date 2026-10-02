@@ -34,6 +34,22 @@ export function createCVWorkspaceController(options = {}) {
   let versions = {};
   let destroyed = false;
 
+  const loadState = () => {
+    if (!storage?.getItem) return;
+    try {
+      const raw = storage.getItem(storageKey);
+      if (!raw) return;
+      const payload = JSON.parse(raw);
+      if (payload?.version !== CV_WORKSPACE_CONTROLLER_VERSION || !payload.workspace) return;
+      workspace.replaceState(payload.workspace, { type: 'load-workspace' });
+      versions = payload.versions && typeof payload.versions === 'object' ? payload.versions : {};
+    } catch {
+      storage.removeItem?.(storageKey);
+    }
+  };
+
+  loadState();
+
   const saveState = () => {
     if (!storage?.setItem) return;
     const payload = {
@@ -149,6 +165,7 @@ export function createCVWorkspaceController(options = {}) {
     getDiagnostics: () => workspace.getDiagnostics(),
     getActiveDocument: () => workspace.getActiveDocument(),
     getVersions: documentId => Object.freeze([...(versions[documentId] || [])].reverse()),
+    hasStoredWorkspace: () => Boolean(storage?.getItem?.(storageKey)),
     createDocument,
     duplicateDocument,
     renameActive,
