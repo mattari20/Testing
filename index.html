@@ -116,7 +116,11 @@
       <div id="cv-version-history" class="cv-version-history" hidden></div>
     </section>
 
-    <section class="intelligence-panel" aria-label="Resume Intelligence"><div id="cv-intelligence-root"></div></section>\n\n    <div id="cv-final-product-root"></div>\n\n    <div id="v2-editor" data-v2-editor-root>
+    <section class="intelligence-panel" aria-label="Resume Intelligence"><div id="cv-intelligence-root"></div></section>
+
+    <div id="cv-final-product-root"></div>
+
+    <div id="v2-editor" data-v2-editor-root>
       <section>
         <div class="preview-title">CV Editor</div>
         <div data-v2-editor-form></div>
@@ -155,8 +159,6 @@
     import { createCVEditorPreviewPageSelector } from './src/application/cv-editor-preview-page-selector.js';
     import { createCVEditorZoomController } from './src/application/cv-editor-zoom-controller.js';
     import { createCVEditorAccessibilityAnnouncer } from './src/application/cv-editor-accessibility-announcer.js';
-    import { createCVEditorIntelligenceProduct } from './src/ui/cv-editor-intelligence-product.js';
-    import { createCVFinalProductHub } from './src/ui/cv-final-product-hub.js';
 
     const templates = listNativeV2Templates();
     const initialProfile = {
@@ -210,8 +212,6 @@
       }
     });
 
-    const intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
-    const finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
 
     const previewNavigation = createCVEditorPreviewNavigation({
       document,
@@ -279,6 +279,32 @@
     previewObserver.observe(previewRoot,{childList:true,subtree:true});
 
     window.eStudentCVBuilderV2 = runtime;
+
+    // Product-layer modules are loaded after the core editor has booted so an
+    // optional product surface can never prevent the editor itself from starting.
+    const loadProductSurfaces = async () => {
+      try {
+        const { createCVEditorIntelligenceProduct } = await import('./src/ui/cv-editor-intelligence-product.js');
+        window.eStudentCVBuilderV2.intelligenceProduct = createCVEditorIntelligenceProduct({
+          document,
+          runtime,
+          container:document.querySelector('#cv-intelligence-root')
+        });
+      } catch (error) {
+        console.error('[CV Builder V2] Resume Intelligence failed to load:', error);
+      }
+      try {
+        const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
+        window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({
+          document,
+          runtime,
+          container:document.querySelector('#cv-final-product-root')
+        });
+      } catch (error) {
+        console.error('[CV Builder V2] Final Product Hub failed to load:', error);
+      }
+    };
+    loadProductSurfaces();
     const workspace = createCVWorkspaceController({
       surface: runtime.surface,
       storage: window.localStorage,
