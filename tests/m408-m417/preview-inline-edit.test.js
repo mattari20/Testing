@@ -22,8 +22,12 @@ const address=server.address();
 const browser=await chromium.launch({headless:true});
 try {
   const page=await browser.newPage({viewport:{width:1200,height:1000}});
+  let pageError = null;
+  page.on('pageerror', error => { pageError = error instanceof Error ? error.message : String(error); });
   await page.goto('http://127.0.0.1:'+address.port+'/tests/browser/m408-m417-preview-inline.html');
-  await page.waitForFunction(()=>window.testReady===true);
+  await page.waitForFunction(() => window.testReady === true || window.testError, null, { timeout: 30000 });
+  assert.equal(pageError, null, 'browser page error: ' + pageError);
+  assert.equal(await page.evaluate(() => window.testError || null), null, 'browser module error');
 
   const ids=['t01-modern-minimalist-cv-design_modern','t02-professional-cv-design_modern','t03-professional-cv-design_modern','t04-modern-blue-corporate_modern','t05-simple-cv-graphic-web-designer_modern','t06-professional-cv-graphic-designer_modern','t07-professional-cv-store-manager-incharge_modern'];
   for (const id of ids) {
