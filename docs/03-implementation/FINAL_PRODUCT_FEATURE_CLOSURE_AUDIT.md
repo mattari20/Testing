@@ -607,3 +607,30 @@ Release evidence still required:
 - Validation against realistic job descriptions.
 - Final UX/accessibility sign-off.
 - Production evidence before R6 can move to PASS.
+
+
+## Consolidated Final Product Closure Pass
+
+Status: IMPLEMENTED where repository-local work is possible; EXTERNAL BLOCKERS remain for capabilities requiring production assets, server publication, or authoritative production evidence.
+
+Implemented in this closure pass:
+- AI Review surface with explicit user approval/rejection boundary.
+- Deterministic local AI-review baseline and safe field-level suggestion application.
+- Career-mode selector for General, Student/Fresh Graduate, Professional and Academic emphasis.
+- Cover Letter Builder first-draft workflow using current CV identity context.
+- Import/Migration intake boundary with JSON import and explicit non-claim for PDF/DOCX extraction until a production parser is enabled.
+- Privacy-controlled Online CV publication preparation boundary.
+- Portfolio link management with HTTP(S) validation.
+- Plans/Entitlements presentation boundary separated from feature logic.
+- Template comparison page.
+- Template Gallery → comparison navigation.
+- Final product closure browser acceptance test.
+- CI extension for the final product closure test.
+
+The following are intentionally NOT marked as falsely complete:
+- Actual public Online CV hosting requires a production publication/account/server service.
+- Production PDF/DOCX extraction requires an enabled parser boundary and validation fixtures.
+- Production AI generation requires an approved external AI provider/configuration; the local review surface remains provider-neutral.
+- Premium/payment entitlement enforcement requires production account/payment infrastructure.
+- Seven final Word DOCX assets still require the external production upload and live hash/HTTP verification gate.
+- Real production browser, PDF/print, DOCX, V1 migration and security evidence remain required before R6/R8.
