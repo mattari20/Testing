@@ -40,3 +40,17 @@ test('missing production root is rejected explicitly', () => {
     /V2 editor root not found/
   );
 });
+
+
+test('production entry page exposes an isolated deployable V2 browser surface', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const html = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
+  assert.match(html, /data-v2-editor-root/);
+  assert.match(html, /mountV2ProductionEntry/);
+  assert.match(html, /\.\/src\/application\/v2-production-entry\.js/);
+  assert.match(html, /data-v2-editor-preview-root/);
+  assert.match(html, /localStorage/);
+  assert.match(html, /window\.print/);
+  assert.match(html, /v2ProductionReady/);
+  assert.doesNotMatch(html, /bridge\.php|builder\.html/);
+});
