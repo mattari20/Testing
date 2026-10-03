@@ -382,7 +382,7 @@
       document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Resume Intelligence…</div>';
       try {
         const { createCVEditorIntelligenceProduct } = await import('./src/ui/cv-editor-intelligence-product.js');
-        window.eStudentCVBuilderV2.intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
+        runtime.tools.intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
         intelligenceLoaded=true; button.textContent='Resume Intelligence';
       } catch(error){ document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-error">Resume Intelligence could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Resume Intelligence failed to load:',error); }
       finally { button.disabled=false; if(!intelligenceLoaded) button.textContent='Resume Intelligence'; }
@@ -395,7 +395,7 @@
       document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Career Tools…</div>';
       try {
         const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
-        window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
+        runtime.tools.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
         careerToolsLoaded=true; button.textContent='Career Tools';
       } catch(error){ const message=String(error?.message||error||'Unknown error'); document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-error">Career Tools could not be loaded: '+message.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</div>'; console.error('[CV Builder V2] Career Tools failed to load:',error); }
       finally { button.disabled=false; if(!careerToolsLoaded) button.textContent='Career Tools'; }
