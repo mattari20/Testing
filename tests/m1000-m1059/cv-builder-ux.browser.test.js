@@ -62,6 +62,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     ];
     for (const templateId of templateIds) {
       await page.locator('#template-select').selectOption(templateId);
+      await page.waitForSelector('[data-v2-editor-preview-root] [data-v2-template-root][data-v2-template-id="' + templateId + '"]');
       let previewText = '';
       for (let attempt = 0; attempt < 50; attempt += 1) {
         previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
