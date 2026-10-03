@@ -55,6 +55,10 @@ test('blocked state cannot silently fall back to V1', () => {
   }).valid, false);
 });
 
+test('V2 state disables fallback', () => { const bridge = createV1ProductionBridge({state:'v2',templateId:'t01-modern-minimalist-cv-design',target:'v2-editor'}); assert.equal(bridge.fallbackEnabled,false); assert.equal(bridge.explicit,true); assert.equal(validateV1ProductionBridge(bridge).valid,true); });
+
+test('blocked state stays blocked even when fallback is requested', () => { const bridge = createV1ProductionBridge({state:'blocked'}); assert.equal(validateV1ProductionBridge({...bridge,fallbackEnabled:true}).valid,false); assert.equal(resolveV2ProductionHandoff({...bridge,fallbackEnabled:true}).route,'blocked'); });
+
 test('invalid state is rejected', () => {
   assert.throws(
     () => createV1ProductionBridge({state: 'unknown'}),
