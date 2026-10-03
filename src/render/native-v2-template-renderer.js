@@ -345,6 +345,23 @@ function applyRepeats(root, snapshot) {
   }
 }
 
+function applyItemValueFallbacks(root, snapshot) {
+  const sectionByType = new Map(
+    (Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [])
+      .map(section => [String(section.type), section])
+  );
+  const keyToSection = { skill: 'skills', language: 'languages' };
+  for (const element of root.querySelectorAll('[data-v2-item-value]')) {
+    if (String(element.textContent || '').trim()) continue;
+    const key = String(element.getAttribute('data-v2-item-value') || '');
+    const section = sectionByType.get(keyToSection[key]);
+    if (!section) continue;
+    const field = (Array.isArray(section.fields) ? section.fields : [])
+      .find(item => item?.visibility !== false && item?.value != null && String(item.value).trim());
+    if (field) element.textContent = String(field.value);
+  }
+}
+
 function applySectionVisibility(root, snapshot) {
   for (const element of [...root.querySelectorAll('[data-v2-section][data-v2-visible-when]')]) {
     const binding = element.getAttribute('data-v2-visible-when') || '';
@@ -383,6 +400,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
 
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
+  applyItemValueFallbacks(root, snapshot);
   applyVisibility(root, snapshot);
   applyValues(root, snapshot);
   applyPreviewEditTargets(root, snapshot);
