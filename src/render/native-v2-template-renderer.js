@@ -277,7 +277,7 @@ function applySectionVisibility(root, snapshot) {
     const binding = element.getAttribute('data-v2-visible-when') || '';
     if (binding.startsWith('section:')) {
       const [, type] = binding.split(':');
-      if (!isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, type))) element.remove();
+      if (type === 'photo' ? !hasProfilePhoto(snapshot) : !isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, type))) element.remove();
     }
   }
 }
