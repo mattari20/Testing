@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="eStudent CV Builder V2 — create, edit, preview and save a professional CV locally.">
+  <meta name="theme-color" content="#0d6efd">
+  <title>eStudent CV Builder V2 — Create Your CV</title>
+  <style>
+    :root{
+      --brand:#0d6efd;--brand-dark:#084298;--ink:#172033;--muted:#667085;
+      --surface:#fff;--soft:#f5f8fc;--border:#dfe5ee;--success:#198754;
+      --radius:14px;--shadow:0 10px 30px rgba(16,24,40,.08)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .site-header{background:linear-gradient(135deg,#0d6efd,#084298);color:#fff;padding:18px 24px}
+    .header-inner{max-width:1500px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between}
+    .brand{font-weight:800;font-size:20px}.subbrand{opacity:.86;font-size:13px;margin-top:2px}
+    .app-shell{max-width:1500px;margin:20px auto;padding:0 16px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);padding:14px;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}
+    .toolbar label{font-size:13px;font-weight:700;color:var(--muted)}
+    select,button,input,textarea{font:inherit}
+    button,select{border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px}
+    button{cursor:pointer;font-weight:650}.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+    button:hover{filter:brightness(.97)}button:disabled{opacity:.55;cursor:not-allowed}
+    .status{margin-left:auto;font-size:13px;color:var(--muted)}
+    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:stretch}#v2-editor>section{display:flex;flex-direction:column;min-height:0}
+    [data-v2-editor-form],[data-v2-editor-preview-root]{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    [data-v2-editor-form]{padding:18px;flex:1;min-height:0;max-height:none;overflow:auto}
+    [data-v2-editor-preview-root]{padding:22px;min-height:650px;overflow:auto;flex:1}
+    .v2-preview-stage{width:100%;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;position:relative}
+    .v2-preview-stage>[data-v2-template-root]{flex:0 0 auto;transform-origin:top center}
+    [data-v2-editor-form] section{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}
+    [data-v2-editor-form] h3{margin:0 0 12px;font-size:16px}
+    [data-v2-editor-form] header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    [data-v2-editor-form] label{display:block;margin:8px 0;font-size:13px;font-weight:650;color:var(--muted)}
+    [data-v2-editor-form] input,[data-v2-editor-form] select,[data-v2-editor-form] textarea{width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;background:#fff}
+    [data-v2-editor-form] button{margin:4px 4px 0 0;font-size:12px}
+    [data-v2-editor-form] article{border-top:1px dashed var(--border);padding-top:12px;margin-top:12px}
+    [data-v2-editor-form] [data-v2-editor-field-wrapper]{padding:10px;background:var(--soft);border-radius:9px;margin:8px 0}
+    .workspace-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:16px}
+    .workspace-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .workspace-head strong{font-size:15px}.workspace-head span{font-size:12px;color:var(--muted);margin-left:10px}
+    .workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{font-size:12px}
+    .cv-document-list{display:flex;gap:8px;overflow:auto;padding-top:12px}
+    .cv-document{min-width:180px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer}
+    .cv-document.active{border-color:var(--brand);box-shadow:0 0 0 2px rgba(13,110,253,.12)}
+    .cv-document.archived{opacity:.6}.cv-document-title{font-weight:750;font-size:13px}.cv-document-meta{font-size:11px;color:var(--muted);margin-top:4px}
+    .cv-version-history{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
+    .cv-version-item{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px}
+    .cv-version-item button{font-size:11px;padding:5px 8px}
+    .intelligence-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.cv-intelligence-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.cv-intelligence-head strong{font-size:16px}.cv-intelligence-head span{font-size:12px;color:var(--muted)}.cv-intelligence-controls{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:12px}.cv-intelligence-controls label{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--muted)}.cv-intelligence-controls textarea{width:100%;resize:vertical;padding:10px;border:1px solid var(--border);border-radius:9px}.cv-intelligence-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.cv-intelligence-summary{grid-column:1/-1}.cv-intelligence-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}.cv-intelligence-card h4{margin:0 0 7px;font-size:12px;color:var(--muted)}.cv-intelligence-card strong{display:block;font-size:21px}.cv-intelligence-card p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}.final-product-hub{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.final-product-tabs{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--border);padding-bottom:10px}.final-product-tabs button{white-space:nowrap;font-size:12px}.final-product-tabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}.final-product-body{padding-top:12px}.final-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:#fff;margin-bottom:10px}.final-card h3{margin:0 0 8px;font-size:15px}.final-card p{font-size:12px;color:var(--muted);line-height:1.5}.final-card input,.final-card textarea,.final-card select{display:block;width:100%;margin:7px 0;padding:9px;border:1px solid var(--border);border-radius:8px}.final-card button{margin:5px 6px 0 0}.final-results{margin-top:12px}@media(max-width:1000px){.cv-intelligence-results{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-intelligence-summary{grid-column:1/-1}}@media(max-width:650px){.cv-intelligence-controls{grid-template-columns:1fr}.cv-intelligence-results{grid-template-columns:1fr}}
+    .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
+    [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
+    .preview-tools{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:-2px 0 12px}
+    .preview-tools button,.preview-tools select{font-size:12px;padding:7px 9px}
+    .preview-tools .preview-page-label{font-size:12px;font-weight:700;color:var(--muted);margin-left:auto}
+    .preview-tools [data-preview-zoom]{display:inline-block}
+    [data-v2-editor-preview-root][data-preview-zoom="0.5"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.5)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.6"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.6)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.7"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.7)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.8)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.9)}
+    [data-v2-editor-preview-root][data-preview-zoom="1"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.1"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.1)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.2)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.3"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.3)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.4"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.4)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.5"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.5)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.6"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.6)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.7"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.7)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.8)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.9)}
+    [data-v2-editor-preview-root][data-preview-zoom="2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(2)}
+    @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
+
+    .header-product-label{font-size:13px;font-weight:700;opacity:.95}
+    .mobile-view-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .mobile-view-switch button{flex:1;border:0;background:transparent;font-size:13px;padding:9px}.mobile-view-switch button.active{background:var(--brand);color:#fff}
+    .tool-modal{position:fixed;inset:0;z-index:1000;background:rgba(23,32,51,.48);display:flex;align-items:center;justify-content:center;padding:18px}
+    .tool-modal[hidden]{display:none}.tool-modal-loading{display:flex;align-items:center;justify-content:center;min-height:180px;color:var(--muted);font-size:14px;gap:10px}.tool-modal-loading::before{content:"";width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:tool-spin .8s linear infinite}@keyframes tool-spin{to{transform:rotate(360deg)}}.tool-modal-error{padding:16px;border:1px solid #f0caca;border-radius:10px;background:#fff7f7;color:#8a1c1c}.tool-modal-card{width:min(760px,100%);max-height:min(88vh,900px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(16,24,40,.24);padding:16px}.tool-modal-wide{width:min(1100px,100%)}
+    .tool-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;position:sticky;top:0;background:var(--surface);z-index:2;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    .tool-modal-head strong{font-size:17px}.tool-modal-head button{font-size:22px;line-height:1;padding:4px 10px;border:0;background:transparent}
+    .editor-section-head,.editor-entry-head,.editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.editor-section-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.editor-section-title input{flex:1;min-width:120px}.editor-section-title span{font-size:11px;color:var(--muted);white-space:nowrap}.editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}.editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}.editor-photo-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}.editor-photo-head{display:flex;justify-content:space-between;gap:10px}.editor-photo-head strong{display:block;font-size:14px}.editor-photo-head span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.editor-photo-body{display:flex;align-items:center;gap:14px;margin-top:12px}.editor-photo-preview,.editor-photo-placeholder{width:78px;height:92px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:var(--soft)}.editor-photo-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:11px;padding:8px}.editor-photo-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-photo-upload,.editor-photo-remove{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:650;cursor:pointer;background:#fff}.editor-photo-upload{background:var(--brand);border-color:var(--brand);color:#fff}.editor-photo-remove{color:#9b1c1c}
+    @media(max-width:760px){
+      .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
+      #v2-editor{grid-template-columns:1fr}#v2-editor>section{min-height:0}[data-v2-editor-preview-root]{flex:none;padding:10px;overflow-x:hidden}.v2-preview-stage{max-width:100%;}
+      #v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}
+      #v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}
+      [data-v2-editor-form]{max-height:none;padding:12px}
+      .toolbar{padding:10px;gap:7px}.toolbar label{display:none}.toolbar select{flex:1;min-width:180px}.status{width:100%;margin-left:0}
+      .workspace-panel{padding:10px}.workspace-actions{width:100%;overflow:auto}.workspace-actions button{flex:0 0 auto}.header-product-label{display:none}.editor-photo-body{align-items:flex-start}
+      .editor-section-head,.editor-entry-head,.editor-field-head{align-items:flex-start}.editor-section-title{flex-direction:column;align-items:stretch}.editor-section-title span{white-space:normal}.editor-inline-actions{flex-shrink:0}
+      .editor-inline-action{padding:5px 6px!important}
+    }
+    @media print{
+  .site-header,.toolbar,[data-v2-editor-form],.preview-title{display:none!important}
+  body{background:#fff}.app-shell{margin:0;padding:0}
+  [data-v2-editor-preview-root]{border:0;box-shadow:none;padding:0;overflow:visible}
+  .v2-preview-stage{display:block;width:auto;height:auto!important;overflow:visible}
+  .v2-preview-stage>[data-v2-template-root]{transform:none!important}
+}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div><div class="brand">eStudent.pk — CV Builder V2</div><div class="subbrand">Create, edit and preview your professional CV online</div></div>
+      <div class="header-product-label">Professional CV Builder</div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <div class="toolbar">
+      <a href="./templates.html" style="font-weight:700;color:#0d6efd;text-decoration:none">Template Gallery</a><label for="template-select">Template</label>
+      <select id="template-select" aria-label="CV template"></select>
+      <button type="button" class="primary" id="save-btn">Save CV</button>
+      <button type="button" id="recover-btn">Recover</button>
+      <button type="button" id="clear-recovery-btn" class="secondary-action">Clear Recovery</button>
+      <button type="button" id="resume-intelligence-btn">Resume Intelligence</button>
+      <button type="button" id="career-tools-btn">Career Tools</button>
+      <button type="button" id="print-btn">Print / PDF</button>
+      <span class="status" id="app-status" aria-live="polite">Starting V2…</span>
+    </div>
+
+    <section class="workspace-panel" aria-label="CV Workspace">
+      <div class="workspace-head">
+        <div><strong>My CV Workspace</strong><span id="workspace-profile-status">One Master Profile</span></div>
+        <div class="workspace-actions">
+          <button type="button" id="new-cv-btn" class="primary">New CV</button>
+          <button type="button" id="duplicate-cv-btn">Duplicate</button>
+          <button type="button" id="rename-cv-btn">Rename</button>
+          <button type="button" id="archive-cv-btn">Archive</button>
+        </div>
+      </div>
+      <div id="cv-document-list" class="cv-document-list"></div>
+      <div id="cv-version-history" class="cv-version-history" hidden></div>
+    </section>
+
+    <div class="mobile-view-switch" role="tablist" aria-label="CV workspace view">
+      <button type="button" class="active" id="mobile-edit-tab" role="tab" aria-selected="true">Edit CV</button>
+      <button type="button" id="mobile-preview-tab" role="tab" aria-selected="false">Preview CV</button>
+    </div>
+
+    <div id="v2-editor" data-v2-editor-root>
+      <section>
+        <div class="preview-title">CV Editor</div>
+        <div data-v2-editor-form></div>
+        <div data-v2-editor-save-status hidden></div>
+        <div data-v2-editor-autosave-status hidden></div>
+        <div data-v2-editor-recovery-status hidden></div>
+      </section>
+      <section>
+        <div class="preview-title">Live A4 Preview</div>
+        <div class="preview-tools" aria-label="Preview controls">
+          <button type="button" id="preview-prev">Previous</button>
+          <button type="button" id="preview-next">Next</button>
+          <select id="preview-page-select" aria-label="Preview page"></select>
+          <span class="preview-page-label" id="preview-page-label">Page 1</span>
+          <button type="button" id="zoom-out">−</button>
+          <button type="button" id="zoom-reset">100%</button>
+          <button type="button" id="zoom-in">+</button>
+          <select id="variant-select" aria-label="Presentation variant">
+            <option value="">Default presentation</option>
+            <option value="compact">Compact</option>
+            <option value="classic">Classic</option>
+            <option value="academic">Academic</option>
+            <option value="creative">Creative</option>
+          </select>
+        </div>
+        <div data-v2-editor-preview-root></div>
+      </section>
+    </div>
+
+    <div class="tool-modal" id="resume-intelligence-modal" hidden role="dialog" aria-modal="true" aria-labelledby="resume-intelligence-title">
+      <div class="tool-modal-card">
+        <div class="tool-modal-head"><strong id="resume-intelligence-title">Resume Intelligence</strong><button type="button" data-close-tool-modal="resume-intelligence-modal" aria-label="Close">×</button></div>
+        <div id="cv-intelligence-root"></div>
+      </div>
+    </div>
+    <div class="tool-modal" id="career-tools-modal" hidden role="dialog" aria-modal="true" aria-labelledby="career-tools-title">
+      <div class="tool-modal-card tool-modal-wide">
+        <div class="tool-modal-head"><strong id="career-tools-title">Career Tools</strong><button type="button" data-close-tool-modal="career-tools-modal" aria-label="Close">×</button></div>
+        <div id="cv-final-product-root"></div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js';
+    import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
+    import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
+    import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
+    import { createCVEditorPreviewPageSelector } from './src/application/cv-editor-preview-page-selector.js';
+    import { createCVEditorZoomController } from './src/application/cv-editor-zoom-controller.js';
+    import { createCVEditorAccessibilityAnnouncer } from './src/application/cv-editor-accessibility-announcer.js';
+
+    const templates = listNativeV2Templates();
+    const initialProfile = {
+      careerData: {
+        assets: [],
+        identity: { fullName:'Your Name', jobTitle:'Professional Title', email:'you@example.com', phone:'', location:'Pakistan' },
+        sections: [
+          {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Write a concise professional summary.',visibility:true}],entries:[],repeatable:false},
+          {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[{id:'experience-1',values:{role:'Your Role',company:'Company Name',dates:'2024 — Present',description:'Describe your responsibilities and achievements.'},visibility:true,order:0}],repeatable:true},
+          {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'Degree / Qualification',institution:'Institution',dates:'2020 — 2024'},visibility:true,order:0}],repeatable:true},
+          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'Communication, Problem Solving, Microsoft Office',visibility:true}],entries:[],repeatable:false},
+          {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[{id:'languagesText',type:'text',label:'Languages',value:'English, Urdu',visibility:true}],entries:[],repeatable:false}
+        ]
+      },
+    cvData: {
+      title:'My CV',
+      configuration:{template:{id:'t01-modern-minimalist-cv-design_modern',version:'2.0.0'}}
+    }
+    };
+
+    const root = document.querySelector('#v2-editor');
+    const status = document.querySelector('#app-status');
+    const reportBootError = error => {
+      const message = String(error?.message || error || 'Unknown startup error');
+      status.textContent = 'V2 startup error: ' + message;
+      console.error('[CV Builder V2] startup error:', error);
+    };
+    window.addEventListener('error', event => {
+      if (event?.error) reportBootError(event.error);
+    });
+    window.addEventListener('unhandledrejection', event => {
+      if (event?.reason) reportBootError(event.reason);
+    });
+    const sanitizeStoredJson = (key) => {
+      try { const raw=window.localStorage.getItem(key); if(raw) JSON.parse(raw); }
+      catch(error){ window.localStorage.removeItem(key); console.warn('[CV Builder V2] Removed invalid saved data:', key); }
+    };
+    sanitizeStoredJson('estudent_cv_builder_v2_production');
+    sanitizeStoredJson('estudent_cv_workspace_v2');
+
+    const previewRoot = document.querySelector('[data-v2-editor-preview-root]');
+    const previewPageSelect = document.querySelector('#preview-page-select');
+    const previewPageLabel = document.querySelector('#preview-page-label');
+    const templateSelect = document.querySelector('#template-select');
+    const previewFetcher = async (requestPath) => {
+      const localPath = String(requestPath).replace(/^\/+/, '');
+      return fetch(new URL('./' + localPath, document.baseURI));
+    };
+
+    const runtime = mountV2ProductionEntry(document, {
+      rootSelector:'#v2-editor',
+      input:{
+        profileData:{careerData:initialProfile.careerData},
+        cvData:initialProfile.cvData,
+        targetedCV:initialProfile.targetedCV,
+        preview:true,
+        previewOptions:{fetcher:previewFetcher},
+        persistence:{storage:window.localStorage,key:'estudent_cv_builder_v2_production',autoRecover:true}
+      }
+    });
+
+
+    const previewNavigation = createCVEditorPreviewNavigation({
+      document,
+      previewContainer: previewRoot
+    });
+    const previewSelector = createCVEditorPreviewPageSelector({container: previewRoot});
+    const zoomController = createCVEditorZoomController({container: previewRoot});
+    const accessibilityAnnouncer = createCVEditorAccessibilityAnnouncer({document});
+    document.body.appendChild(accessibilityAnnouncer.node);
+    const previewTools = document.querySelector('.preview-tools');
+    previewTools.insertBefore(previewNavigation.controls, previewPageSelect);
+    previewNavigation.controls.querySelectorAll('button').forEach(button => button.style.display = 'none');
+
+    const refreshPreviewControls = () => {
+      const templateRoot = previewRoot.querySelector('[data-v2-template-root]');
+      if (templateRoot && !previewRoot.querySelector('[data-page-number]')) {
+        templateRoot.setAttribute('data-page-number', '1');
+      }
+      const pages = [...previewRoot.querySelectorAll('[data-page-number]')];
+      const current = previewSelector.get();
+      previewPageSelect.replaceChildren(...pages.map(page => {
+        const option = document.createElement('option');
+        option.value = page.getAttribute('data-page-number');
+        option.textContent = 'Page ' + option.value;
+        option.selected = Number(option.value) === current;
+        return option;
+      }));
+      previewPageLabel.textContent = 'Page ' + current + (pages.length ? ' of ' + pages.length : '');
+    };
+    const showPage = page => {
+      previewSelector.select(page);
+      previewNavigation.show(page);
+      refreshPreviewControls();
+      accessibilityAnnouncer.announce('Preview page ' + previewSelector.get() + ' selected.');
+    };
+    document.querySelector('#preview-prev').addEventListener('click', () => showPage(previewSelector.get()-1));
+    document.querySelector('#preview-next').addEventListener('click', () => showPage(previewSelector.get()+1));
+    previewPageSelect.addEventListener('change', () => showPage(Number(previewPageSelect.value)));
+    document.querySelector('#zoom-out').addEventListener('click', () => {
+      zoomController.zoomOut();
+      document.querySelector('#zoom-reset').textContent = Math.round(zoomController.get()*100) + '%';
+      accessibilityAnnouncer.announce('Preview zoom ' + Math.round(zoomController.get()*100) + ' percent.');
+    });
+    document.querySelector('#zoom-in').addEventListener('click', () => {
+      zoomController.zoomIn();
+      document.querySelector('#zoom-reset').textContent = Math.round(zoomController.get()*100) + '%';
+      accessibilityAnnouncer.announce('Preview zoom ' + Math.round(zoomController.get()*100) + ' percent.');
+    });
+    document.querySelector('#zoom-reset').addEventListener('click', () => {
+      zoomController.reset();
+      document.querySelector('#zoom-reset').textContent = '100%';
+      accessibilityAnnouncer.announce('Preview zoom reset to 100 percent.');
+    });
+    document.querySelector('#variant-select').addEventListener('change', event => {
+      const variant = event.target.value || null;
+      runtime.surface.dispatch({
+        type:'set-variant',
+        target:{},
+        payload:{variant}
+      });
+      status.textContent = variant ? 'Presentation variant updated.' : 'Default presentation restored.';
+      accessibilityAnnouncer.announce(status.textContent);
+    });
+    const previewObserver = new MutationObserver(() => refreshPreviewControls());
+    previewObserver.observe(previewRoot,{childList:true,subtree:true});
+    const mobileEditTab=document.querySelector('#mobile-edit-tab');
+    const mobilePreviewTab=document.querySelector('#mobile-preview-tab');
+    const fitMobilePreview=()=>{
+      if(window.innerWidth>760) return;
+      const templateRoot=previewRoot.querySelector('[data-v2-template-root]');
+      if(!templateRoot) return;
+      const available=Math.max(240,previewRoot.clientWidth-20);
+      const nativeWidth=Math.max(1,templateRoot.getBoundingClientRect().width / Math.max(zoomController.get(),0.01));
+      zoomController.set(Math.max(.5,Math.min(1,available/nativeWidth)));
+      document.querySelector('#zoom-reset').textContent=Math.round(zoomController.get()*100)+'%';
+    };
+    const setMobileView=view=>{
+      document.querySelector('#v2-editor').setAttribute('data-mobile-view',view);
+      mobileEditTab.classList.toggle('active',view==='edit'); mobilePreviewTab.classList.toggle('active',view==='preview');
+      mobileEditTab.setAttribute('aria-selected',String(view==='edit')); mobilePreviewTab.setAttribute('aria-selected',String(view==='preview'));
+      if(view==='preview'){ refreshPreviewControls(); requestAnimationFrame(fitMobilePreview); }
+    };
+    mobileEditTab.addEventListener('click',()=>setMobileView('edit'));
+    mobilePreviewTab.addEventListener('click',()=>setMobileView('preview'));
+    setMobileView('edit');
+    window.addEventListener('resize',()=>{ if(document.querySelector('#v2-editor').getAttribute('data-mobile-view')==='preview') fitMobilePreview(); });
+
+
+    window.eStudentCVBuilderV2 = runtime;
+
+    // Secondary tools are lazy-loaded only when opened, keeping the main editor compact and reducing boot work.
+    let intelligenceLoaded=false, careerToolsLoaded=false;
+    const openModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=false; document.body.style.overflow='hidden'; } };
+    const closeModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=true; if(!document.querySelector('.tool-modal:not([hidden])')) document.body.style.overflow=''; } };
+    document.querySelector('#resume-intelligence-btn').addEventListener('click', async () => {
+      const button=document.querySelector('#resume-intelligence-btn');
+      openModal('resume-intelligence-modal');
+      if(intelligenceLoaded) return;
+      button.disabled=true; button.textContent='Opening…';
+      document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Resume Intelligence…</div>';
+      try {
+        const { createCVEditorIntelligenceProduct } = await import('./src/ui/cv-editor-intelligence-product.js');
+        window.eStudentCVBuilderV2.intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
+        intelligenceLoaded=true; button.textContent='Resume Intelligence';
+      } catch(error){ document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-error">Resume Intelligence could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Resume Intelligence failed to load:',error); }
+      finally { button.disabled=false; if(!intelligenceLoaded) button.textContent='Resume Intelligence'; }
+    });
+    document.querySelector('#career-tools-btn').addEventListener('click', async () => {
+      const button=document.querySelector('#career-tools-btn');
+      openModal('career-tools-modal');
+      if(careerToolsLoaded) return;
+      button.disabled=true; button.textContent='Opening…';
+      document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Career Tools…</div>';
+      try {
+        const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
+        window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
+        careerToolsLoaded=true; button.textContent='Career Tools';
+      } catch(error){ document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-error">Career Tools could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Career Tools failed to load:',error); }
+      finally { button.disabled=false; if(!careerToolsLoaded) button.textContent='Career Tools'; }
+    });
+    document.querySelectorAll('[data-close-tool-modal]').forEach(button => button.addEventListener('click',()=>closeModal(button.getAttribute('data-close-tool-modal'))));
+    document.querySelectorAll('.tool-modal').forEach(modal => modal.addEventListener('click',event=>{ if(event.target===modal) closeModal(modal.id); }));
+    document.addEventListener('keydown',event=>{ if(event.key==='Escape') document.querySelectorAll('.tool-modal:not([hidden])').forEach(modal=>closeModal(modal.id)); });
+
+    const workspace = createCVWorkspaceController({
+      surface: runtime.surface,
+      storage: window.localStorage,
+      storageKey: 'estudent_cv_workspace_v2'
+    });
+
+    const documentList = document.querySelector('#cv-document-list');
+    const versionHistory = document.querySelector('#cv-version-history');
+    const renderWorkspace = () => {
+      const state = workspace.getState();
+      documentList.replaceChildren(...state.documents.map(cvDocument => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cv-document' + (cvDocument.id === state.activeDocumentId ? ' active' : '') + (cvDocument.status === 'archived' ? ' archived' : '');
+        button.innerHTML = '<div class="cv-document-title"></div><div class="cv-document-meta"></div>';
+        button.querySelector('.cv-document-title').textContent = cvDocument.title || 'Untitled CV';
+        button.querySelector('.cv-document-meta').textContent = cvDocument.status === 'archived' ? 'Archived' : 'Active CV';
+        button.addEventListener('click', () => {
+          try { workspace.switchDocument(cvDocument.id); renderWorkspace(); renderVersions(cvDocument.id); status.textContent = 'CV switched.'; }
+          catch (error) { status.textContent = 'Switch failed: ' + (error?.message || error); }
+        });
+        return button;
+      }));
+    };
+    const renderVersions = (documentId) => {
+      const versions = workspace.getVersions(documentId);
+      versionHistory.hidden = versions.length === 0;
+      versionHistory.innerHTML = '<strong>Version History</strong>';
+      versions.slice(0,10).forEach(version => {
+        const row = document.createElement('div');
+        row.className = 'cv-version-item';
+        const label = document.createElement('span');
+        label.textContent = (version.title || 'CV') + ' — ' + new Date(version.createdAt).toLocaleString();
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = 'Restore';
+        button.addEventListener('click', () => {
+          try { workspace.restoreVersion(documentId, version.id); renderWorkspace(); renderVersions(documentId); status.textContent = 'Previous CV version restored.'; }
+          catch (error) { status.textContent = 'Version restore failed: ' + (error?.message || error); }
+        });
+        row.append(label, button); versionHistory.appendChild(row);
+      });
+    };
+    document.querySelector('#new-cv-btn').addEventListener('click', () => {
+      const title = window.prompt('CV name', 'New CV');
+      if (title === null) return;
+      try { workspace.createDocument(title.trim() || 'New CV'); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'New CV created.'; }
+      catch (error) { status.textContent = 'Create failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#duplicate-cv-btn').addEventListener('click', () => {
+      try { workspace.duplicateDocument(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV duplicated.'; }
+      catch (error) { status.textContent = 'Duplicate failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#rename-cv-btn').addEventListener('click', () => {
+      const current = workspace.getActiveDocument()?.title || 'CV';
+      const title = window.prompt('CV name', current);
+      if (title === null) return;
+      try { workspace.renameActive(title.trim() || current); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV renamed.'; }
+      catch (error) { status.textContent = 'Rename failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#archive-cv-btn').addEventListener('click', () => {
+      if (!window.confirm('Archive the active CV?')) return;
+      try { workspace.archiveActive(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV archived.'; }
+      catch (error) { status.textContent = 'Archive failed: ' + (error?.message || error); }
+    });
+
+
+    templates.forEach(template => {
+      const option = document.createElement('option');
+      option.value = template.id;
+      option.textContent = template.name;
+      templateSelect.appendChild(option);
+    });
+
+    const requestedTemplateId = new URLSearchParams(window.location.search).get('template');
+    if (requestedTemplateId && templates.some(item => item.id === requestedTemplateId)) {
+      runtime.surface.dispatch({
+        type:'set-template',
+        target:{},
+        payload:{templateId:requestedTemplateId,version:templates.find(item => item.id === requestedTemplateId).version}
+      });
+    }
+    const currentTemplate = runtime.surface.getState().session.application.targetedCV.configuration.template?.id;
+    templateSelect.value = currentTemplate || templates[0]?.id || '';
+
+    templateSelect.addEventListener('change', () => {
+      const template = templates.find(item => item.id === templateSelect.value);
+      if (!template) return;
+      runtime.surface.dispatch({
+        type:'set-template',
+        target:{},
+        payload:{templateId:template.id,version:template.version}
+      });
+      status.textContent = 'Template updated — preview refreshing…';
+    });
+
+    document.querySelector('#save-btn').addEventListener('click', () => {
+      try { runtime.save(); workspace.save(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV saved locally.'; }
+      catch (error) { status.textContent = 'Save failed: ' + (error?.message || error); }
+    });
+
+    document.querySelector('#recover-btn').addEventListener('click', () => {
+      try { runtime.recover(); status.textContent = 'Recovery check completed.'; }
+      catch (error) { status.textContent = 'Recovery failed: ' + (error?.message || error); }
+    });
+
+    document.querySelector('#clear-recovery-btn').addEventListener('click', () => {
+      try { runtime.clearRecovery(); status.textContent = 'Saved recovery snapshot cleared.'; }
+      catch (error) { status.textContent = 'Clear failed: ' + (error?.message || error); }
+    });
+
+    document.querySelector('#print-btn').addEventListener('click', () => window.print());
+
+    const initialActive = workspace.getState().activeDocumentId;
+    if (workspace.hasStoredWorkspace()) {
+      try {
+        if (!runtime.persistence?.hasRecovery?.()) workspace.switchDocument(initialActive);
+        else workspace.save();
+      } catch { /* preserve the current editor/recovery state */ }
+    }
+    renderWorkspace();
+    renderVersions(workspace.getState().activeDocumentId);
+    refreshPreviewControls();
+    status.textContent = 'V2 editor ready.';
+    window.v2ProductionReady = true;
+  </script>
+</body>
+</html>
