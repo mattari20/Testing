@@ -1,7 +1,7 @@
 import { createAIResult, AI_TASK } from '../application/cv-ai-intelligence.js';
 import { createPrivacyPolicy, VISIBILITY } from '../security/security-privacy-engine.js';
 
-export const CV_FINAL_PRODUCT_HUB_VERSION='1.0.0';
+export const CV_FINAL_PRODUCT_HUB_VERSION='1.1.0';
 const clone=v=>v==null?v:JSON.parse(JSON.stringify(v));
 
 export function createCVFinalProductHub(options={}){
@@ -56,7 +56,7 @@ export function createCVFinalProductHub(options={}){
   const c=card('Cover Letter Builder','Create a first draft from the current CV. Review and edit before use.');
   const role=document.createElement('input');role.placeholder='Target role';const company=document.createElement('input');company.placeholder='Company / organization';
   const generate=document.createElement('button');generate.textContent='Create Draft';generate.className='primary';const out=document.createElement('textarea');out.rows=12;out.style.width='100%';
-  generate.onclick=()=>{const s=runtime.getState();const id=s.session.application.masterProfile?.careerData?.identity||{};out.value='Dear Hiring Manager,\n\nI am writing to apply for the '+(role.value||'position')+' opportunity at '+(company.value||'your organization')+'. My background and skills described in my CV have prepared me to contribute effectively to this role.\n\nI would welcome the opportunity to discuss how my experience can support your team.\n\nSincerely,\n'+(id.fullName||'Your Name');};
+  generate.onclick=()=>{const s=surface.getState();const id=s.session.application.masterProfile?.careerData?.identity||{};out.value='Dear Hiring Manager,\n\nI am writing to apply for the '+(role.value||'position')+' opportunity at '+(company.value||'your organization')+'. My background and skills described in my CV have prepared me to contribute effectively to this role.\n\nI would welcome the opportunity to discuss how my experience can support your team.\n\nSincerely,\n'+(id.fullName||'Your Name');};
   c.append(role,company,generate,out);body.append(c);
  }
  function renderImport(){
