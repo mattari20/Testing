@@ -30,6 +30,16 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     });
     await page.waitForTimeout(100);
     assert.equal(await page.locator('.editor-photo-preview').count(),1);
+    assert.equal(await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count(),1);
+
+    // Verify real identity editing reaches the live application state.
+    const fullName = page.locator('[data-v2-editor-identity-field="fullName"]');
+    await fullName.fill('Ali Akbar');
+    await fullName.blur();
+    await page.waitForTimeout(100);
+    assert.equal(await page.evaluate(() =>
+      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+    ), 'Ali Akbar');
 
     assert.equal(await page.locator('[data-v2-editor-identity-field="fullName"]').count(),1);
     assert.match(await page.locator('[data-v2-editor-identity-wrapper="fullName"]').innerText(),/Full Name/);
@@ -44,6 +54,45 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await page.waitForSelector('#v2-editor');
     assert.doesNotMatch(await page.locator('#app-status').innerText(),/startup error/i);
     assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1');
+
+    // Verify section visibility controls persist through a real UI command.
+    const summarySection = page.locator('[data-v2-editor-section="summary"]');
+    await summarySection.locator('[data-v2-editor-command="set-visibility"]').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden'), 'true');
+
+    await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-command="set-visibility"]').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden'), 'false');
+
+    // Duplicate an experience entry and verify the editor rerenders the new entry.
+    const experienceEntriesBefore = await page.locator('[data-v2-editor-section="experience"] [data-v2-editor-entry]').count();
+    await page.locator('[data-v2-editor-section="experience"] [data-v2-editor-command="duplicate-entry"]').first().click();
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.locator('[data-v2-editor-section="experience"] [data-v2-editor-entry]').count(),
+      experienceEntriesBefore + 1
+    );
+
+    // Add a field and a section through the actual editor controls.
+    const summaryFieldsBefore = await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-field-wrapper]').count();
+    await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-command="add-field"]').click();
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-field-wrapper]').count(),
+      summaryFieldsBefore + 1
+    );
+
+    const sectionsBefore = await page.locator('[data-v2-editor-section]').count();
+    await page.locator('[data-v2-editor-command="add-section"]').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('[data-v2-editor-section]').count(), sectionsBefore + 1);
+
+    // Verify uploaded photo can be removed from the same live editor state.
+    await page.locator('[data-v2-editor-photo-remove="profile-photo"]').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('.editor-photo-preview').count(),0);
+    assert.equal(await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count(),0);
 
     await page.locator('#variant-select').selectOption('academic');
     await page.waitForTimeout(100);
