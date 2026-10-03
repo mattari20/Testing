@@ -25,29 +25,76 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     await page.waitForSelector('#cv-document-list .cv-document');
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),1);
 
-    page.once('dialog',dialog=>dialog.accept('Second CV'));
-    await page.locator('#new-cv-btn').click();
+    // Establish a real content baseline and a version that can be restored.
+    const fullNameInput = page.locator('[data-v2-editor-identity-wrapper="fullName"] input').first();
+    await fullNameInput.fill('Baseline Engineer');
+    await fullNameInput.blur();
+    await page.locator('#save-btn').click();
+    await page.waitForTimeout(150);
+    assert.ok((await page.locator('#cv-version-history').textContent()).includes('Version History'));
+
+    const baselineName = await page.evaluate(() =>
+      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+    );
+    assert.equal(baselineName, 'Baseline Engineer');
+
+    // Duplicate the edited original and verify the duplicate carries real content.
+    await page.locator('#duplicate-cv-btn').click();
     await page.waitForTimeout(100);
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),2);
 
-    await page.locator('#duplicate-cv-btn').click();
+    const duplicatedName = await page.evaluate(() =>
+      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+    );
+    assert.equal(duplicatedName, 'Baseline Engineer');
+
+    // Switch back to the original CV and verify its content remains intact.
+    const originalCard = page.locator('#cv-document-list .cv-document').first();
+    await originalCard.click();
     await page.waitForTimeout(100);
-    assert.equal(await page.locator('#cv-document-list .cv-document').count(),3);
+    const switchedName = await page.evaluate(() =>
+      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+    );
+    assert.equal(switchedName, 'Baseline Engineer');
 
     page.once('dialog',dialog=>dialog.accept('Renamed CV'));
     await page.locator('#rename-cv-btn').click();
     await page.waitForTimeout(100);
     assert.equal(await page.locator('.cv-document-title', {hasText:'Renamed CV'}).count(),1);
 
+    // Change real CV content, save a second version, then restore the first version.
+    await fullNameInput.fill('Edited Engineer');
+    await fullNameInput.blur();
     await page.locator('#save-btn').click();
     await page.waitForTimeout(200);
     assert.equal(await page.locator('#cv-version-history').getAttribute('hidden'),null);
+    assert.ok((await page.locator('.cv-version-item').count()) >= 2);
+
+    const versionBeforeRestore = await page.evaluate(() =>
+      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+    );
+    assert.equal(versionBeforeRestore, 'Edited Engineer');
+
+    const restoreButtons = page.locator('.cv-version-item button');
+    assert.ok((await restoreButtons.count()) >= 2);
+    await restoreButtons.nth(1).click();
+    await page.waitForTimeout(150);
+    const restoredName = await page.evaluate(() =>
+      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+    );
+    assert.equal(restoredName, 'Baseline Engineer');
+
+    // Create a separate CV, then archive it to verify the active-document handoff.
+    page.once('dialog',dialog=>dialog.accept('Second CV'));
+    await page.locator('#new-cv-btn').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('#cv-document-list .cv-document').count(),3);
 
     page.once('dialog',dialog=>dialog.accept());
     await page.locator('#archive-cv-btn').click();
     await page.waitForTimeout(100);
-    const dialog=page.locator('body');
-    assert.ok(await dialog.textContent().then(text=>text.includes('My CV') || text.includes('Second CV') || text.includes('Renamed CV')));
+    assert.ok(await page.locator('.cv-document.archived').count() >= 1);
+    assert.equal(await page.locator('#cv-document-list .cv-document').count(),3);
 
     await page.reload({waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
