@@ -397,7 +397,7 @@
         const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
         window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
         careerToolsLoaded=true; button.textContent='Career Tools';
-      } catch(error){ document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-error">Career Tools could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Career Tools failed to load:',error); }
+      } catch(error){ const message=String(error?.message||error||'Unknown error'); document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-error">Career Tools could not be loaded: '+message.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</div>'; console.error('[CV Builder V2] Career Tools failed to load:',error); }
       finally { button.disabled=false; if(!careerToolsLoaded) button.textContent='Career Tools'; }
     });
     document.querySelectorAll('[data-close-tool-modal]').forEach(button => button.addEventListener('click',()=>closeModal(button.getAttribute('data-close-tool-modal'))));
