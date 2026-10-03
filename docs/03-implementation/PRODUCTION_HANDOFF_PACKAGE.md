@@ -8,7 +8,9 @@ Repository implementation and automated validation are complete through the curr
 
 ## Current verified repository state
 
-- Accepted release code commit: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+- Current production deployment candidate: `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6`.
+- Previously validated application-code boundary: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+- Subsequent production-branch commits are repository-side test/security/governance closure; no live production acceptance is implied.
 - V2 Integration Validation: SUCCESS — run `36898954934`.
 - Native V2 Browser Validation: SUCCESS — run `36898954976`.
 - CV Builder V2 Validation: SUCCESS — run `36898954974`.
@@ -29,15 +31,15 @@ Repository implementation and automated validation are complete through the curr
 
 Before uploading anything to production:
 
-- freeze the deployment target at commit `274707d57edd69a840274fbdb5eb4eace80be4fb`;
-- do not deploy an unverified later application-code commit;
-- confirm the fresh validation runs above remain the authoritative evidence for this release boundary;
+- freeze the deployment target at the exact final candidate commit `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6`;
+- retain the previously validated application-code evidence as supporting repository evidence;
+- do not represent repository test/security closure as live production acceptance;
 - ensure the seven Word-template assets and their manifest are included in the production upload plan;
 - keep V1 available until R6 is PASS.
 
 ### Step 1 — Deploy the exact accepted commit
 
-Deploy the exact V2 release commit intended for production and record:
+Deploy the exact final V2 release candidate identified in Step 0 and record:
 
 - production URL;
 - exact deployed Git commit SHA;
@@ -232,7 +234,7 @@ Notes:
 
 ## Remaining external release blockers
 
-The repository-side implementation and current automated evidence are complete through R5. The remaining blockers are operational/external:
+The repository-side implementation and automated release evidence are complete through the current repository gate boundary; live production evidence is still required. The remaining blockers are operational/external:
 
 1. Production credential rotation/revocation.
 2. Authoritative Git-history secret verification.
