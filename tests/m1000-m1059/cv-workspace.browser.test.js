@@ -38,16 +38,11 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     );
     assert.equal(baselineName, 'Baseline Engineer');
 
-    page.once('dialog',dialog=>dialog.accept('Second CV'));
-    await page.locator('#new-cv-btn').click();
+    // Duplicate the edited original and verify the duplicate carries real content.
+    await page.locator('#duplicate-cv-btn').click();
     await page.waitForTimeout(100);
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),2);
 
-    await page.locator('#duplicate-cv-btn').click();
-    await page.waitForTimeout(100);
-    assert.equal(await page.locator('#cv-document-list .cv-document').count(),3);
-
-    // Duplicate must carry the actual edited CV content, not just the title.
     const duplicatedName = await page.evaluate(() =>
       window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
     );
@@ -89,11 +84,17 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     );
     assert.equal(restoredName, 'Baseline Engineer');
 
+    // Create a separate CV, then archive it to verify the active-document handoff.
+    page.once('dialog',dialog=>dialog.accept('Second CV'));
+    await page.locator('#new-cv-btn').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('#cv-document-list .cv-document').count(),3);
+
     page.once('dialog',dialog=>dialog.accept());
     await page.locator('#archive-cv-btn').click();
     await page.waitForTimeout(100);
-    const dialog=page.locator('body');
-    assert.ok(await dialog.textContent().then(text=>text.includes('My CV') || text.includes('Second CV') || text.includes('Renamed CV')));
+    assert.ok(await page.locator('.cv-document.archived').count() >= 1);
+    assert.equal(await page.locator('#cv-document-list .cv-document').count(),3);
 
     await page.reload({waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
