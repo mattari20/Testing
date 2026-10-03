@@ -15,6 +15,17 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     const page=await browser.newPage({viewport:{width:1440,height:1000}});
     await page.goto('http://127.0.0.1:'+port+'/?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
     await page.waitForSelector('#v2-editor');
+
+    // Desktop must expose the secondary tools; they are intentionally collapsed only on mobile.
+    for (const id of ['recover-btn','clear-recovery-btn','resume-intelligence-btn','career-tools-btn','print-btn']) {
+      assert.equal(await page.locator('#'+id).isVisible(),true,'Desktop tool should be visible: '+id);
+    }
+    await page.locator('#resume-intelligence-btn').click();
+    assert.equal(await page.locator('#resume-intelligence-modal').isVisible(),true);
+    await page.locator('[data-close-tool-modal="resume-intelligence-modal"]').click();
+    await page.locator('#career-tools-btn').click();
+    assert.equal(await page.locator('#career-tools-modal').isVisible(),true);
+    await page.locator('[data-close-tool-modal="career-tools-modal"]').click();
     assert.equal(await page.locator('#preview-prev').count(),1);
     assert.equal(await page.locator('#preview-next').count(),1);
     assert.equal(await page.locator('#zoom-in').count(),1);
