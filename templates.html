@@ -140,7 +140,7 @@ async function openDetails(t){
  dialog.showModal();
 }
 document.querySelector('#close-dialog').onclick=()=>dialog.close();
-document.querySelector('#builder-btn').onclick=()=>location.href='./?template='+encodeURIComponent(templates[0]?.id||'');
+document.querySelector('#builder-btn').onclick=()=>location.href='./builder.html?template='+encodeURIComponent(templates[0]?.id||'');
 document.querySelector('#reset').onclick=()=>{search.value='';level.value='';industry.value='';style.value='';render();};
 [search,level,industry,style].forEach(el=>el.addEventListener('input',render));
 render();
