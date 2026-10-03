@@ -54,8 +54,8 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     assert.equal(duplicatedName, 'Baseline Engineer');
 
     // Switch back to the original CV and verify its content remains intact.
-    const originalCard = page.locator('#cv-document-list .cv-document').filter({hasText:'Baseline Engineer'});
-    await originalCard.first().click();
+    const originalCard = page.locator('#cv-document-list .cv-document').first();
+    await originalCard.click();
     await page.waitForTimeout(100);
     const switchedName = await page.evaluate(() =>
       window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
