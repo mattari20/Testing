@@ -13,7 +13,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
   const browser=await chromium.launch({headless:true});
   try{
     const page=await browser.newPage({viewport:{width:1440,height:1000}});
-    await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+    await page.goto('http://127.0.0.1:'+port+'/?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
     await page.waitForSelector('#v2-editor');
     assert.equal(await page.locator('#preview-prev').count(),1);
     assert.equal(await page.locator('#preview-next').count(),1);
@@ -21,10 +21,28 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     assert.equal(await page.locator('#zoom-out').count(),1);
     assert.equal(await page.locator('#variant-select').count(),1);
     assert.equal(await page.locator('[data-editor-announcer]').count(),1);
+    assert.equal(await page.locator('[data-v2-editor-photo]').count(),1);
+    assert.equal(await page.locator('[data-v2-editor-photo-input]').count(),1);
+    await page.locator('[data-v2-editor-photo-input]').setInputFiles({
+      name:'profile.png',
+      mimeType:'image/png',
+      buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64')
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('.editor-photo-preview').count(),1);
+
+    assert.equal(await page.locator('[data-v2-editor-identity-field="fullName"]').count(),1);
+    assert.match(await page.locator('[data-v2-editor-identity-wrapper="fullName"]').innerText(),/Full Name/);
+    assert.doesNotMatch(await page.locator('[data-v2-editor-section="summary"]').innerText(),/fullName|jobTitle/);
+
 
     await page.locator('#zoom-in').click();
     assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1.1');
     await page.locator('#zoom-reset').click();
+    await page.evaluate(() => localStorage.setItem('estudent_cv_builder_v2_production','{broken-json'));
+    await page.reload({waitUntil:'networkidle'});
+    await page.waitForSelector('#v2-editor');
+    assert.doesNotMatch(await page.locator('#app-status').innerText(),/startup error/i);
     assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1');
 
     await page.locator('#variant-select').selectOption('academic');

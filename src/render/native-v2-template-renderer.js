@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.2.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -23,6 +23,14 @@ function readPath(source, path) {
 export function findCanonicalSection(snapshot, sectionType) {
   const sections = Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [];
   return sections.find(section => String(section.type) === String(sectionType)) || null;
+}
+
+function hasProfilePhoto(snapshot) {
+  const assets = Array.isArray(snapshot?.careerData?.assets) ? snapshot.careerData.assets : [];
+  return assets.some(item => String(item?.key || item?.id || '') === 'profile-photo' && meaningfulAsset(item));
+}
+function meaningfulAsset(asset) {
+  return Boolean(asset?.url || asset?.src);
 }
 
 export function isCanonicalSectionVisible(snapshot, section) {
@@ -114,7 +122,7 @@ function applyVisibility(root, snapshot, context = {}) {
     let value;
     if (binding.startsWith('section:')) {
       const [, sectionType] = binding.split(':');
-      value = isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, sectionType));
+      value = sectionType === 'photo' ? hasProfilePhoto(snapshot) : isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, sectionType));
     } else {
       value = resolveNativeValue(snapshot, binding, context);
     }
@@ -269,7 +277,7 @@ function applySectionVisibility(root, snapshot) {
     const binding = element.getAttribute('data-v2-visible-when') || '';
     if (binding.startsWith('section:')) {
       const [, type] = binding.split(':');
-      if (!isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, type))) element.remove();
+      if (type === 'photo' ? !hasProfilePhoto(snapshot) : !isCanonicalSectionVisible(snapshot, findCanonicalSection(snapshot, type))) element.remove();
     }
   }
 }

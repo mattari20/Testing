@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.4.0';
+export const EDITOR_DOM_VERSION = '1.5.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -33,6 +33,33 @@ export function bindEditorFields(root, surface, options = {}) {
     };
     input.addEventListener('input', handler);
     listeners.push(() => input.removeEventListener('input', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-photo-input]').forEach(input => {
+    const handler = () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (!String(file.type || '').startsWith('image/')) { input.value=''; return; }
+      if (file.size > 2 * 1024 * 1024) { input.value=''; return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        surface.dispatch(createEditorCommand({
+          type:'upload-asset',
+          target:{assetId:'profile-photo'},
+          payload:{id:'profile-photo',key:'profile-photo',type:file.type,url:String(reader.result || ''),name:file.name,size:file.size}
+        }));
+      };
+      reader.readAsDataURL(file);
+    };
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-photo-remove]').forEach(button => {
+    const handler = () => surface.dispatch(createEditorCommand({
+      type:'remove-asset',
+      target:{assetId:button.getAttribute('data-v2-editor-photo-remove')}
+    }));
+    button.addEventListener('click', handler);
+    listeners.push(() => button.removeEventListener('click', handler));
   });
   root.querySelectorAll('[data-v2-editor-section-title]').forEach(input => {
     const handler = () => surface.dispatch(createEditorCommand({type:'set-section-title',target:{sectionId:input.dataset.v2EditorSectionTitle},payload:{title:input.value}}));

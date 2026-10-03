@@ -10,7 +10,7 @@ test('final product closure surface exposes remaining product workflows', async 
   await delay(500);
   const browser=await chromium.launch({headless:true});
   const page=await browser.newPage();
-  await page.goto('http://127.0.0.1:4177/index.html',{waitUntil:'networkidle'});
+  await page.goto('http://127.0.0.1:4177/index.html?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
   await page.locator('#career-tools-btn').click();
   await page.locator('#career-tools-modal').waitFor({state:'visible'});
   const tabs=await page.locator('.final-product-tabs button').allTextContents();

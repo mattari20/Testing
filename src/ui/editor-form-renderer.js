@@ -1,12 +1,13 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.5.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.6.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
   role:'Role', company:'Company', dates:'Dates', description:'Description', degree:'Degree / Qualification', institution:'Institution'
 });
 function labelFor(key){ return LABELS[String(key)] || String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase()); }
+function iconFor(label){ return ({Hide:'👁',Show:'👁',Remove:'🗑',Duplicate:'⧉','Move Up':'↑','Move Down':'↓'})[label] || label; }
 function actionButton(label, command, target, payload, extra='') {
-  return '<button type="button" class="editor-inline-action '+extra+'" title="'+esc(label)+'" aria-label="'+esc(label)+'" data-v2-editor-command="'+esc(command)+'" data-v2-target="'+attr(target)+'"'+(payload ? ' data-v2-payload="'+attr(payload)+'"' : '')+'>'+esc(label === 'Move Up' ? '↑' : label === 'Move Down' ? '↓' : label)+'</button>';
+  return '<button type="button" class="editor-inline-action '+extra+'" title="'+esc(label)+'" aria-label="'+esc(label)+'" data-v2-editor-command="'+esc(command)+'" data-v2-target="'+attr(target)+'"'+(payload ? ' data-v2-payload="'+attr(payload)+'"' : '')+'>'+esc(iconFor(label))+'</button>';
 }
 
 function esc(value) {
@@ -85,7 +86,7 @@ export function renderEditorForm(surface, documentData, options = {}) {
   const hiddenEntries = Array.isArray(configuration.hiddenEntries) ? configuration.hiddenEntries.map(String) : [];
   const identity = documentData.careerData?.identity && typeof documentData.careerData.identity === 'object' ? documentData.careerData.identity : {};
   const identityHtml = Object.entries(identity).map(([key,value]) =>
-    '<label data-v2-editor-identity-wrapper="'+esc(key)+'"><span>'+esc(key)+'</span><input data-v2-editor-identity-field="'+esc(key)+'" value="'+esc(value)+'"></label>'
+    '<label data-v2-editor-identity-wrapper="'+esc(key)+'"><span>'+esc(labelFor(key))+'</span><input data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(value)+'"></label>'
   ).join('');
   const sections = orderItems(documentData.careerData?.sections || [], configuration.sectionOrder || []);
   const sectionIds = sections.map(s=>s.id);
@@ -108,9 +109,16 @@ export function renderEditorForm(surface, documentData, options = {}) {
       (section.repeatable ? '<button type="button" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:section.id})+'" data-v2-payload="'+attr({values:{}})+'">Add '+esc(section.title || section.type || 'entry')+'</button>' : '') +
       '</section>';
   }).join('');
+  const assets = Array.isArray(documentData.careerData?.assets) ? documentData.careerData.assets : [];
+  const photo = assets.find(item => String(item?.key || item?.id || '') === 'profile-photo');
+  const photoHtml = '<section class="editor-photo-card" data-v2-editor-photo>' +
+    '<div class="editor-photo-head"><div><strong>Profile Photo</strong><span>Optional • used by templates that support photos</span></div></div>' +
+    '<div class="editor-photo-body">' + (photo?.url || photo?.src ? '<img class="editor-photo-preview" src="'+esc(photo.url || photo.src)+'" alt="Profile photo preview">' : '<div class="editor-photo-placeholder">No photo added</div>') +
+    '<div class="editor-photo-actions"><label class="editor-photo-upload">'+(photo?.url || photo?.src ? 'Change Photo' : 'Upload Photo')+'<input type="file" accept="image/*" data-v2-editor-photo-input hidden></label>' +
+    ((photo?.url || photo?.src) ? '<button type="button" class="editor-photo-remove" data-v2-editor-photo-remove="profile-photo">Remove Photo</button>' : '') + '</div></div></section>';
   return Object.freeze({
     version: EDITOR_FORM_RENDERER_VERSION,
-    html: '<section data-v2-editor-identity><h3>Personal Information</h3>'+identityHtml+'</section>'+sectionsHtml+
+    html: photoHtml+'<section data-v2-editor-identity><h3>Personal Information</h3>'+identityHtml+'</section>'+sectionsHtml+
       '<button type="button" data-v2-editor-command="add-section" data-v2-target="'+attr({})+'" data-v2-payload="'+attr({title:'New Section',type:'custom',repeatable:false})+'">Add Section</button>',
     sectionCount:sections.length
   });
