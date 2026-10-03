@@ -328,6 +328,15 @@ function applyRepeats(root, snapshot) {
       }
       const context = mode === 'values' ? { item } : { entry: item };
       applyValues(cloneNode, snapshot, context);
+      if (mode === 'values') {
+        for (const element of cloneNode.querySelectorAll('[data-v2-item-value]')) {
+          const key = element.getAttribute('data-v2-item-value') || '';
+          const direct = item?.[key];
+          const canonical = item?.value;
+          const value = direct ?? canonical;
+          if (value !== undefined && value !== null) element.textContent = String(value);
+        }
+      }
       applyVisibility(cloneNode, snapshot, context);
       fragment.appendChild(cloneNode);
     }
