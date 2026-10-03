@@ -62,11 +62,12 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     ];
     for (const templateId of templateIds) {
       await page.locator('#template-select').selectOption(templateId);
-      await page.waitForFunction(() => {
-        const text = document.querySelector('[data-v2-editor-preview-root]')?.innerText || '';
-        return text.includes('Ali Khan') && text.includes('Software Engineer') && text.includes('Tech Solutions Ltd.') && text.includes('University of Lahore');
-      }, {timeout:5000});
-      const previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
+      let previewText = '';
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
+        if (previewText.includes('Ali Khan') && previewText.includes('Software Engineer') && previewText.includes('Tech Solutions Ltd.') && previewText.includes('University of Lahore')) break;
+        await page.waitForTimeout(100);
+      }
       assert.ok(previewText.includes('Ali Khan'), 'Template should render the demo identity: '+templateId);
       assert.ok(previewText.includes('Software Engineer'), 'Template should render the demo title: '+templateId);
       assert.ok(previewText.includes('Tech Solutions Ltd.'), 'Template should render experience data: '+templateId);
