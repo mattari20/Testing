@@ -20,7 +20,7 @@ function createVersionSnapshot(document, masterProfile) {
 
 export function createCVWorkspaceController(options = {}) {
   const storage = options.storage || null;
-  const storageKey = options.storageKey || 'estudent_cv_workspace_v2';
+  const storageKey = options.storageKey || 'estudent_cv_workspace_v2_2027';
   const surface = options.surface;
   if (!surface?.getState) throw new Error('Workspace controller requires an editor surface.');
 
