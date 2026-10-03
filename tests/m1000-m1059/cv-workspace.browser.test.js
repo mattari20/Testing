@@ -21,7 +21,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
   try {
     const context=await browser.newContext();
     const page=await context.newPage({viewport:{width:1440,height:1000}});
-    await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+    await page.goto('http://127.0.0.1:'+port+'/?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),1);
 
