@@ -8,7 +8,18 @@ Repository implementation and automated validation are complete through the curr
 
 ## Current verified repository state
 
-- Accepted release code commit: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+### Current release reconciliation — 2026-10-03
+
+- Current production-branch application candidate: `1e979b736f78ced3a0b8b7c393290d646d64215a`.
+- This candidate is **not yet certified as the final production release commit**; the latest successful browser evidence recorded in the repository predates this application-code candidate.
+- The candidate is 79 commits ahead of the earlier `36e5e174...` evidence boundary and contains additional application/UX changes, so earlier validation must not be treated as automatic validation of this candidate.
+- GitHub Actions execution is currently blocked by the account Actions-minute limit; therefore no new CI reruns should be used solely to establish this reconciliation.
+- The deployment target must remain frozen at the exact candidate above until a fresh validation/deployment decision is recorded.
+
+
+
+- Historical accepted/evidenced release boundary: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+- Current application deployment candidate under reconciliation: `1e979b736f78ced3a0b8b7c393290d646d64215a`.
 - V2 Integration Validation: SUCCESS — run `36898954934`.
 - Native V2 Browser Validation: SUCCESS — run `36898954976`.
 - CV Builder V2 Validation: SUCCESS — run `36898954974`.
@@ -29,15 +40,15 @@ Repository implementation and automated validation are complete through the curr
 
 Before uploading anything to production:
 
-- freeze the deployment target at commit `274707d57edd69a840274fbdb5eb4eace80be4fb`;
-- do not deploy an unverified later application-code commit;
-- confirm the fresh validation runs above remain the authoritative evidence for this release boundary;
+- freeze the deployment target at commit `1e979b736f78ced3a0b8b7c393290d646d64215a` only after the remaining candidate-validation decision is recorded;
+- do not substitute the older `274707d57edd69a840274fbdb5eb4eace80be4fb` evidence boundary for validation of the newer application candidate;
+- do not deploy any later application-code commit until it has its own evidence boundary;
 - ensure the seven Word-template assets and their manifest are included in the production upload plan;
 - keep V1 available until R6 is PASS.
 
-### Step 1 — Deploy the exact accepted commit
+### Step 1 — Deploy the exact reconciled candidate
 
-Deploy the exact V2 release commit intended for production and record:
+Deploy the exact reconciled V2 candidate only after the release lock is satisfied, and record:
 
 - production URL;
 - exact deployed Git commit SHA;
