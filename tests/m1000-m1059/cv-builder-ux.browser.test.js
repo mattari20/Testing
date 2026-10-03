@@ -26,7 +26,6 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await page.locator('#career-tools-btn').click();
     assert.equal(await page.locator('#career-tools-modal').isVisible(),true);
     const careerTabs = ['AI Review','Career Mode','Cover Letter','Import / Migration','Online CV','Portfolio','Plans & Privacy'];
-    await page.locator('#career-tools-btn').click();
     for (const tab of careerTabs) {
       await page.locator('.final-product-tabs button', { hasText: tab }).click();
       assert.equal(await page.locator('.final-product-body').isVisible(), true, 'Career tool tab should be accessible: '+tab);
