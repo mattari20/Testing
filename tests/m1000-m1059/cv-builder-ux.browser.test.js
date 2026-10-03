@@ -101,7 +101,25 @@ test('production builder exposes page navigation, zoom, variants and accessibili
 
     const pageCount=await page.locator('[data-page-number]').count();
     assert.ok(pageCount>=1);
+    assert.equal(await page.locator('#preview-page-select option').count(),pageCount);
+    assert.match(await page.locator('#preview-page-label').innerText(),new RegExp('Page 1 of ' + pageCount));
+
+    // Validate the rendered page has A4-like geometry and the print control reaches the browser boundary.
+    const desktopPageGeometry=await page.evaluate(()=>{
+      const node=document.querySelector('[data-v2-template-root]');
+      const rect=node?.getBoundingClientRect();
+      return {width:rect?.width||0,height:rect?.height||0,ratio:rect?.width&&rect?.height?rect.height/rect.width:0};
+    });
+    assert.ok(desktopPageGeometry.width>0);
+    assert.ok(desktopPageGeometry.height>0);
+    assert.ok(desktopPageGeometry.ratio>1.2 && desktopPageGeometry.ratio<1.6);
+    await page.evaluate(()=>{ window.__eStudentPrintCalled=false; window.print=()=>{window.__eStudentPrintCalled=true;}; });
+    await page.locator('#print-btn').click();
+    assert.equal(await page.evaluate(()=>window.__eStudentPrintCalled),true);
+
+    // A one-page document must not navigate beyond its available page range.
     await page.locator('#preview-next').click();
+    assert.equal(await page.locator('[data-page-number][data-page-active="true"]').getAttribute('data-page-number'),'1');
 
     // Real mobile editor/preview view switching and fit-to-width behavior.
     await page.setViewportSize({width:390,height:844});
