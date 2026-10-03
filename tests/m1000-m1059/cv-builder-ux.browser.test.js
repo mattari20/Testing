@@ -23,6 +23,14 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     assert.equal(await page.locator('[data-editor-announcer]').count(),1);
     assert.equal(await page.locator('[data-v2-editor-photo]').count(),1);
     assert.equal(await page.locator('[data-v2-editor-photo-input]').count(),1);
+    await page.locator('[data-v2-editor-photo-input]').setInputFiles({
+      name:'profile.png',
+      mimeType:'image/png',
+      buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64')
+    });
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('.editor-photo-preview').count(),1);
+
     assert.equal(await page.locator('[data-v2-editor-identity-field="fullName"]').count(),1);
     assert.match(await page.locator('[data-v2-editor-identity-wrapper="fullName"]').innerText(),/Full Name/);
     assert.doesNotMatch(await page.locator('[data-v2-editor-section="summary"]').innerText(),/fullName|jobTitle/);
