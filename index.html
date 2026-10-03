@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="eStudent CV Builder V2 — create, edit, preview and save a professional CV locally.">
   <meta name="theme-color" content="#0d6efd">
+  <script>
+    (() => {
+      const path = location.pathname.replace(/\/+$/, '/');
+      const isBuilderRoot = /\/cv-builder-v2\/(?:index\.html)?$/.test(path);
+      const hasTemplate = new URLSearchParams(location.search).has('template');
+      if (isBuilderRoot && !hasTemplate) location.replace('./templates.html');
+    })();
+  </script>
   <title>eStudent CV Builder V2</title>
   <style>
     :root{
@@ -25,10 +33,10 @@
     button{cursor:pointer;font-weight:650}.primary{background:var(--brand);border-color:var(--brand);color:#fff}
     button:hover{filter:brightness(.97)}button:disabled{opacity:.55;cursor:not-allowed}
     .status{margin-left:auto;font-size:13px;color:var(--muted)}
-    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:start}
+    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:stretch}#v2-editor>section{display:flex;flex-direction:column;min-height:0}
     [data-v2-editor-form],[data-v2-editor-preview-root]{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-    [data-v2-editor-form]{padding:18px;max-height:calc(100vh - 170px);overflow:auto}
-    [data-v2-editor-preview-root]{padding:22px;min-height:650px;overflow:auto}
+    [data-v2-editor-form]{padding:18px;flex:1;min-height:0;max-height:none;overflow:auto}
+    [data-v2-editor-preview-root]{padding:22px;min-height:650px;overflow:auto;flex:1}
     .v2-preview-stage{width:100%;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;position:relative}
     .v2-preview-stage>[data-v2-template-root]{flex:0 0 auto;transform-origin:top center}
     [data-v2-editor-form] section{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}
@@ -79,13 +87,13 @@
     .mobile-view-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;box-shadow:var(--shadow)}
     .mobile-view-switch button{flex:1;border:0;background:transparent;font-size:13px;padding:9px}.mobile-view-switch button.active{background:var(--brand);color:#fff}
     .tool-modal{position:fixed;inset:0;z-index:1000;background:rgba(23,32,51,.48);display:flex;align-items:center;justify-content:center;padding:18px}
-    .tool-modal[hidden]{display:none}.tool-modal-card{width:min(760px,100%);max-height:min(88vh,900px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(16,24,40,.24);padding:16px}.tool-modal-wide{width:min(1100px,100%)}
+    .tool-modal[hidden]{display:none}.tool-modal-loading{display:flex;align-items:center;justify-content:center;min-height:180px;color:var(--muted);font-size:14px;gap:10px}.tool-modal-loading::before{content:"";width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:tool-spin .8s linear infinite}@keyframes tool-spin{to{transform:rotate(360deg)}}.tool-modal-error{padding:16px;border:1px solid #f0caca;border-radius:10px;background:#fff7f7;color:#8a1c1c}.tool-modal-card{width:min(760px,100%);max-height:min(88vh,900px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(16,24,40,.24);padding:16px}.tool-modal-wide{width:min(1100px,100%)}
     .tool-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;position:sticky;top:0;background:var(--surface);z-index:2;padding-bottom:8px;border-bottom:1px solid var(--border)}
     .tool-modal-head strong{font-size:17px}.tool-modal-head button{font-size:22px;line-height:1;padding:4px 10px;border:0;background:transparent}
     .editor-section-head,.editor-entry-head,.editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.editor-section-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.editor-section-title input{flex:1;min-width:120px}.editor-section-title span{font-size:11px;color:var(--muted);white-space:nowrap}.editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}.editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}
     @media(max-width:760px){
       .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
-      #v2-editor{grid-template-columns:1fr}
+      #v2-editor{grid-template-columns:1fr}#v2-editor>section{min-height:0}[data-v2-editor-preview-root]{flex:none;padding:10px;overflow-x:hidden}.v2-preview-stage{max-width:100%;}
       #v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}
       #v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}
       [data-v2-editor-form]{max-height:none;padding:12px}
@@ -315,15 +323,25 @@
     previewObserver.observe(previewRoot,{childList:true,subtree:true});
     const mobileEditTab=document.querySelector('#mobile-edit-tab');
     const mobilePreviewTab=document.querySelector('#mobile-preview-tab');
+    const fitMobilePreview=()=>{
+      if(window.innerWidth>760) return;
+      const templateRoot=previewRoot.querySelector('[data-v2-template-root]');
+      if(!templateRoot) return;
+      const available=Math.max(240,previewRoot.clientWidth-20);
+      const nativeWidth=Math.max(1,templateRoot.getBoundingClientRect().width / Math.max(zoomController.get(),0.01));
+      zoomController.set(Math.max(.5,Math.min(1,available/nativeWidth)));
+      document.querySelector('#zoom-reset').textContent=Math.round(zoomController.get()*100)+'%';
+    };
     const setMobileView=view=>{
       document.querySelector('#v2-editor').setAttribute('data-mobile-view',view);
       mobileEditTab.classList.toggle('active',view==='edit'); mobilePreviewTab.classList.toggle('active',view==='preview');
       mobileEditTab.setAttribute('aria-selected',String(view==='edit')); mobilePreviewTab.setAttribute('aria-selected',String(view==='preview'));
-      if(view==='preview') refreshPreviewControls();
+      if(view==='preview'){ refreshPreviewControls(); requestAnimationFrame(fitMobilePreview); }
     };
     mobileEditTab.addEventListener('click',()=>setMobileView('edit'));
     mobilePreviewTab.addEventListener('click',()=>setMobileView('preview'));
     setMobileView('edit');
+    window.addEventListener('resize',()=>{ if(document.querySelector('#v2-editor').getAttribute('data-mobile-view')==='preview') fitMobilePreview(); });
 
 
     window.eStudentCVBuilderV2 = runtime;
@@ -333,22 +351,30 @@
     const openModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=false; document.body.style.overflow='hidden'; } };
     const closeModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=true; if(!document.querySelector('.tool-modal:not([hidden])')) document.body.style.overflow=''; } };
     document.querySelector('#resume-intelligence-btn').addEventListener('click', async () => {
+      const button=document.querySelector('#resume-intelligence-btn');
       openModal('resume-intelligence-modal');
       if(intelligenceLoaded) return;
+      button.disabled=true; button.textContent='Opening…';
+      document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Resume Intelligence…</div>';
       try {
         const { createCVEditorIntelligenceProduct } = await import('./src/ui/cv-editor-intelligence-product.js');
         window.eStudentCVBuilderV2.intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
-        intelligenceLoaded=true;
-      } catch(error){ console.error('[CV Builder V2] Resume Intelligence failed to load:',error); }
+        intelligenceLoaded=true; button.textContent='Resume Intelligence';
+      } catch(error){ document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-error">Resume Intelligence could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Resume Intelligence failed to load:',error); }
+      finally { button.disabled=false; if(!intelligenceLoaded) button.textContent='Resume Intelligence'; }
     });
     document.querySelector('#career-tools-btn').addEventListener('click', async () => {
+      const button=document.querySelector('#career-tools-btn');
       openModal('career-tools-modal');
       if(careerToolsLoaded) return;
+      button.disabled=true; button.textContent='Opening…';
+      document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Career Tools…</div>';
       try {
         const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
         window.eStudentCVBuilderV2.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
-        careerToolsLoaded=true;
-      } catch(error){ console.error('[CV Builder V2] Career Tools failed to load:',error); }
+        careerToolsLoaded=true; button.textContent='Career Tools';
+      } catch(error){ document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-error">Career Tools could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Career Tools failed to load:',error); }
+      finally { button.disabled=false; if(!careerToolsLoaded) button.textContent='Career Tools'; }
     });
     document.querySelectorAll('[data-close-tool-modal]').forEach(button => button.addEventListener('click',()=>closeModal(button.getAttribute('data-close-tool-modal'))));
     document.querySelectorAll('.tool-modal').forEach(modal => modal.addEventListener('click',event=>{ if(event.target===modal) closeModal(modal.id); }));
