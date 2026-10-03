@@ -133,6 +133,17 @@ function resolveEntryValue(entry, key) {
   return undefined;
 }
 
+function canonicalEntryKey(key, sectionType) {
+  const raw = String(key);
+  const map = {
+    experience: { title: 'role', duration: 'dates', desc: 'description' },
+    education: { institute: 'institution', year: 'dates' },
+    projects: { title: 'name', desc: 'description' },
+    achievements: { achievement: 'achievement', title: 'achievement', desc: 'achievement' }
+  };
+  return map[String(sectionType)]?.[raw] || raw;
+}
+
 function meaningful(value) {
   if (Array.isArray(value)) return value.length > 0;
   return value !== undefined && value !== null && String(value).trim() !== '';
@@ -246,7 +257,7 @@ function applyPreviewEditTargets(root, snapshot) {
     element.setAttribute('data-v2-preview-target', JSON.stringify({
       sectionId: section.id,
       entryId,
-      key: element.getAttribute('data-v2-entry-value')
+      key: canonicalEntryKey(element.getAttribute('data-v2-entry-value'), sectionType)
     }));
     element.setAttribute('contenteditable', 'true');
     element.setAttribute('spellcheck', 'false');
