@@ -62,19 +62,10 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     ];
     for (const templateId of templateIds) {
       await page.locator('#template-select').selectOption(templateId);
-      try {
-        await page.waitForFunction(() => {
-          const text = document.querySelector('[data-v2-editor-preview-root]')?.innerText || '';
-          return /Ali Khan/.test(text) && /Software Engineer/.test(text) && /Tech Solutions Ltd\\./.test(text) && /University of Lahore/.test(text);
-        }, {timeout:5000});
-      } catch (error) {
-        const diagnostic = await page.evaluate(() => ({
-          text: document.querySelector('[data-v2-editor-preview-root]')?.innerText || '',
-          html: document.querySelector('[data-v2-editor-preview-root]')?.innerHTML || '',
-          sections: window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.sections
-        }));
-        throw new Error('Template render diagnostic '+templateId+': '+JSON.stringify(diagnostic));
-      }
+      await page.waitForFunction(() => {
+        const text = document.querySelector('[data-v2-editor-preview-root]')?.innerText || '';
+        return /Ali Khan/.test(text) && /Software Engineer/.test(text) && /Tech Solutions Ltd\\./.test(text) && /University of Lahore/.test(text);
+      }, {timeout:5000});
       const previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
       assert.match(previewText,/Ali Khan/, 'Template should render the demo identity: '+templateId);
       assert.match(previewText,/Software Engineer/, 'Template should render the demo title: '+templateId);
