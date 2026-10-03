@@ -6,7 +6,7 @@ This document is the final repository-level reconciliation after the M208–M217
 
 ## Repository completion
 
-The following are present on `main`:
+The following are present on `release/cv-builder-v2-production`:
 
 - V1 functional preservation inventory and UI/CSS preservation contract.
 - V1 source/security audit and V1→V2 master reconciliation.
@@ -23,7 +23,7 @@ The following are present on `main`:
 
 ## Security scan result
 
-A repository search on the current `main` branch found no matches for the checked secret indicators:
+A repository search on the current `release/cv-builder-v2-production` branch found no matches for the checked secret indicators:
 
 - `password`
 - `DB_HOST`
@@ -36,12 +36,12 @@ This is a repository-content scan only. It does not prove that historical V1 pro
 
 ## Current release gate status
 
-The current `main` commit has fresh automated validation evidence:
+The current V2 release boundary has fresh automated validation evidence:
 
-- V2 Integration Validation: SUCCESS — run `36898954934` on release code commit `274707d57edd69a840274fbdb5eb4eace80be4fb`.
-- Native V2 Browser Validation: SUCCESS — run `36898954976` on release code commit `274707d57edd69a840274fbdb5eb4eace80be4fb`.
-- Browser job completed Golden Baseline, Native V2, V1, paired comparison, editor preview, and integrated fragmentation validation successfully.
-- R3, R4 and R5 are now closed at the evidence level for the current V2 release boundary. Full repository validation and E2E contract validation are also green.
+- Deployment candidate: `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6`.
+- Previously validated application-code boundary: `274707d57edd69a840274fbdb5eb4eace80be4fb`.
+- Subsequent production-branch changes are repository-side test/security/governance closure; this document does not convert them into live production evidence.
+- R3, R4 and R5 remain evidence-controlled; R6 remains OPEN, R7 remains OPEN, and R8 remains BLOCKED until production evidence is recorded.
 
 ## Remaining release gates
 
@@ -76,8 +76,8 @@ The project governance rule is to keep these gates explicit rather than converti
 The release-closure work now has explicit records for the first five gates:
 
 - `docs/00-foundation/R1_V1_SOURCE_AND_ASSET_CLOSURE.md` — V1 source/asset reconciliation remains conditional because T01 ATS, T01 Simple and remaining historical asset references are not authoritatively recovered.
-- `docs/00-foundation/R2_SECURITY_CLOSURE.md` — current-main repository secret-indicator scan is clean for the checked indicators; production credential rotation/revocation and historical-secret verification remain open.
-- `docs/00-foundation/R3_GOLDEN_BASELINE_CLOSURE.md` — sanitized A–I Golden Baseline input fixtures are present; current-main runtime/output evidence is now observed through the fresh browser validation run.
+- `docs/00-foundation/R2_SECURITY_CLOSURE.md` — current release-branch repository secret-indicator scan is clean for the checked indicators; production credential rotation/revocation and historical-secret verification remain open.
+- `docs/00-foundation/R3_GOLDEN_BASELINE_CLOSURE.md` — sanitized A–I Golden Baseline input fixtures are present; current release-boundary runtime/output evidence is now observed through the fresh browser validation run.
 
 These records do not change the release-gate policy: unresolved external evidence remains explicitly open.
 
