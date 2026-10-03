@@ -634,3 +634,22 @@ The following are intentionally NOT marked as falsely complete:
 - Premium/payment entitlement enforcement requires production account/payment infrastructure.
 - Seven final Word DOCX assets still require the external production upload and live hash/HTTP verification gate.
 - Real production browser, PDF/print, DOCX, V1 migration and security evidence remain required before R6/R8.
+
+
+## Gallery-first builder UX closure
+
+This audit now records the consolidated UX closure pass implemented after real-browser visual review:
+
+- The public V2 root entry is gallery-first; direct editor entry remains available through an explicit template query/deep link.
+- Template gallery continues to provide preview/detail and Build Online handoff.
+- Desktop editor and preview share a balanced outer workspace height, with independent inner scrolling.
+- Mobile preview uses an explicit Edit/Preview switch and fits the A4 page to the available viewport width.
+- Resume Intelligence and Career Tools remain secondary lazy-loaded modal surfaces with visible loading/error states.
+- Section/entry/field actions use compact icon controls with accessible labels/tooltips.
+- Editor identity labels are user-facing rather than raw internal field keys.
+- Profile photo upload, replace and remove are exposed in the editor; native templates can resolve the profile-photo asset without requiring a separate photo section in the canonical profile model.
+- Invalid local JSON storage is discarded before V2 boot so malformed recovery/workspace data cannot block startup.
+- Career Tools state access is bound to the editor surface state contract.
+- Browser regression coverage was updated for the explicit template entry, photo upload, human-readable labels and malformed-storage startup recovery.
+
+This pass is a product-UX implementation update; final production evidence still requires the release branch deployment and real-browser verification on Hostinger.
