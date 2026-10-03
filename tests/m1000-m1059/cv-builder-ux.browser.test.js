@@ -25,7 +25,21 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await page.locator('[data-close-tool-modal="resume-intelligence-modal"]').click();
     await page.locator('#career-tools-btn').click();
     assert.equal(await page.locator('#career-tools-modal').isVisible(),true);
+    const careerTabs = ['AI Review','Career Mode','Cover Letter','Import / Migration','Online CV','Portfolio','Plans & Privacy'];
+    await page.locator('#career-tools-btn').click();
+    for (const tab of careerTabs) {
+      await page.locator('.final-product-tabs button', { hasText: tab }).click();
+      assert.equal(await page.locator('.final-product-body').isVisible(), true, 'Career tool tab should be accessible: '+tab);
+    }
     await page.locator('[data-close-tool-modal="career-tools-modal"]').click();
+
+    await page.locator('#resume-intelligence-btn').click();
+    assert.equal(await page.locator('#cv-intelligence-root').isVisible(), true);
+    await page.locator('#cv-intelligence-job').fill('JavaScript REST APIs Git Testing');
+    await page.getByRole('button', {name:'Analyze CV'}).click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('.cv-intelligence-results').isVisible(), true);
+    await page.locator('[data-close-tool-modal="resume-intelligence-modal"]').click();
 
     // Every published native V2 template must render the canonical demo identity,
     // experience, and education data; template-specific legacy field names must not blank the CV.
