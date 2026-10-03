@@ -18,7 +18,7 @@
     .header-inner{max-width:1500px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between}
     .brand{font-weight:800;font-size:20px}.subbrand{opacity:.86;font-size:13px;margin-top:2px}
     .app-shell{max-width:1500px;margin:20px auto;padding:0 16px}
-    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);padding:14px;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);padding:14px;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}.toolbar-secondary{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.toolbar-menu{display:none}.toolbar-menu summary{list-style:none;cursor:pointer;font-weight:700;border:1px solid var(--border);background:#fff;border-radius:9px;padding:9px 12px}.toolbar-menu summary::-webkit-details-marker{display:none}
     .toolbar label{font-size:13px;font-weight:700;color:var(--muted)}
     select,button,input,textarea{font:inherit}
     button,select{border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px}
@@ -42,7 +42,7 @@
     .workspace-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:16px}
     .workspace-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
     .workspace-head strong{font-size:15px}.workspace-head span{font-size:12px;color:var(--muted);margin-left:10px}
-    .workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{font-size:12px}
+    .workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{font-size:12px}.workspace-menu{display:block}.workspace-menu>summary{display:none;list-style:none;cursor:pointer;font-weight:700;font-size:13px}.workspace-menu>summary::-webkit-details-marker{display:none}
     .cv-document-list{display:flex;gap:8px;overflow:auto;padding-top:12px}
     .cv-document{min-width:180px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer}
     .cv-document.active{border-color:var(--brand);box-shadow:0 0 0 2px rgba(13,110,253,.12)}
@@ -84,6 +84,7 @@
     .tool-modal-head strong{font-size:17px}.tool-modal-head button{font-size:22px;line-height:1;padding:4px 10px;border:0;background:transparent}
     .editor-section-head,.editor-entry-head,.editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.editor-section-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.editor-section-title input{flex:1;min-width:120px}.editor-section-title span{font-size:11px;color:var(--muted);white-space:nowrap}.editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}.editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}.editor-photo-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}.editor-photo-head{display:flex;justify-content:space-between;gap:10px}.editor-photo-head strong{display:block;font-size:14px}.editor-photo-head span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.editor-photo-body{display:flex;align-items:center;gap:14px;margin-top:12px}.editor-photo-preview,.editor-photo-placeholder{width:78px;height:92px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:var(--soft)}.editor-photo-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:11px;padding:8px}.editor-photo-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-photo-upload,.editor-photo-remove{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:650;cursor:pointer;background:#fff}.editor-photo-upload{background:var(--brand);border-color:var(--brand);color:#fff}.editor-photo-remove{color:#9b1c1c}
     @media(max-width:760px){
+      .toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex;position:absolute;z-index:50;right:12px;top:calc(100% - 4px);background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:10px;flex-direction:column;align-items:stretch;min-width:190px}.toolbar-menu[open] .toolbar-secondary button{width:100%;text-align:left}.toolbar{position:relative}.workspace-menu>summary{display:block;padding:2px 0 8px}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex;width:100%;margin-top:6px}.workspace-menu[open] .workspace-actions button{flex:1 1 auto}
       .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
       #v2-editor{grid-template-columns:1fr}#v2-editor>section{min-height:0}[data-v2-editor-preview-root]{flex:none;padding:10px;overflow-x:hidden}.v2-preview-stage{max-width:100%;}
       #v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}
@@ -116,23 +117,31 @@
       <a href="./templates.html" style="font-weight:700;color:#0d6efd;text-decoration:none">Template Gallery</a><label for="template-select">Template</label>
       <select id="template-select" aria-label="CV template"></select>
       <button type="button" class="primary" id="save-btn">Save CV</button>
-      <button type="button" id="recover-btn">Recover</button>
-      <button type="button" id="clear-recovery-btn" class="secondary-action">Clear Recovery</button>
-      <button type="button" id="resume-intelligence-btn">Resume Intelligence</button>
-      <button type="button" id="career-tools-btn">Career Tools</button>
-      <button type="button" id="print-btn">Print / PDF</button>
+      <details class="toolbar-menu">
+        <summary aria-label="More CV tools">More</summary>
+        <div class="toolbar-secondary">
+          <button type="button" id="recover-btn">Recover</button>
+          <button type="button" id="clear-recovery-btn" class="secondary-action">Clear Recovery</button>
+          <button type="button" id="resume-intelligence-btn">Resume Intelligence</button>
+          <button type="button" id="career-tools-btn">Career Tools</button>
+          <button type="button" id="print-btn">Print / PDF</button>
+        </div>
+      </details>
       <span class="status" id="app-status" aria-live="polite">Starting V2…</span>
     </div>
 
     <section class="workspace-panel" aria-label="CV Workspace">
       <div class="workspace-head">
         <div><strong>My CV Workspace</strong><span id="workspace-profile-status">One Master Profile</span></div>
-        <div class="workspace-actions">
-          <button type="button" id="new-cv-btn" class="primary">New CV</button>
-          <button type="button" id="duplicate-cv-btn">Duplicate</button>
-          <button type="button" id="rename-cv-btn">Rename</button>
-          <button type="button" id="archive-cv-btn">Archive</button>
-        </div>
+        <details class="workspace-menu" open>
+          <summary>Workspace actions</summary>
+          <div class="workspace-actions">
+            <button type="button" id="new-cv-btn" class="primary">New CV</button>
+            <button type="button" id="duplicate-cv-btn">Duplicate</button>
+            <button type="button" id="rename-cv-btn">Rename</button>
+            <button type="button" id="archive-cv-btn">Archive</button>
+          </div>
+        </details>
       </div>
       <div id="cv-document-list" class="cv-document-list"></div>
       <div id="cv-version-history" class="cv-version-history" hidden></div>
@@ -200,12 +209,15 @@
     const initialProfile = {
       careerData: {
         assets: [],
-        identity: { fullName:'Your Name', jobTitle:'Professional Title', email:'you@example.com', phone:'', location:'Pakistan' },
+        identity: { fullName:'Ali Khan', jobTitle:'Software Engineer', email:'ali.khan@example.com', phone:'+92 300 1234567', location:'Lahore, Pakistan' },
         sections: [
-          {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Write a concise professional summary.',visibility:true}],entries:[],repeatable:false},
-          {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[{id:'experience-1',values:{role:'Your Role',company:'Company Name',dates:'2024 — Present',description:'Describe your responsibilities and achievements.'},visibility:true,order:0}],repeatable:true},
-          {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'Degree / Qualification',institution:'Institution',dates:'2020 — 2024'},visibility:true,order:0}],repeatable:true},
-          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'Communication, Problem Solving, Microsoft Office',visibility:true}],entries:[],repeatable:false},
+          {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.',visibility:true}],entries:[],repeatable:false},
+          {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[
+            {id:'experience-1',values:{role:'Software Engineer',company:'Tech Solutions Ltd.',dates:'2023 — Present',description:'Built and maintained customer-facing web features, improved page performance, and collaborated with design and product teams to ship reliable releases.'},visibility:true,order:0},
+            {id:'experience-2',values:{role:'Junior Software Engineer',company:'Digital Works',dates:'2021 — 2023',description:'Developed responsive interfaces, integrated REST APIs, and resolved production issues while contributing to automated testing and code reviews.'},visibility:true,order:1}
+          ],repeatable:true},
+          {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'BS Computer Science',institution:'University of Lahore',dates:'2017 — 2021'},visibility:true,order:0}],repeatable:true},
+          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'JavaScript, HTML, CSS, REST APIs, Git, Testing, Problem Solving, Team Collaboration',visibility:true}],entries:[],repeatable:false},
           {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[{id:'languagesText',type:'text',label:'Languages',value:'English, Urdu',visibility:true}],entries:[],repeatable:false}
         ]
       },
