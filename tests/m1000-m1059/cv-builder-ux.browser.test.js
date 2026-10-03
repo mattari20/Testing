@@ -67,10 +67,10 @@ test('production builder exposes page navigation, zoom, variants and accessibili
         return text.includes('Ali Khan') && text.includes('Software Engineer') && text.includes('Tech Solutions Ltd.') && text.includes('University of Lahore');
       }, {timeout:5000});
       const previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
-      assert.match(previewText,/Ali Khan/, 'Template should render the demo identity: '+templateId);
-      assert.match(previewText,/Software Engineer/, 'Template should render the demo title: '+templateId);
-      assert.match(previewText,/Tech Solutions Ltd\\./, 'Template should render experience data: '+templateId);
-      assert.match(previewText,/University of Lahore/, 'Template should render education data: '+templateId);
+      assert.ok(previewText.includes('Ali Khan'), 'Template should render the demo identity: '+templateId);
+      assert.ok(previewText.includes('Software Engineer'), 'Template should render the demo title: '+templateId);
+      assert.ok(previewText.includes('Tech Solutions Ltd.'), 'Template should render experience data: '+templateId);
+      assert.ok(previewText.includes('University of Lahore'), 'Template should render education data: '+templateId);
     }
 
     // T03 uses legacy visual field names; inline editing must still update the canonical V2 field.
