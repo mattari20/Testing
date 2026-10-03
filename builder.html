@@ -120,7 +120,7 @@
       <a href="./templates.html" style="font-weight:700;color:#0d6efd;text-decoration:none">Template Gallery</a><label for="template-select">Template</label>
       <select id="template-select" aria-label="CV template"></select>
       <button type="button" class="primary" id="save-btn">Save CV</button>
-      <details class="toolbar-menu">
+      <details class="toolbar-menu" open>
         <summary aria-label="More CV tools">More</summary>
         <div class="toolbar-secondary">
           <button type="button" id="recover-btn">Recover</button>
@@ -229,6 +229,15 @@
       configuration:{template:{id:'t01-modern-minimalist-cv-design_modern',version:'2.0.0'}}
     }
     };
+
+    const toolbarMenu = document.querySelector('.toolbar-menu');
+    const syncToolbarMenu = () => {
+      if (!toolbarMenu) return;
+      if (window.matchMedia('(max-width: 760px)').matches) toolbarMenu.removeAttribute('open');
+      else toolbarMenu.setAttribute('open', '');
+    };
+    syncToolbarMenu();
+    window.addEventListener('resize', syncToolbarMenu);
 
     const root = document.querySelector('#v2-editor');
     const status = document.querySelector('#app-status');
