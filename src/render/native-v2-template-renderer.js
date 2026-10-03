@@ -183,6 +183,15 @@ function applyVisibility(root, snapshot, context = {}) {
   }
 }
 
+function resolveDomEntry(snapshot, element) {
+  const holder = element?.closest?.('[data-v2-preview-entry-id][data-v2-preview-section-type]');
+  if (!holder) return null;
+  const section = findCanonicalSection(snapshot, holder.getAttribute('data-v2-preview-section-type'));
+  if (!section) return null;
+  const entryId = holder.getAttribute('data-v2-preview-entry-id');
+  return (Array.isArray(section.entries) ? section.entries : []).find(entry => String(entry.id) === String(entryId)) || null;
+}
+
 function applyValues(root, snapshot, context = {}) {
   for (const element of root.querySelectorAll('[data-v2-value]')) {
     const value = resolveNativeValue(snapshot, element.getAttribute('data-v2-value'), context);
@@ -191,7 +200,7 @@ function applyValues(root, snapshot, context = {}) {
 
   for (const element of root.querySelectorAll('[data-v2-entry-value]')) {
     const key = element.getAttribute('data-v2-entry-value');
-    const value = resolveEntryValue(context.entry, key);
+    const value = resolveEntryValue(context.entry || resolveDomEntry(snapshot, element), key);
     element.textContent = value == null ? '' : String(value);
   }
 
