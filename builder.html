@@ -25,10 +25,10 @@
     button{cursor:pointer;font-weight:650}.primary{background:var(--brand);border-color:var(--brand);color:#fff}
     button:hover{filter:brightness(.97)}button:disabled{opacity:.55;cursor:not-allowed}
     .status{margin-left:auto;font-size:13px;color:var(--muted)}
-    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:stretch}#v2-editor>section{display:flex;flex-direction:column;min-height:0}
+    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:stretch}#v2-editor>section{display:flex;flex-direction:column;min-height:0}#v2-editor>section:nth-child(2){position:sticky;top:16px;align-self:start}
     [data-v2-editor-form],[data-v2-editor-preview-root]{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-    [data-v2-editor-form]{padding:18px;flex:1;min-height:0;max-height:none;overflow:auto}
-    [data-v2-editor-preview-root]{padding:22px;min-height:650px;overflow:auto;flex:1}
+    [data-v2-editor-form]{padding:18px;flex:1;min-height:0;max-height:calc(100vh - 150px);overflow:auto}
+    [data-v2-editor-preview-root]{padding:22px;min-height:650px;max-height:calc(100vh - 150px);overflow:auto;flex:1}
     .v2-preview-stage{width:100%;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;position:relative}
     .v2-preview-stage>[data-v2-template-root]{flex:0 0 auto;transform-origin:top center}
     [data-v2-editor-form] section{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}
@@ -73,7 +73,7 @@
     [data-v2-editor-preview-root][data-preview-zoom="1.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.8)}
     [data-v2-editor-preview-root][data-preview-zoom="1.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.9)}
     [data-v2-editor-preview-root][data-preview-zoom="2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(2)}
-    @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
+    @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}#v2-editor>section:nth-child(2){position:static;top:auto}[data-v2-editor-preview-root]{max-height:none}}
 
     .header-product-label{font-size:13px;font-weight:700;opacity:.95}
     .mobile-view-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;box-shadow:var(--shadow)}
@@ -244,8 +244,8 @@
       try { const raw=window.localStorage.getItem(key); if(raw) JSON.parse(raw); }
       catch(error){ window.localStorage.removeItem(key); console.warn('[CV Builder V2] Removed invalid saved data:', key); }
     };
-    sanitizeStoredJson('estudent_cv_builder_v2_production');
-    sanitizeStoredJson('estudent_cv_workspace_v2');
+    sanitizeStoredJson('estudent_cv_builder_v2_2027');
+    sanitizeStoredJson('estudent_cv_workspace_v2_2027');
 
     const previewRoot = document.querySelector('[data-v2-editor-preview-root]');
     const previewPageSelect = document.querySelector('#preview-page-select');
@@ -264,7 +264,7 @@
         targetedCV:initialProfile.targetedCV,
         preview:true,
         previewOptions:{fetcher:previewFetcher},
-        persistence:{storage:window.localStorage,key:'estudent_cv_builder_v2_production',autoRecover:true}
+        persistence:{storage:window.localStorage,key:'estudent_cv_builder_v2_2027',autoRecover:true}
       }
     });
 
@@ -395,7 +395,7 @@
     const workspace = createCVWorkspaceController({
       surface: runtime.surface,
       storage: window.localStorage,
-      storageKey: 'estudent_cv_workspace_v2'
+      storageKey: 'estudent_cv_workspace_v2_2027'
     });
 
     const documentList = document.querySelector('#cv-document-list');
