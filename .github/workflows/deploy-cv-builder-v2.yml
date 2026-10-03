@@ -47,3 +47,5 @@ jobs:
             package-lock.json
 
 # Deployment verification: this workflow intentionally uses the standard GitHub-hosted runner.
+
+# Final release verification trigger: exact production branch deployment.
