@@ -13,7 +13,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
   const browser=await chromium.launch({headless:true});
   try{
     const page=await browser.newPage({viewport:{width:1440,height:1000}});
-    await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+    await page.goto('http://127.0.0.1:'+port+'/?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
     await page.waitForSelector('#v2-editor');
     assert.equal(await page.locator('#preview-prev').count(),1);
     assert.equal(await page.locator('#preview-next').count(),1);
