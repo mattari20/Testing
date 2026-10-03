@@ -25,6 +25,19 @@ Repository implementation and automated validation are complete through the curr
 - R7 V1 Retirement: OPEN.
 - R8 Final Release: BLOCKED until all preceding gates are PASS.
 
+## Downloadable template asset scope
+
+The separate downloadable Word-template files are **deferred by project decision** and are not part of the current release-completion target.
+
+This means:
+
+- no new downloadable Word-template binaries are required for the current repository completion batch;
+- their future delivery must not be represented as completed now;
+- the existing V2 application architecture remains preserved for a future template-asset phase;
+- the current release work continues with the application, runtime, UX, pagination, export boundaries, security, deployment, and production acceptance.
+
+This deferral does **not** remove the DOCX export acceptance item from R6. If the deployed product exposes a DOCX export path, that runtime path remains subject to its existing production acceptance contract.
+
 ## Production execution order
 
 ### Step 0 — Pre-deployment release lock
@@ -34,7 +47,7 @@ Before uploading anything to production:
 - freeze the deployment target at the exact final candidate commit `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6`;
 - retain the previously validated application-code evidence as supporting repository evidence;
 - do not represent repository test/security closure as live production acceptance;
-- ensure the seven Word-template assets and their manifest are included in the production upload plan;
+- exclude the deferred downloadable Word-template binaries from the current release package;
 - keep V1 available until R6 is PASS.
 
 ### Step 1 — Deploy the exact accepted commit
@@ -225,9 +238,9 @@ Unexpected V1 fallback: PASS / FAIL
 Production credential/configuration review: PASS / FAIL
 
 Evidence references:
-- 
-- 
-- 
+-
+-
+-
 
 Notes:
 ```
@@ -240,8 +253,7 @@ The repository-side implementation and automated release evidence are complete t
 2. Authoritative Git-history secret verification.
 3. Actual Hostinger deployment of the accepted release commit.
 4. Live nine-point R6 smoke-test evidence.
-5. Production availability/integrity verification of the seven Word-template downloads.
-6. V1 retirement after R6 acceptance.
+5. V1 retirement after R6 acceptance.
 
 The two historical T01 ATS/Simple V1 sources remain unrecovered by design, but their new V2-native replacements are implemented and covered by the fresh nine-template browser evidence. They are not a remaining production deployment blocker.
 
@@ -251,8 +263,8 @@ Do not mark a release gate PASS because a test, contract, or document exists. PA
 
 ## Handoff status
 
-**Repository side:** ready for production handoff.
+**Repository side:** ready for production handoff, with downloadable Word-template assets explicitly deferred.
 
 **Production side:** pending actual deployment and external verification.
 
-**Final release:** blocked until the listed external/source gates are closed.
+**Final release:** blocked until the remaining security and production gates are closed.
