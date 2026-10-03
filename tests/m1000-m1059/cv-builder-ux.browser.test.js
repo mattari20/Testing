@@ -21,10 +21,20 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     assert.equal(await page.locator('#zoom-out').count(),1);
     assert.equal(await page.locator('#variant-select').count(),1);
     assert.equal(await page.locator('[data-editor-announcer]').count(),1);
+    assert.equal(await page.locator('[data-v2-editor-photo]').count(),1);
+    assert.equal(await page.locator('[data-v2-editor-photo-input]').count(),1);
+    assert.equal(await page.locator('[data-v2-editor-identity-field="fullName"]').count(),1);
+    assert.match(await page.locator('[data-v2-editor-identity-wrapper="fullName"]').innerText(),/Full Name/);
+    assert.doesNotMatch(await page.locator('[data-v2-editor-section="summary"]').innerText(),/fullName|jobTitle/);
+
 
     await page.locator('#zoom-in').click();
     assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1.1');
     await page.locator('#zoom-reset').click();
+    await page.evaluate(() => localStorage.setItem('estudent_cv_builder_v2_production','{broken-json'));
+    await page.reload({waitUntil:'networkidle'});
+    await page.waitForSelector('#v2-editor');
+    assert.doesNotMatch(await page.locator('#app-status').innerText(),/startup error/i);
     assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1');
 
     await page.locator('#variant-select').selectOption('academic');
