@@ -5,7 +5,7 @@ import {
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
-export const EDITOR_EXECUTOR_VERSION = '1.2.0';
+export const EDITOR_EXECUTOR_VERSION = '1.3.0';
 
 const findSection = (profile,id) => profile.careerData.sections.find(s=>s.id===id);
 const touch = o => { o.revision += 1; o.updatedAt = new Date().toISOString(); };
@@ -113,8 +113,12 @@ export function executeEditorCommand(editorSession, command) {
     case COMMAND_TYPE.SET_VARIANT:
       configureTargetedCV(targetedCV,{presentation:{variant:p.variant||null}});
       break;
-    case COMMAND_TYPE.UPLOAD_ASSET:
-      masterProfile.careerData.assets.push({...p}); touch(masterProfile); break;
+    case COMMAND_TYPE.UPLOAD_ASSET: {
+      const asset = {...p};
+      const assetId = String(asset.id || target.assetId || '');
+      masterProfile.careerData.assets = (masterProfile.careerData.assets || []).filter(item => String(item?.id || item?.key || '') !== assetId && String(item?.key || '') !== String(asset.key || ''));
+      masterProfile.careerData.assets.push(asset); touch(masterProfile); break;
+    }
     case COMMAND_TYPE.REMOVE_ASSET:
       masterProfile.careerData.assets = masterProfile.careerData.assets.filter(a=>a.id!==target.assetId); touch(masterProfile); break;
     default:
