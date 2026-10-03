@@ -34,7 +34,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     assert.ok((await page.locator('#cv-version-history').textContent()).includes('Version History'));
 
     const baselineName = await page.evaluate(() =>
-      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+      window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     );
     assert.equal(baselineName, 'Baseline Engineer');
 
@@ -44,7 +44,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),2);
 
     const duplicatedName = await page.evaluate(() =>
-      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+      window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     );
     assert.equal(duplicatedName, 'Baseline Engineer');
 
@@ -53,7 +53,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     await originalCard.click();
     await page.waitForTimeout(100);
     const switchedName = await page.evaluate(() =>
-      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+      window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     );
     assert.equal(switchedName, 'Baseline Engineer');
 
@@ -71,7 +71,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     assert.ok((await page.locator('.cv-version-item').count()) >= 2);
 
     const versionBeforeRestore = await page.evaluate(() =>
-      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+      window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     );
     assert.equal(versionBeforeRestore, 'Edited Engineer');
 
@@ -80,7 +80,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     await restoreButtons.nth(1).click();
     await page.waitForTimeout(150);
     const restoredName = await page.evaluate(() =>
-      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+      window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     );
     assert.equal(restoredName, 'Baseline Engineer');
 
