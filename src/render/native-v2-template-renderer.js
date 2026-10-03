@@ -30,7 +30,9 @@ const ENTRY_ALIASES = Object.freeze({
   year: ['year', 'dates', 'duration', 'years'],
   grade: ['grade', 'gpa', 'result'],
   name: ['name', 'title', 'projectName', 'achievement'],
-  achievement: ['achievement', 'title', 'name', 'description', 'desc']
+  achievement: ['achievement', 'title', 'name', 'description', 'desc'],
+  skill: ['skill', 'value', 'name'],
+  language: ['language', 'value', 'name']
 });
 
 function readPath(source, path) {
