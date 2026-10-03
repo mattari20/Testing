@@ -45,3 +45,5 @@ jobs:
             **/tests/**
             package.json
             package-lock.json
+
+# Deployment verification: this workflow intentionally uses the standard GitHub-hosted runner.
