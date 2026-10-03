@@ -25,7 +25,8 @@ test('production V2 entry boots the editor, template catalog and live preview', 
     page.on('pageerror', error => pageErrors.push(String(error?.stack || error?.message || error)));
     page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 
-    await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+    await page.goto('http://127.0.0.1:'+port+'/builder.html',{waitUntil:'networkidle'});
+    await page.waitForSelector('#app-status');
     await page.waitForTimeout(3000);
     if (!(await page.evaluate(() => window.v2ProductionReady === true))) {
       const status = await page.locator('#app-status').textContent();
