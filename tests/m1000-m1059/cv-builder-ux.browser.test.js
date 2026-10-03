@@ -102,6 +102,33 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     const pageCount=await page.locator('[data-page-number]').count();
     assert.ok(pageCount>=1);
     await page.locator('#preview-next').click();
+
+    // Real mobile editor/preview view switching and fit-to-width behavior.
+    await page.setViewportSize({width:390,height:844});
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('#mobile-edit-tab').isVisible(),true);
+    assert.equal(await page.locator('#mobile-preview-tab').isVisible(),true);
+    assert.equal(await page.locator('#v2-editor').getAttribute('data-mobile-view'),'edit');
+    assert.notEqual(await page.locator('#v2-editor > section').nth(0).evaluate(el=>getComputedStyle(el).display),'none');
+    assert.equal(await page.locator('#v2-editor > section').nth(1).evaluate(el=>getComputedStyle(el).display),'none');
+
+    await page.locator('#mobile-preview-tab').click();
+    await page.waitForTimeout(150);
+    assert.equal(await page.locator('#v2-editor').getAttribute('data-mobile-view'),'preview');
+    assert.equal(await page.locator('#v2-editor > section').nth(0).evaluate(el=>getComputedStyle(el).display),'none');
+    assert.notEqual(await page.locator('#v2-editor > section').nth(1).evaluate(el=>getComputedStyle(el).display),'none');
+    const mobilePreview = await page.evaluate(() => {
+      const root=document.querySelector('[data-v2-editor-preview-root]');
+      const page=document.querySelector('[data-v2-template-root]');
+      return {rootWidth:root?.getBoundingClientRect().width || 0,pageWidth:page?.getBoundingClientRect().width || 0,overflow:root?.scrollWidth || 0};
+    });
+    assert.ok(mobilePreview.rootWidth>0);
+    assert.ok(mobilePreview.pageWidth>0);
+    assert.ok(mobilePreview.pageWidth <= mobilePreview.rootWidth + 2);
+
+    await page.locator('#mobile-edit-tab').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('#v2-editor').getAttribute('data-mobile-view'),'edit');
     const active=await page.locator('[data-page-number][data-page-active="true"]').count();
     assert.equal(active,1);
   }finally{await browser.close();server.kill();}
