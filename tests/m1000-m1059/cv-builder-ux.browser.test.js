@@ -25,7 +25,13 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await page.locator('[data-close-tool-modal="resume-intelligence-modal"]').click();
     await page.locator('#career-tools-btn').click();
     assert.equal(await page.locator('#career-tools-modal').isVisible(),true);
-    await page.waitForSelector('.final-product-tabs button');
+    await Promise.race([
+      page.waitForSelector('.final-product-tabs button'),
+      page.waitForSelector('#cv-final-product-root .tool-modal-error')
+    ]);
+    if (await page.locator('#cv-final-product-root .tool-modal-error').count()) {
+      throw new Error('Career Tools load failed: ' + await page.locator('#cv-final-product-root .tool-modal-error').textContent());
+    }
     const careerTabs = ['AI Review','Career Mode','Cover Letter','Import / Migration','Online CV','Portfolio','Plans & Privacy'];
     for (const tab of careerTabs) {
       await page.locator('.final-product-tabs button', { hasText: tab }).click();
