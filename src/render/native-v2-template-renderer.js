@@ -6,7 +6,31 @@ const isObject = value => value !== null && typeof value === 'object' && !Array.
 const IDENTITY_ALIASES = Object.freeze({
   fullName: ['fullName', 'name'],
   jobTitle: ['jobTitle', 'job'],
-  dateOfBirth: ['dateOfBirth', 'dob']
+  phone: ['phone', 'mobile', 'contactNumber'],
+  address: ['address', 'location'],
+  dateOfBirth: ['dateOfBirth', 'dob'],
+  linkedin: ['linkedin', 'linkedinUrl'],
+  website: ['website', 'websiteUrl'],
+  whatsapp: ['whatsapp', 'whatsappNumber'],
+  cnic: ['cnic', 'nationalId'],
+  religion: ['religion']
+});
+
+const ENTRY_ALIASES = Object.freeze({
+  role: ['role', 'title', 'position', 'jobTitle'],
+  title: ['title', 'role', 'position', 'jobTitle', 'name'],
+  company: ['company', 'employer', 'organization', 'institution'],
+  dates: ['dates', 'duration', 'year', 'years'],
+  duration: ['duration', 'dates', 'year', 'years'],
+  description: ['description', 'desc', 'details', 'summary'],
+  desc: ['desc', 'description', 'details', 'summary'],
+  institution: ['institution', 'institute', 'school', 'university'],
+  institute: ['institute', 'institution', 'school', 'university'],
+  degree: ['degree', 'qualification', 'program'],
+  year: ['year', 'dates', 'duration', 'years'],
+  grade: ['grade', 'gpa', 'result'],
+  name: ['name', 'title', 'projectName', 'achievement'],
+  achievement: ['achievement', 'title', 'name', 'description', 'desc']
 });
 
 function readPath(source, path) {
@@ -86,9 +110,38 @@ export function resolveNativeValue(snapshot, binding, context = {}) {
     return field?.value;
   }
 
-  if (context.entry && path) return context.entry.values?.[path];
-  if (context.item && path) return context.item[path];
+  if (context.entry && path) return resolveEntryValue(context.entry, path);
+  if (context.item && path) {
+    const item = context.item;
+    const candidates = ENTRY_ALIASES[String(path)] || [String(path)];
+    for (const candidate of candidates) {
+      if (item[candidate] !== undefined && item[candidate] !== null) return item[candidate];
+    }
+    return undefined;
+  }
   return readPath(snapshot, path);
+}
+
+function resolveEntryValue(entry, key) {
+  const values = isObject(entry?.values) ? entry.values : (isObject(entry) ? entry : {});
+  const candidates = ENTRY_ALIASES[String(key)] || [String(key)];
+  for (const candidate of candidates) {
+    if (values[candidate] !== undefined && values[candidate] !== null && String(values[candidate]).trim() !== '') {
+      return values[candidate];
+    }
+  }
+  return undefined;
+}
+
+function canonicalEntryKey(key, sectionType) {
+  const raw = String(key);
+  const map = {
+    experience: { title: 'role', duration: 'dates', desc: 'description' },
+    education: { institute: 'institution', year: 'dates' },
+    projects: { title: 'name', desc: 'description' },
+    achievements: { achievement: 'achievement', title: 'achievement', desc: 'achievement' }
+  };
+  return map[String(sectionType)]?.[raw] || raw;
 }
 
 function meaningful(value) {
@@ -138,13 +191,13 @@ function applyValues(root, snapshot, context = {}) {
 
   for (const element of root.querySelectorAll('[data-v2-entry-value]')) {
     const key = element.getAttribute('data-v2-entry-value');
-    const value = context.entry?.values?.[key];
+    const value = resolveEntryValue(context.entry, key);
     element.textContent = value == null ? '' : String(value);
   }
 
   for (const element of root.querySelectorAll('[data-v2-item-value]')) {
     const key = element.getAttribute('data-v2-item-value');
-    const value = context.item?.[key];
+    const value = resolveEntryValue(context.item, key);
     element.textContent = value == null ? '' : String(value);
   }
 
@@ -204,7 +257,7 @@ function applyPreviewEditTargets(root, snapshot) {
     element.setAttribute('data-v2-preview-target', JSON.stringify({
       sectionId: section.id,
       entryId,
-      key: element.getAttribute('data-v2-entry-value')
+      key: canonicalEntryKey(element.getAttribute('data-v2-entry-value'), sectionType)
     }));
     element.setAttribute('contenteditable', 'true');
     element.setAttribute('spellcheck', 'false');

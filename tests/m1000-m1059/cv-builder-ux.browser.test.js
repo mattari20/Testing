@@ -15,6 +15,66 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     const page=await browser.newPage({viewport:{width:1440,height:1000}});
     await page.goto('http://127.0.0.1:'+port+'/?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
     await page.waitForSelector('#v2-editor');
+
+    // Desktop must expose the secondary tools; they are intentionally collapsed only on mobile.
+    for (const id of ['recover-btn','clear-recovery-btn','resume-intelligence-btn','career-tools-btn','print-btn']) {
+      assert.equal(await page.locator('#'+id).isVisible(),true,'Desktop tool should be visible: '+id);
+    }
+    await page.locator('#resume-intelligence-btn').click();
+    assert.equal(await page.locator('#resume-intelligence-modal').isVisible(),true);
+    await page.locator('[data-close-tool-modal="resume-intelligence-modal"]').click();
+    await page.locator('#career-tools-btn').click();
+    assert.equal(await page.locator('#career-tools-modal').isVisible(),true);
+    const careerTabs = ['AI Review','Career Mode','Cover Letter','Import / Migration','Online CV','Portfolio','Plans & Privacy'];
+    for (const tab of careerTabs) {
+      await page.locator('.final-product-tabs button', { hasText: tab }).click();
+      assert.equal(await page.locator('.final-product-body').isVisible(), true, 'Career tool tab should be accessible: '+tab);
+    }
+    await page.locator('[data-close-tool-modal="career-tools-modal"]').click();
+
+    await page.locator('#resume-intelligence-btn').click();
+    assert.equal(await page.locator('#cv-intelligence-root').isVisible(), true);
+    await page.locator('#cv-intelligence-job').fill('JavaScript REST APIs Git Testing');
+    await page.getByRole('button', {name:'Analyze CV'}).click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('.cv-intelligence-results').isVisible(), true);
+    await page.locator('[data-close-tool-modal="resume-intelligence-modal"]').click();
+
+    // Every published native V2 template must render the canonical demo identity,
+    // experience, and education data; template-specific legacy field names must not blank the CV.
+    const templateIds = [
+      't01-modern-minimalist-cv-design_ats',
+      't01-modern-minimalist-cv-design_simple',
+      't01-modern-minimalist-cv-design_modern',
+      't02-professional-cv-design_modern',
+      't03-professional-cv-design_modern',
+      't04-modern-blue-corporate_modern',
+      't05-simple-cv-graphic-web-designer_modern',
+      't06-professional-cv-graphic-designer_modern',
+      't07-professional-cv-store-manager-incharge_modern'
+    ];
+    for (const templateId of templateIds) {
+      await page.locator('#template-select').selectOption(templateId);
+      await page.waitForTimeout(150);
+      const previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
+      assert.match(previewText,/Ali Khan/, 'Template should render the demo identity: '+templateId);
+      assert.match(previewText,/Software Engineer/, 'Template should render the demo title: '+templateId);
+      assert.match(previewText,/Tech Solutions Ltd\./, 'Template should render experience data: '+templateId);
+      assert.match(previewText,/University of Lahore/, 'Template should render education data: '+templateId);
+    }
+
+    // T03 uses legacy visual field names; inline editing must still update the canonical V2 field.
+    await page.locator('#template-select').selectOption('t03-professional-cv-design_modern');
+    await page.waitForTimeout(150);
+    const inlineRole = page.locator('[data-v2-entry-value="title"]').first();
+    await inlineRole.fill('Lead Software Engineer');
+    await inlineRole.blur();
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(() => window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.sections
+        .find(section => section.type === 'experience')?.entries?.[0]?.values?.role),
+      'Lead Software Engineer'
+    );
     assert.equal(await page.locator('#preview-prev').count(),1);
     assert.equal(await page.locator('#preview-next').count(),1);
     assert.equal(await page.locator('#zoom-in').count(),1);
