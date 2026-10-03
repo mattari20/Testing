@@ -100,6 +100,7 @@ export function mountV2EditorRuntime(root, input = {}) {
 
   return Object.freeze({
     ...mounted,
+    tools: {},
     previewRuntime,
     persistence: recoveryController,
     lifecycle: lifecycleController,
