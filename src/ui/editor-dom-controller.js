@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.5.0';
+export const EDITOR_DOM_VERSION = '1.6.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -85,18 +85,16 @@ export function bindEditorFields(root, surface, options = {}) {
 
 export function bindEditorActions(root, surface) {
   if (!root || !surface) throw new Error('Editor root and surface are required.');
-  const listeners = [];
-  root.querySelectorAll('[data-v2-editor-command]').forEach(element => {
-    const handler = () => {
-      const type = element.dataset.v2EditorCommand;
-      const target = parseJson(element.dataset.v2Target);
-      const payload = parseJson(element.dataset.v2Payload);
-      surface.dispatch({type,target,payload});
-    };
-    element.addEventListener('click', handler);
-    listeners.push(() => element.removeEventListener('click', handler));
-  });
-  return Object.freeze({destroy:()=>listeners.forEach(fn=>fn())});
+  const handler = event => {
+    const element = event.target?.closest?.('[data-v2-editor-command]');
+    if (!element || !root.contains(element)) return;
+    const type = element.dataset.v2EditorCommand;
+    const target = parseJson(element.dataset.v2Target);
+    const payload = parseJson(element.dataset.v2Payload);
+    surface.dispatch({type,target,payload});
+  };
+  root.addEventListener('click', handler);
+  return Object.freeze({destroy:()=>root.removeEventListener('click', handler)});
 }
 
 export function bindEditorLifecycle(root, lifecycle) {
