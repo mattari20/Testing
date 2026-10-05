@@ -115,9 +115,15 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       mimeType:'image/png',
       buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=','base64')
     });
-    await page.waitForTimeout(100);
-    assert.equal(await page.locator('.editor-photo-preview').count(),1);
-    assert.equal(await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count(),1);
+    let photoReady = false;
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+      if (await page.locator('.editor-photo-preview').count() === 1 && await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count() === 1) {
+        photoReady = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+    assert.equal(photoReady,true);
 
     // Verify real identity editing reaches the live application state.
     const fullName = page.locator('[data-v2-editor-identity-field="fullName"]');
