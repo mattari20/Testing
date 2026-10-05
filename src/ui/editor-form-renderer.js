@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.6.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.6.1';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -102,7 +102,7 @@ export function renderEditorForm(surface, documentData, options = {}) {
     const sectionDown = moveOrder(sectionIds,sectionIndex,1);
     return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
       '<header class="editor-section-head"><div class="editor-section-title"><input data-v2-editor-section-title="'+esc(section.id)+'" aria-label="Section title" value="'+esc(section.title || labelFor(section.type))+'"><span>'+esc(sectionHidden ? 'Hidden in this CV' : 'Visible in this CV')+'</span></div>' +
-      '<div class="editor-inline-actions">' + actionButton(sectionHidden ? 'Show' : 'Hide','set-visibility',{kind:'section',sectionId:section.id},{visible:!sectionHidden}) + actionButton('Remove','remove-section',{sectionId:section.id}) + actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp}) + actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown}) + '</div></header>' +
+      '<div class="editor-inline-actions">' + actionButton(sectionHidden ? 'Show' : 'Hide','set-visibility',{kind:'section',sectionId:section.id},{visible:sectionHidden}) + actionButton('Remove','remove-section',{sectionId:section.id}) + actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp}) + actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown}) + '</div></header>' +
       '<div data-v2-editor-fields>'+fieldHtml+'</div>' +
       '<button type="button" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:section.id})+'" data-v2-payload="'+attr({type:'text',label:'New Field',value:''})+'">Add Field</button>' +
       '<div data-v2-editor-entries>'+entryHtml+'</div>' +
