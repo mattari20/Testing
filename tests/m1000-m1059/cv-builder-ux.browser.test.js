@@ -125,7 +125,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await fullName.blur();
     await page.waitForTimeout(100);
     assert.equal(await page.evaluate(() =>
-      window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.careerData.identity.fullName
+      window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     ), 'Ali Akbar');
 
     assert.equal(await page.locator('[data-v2-editor-identity-field="fullName"]').count(),1);
