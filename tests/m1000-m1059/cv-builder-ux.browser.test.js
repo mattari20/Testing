@@ -149,7 +149,16 @@ test('production builder exposes page navigation, zoom, variants and accessibili
 
     // Verify section visibility controls persist through a real UI command.
     const summarySection = page.locator('[data-v2-editor-section="summary"]');
-    await summarySection.locator('[data-v2-editor-command="set-visibility"]').click();
+    // Normalize the starting state so this acceptance check exercises the Hide -> Show transition.
+    if (await summarySection.getAttribute('data-v2-editor-section-hidden') === 'true') {
+      await summarySection.locator('[data-v2-editor-command="set-visibility"]').click();
+      for (let attempt = 0; attempt < 20; attempt += 1) {
+        if (await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden') === 'false') break;
+        await page.waitForTimeout(100);
+      }
+    }
+    assert.equal(await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden'), 'false');
+    await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-command="set-visibility"]').click();
     let summaryHidden = null;
     for (let attempt = 0; attempt < 20; attempt += 1) {
       summaryHidden = await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden');
