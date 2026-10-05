@@ -125,6 +125,19 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     }
     assert.equal(photoReady,true);
 
+    // Verify uploaded photo can be removed from the same live editor state.
+    const photoRemove = page.locator('[data-v2-editor-photo-remove="profile-photo"]');
+    await photoRemove.dispatchEvent('click');
+    let photoRemoved = false;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      if (await page.locator('.editor-photo-preview').count() === 0 && await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count() === 0) {
+        photoRemoved = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+    assert.equal(photoRemoved,true);
+
     // Verify real identity editing reaches the live application state.
     const fullName = page.locator('[data-v2-editor-identity-field="fullName"]');
     await fullName.fill('Ali Akbar');
@@ -205,18 +218,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await page.waitForTimeout(100);
     assert.equal(await page.locator('[data-v2-editor-section]').count(), sectionsBefore + 1);
 
-    // Verify uploaded photo can be removed from the same live editor state.
-    const photoRemove = page.locator('[data-v2-editor-photo-remove="profile-photo"]');
-    await photoRemove.dispatchEvent('click');
-    let photoRemoved = false;
-    for (let attempt = 0; attempt < 20; attempt += 1) {
-      if (await page.locator('.editor-photo-preview').count() === 0 && await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count() === 0) {
-        photoRemoved = true;
-        break;
-      }
-      await page.waitForTimeout(100);
-    }
-    assert.equal(photoRemoved,true);
+
 
     await page.locator('#variant-select').selectOption('academic');
     await page.waitForTimeout(100);
