@@ -79,6 +79,10 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       assert.ok(previewText.includes('University of Lahore'), 'Template should render education data: '+templateId);
     }
 
+    // T03 uses legacy visual field names; inline editing must still update the canonical V2 field.
+    await page.locator('#template-select').selectOption('t03-professional-cv-design_modern');
+    await page.waitForTimeout(150);
+
     // T03 must also resolve scalar section bindings and split skills/languages into visible repeat items.
     const t03Preview = page.locator('[data-v2-editor-preview-root]');
     const t03Text = await t03Preview.innerText();
@@ -88,9 +92,6 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     assert.ok(t03Text.includes('Software Engineer with 4+ years of experience'), 'T03 should render the summary field.');
     assert.doesNotMatch(await page.locator('#app-status').innerText(), /startup error/i);
 
-    // T03 uses legacy visual field names; inline editing must still update the canonical V2 field.
-    await page.locator('#template-select').selectOption('t03-professional-cv-design_modern');
-    await page.waitForTimeout(150);
     const inlineRole = page.locator('[data-v2-entry-value="title"]').first();
     await inlineRole.fill('Lead Software Engineer');
     await inlineRole.blur();
