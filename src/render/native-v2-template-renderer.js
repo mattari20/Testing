@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.1';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -104,11 +104,7 @@ export function resolveNativeValue(snapshot, binding, context = {}) {
     const [, sectionType, fieldKey] = path.split(':');
     const section = findCanonicalSection(snapshot, sectionType);
     if (!section || !isCanonicalSectionVisible(snapshot, section)) return undefined;
-    const field = (section.fields || []).find(item =>
-      String(item.id) === String(fieldKey) ||
-      String(item.metadata?.semanticKey || '') === String(fieldKey) ||
-      String(item.label || '').toLowerCase() === String(fieldKey).toLowerCase()
-    );
+    const field = findSectionField(section, fieldKey);
     return field?.value;
   }
 
@@ -296,7 +292,10 @@ function applyRepeats(root, snapshot) {
               const raw = field?.value;
               if (raw == null) return [];
               if (sectionType === 'skills' || sectionType === 'languages') {
-                return String(raw).split(/[,\n]+/).map(value => value.trim()).filter(Boolean).map(value => ({ value }));
+                return String(raw).split(/[,\n]+/).map(value => value.trim()).filter(Boolean).map(value => ({
+                  [sectionType === 'skills' ? 'skill' : 'language']: value,
+                  value
+                }));
               }
               return [{ value: raw }];
             });
