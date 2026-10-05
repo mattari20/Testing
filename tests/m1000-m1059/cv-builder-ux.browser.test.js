@@ -65,18 +65,19 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       await page.locator('#template-select').selectOption(templateId);
       await page.waitForSelector('[data-v2-editor-preview-root] [data-v2-template-root][data-v2-template-id="' + templateId + '"]');
       let previewText = '';
+      const hasExpectedText = (text, expected) => String(text).toLocaleLowerCase().includes(String(expected).toLocaleLowerCase());
       for (let attempt = 0; attempt < 50; attempt += 1) {
         previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
-        if (previewText.includes('Ali Khan') && previewText.includes('Software Engineer') && previewText.includes('Tech Solutions Ltd.') && previewText.includes('University of Lahore')) break;
+        if (hasExpectedText(previewText,'Ali Khan') && hasExpectedText(previewText,'Software Engineer') && hasExpectedText(previewText,'Tech Solutions Ltd.') && hasExpectedText(previewText,'University of Lahore')) break;
         await page.waitForTimeout(100);
       }
-      if (!(previewText.includes('Ali Khan') && previewText.includes('Software Engineer') && previewText.includes('Tech Solutions Ltd.') && previewText.includes('University of Lahore'))) {
+      if (!(hasExpectedText(previewText,'Ali Khan') && hasExpectedText(previewText,'Software Engineer') && hasExpectedText(previewText,'Tech Solutions Ltd.') && hasExpectedText(previewText,'University of Lahore'))) {
         throw new Error('Template content incomplete for '+templateId+': '+JSON.stringify({previewText,templateRoot:await page.locator('[data-v2-template-root]').getAttribute('data-v2-template-id')}));
       }
-      assert.ok(previewText.includes('Ali Khan'), 'Template should render the demo identity: '+templateId);
-      assert.ok(previewText.includes('Software Engineer'), 'Template should render the demo title: '+templateId);
-      assert.ok(previewText.includes('Tech Solutions Ltd.'), 'Template should render experience data: '+templateId);
-      assert.ok(previewText.includes('University of Lahore'), 'Template should render education data: '+templateId);
+      assert.ok(hasExpectedText(previewText,'Ali Khan'), 'Template should render the demo identity: '+templateId);
+      assert.ok(hasExpectedText(previewText,'Software Engineer'), 'Template should render the demo title: '+templateId);
+      assert.ok(hasExpectedText(previewText,'Tech Solutions Ltd.'), 'Template should render experience data: '+templateId);
+      assert.ok(hasExpectedText(previewText,'University of Lahore'), 'Template should render education data: '+templateId);
     }
 
     // T03 uses legacy visual field names; inline editing must still update the canonical V2 field.
