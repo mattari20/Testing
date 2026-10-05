@@ -123,7 +123,14 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       }
       await page.waitForTimeout(100);
     }
-    assert.equal(photoReady,true);
+    if (!photoReady) {
+      const photoDiagnostic = await page.evaluate(() => ({
+        assets: window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.assets,
+        fileCount: document.querySelector('[data-v2-editor-photo-input]')?.files?.length || 0,
+        status: document.querySelector('#app-status')?.textContent || ''
+      }));
+      throw new Error('Profile photo upload did not render: ' + JSON.stringify(photoDiagnostic));
+    }
 
     // Verify real identity editing reaches the live application state.
     const fullName = page.locator('[data-v2-editor-identity-field="fullName"]');
