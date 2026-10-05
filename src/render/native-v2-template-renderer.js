@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.1';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.2';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -202,10 +202,12 @@ function applyValues(root, snapshot, context = {}) {
     element.textContent = value == null ? '' : String(value);
   }
 
-  for (const element of root.querySelectorAll('[data-v2-item-value]')) {
-    const key = element.getAttribute('data-v2-item-value');
-    const value = resolveEntryValue(context.item, key);
-    element.textContent = value == null ? '' : String(value);
+  if (context.item) {
+    for (const element of root.querySelectorAll('[data-v2-item-value]')) {
+      const key = element.getAttribute('data-v2-item-value');
+      const value = resolveEntryValue(context.item, key);
+      element.textContent = value == null ? '' : String(value);
+    }
   }
 
   for (const element of root.querySelectorAll('[data-v2-bind-src]')) {
