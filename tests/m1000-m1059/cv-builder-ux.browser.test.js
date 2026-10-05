@@ -150,12 +150,22 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     // Verify section visibility controls persist through a real UI command.
     const summarySection = page.locator('[data-v2-editor-section="summary"]');
     await summarySection.locator('[data-v2-editor-command="set-visibility"]').click();
-    await page.waitForTimeout(100);
-    assert.equal(await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden'), 'true');
+    let summaryHidden = null;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      summaryHidden = await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden');
+      if (summaryHidden === 'true') break;
+      await page.waitForTimeout(100);
+    }
+    assert.equal(summaryHidden, 'true');
 
     await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-command="set-visibility"]').click();
-    await page.waitForTimeout(100);
-    assert.equal(await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden'), 'false');
+    let summaryVisible = null;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      summaryVisible = await page.locator('[data-v2-editor-section="summary"]').getAttribute('data-v2-editor-section-hidden');
+      if (summaryVisible === 'false') break;
+      await page.waitForTimeout(100);
+    }
+    assert.equal(summaryVisible, 'false');
 
     // Duplicate an experience entry and verify the editor rerenders the new entry.
     const experienceEntriesBefore = await page.locator('[data-v2-editor-section="experience"] [data-v2-editor-entry]').count();
