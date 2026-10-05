@@ -7,7 +7,7 @@ import { createEditorPersistenceAdapter, createEditorRecoveryController } from '
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.7.0';
+export const EDITOR_RUNTIME_VERSION = '1.7.1';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -100,6 +100,9 @@ export function mountV2EditorRuntime(root, input = {}) {
 
   return Object.freeze({
     ...mounted,
+    getState() {
+      return mounted.surface.getState();
+    },
     tools: {},
     previewRuntime,
     persistence: recoveryController,

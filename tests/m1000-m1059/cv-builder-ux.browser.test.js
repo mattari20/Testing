@@ -38,6 +38,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       assert.equal(await page.locator('.final-product-body').isVisible(), true, 'Career tool tab should be accessible: '+tab);
     }
     await page.locator('[data-close-tool-modal="career-tools-modal"]').click();
+    assert.doesNotMatch(await page.locator('#app-status').innerText(),/startup error/i);
 
     await page.locator('#resume-intelligence-btn').click();
     assert.equal(await page.locator('#cv-intelligence-root').isVisible(), true);
@@ -81,6 +82,16 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     // T03 uses legacy visual field names; inline editing must still update the canonical V2 field.
     await page.locator('#template-select').selectOption('t03-professional-cv-design_modern');
     await page.waitForTimeout(150);
+
+    // T03 must also resolve scalar section bindings and split skills/languages into visible repeat items.
+    const t03Preview = page.locator('[data-v2-editor-preview-root]');
+    const t03Text = await t03Preview.innerText();
+    assert.ok(t03Text.includes('Software Engineer'), 'T03 should render the professional title.');
+    assert.ok(t03Text.includes('JavaScript'), 'T03 should render a skill value.');
+    assert.ok(t03Text.includes('English'), 'T03 should render a language value.');
+    assert.ok(t03Text.includes('Software Engineer with 4+ years of experience'), 'T03 should render the summary field.');
+    assert.doesNotMatch(await page.locator('#app-status').innerText(), /startup error/i);
+
     const inlineRole = page.locator('[data-v2-entry-value="title"]').first();
     await inlineRole.fill('Lead Software Engineer');
     await inlineRole.blur();
