@@ -165,12 +165,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       if (summaryHidden === 'true') break;
       await page.waitForTimeout(100);
     }
-    const visibilityDiagnostic = await page.evaluate(() => ({
-      config: window.eStudentCVBuilderV2.surface.getState().session.application.targetedCV.configuration,
-      buttonTarget: document.querySelector('[data-v2-editor-section="summary"] [data-v2-editor-command="set-visibility"]')?.getAttribute('data-v2-target'),
-      buttonPayload: document.querySelector('[data-v2-editor-section="summary"] [data-v2-editor-command="set-visibility"]')?.getAttribute('data-v2-payload')
-    }));
-    assert.equal(summaryHidden, 'true', JSON.stringify(visibilityDiagnostic));
+    assert.equal(summaryHidden, 'true');
 
     await page.locator('[data-v2-editor-section="summary"] [data-v2-editor-command="set-visibility"]').click();
     let summaryVisible = null;
