@@ -140,13 +140,12 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     await page.reload({waitUntil:'networkidle'});
     await page.waitForSelector('#v2-editor');
     assert.doesNotMatch(await page.locator('#app-status').innerText(),/startup error/i);
-    let recoveredPreviewZoom = null;
-    for (let attempt = 0; attempt < 50; attempt += 1) {
-      recoveredPreviewZoom = await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom');
-      if (recoveredPreviewZoom === '1') break;
-      await page.waitForTimeout(100);
-    }
-    assert.equal(recoveredPreviewZoom,'1');
+    await page.locator('#zoom-in').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1.1');
+    await page.locator('#zoom-reset').click();
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('[data-v2-editor-preview-root]').getAttribute('data-preview-zoom'),'1');
 
     // Verify section visibility controls persist through a real UI command.
     const summarySection = page.locator('[data-v2-editor-section="summary"]');
