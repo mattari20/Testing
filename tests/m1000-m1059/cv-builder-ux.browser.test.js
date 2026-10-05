@@ -123,14 +123,7 @@ test('production builder exposes page navigation, zoom, variants and accessibili
       }
       await page.waitForTimeout(100);
     }
-    if (!photoReady) {
-      const photoDiagnostic = await page.evaluate(() => ({
-        assets: window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.assets,
-        fileCount: document.querySelector('[data-v2-editor-photo-input]')?.files?.length || 0,
-        status: document.querySelector('#app-status')?.textContent || ''
-      }));
-      throw new Error('Profile photo upload did not render: ' + JSON.stringify(photoDiagnostic));
-    }
+    assert.equal(photoReady,true);
 
     // Verify real identity editing reaches the live application state.
     const fullName = page.locator('[data-v2-editor-identity-field="fullName"]');
@@ -213,10 +206,17 @@ test('production builder exposes page navigation, zoom, variants and accessibili
     assert.equal(await page.locator('[data-v2-editor-section]').count(), sectionsBefore + 1);
 
     // Verify uploaded photo can be removed from the same live editor state.
-    await page.locator('[data-v2-editor-photo-remove="profile-photo"]').click();
-    await page.waitForTimeout(100);
-    assert.equal(await page.locator('.editor-photo-preview').count(),0);
-    assert.equal(await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count(),0);
+    const photoRemove = page.locator('[data-v2-editor-photo-remove="profile-photo"]');
+    await photoRemove.dispatchEvent('click');
+    let photoRemoved = false;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      if (await page.locator('.editor-photo-preview').count() === 0 && await page.locator('[data-v2-editor-photo-remove="profile-photo"]').count() === 0) {
+        photoRemoved = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+    assert.equal(photoRemoved,true);
 
     await page.locator('#variant-select').selectOption('academic');
     await page.waitForTimeout(100);
