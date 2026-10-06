@@ -1,10 +1,72 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.6.0';
+export const EDITOR_DOM_VERSION = '1.7.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
   catch { return fallback; }
+}
+
+
+
+function createPhotoCropper(root, surface, asset) {
+  const documentRef=root.ownerDocument;
+  const source=String(asset?.url||asset?.src||'');
+  if(!source)return null;
+  const modal=documentRef.createElement('div');
+  modal.className='editor-crop-modal';
+  modal.innerHTML='<div class="editor-crop-dialog" role="dialog" aria-modal="true" aria-label="Adjust profile photo">'+
+    '<div class="editor-crop-head"><div><span class="editor-eyebrow">PHOTO</span><h3>Adjust Photo Crop</h3><p>The crop shape follows the selected CV template.</p></div><button type="button" data-crop-cancel aria-label="Close">×</button></div>'+
+    '<div class="editor-crop-work"><div class="editor-crop-preview"><canvas data-crop-canvas></canvas></div>'+
+    '<div class="editor-crop-controls"><label>Zoom <input type="range" min="1" max="3" step="0.01" value="1" data-crop-zoom></label>'+
+    '<label>Horizontal <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-x></label>'+
+    '<label>Vertical <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-y></label></div></div>'+
+    '<div class="editor-crop-actions"><button type="button" data-crop-cancel>Cancel</button><button type="button" class="primary" data-crop-apply>Apply Crop</button></div></div>';
+  documentRef.body.appendChild(modal);
+  const canvas=modal.querySelector('[data-crop-canvas]');
+  const zoom=modal.querySelector('[data-crop-zoom]');
+  const xInput=modal.querySelector('[data-crop-x]');
+  const yInput=modal.querySelector('[data-crop-y]');
+  const img=new Image();
+  let loaded=false;
+  const shape=String(root.closest('[data-v2-editor-root]')?.getAttribute('data-v2-photo-shape')||'circle');
+  const ratio=shape==='portrait'?0.78:shape==='landscape'?1.35:1;
+  const outputW=shape==='portrait'?720:720;
+  const outputH=Math.round(outputW/ratio);
+  canvas.width=outputW;canvas.height=outputH;
+  const draw=()=>{
+    if(!loaded)return;
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,outputW,outputH);
+    const scale=Math.max(outputW/img.naturalWidth,outputH/img.naturalHeight)*Number(zoom.value);
+    const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
+    const maxX=Math.max(0,(w-outputW)/2),maxY=Math.max(0,(h-outputH)/2);
+    const dx=(outputW-w)/2+Number(xInput.value)*maxX;
+    const dy=(outputH-h)/2+Number(yInput.value)*maxY;
+    ctx.drawImage(img,dx,dy,w,h);
+  };
+  img.onload=()=>{loaded=true;draw();};
+  img.src=source;
+  [zoom,xInput,yInput].forEach(input=>input.addEventListener('input',draw));
+  const close=()=>modal.remove();
+  modal.querySelectorAll('[data-crop-cancel]').forEach(button=>button.addEventListener('click',close));
+  modal.querySelector('[data-crop-apply]').addEventListener('click',()=>{
+    if(!loaded)return;
+    canvas.toBlob(blob=>{
+      if(!blob)return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        surface.dispatch(createEditorCommand({
+          type:'upload-asset',
+          target:{assetId:'profile-photo'},
+          payload:{id:'profile-photo',key:'profile-photo',type:'image/png',url:String(reader.result||''),name:asset.name||'profile-photo-cropped.png',size:blob.size,metadata:{crop:{shape,zoom:Number(zoom.value),x:Number(xInput.value),y:Number(yInput.value)}}}
+        }));
+        close();
+      };
+      reader.readAsDataURL(blob);
+    },'image/png',0.92);
+  });
+  return Object.freeze({destroy:close});
 }
 
 export function bindEditorFields(root, surface, options = {}) {
@@ -52,6 +114,16 @@ export function bindEditorFields(root, surface, options = {}) {
     };
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-photo-crop]').forEach(button => {
+    const handler = () => {
+      const state = surface.getState();
+      const assets = state.session.application.masterProfile.careerData.assets || [];
+      const asset = assets.find(item => String(item?.key || item?.id || '') === String(button.dataset.v2EditorPhotoCrop));
+      createPhotoCropper(root, surface, asset);
+    };
+    button.addEventListener('click', handler);
+    listeners.push(() => button.removeEventListener('click', handler));
   });
   root.querySelectorAll('[data-v2-editor-photo-remove]').forEach(button => {
     const handler = () => surface.dispatch(createEditorCommand({
