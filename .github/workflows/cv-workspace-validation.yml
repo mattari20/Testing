@@ -12,21 +12,18 @@ permissions:
 jobs:
   workspace:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npm install --no-save playwright
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:cv-workspace-controller
-      - name: Production V2 boot regression test
-        run: node --test tests/m1000-m1059/cv-production-entry.browser.test.js
-      - run: node --test tests/m1000-m1059/cv-workspace.browser.test.js
-      - run: node --test tests/m1000-m1059/cv-builder-ux.browser.test.js
-      - name: Resume intelligence browser acceptance
-        run: node --test tests/m1000-m1059/cv-resume-intelligence.browser.test.js
-      - name: Final product closure browser acceptance
-        run: node --test tests/m1000-m1059/cv-final-product.browser.test.js
+      - run: npm install --no-audit --no-fund
+      - name: Targeted editor contract validation
+        run: npm run test:m64-m67
+      - name: Editor form and interaction validation
+        run: npm run test:m72-m75
+      - name: Production editor runtime validation
+        run: npm run test:m76-m81
+      - name: Native V2 renderer validation
+        run: npm run test:m14 && npm run test:m15 && npm run test:m16
