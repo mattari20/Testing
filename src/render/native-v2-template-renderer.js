@@ -55,7 +55,7 @@ function entryDateKey(entry, sectionType) {
   const values = entry?.values || {};
   if (String(sectionType)==='experience') return String(values.startDate || values.dates || '').trim();
   const raw = String(values.dates || values.startDate || '').trim();
-  const matches = raw.match(/(19\\d{2}|20\\d{2}|21\\d{2})/g);
+  const matches = raw.match(/(19\d{2}|20\d{2}|21\d{2})/g);
   return matches?.[0] || raw;
 }
 function orderEntries(snapshot, section) {
