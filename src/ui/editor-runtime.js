@@ -96,6 +96,16 @@ export function mountV2EditorRuntime(root, input = {}) {
     return false;
   };
   repairProfessionalSummary();
+  const repairIdentityLocation=()=>{
+    const profile=mounted.surface.getState()?.session?.application?.masterProfile;
+    const identity=profile?.careerData?.identity;
+    if(!identity || identity.address===undefined)return;
+    if(!String(identity.location||'').trim() && String(identity.address||'').trim()){
+      mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:String(identity.address)}}));
+    }
+    mounted.surface.dispatch(createEditorCommand({type:'remove-identity-field',target:{key:'address'}}));
+  };
+  repairIdentityLocation();
   render();
   lifecycleBinding = bindEditorLifecycle(root, lifecycleController);
   const refreshPreview = () => previewRuntime?.refresh().catch(error => { console.error('[CV Builder V2] preview refresh failed:', error); });
