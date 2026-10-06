@@ -79,7 +79,7 @@ function normalizeMetadata(input = {}) {
     discovery: isObject(source.discovery) ? clone(source.discovery) : {},
     demo: isObject(source.demo) ? clone(source.demo) : {},
     assets: isObject(source.assets) ? clone(source.assets) : {},
-    compatibility: isObject(source.compatibility) ? clone(source.compatibility) : {},
+    compatibility: isObject(source.compatibility) ? clone(source.compatibility) : (source.compatibility ? String(source.compatibility) : {}),
     metadata: isObject(source.metadata) ? clone(source.metadata) : {}
   };
 }
