@@ -151,7 +151,16 @@ export function bindEditorFields(root, surface, options = {}) {
     const handler = () => {
       const key=String(input.value||'').trim();
       if(!key)return;
-      surface.dispatch(createEditorCommand({type:'add-identity-field',payload:{key}}));
+      if(key==='custom'){
+        const view=root.ownerDocument?.defaultView;
+        const label=view?.prompt?.('Field name (for example: CNIC Number)')||'';
+        const normalized=String(label).trim().toLowerCase().replace(/[^a-z0-9]+(.)/g,(_,ch)=>String(ch).toUpperCase()).replace(/[^a-zA-Z0-9]/g,'');
+        if(!normalized)return;
+        surface.dispatch(createEditorCommand({type:'add-identity-field',payload:{key:normalized}}));
+      }else{
+        surface.dispatch(createEditorCommand({type:'add-identity-field',payload:{key}}));
+      }
+      input.value='';
     };
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
