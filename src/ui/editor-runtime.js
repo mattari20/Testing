@@ -91,7 +91,9 @@ export function mountV2EditorRuntime(root, input = {}) {
     'upload-asset','remove-asset','undo','redo','restore'
   ]);
   const unsubscribe = mounted.surface.subscribe((state, command) => {
-    if (rerenderTypes.has(command?.type)) {
+    const sortRelevantEntryUpdate = command?.type === 'update-entry'
+      && Object.keys(command?.payload?.values || {}).some(key => ['startDate','endDate','dates'].includes(String(key)));
+    if (rerenderTypes.has(command?.type) || sortRelevantEntryUpdate) {
       render();
       refreshPreview();
     }
