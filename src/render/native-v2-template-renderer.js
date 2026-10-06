@@ -436,8 +436,12 @@ function applySectionOrder(root, snapshot) {
     const parent=heading.parentElement;
     if(!parent) continue;
     const group=[heading];
-    const next=heading.nextElementSibling;
-    if(next) group.push(next);
+    let next=heading.nextElementSibling;
+    while(next && !next.hasAttribute('data-v2-section')) {
+      const following=next.nextElementSibling;
+      group.push(next);
+      next=following;
+    }
     groups.push({sectionId:String(section?.id||type),parent,group});
   }
   const byParent=new Map();
