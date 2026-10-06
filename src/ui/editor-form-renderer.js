@@ -89,6 +89,7 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
   const up=moveOrder(entryIds,index,-1),down=moveOrder(entryIds,index,1);
   const isExperience=String(sectionId).toLowerCase()==='experience';
   const isEducation=String(sectionId).toLowerCase()==='education';
+  const autoSorted=isExperience||isEducation;
   const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:Object.keys(values);
   const fields=entryVisible?entryKeys.map(key=>{
     const value=values[key]==null?'':values[key];
@@ -98,7 +99,7 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
     return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span><input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(value)+'">'+legacyHint+'</label>';
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
   return '<article class="editor-entry-card" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
-    '<div class="editor-entry-head"><div><span class="editor-entry-kicker">ENTRY '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down})+'</div></div>'+
+    '<div class="editor-entry-head"><div><span class="editor-entry-kicker">ENTRY '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
     '<div class="editor-entry-fields">'+fields+'</div></article>';
 }
 
