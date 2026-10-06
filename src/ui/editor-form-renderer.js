@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.9.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.10.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -88,6 +88,17 @@ function renderPalette(configuration){
     }).join('')+'</div></section>';
 }
 
+function listStyleControl(sectionType,configuration){
+  const defaults={skills:'tags',languages:'stacked'};
+  const selected=String(configuration?.presentation?.listStyles?.[sectionType]||defaults[sectionType]);
+  const options=sectionType==='skills'
+    ? [['tags','Tags'],['inline','Inline'],['bullets','Bullets'],['compact','Compact']]
+    : [['stacked','Stacked'],['inline','Inline'],['pills','Pills'],['compact','Compact']];
+  return '<label class="editor-list-style-control"><span>Display style</span><select data-v2-editor-list-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' display style">'+
+    options.map(([value,label])=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+label+'</option>').join('')+
+    '</select></label>';
+}
+
 function renderListField(sectionId,field,index,fieldIds,visible,itemLabel){
   const fieldVisible=visible&&field.visibility!==false;
   const up=moveOrder(fieldIds,index,-1),down=moveOrder(fieldIds,index,1);
@@ -146,7 +157,8 @@ export function renderEditorForm(surface,documentData,options={}){
     const canAddField=!section.repeatable&&type!=='photo';
     return '<section class="editor-section-card'+(sectionHidden?' is-hidden':'')+'" data-v2-editor-section="'+esc(sid)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(sid)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">'+
       '<div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">'+esc(type==='experience'?'WORK':type==='education'?'EDU':type==='skills'?'SKILLS':type==='languages'?'LANG':type==='summary'?'SUMMARY':'SECTION')+'</span><div><h3>'+esc(section.title||labelFor(type))+'</h3><span class="editor-section-status">'+(sectionHidden?'Hidden from CV':'Visible in CV')+'</span></div></div>'+
-      '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div>'+
+      '<div class="editor-section-banner-tools">'+((type==='skills'||type==='languages')&&!sectionHidden?listStyleControl(type,configuration):'')+
+      '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
       (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
       '</section>';
