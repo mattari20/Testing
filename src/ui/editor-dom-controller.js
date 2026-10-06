@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.15.0';
+export const EDITOR_DOM_VERSION = '1.16.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -15,15 +15,17 @@ function createPhotoCropper(root, surface, asset) {
   if(!source)return null;
   const modal=documentRef.createElement('div');
   modal.className='editor-crop-modal';
-  modal.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:rgba(15,23,42,.68);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
-  modal.innerHTML='<div class="editor-crop-dialog" role="dialog" aria-modal="true" aria-label="Adjust profile photo" style="position:relative;width:min(820px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 28px 90px rgba(0,0,0,.35);padding:20px;box-sizing:border-box;">'+
-    '<div class="editor-crop-head"><div><span class="editor-eyebrow">PHOTO</span><h3>Adjust Photo Crop</h3><p>The crop shape follows the selected CV template.</p></div><button type="button" data-crop-cancel aria-label="Close">×</button></div>'+
-    '<div class="editor-crop-work"><div class="editor-crop-preview" data-crop-preview><canvas data-crop-canvas></canvas></div>'+
-    '<div class="editor-crop-controls"><div class="editor-crop-rotate-actions"><button type="button" data-crop-rotate-left>↶ Rotate Left</button><button type="button" data-crop-rotate-right>↷ Rotate Right</button><button type="button" data-crop-rotate-reset>Reset</button></div>'+
-    '<label>Zoom <input type="range" min="1" max="3" step="0.01" value="1" data-crop-zoom></label>'+
-    '<label>Horizontal <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-x></label>'+
-    '<label>Vertical <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-y></label></div></div>'+
-    '<div class="editor-crop-actions"><button type="button" data-crop-cancel>Cancel</button><button type="button" class="primary" data-crop-apply>Apply Crop</button></div></div>';
+  modal.innerHTML='<div class="editor-crop-dialog" role="dialog" aria-modal="true" aria-label="Adjust profile photo">'+
+    '<div class="editor-crop-head"><div><span class="editor-eyebrow">PHOTO</span><h3>Adjust Photo Crop</h3><p>Position, zoom and rotate your photo. The template shape is preserved.</p></div><button type="button" class="editor-crop-close" data-crop-cancel aria-label="Close">×</button></div>'+
+    '<div class="editor-crop-preview" data-crop-preview><canvas data-crop-canvas></canvas></div>'+
+    '<div class="editor-crop-controls">'+
+      '<div class="editor-crop-control-group"><span>Rotate</span><div class="editor-crop-rotate-actions"><button type="button" data-crop-rotate-left>↶ Left</button><button type="button" data-crop-rotate-right>↷ Right</button><button type="button" data-crop-rotate-reset>Reset</button></div></div>'+
+      '<label><span>Zoom</span><input type="range" min="1" max="3" step="0.01" value="1" data-crop-zoom></label>'+
+      '<label><span>Horizontal</span><input type="range" min="-1" max="1" step="0.01" value="0" data-crop-x></label>'+
+      '<label><span>Vertical</span><input type="range" min="-1" max="1" step="0.01" value="0" data-crop-y></label>'+
+    '</div>'+
+    '<div class="editor-crop-actions"><button type="button" class="editor-crop-secondary" data-crop-cancel>Cancel</button><button type="button" class="editor-crop-primary" data-crop-apply>Apply Crop</button></div>'+
+    '</div>';
   documentRef.body.appendChild(modal);
   const previousOverflow=documentRef.body.style.overflow;
   documentRef.body.style.overflow='hidden';
@@ -32,42 +34,25 @@ function createPhotoCropper(root, surface, asset) {
   const xInput=modal.querySelector('[data-crop-x]');
   const yInput=modal.querySelector('[data-crop-y]');
   const img=new Image();
-  let loaded=false;
-  let rotation=0;
+  let loaded=false, rotation=0;
   const shape=String(root.closest('[data-v2-editor-root]')?.getAttribute('data-v2-photo-shape')||'circle');
   const ratio=shape==='portrait'?0.78:shape==='landscape'?1.35:1;
-  const outputW=shape==='portrait'?720:720;
-  const outputH=Math.round(outputW/ratio);
-  canvas.width=outputW;canvas.height=outputH;
-  const cropRadius=shape==='circle'?'50%':shape==='square'?'8px':'12px';
-  canvas.style.borderRadius=cropRadius;
-  canvas.style.overflow='hidden';
-  canvas.setAttribute('data-crop-shape',shape);
+  const outputW=720, outputH=Math.round(outputW/ratio);
+  canvas.width=outputW; canvas.height=outputH; canvas.setAttribute('data-crop-shape',shape);
   const draw=()=>{
     if(!loaded)return;
-    const ctx=canvas.getContext('2d');
-    ctx.clearRect(0,0,outputW,outputH);
+    const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,outputW,outputH);
     const scale=Math.max(outputW/img.naturalWidth,outputH/img.naturalHeight)*Number(zoom.value);
     const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
     const maxX=Math.max(0,(w-outputW)/2),maxY=Math.max(0,(h-outputH)/2);
-    const dx=(outputW-w)/2+Number(xInput.value)*maxX;
-    const dy=(outputH-h)/2+Number(yInput.value)*maxY;
-    ctx.save();
-    ctx.translate(outputW/2,outputH/2);
-    ctx.rotate(rotation*Math.PI/180);
-    ctx.drawImage(img,dx-outputW/2,dy-outputH/2,w,h);
-    ctx.restore();
+    const dx=(outputW-w)/2+Number(xInput.value)*maxX,dy=(outputH-h)/2+Number(yInput.value)*maxY;
+    ctx.save();ctx.translate(outputW/2,outputH/2);ctx.rotate(rotation*Math.PI/180);ctx.drawImage(img,dx-outputW/2,dy-outputH/2,w,h);ctx.restore();
   };
-  img.onload=()=>{loaded=true;draw();};
-  img.src=source;
+  img.onload=()=>{loaded=true;draw();}; img.src=source;
   [zoom,xInput,yInput].forEach(input=>input.addEventListener('input',draw));
-  const rotateLeft=modal.querySelector('[data-crop-rotate-left]');
-  const rotateRight=modal.querySelector('[data-crop-rotate-right]');
-  const rotateReset=modal.querySelector('[data-crop-rotate-reset]');
-  rotateLeft.addEventListener('click',()=>{rotation=(rotation+270)%360;draw();});
-  rotateRight.addEventListener('click',()=>{rotation=(rotation+90)%360;draw();});
-  rotateReset.addEventListener('click',()=>{rotation=0;draw();});
-
+  modal.querySelector('[data-crop-rotate-left]').addEventListener('click',()=>{rotation=(rotation+270)%360;draw();});
+  modal.querySelector('[data-crop-rotate-right]').addEventListener('click',()=>{rotation=(rotation+90)%360;draw();});
+  modal.querySelector('[data-crop-rotate-reset]').addEventListener('click',()=>{rotation=0;draw();});
   const close=()=>{modal.remove();documentRef.body.style.overflow=previousOverflow;};
   modal.querySelectorAll('[data-crop-cancel]').forEach(button=>button.addEventListener('click',close));
   modal.querySelector('[data-crop-apply]').addEventListener('click',()=>{
@@ -76,11 +61,7 @@ function createPhotoCropper(root, surface, asset) {
       if(!blob)return;
       const reader=new FileReader();
       reader.onload=()=>{
-        surface.dispatch(createEditorCommand({
-          type:'upload-asset',
-          target:{assetId:'profile-photo'},
-          payload:{id:'profile-photo',key:'profile-photo',type:'image/png',url:String(reader.result||''),name:asset.name||'profile-photo-cropped.png',size:blob.size,metadata:{crop:{shape,zoom:Number(zoom.value),x:Number(xInput.value),y:Number(yInput.value),rotation}}}
-        }));
+        surface.dispatch(createEditorCommand({type:'upload-asset',target:{assetId:'profile-photo'},payload:{id:'profile-photo',key:'profile-photo',type:'image/png',url:String(reader.result||''),name:asset.name||'profile-photo-cropped.png',size:blob.size,metadata:{crop:{shape,zoom:Number(zoom.value),x:Number(xInput.value),y:Number(yInput.value),rotation}}}}));
         close();
       };
       reader.readAsDataURL(blob);

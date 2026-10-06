@@ -1,6 +1,6 @@
 import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
-import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261006.9';
-import { renderEditorForm } from './editor-form-renderer.js?v=20261006.9';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261007.2';
+import { renderEditorForm } from './editor-form-renderer.js?v=20261007.2';
 import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.6';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
@@ -96,6 +96,16 @@ export function mountV2EditorRuntime(root, input = {}) {
     return false;
   };
   repairProfessionalSummary();
+  const repairIdentityLocation=()=>{
+    const profile=mounted.surface.getState()?.session?.application?.masterProfile;
+    const identity=profile?.careerData?.identity;
+    if(!identity || identity.address===undefined)return;
+    if(!String(identity.location||'').trim() && String(identity.address||'').trim()){
+      mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:String(identity.address)}}));
+    }
+    mounted.surface.dispatch(createEditorCommand({type:'remove-identity-field',target:{key:'address'}}));
+  };
+  repairIdentityLocation();
   render();
   lifecycleBinding = bindEditorLifecycle(root, lifecycleController);
   const refreshPreview = () => previewRuntime?.refresh().catch(error => { console.error('[CV Builder V2] preview refresh failed:', error); });
