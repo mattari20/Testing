@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.13.0';
+export const EDITOR_DOM_VERSION = '1.14.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -202,6 +202,14 @@ export function bindEditorFields(root, surface, options = {}) {
     };
     button.addEventListener('click',handler);
     listeners.push(()=>button.removeEventListener('click',handler));
+  });
+  root.querySelectorAll('[data-v2-editor-rating-style]').forEach(input => {
+    const handler=()=>surface.dispatch(createEditorCommand({type:'set-rating-style',target:{sectionType:input.dataset.v2EditorRatingStyle},payload:{sectionType:input.dataset.v2EditorRatingStyle,style:input.value}}));
+    input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
+  });
+  root.querySelectorAll('[data-v2-editor-item-rating]').forEach(input => {
+    const handler=()=>surface.dispatch(createEditorCommand({type:'set-item-rating',target:{sectionType:input.dataset.v2EditorItemRating},payload:{sectionType:input.dataset.v2EditorItemRating,item:input.dataset.v2RatingItem,rating:Number(input.value)}}));
+    input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
   });
   root.querySelectorAll('[data-v2-editor-list-style]').forEach(input => {
     const handler = () => surface.dispatch(createEditorCommand({
