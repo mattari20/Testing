@@ -85,11 +85,11 @@ export function mountV2EditorRuntime(root, input = {}) {
     const sections=profile?.careerData?.sections||[];
     let summary=sections.find(s=>String(s.type)==='summary');
     if(!summary){
-      mounted.surface.dispatch(createEditorCommand({type:'add-section',payload:{id:'summary',type:'summary',title:'Professional Summary',visibility:true,repeatable:false,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'',visibility:true}]}}));
+      mounted.surface.dispatch(createEditorCommand({type:'add-section',payload:{id:'summary',type:'summary',title:'Professional Summary',visibility:true,repeatable:false,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:"Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.",visibility:true}]}}));
       return true;
     }
     if(!Array.isArray(summary.fields)||summary.fields.length===0){
-      mounted.surface.dispatch(createEditorCommand({type:'add-field',target:{sectionId:summary.id},payload:{id:'summaryText',type:'textarea',label:'Summary',value:'',visibility:true}}));
+      mounted.surface.dispatch(createEditorCommand({type:'add-field',target:{sectionId:summary.id},payload:{id:'summaryText',type:'textarea',label:'Summary',value:"Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.",visibility:true}}));
       return true;
     }
     return false;
