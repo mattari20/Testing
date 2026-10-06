@@ -509,6 +509,17 @@ function applySectionOrder(root, snapshot) {
   }
 }
 
+function applyIdentityVisibility(root, snapshot) {
+  const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
+    ? snapshot.configuration.hiddenIdentityFields.map(String) : []);
+  for (const element of [...root.querySelectorAll('[data-v2-visible-when]')]) {
+    const binding = element.getAttribute('data-v2-visible-when') || '';
+    if (!binding.startsWith('identity.')) continue;
+    const key = binding.slice('identity.'.length);
+    if (hidden.has(key)) element.remove();
+  }
+}
+
 function applySectionVisibility(root, snapshot) {
   for (const element of [...root.querySelectorAll('[data-v2-section][data-v2-visible-when]')]) {
     const binding = element.getAttribute('data-v2-visible-when') || '';
@@ -546,6 +557,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   templateStyles.forEach(style => root.prepend(style.cloneNode(true)));
 
   applyTheme(root, snapshot);
+  applyIdentityVisibility(root, snapshot);
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
   applyListStyles(root, snapshot);
