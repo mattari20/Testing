@@ -7,7 +7,7 @@ import { createEditorPersistenceAdapter, createEditorRecoveryController } from '
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.12.0';
+export const EDITOR_RUNTIME_VERSION = '1.13.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -86,7 +86,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   refreshPreview();
 
   const rerenderTypes = new Set([
-    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
+    'set-field','set-identity','update-entry','add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
     'upload-asset','remove-asset','undo','redo','restore'
   ]);
