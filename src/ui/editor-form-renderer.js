@@ -79,7 +79,7 @@ function summarySuggestionButton(section){
 function sortEntriesForEditor(entries,sectionType,direction){
   const list=Array.isArray(entries)?[...entries]:[];
   if(!new Set(['experience','education']).has(String(sectionType))) return list;
-  const key=e=>{const v=e?.values||{};if(sectionType==='experience')return String(v.startDate||v.dates||'');const m=String(v.dates||v.startDate||'').match(/(19\\d{2}|20\\d{2}|21\\d{2})/g);return m?.[0]||String(v.dates||'');};
+  const key=e=>{const v=e?.values||{};if(sectionType==='experience')return String(v.startDate||v.dates||'');const m=String(v.dates||v.startDate||'').match(/(19\d{2}|20\d{2}|21\d{2})/g);return m?.[0]||String(v.dates||'');};
   return list.sort((a,b)=>{const ad=key(a),bd=key(b);if(ad!==bd)return direction==='asc'?ad.localeCompare(bd):bd.localeCompare(ad);return (Number(a.order)||0)-(Number(b.order)||0);});
 }
 
