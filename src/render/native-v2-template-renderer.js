@@ -123,6 +123,7 @@ export function resolveNativeValue(snapshot, binding, context = {}) {
   }
 
   if (context.entry && path) return resolveEntryValue(context.entry, path);
+  if (context.values && path) return resolveEntryValue({ values: context.values }, path);
   if (context.item && path) {
     const item = context.item;
     const candidates = ENTRY_ALIASES[String(path)] || [String(path)];
