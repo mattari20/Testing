@@ -94,7 +94,7 @@ const nativeTemplates = [
     careerLevel: ['Fresh Graduate','Professional','Senior Professional'],
     industry: ['General','Business','IT / Software','Engineering','Academic'],
     style: ['Professional','Structured'],
-    photo: { supported: true },
+    photo: { supported: true, shape: 'circle' },
     ats: { profile: 'Standard', machineReadable: true },
     capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['professional','structured','detailed'] }
