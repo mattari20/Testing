@@ -1,8 +1,8 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.6.1';
+export const EDITOR_FORM_RENDERER_VERSION = '1.7.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
-  role:'Role', company:'Company', dates:'Dates', description:'Description', degree:'Degree / Qualification', institution:'Institution'
+  role:'Role', company:'Company', dates:'Dates', startDate:'Start Date', endDate:'End Date', description:'Description', degree:'Degree / Qualification', institution:'Institution'
 });
 function labelFor(key){ return LABELS[String(key)] || String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase()); }
 function iconFor(label){ return ({Hide:'👁',Show:'👁',Remove:'🗑',Duplicate:'⧉','Move Up':'↑','Move Down':'↓'})[label] || label; }
@@ -55,7 +55,6 @@ function renderField(sectionId, field, index, fieldIds, visible = true) {
     '<select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field type">'+typeOptions+'</select></div><div class="editor-inline-actions">' +
     actionButton('Remove','remove-field',{sectionId,fieldId:field.id}) + actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up}) + actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down}) + '</div></div>' +
     valueControl +
-
     '</div>';
 }
 function renderEntry(sectionId, entry, index, entryIds, visible = true) {
@@ -63,12 +62,21 @@ function renderEntry(sectionId, entry, index, entryIds, visible = true) {
   const entryVisible = visible && entry.visibility !== false;
   const up = moveOrder(entryIds,index,-1);
   const down = moveOrder(entryIds,index,1);
-  const fields = entryVisible ? Object.keys(values).map(key =>
-    '<label data-v2-editor-entry-field-wrapper="'+esc(sectionId)+':'+esc(entry.id)+':'+esc(key)+'">' +
-    '<span>'+esc(labelFor(key))+'</span>' +
-    '<input data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(values[key])+'">' +
-    '</label>'
-  ).join('') : '<span data-v2-editor-entry-hidden-state="true">Hidden in this CV</span>';
+  const isExperience = String(sectionId) === 'experience' || String(sectionId).toLowerCase() === 'experience';
+  const entryKeys = isExperience
+    ? ['role','company','startDate','endDate','description']
+    : Object.keys(values);
+  const fields = entryVisible ? entryKeys.map(key => {
+    const value = values[key] == null ? '' : values[key];
+    const inputType = isExperience && (key === 'startDate' || key === 'endDate') ? 'month' : 'text';
+    const legacyHint = isExperience && key === 'startDate' && !value && values.dates
+      ? '<small style="display:block;margin-top:4px;color:var(--muted)">Existing duration: '+esc(values.dates)+' — enter month/year above to replace it.</small>'
+      : '';
+    return '<label data-v2-editor-entry-field-wrapper="'+esc(sectionId)+':'+esc(entry.id)+':'+esc(key)+'">' +
+      '<span>'+esc(labelFor(key))+'</span>' +
+      '<input type="'+inputType+'" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(value)+'">'+legacyHint+
+      '</label>';
+  }).join('') : '<span data-v2-editor-entry-hidden-state="true">Hidden in this CV</span>';
   return '<article data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">' +
     '<div class="editor-entry-head"><h4>'+esc('Entry '+(index+1))+'</h4><div class="editor-inline-actions">' +
     actionButton(entryVisible ? 'Hide' : 'Show','set-visibility',{kind:'entry',sectionId,entryId:entry.id},{visible:!entryVisible}) +
