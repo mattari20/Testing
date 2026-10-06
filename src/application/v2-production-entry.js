@@ -1,4 +1,4 @@
-import { mountV2EditorRuntime } from '../ui/editor-runtime.js';
+import { mountV2EditorRuntime } from '../ui/editor-runtime.js?v=20261006.1';
 
 export const V2_PRODUCTION_ENTRY_VERSION = '1.0.0';
 
