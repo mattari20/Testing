@@ -1,8 +1,8 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.16.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.17.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
-  role:'Role', company:'Company', dates:'Dates', startDate:'Start Date', endDate:'End Date', description:'Description',
+  role:'Role', company:'Company', dates:'Dates', startDate:'Start Date', endDate:'End Date', description:'Description', dateOfBirth:'Date of Birth',
   degree:'Degree / Qualification', institution:'Institution', grade:'Grade'
 });
 
@@ -75,6 +75,13 @@ function renderField(sectionId,field,index,fieldIds,visible=true){
   return '<div class="editor-field-card" data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
     '<div class="editor-field-head"><div class="editor-field-definition"><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field label" value="'+esc(field.label||labelFor(field.id))+'"><select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field type">'+typeOptions+'</select></div>'+
     '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+valueControl+'</div>';
+}
+
+function renderSummaryField(sectionId,field,visible=true){
+  const fieldVisible=visible&&field.visibility!==false;
+  return '<div class="editor-summary-field" data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
+    (fieldVisible?'<textarea rows="7" data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Professional Summary">'+esc(field.value||'')+'</textarea>':'<div class="editor-hidden-note">Professional Summary is hidden from the CV. Use the section eye button to show it again.</div>')+
+    '</div>';
 }
 
 function summarySuggestionButton(section){
@@ -190,17 +197,19 @@ export function renderEditorForm(surface,documentData,options={}){
   const identityGroups=[
     {id:'identity',title:'Name & Professional',keys:['fullName','jobTitle'],add:[]},
     {id:'contact',title:'Contact Information',keys:['email','phone','location','website','linkedin','whatsapp'],add:['website','linkedin','whatsapp']},
-    {id:'personal',title:'Personal Information',keys:['dateOfBirth','cnic','religion','nationality','address','gender','maritalStatus'],add:['dateOfBirth','cnic','religion','nationality','address','gender','maritalStatus']}
+    {id:'personal',title:'Personal Information',keys:['dateOfBirth','cnic','religion','nationality','gender','maritalStatus'],add:['dateOfBirth','cnic','religion','nationality','gender','maritalStatus']}
   ];
   const knownKeys=new Set(identityGroups.flatMap(group=>group.keys));
   const customKeys=Object.keys(identity).filter(key=>!knownKeys.has(key));
   if(customKeys.length) identityGroups[2].keys=[...identityGroups[2].keys,...customKeys];
   const identityGroupHtml=group=>{
-    const fields=group.keys.filter(key=>identity[key]!==undefined || ['fullName','jobTitle','email','phone','location','dateOfBirth','cnic','religion','nationality','address','gender','maritalStatus'].includes(key));
-    const addOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">+ '+esc(labelFor(key))+'</option>').join('')+'<option value="custom">+ Custom Field</option>';
+    const fields=group.keys.filter(key=>identity[key]!==undefined || ['fullName','jobTitle','email','phone','location','dateOfBirth','cnic','religion','nationality','gender','maritalStatus'].includes(key));
+    const missingAddOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">Add '+esc(labelFor(key))+'</option>').join('');
+    const addOptions=missingAddOptions+'<option value="custom">Add Custom Field…</option>';
     return '<section class="editor-identity-block"><div class="editor-identity-head"><div><span class="editor-eyebrow">'+esc(group.id==='identity'?'IDENTITY':group.id==='contact'?'CONTACT':'PERSONAL')+'</span><h4>'+esc(group.title)+'</h4></div>'+((group.id!=='identity'&&addOptions)?'<select class="editor-identity-add" data-v2-editor-identity-add aria-label="Add '+esc(group.title)+' field"><option value="">+ Add Field</option>'+addOptions+'</select>':'')+'</div><div class="editor-identity-grid">'+fields.map(key=>{
       const removable=group.id!=='identity'; const identityVisible=!hiddenIdentityFields.includes(String(key));
-      return '<label class="editor-identity-field'+(identityVisible?'':' is-hidden')+'"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(identity[key]??'')+'">'+(removable?identityVisibilityButton(key,identityVisible):'')+'</div></label>';
+      const inputType=key==='dateOfBirth'?'date':'text';
+      return '<label class="editor-identity-field'+(identityVisible?'':' is-hidden')+'"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input type="'+inputType+'" data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(identity[key]??'')+'">'+(removable?identityVisibilityButton(key,identityVisible):'')+'</div></label>';
     }).join('')+'</div></section>';
   };
   const identityHtml=identityGroups.map(identityGroupHtml).join('');
@@ -219,7 +228,7 @@ export function renderEditorForm(surface,documentData,options={}){
     const fieldHtml=!sectionHidden&&type!=='experience'&&type!=='education'
       ? (type==='skills'||type==='languages'
         ? fields.map((field,index)=>renderListField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id),type==='skills'?'Skill':'Language',configuration)).join('')
-        : fields.map((field,index)=>renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join(''))
+        : fields.map((field,index)=>type==='summary'?renderSummaryField(sid,field,!hasConfiguredKey(hiddenFields,sid+':'+field.id)):renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join(''))
       : '';
     const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id))).join(''):'';
     const addButton=type==='experience'?'Add Experience':type==='education'?'Add Education':('Add '+(section.title||labelFor(type)));
