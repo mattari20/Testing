@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.7.0';
+export const EDITOR_DOM_VERSION = '1.8.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -17,7 +17,7 @@ function createPhotoCropper(root, surface, asset) {
   modal.className='editor-crop-modal';
   modal.innerHTML='<div class="editor-crop-dialog" role="dialog" aria-modal="true" aria-label="Adjust profile photo">'+
     '<div class="editor-crop-head"><div><span class="editor-eyebrow">PHOTO</span><h3>Adjust Photo Crop</h3><p>The crop shape follows the selected CV template.</p></div><button type="button" data-crop-cancel aria-label="Close">×</button></div>'+
-    '<div class="editor-crop-work"><div class="editor-crop-preview"><canvas data-crop-canvas></canvas></div>'+
+    '<div class="editor-crop-work"><div class="editor-crop-preview" data-crop-preview><canvas data-crop-canvas></canvas></div>'+
     '<div class="editor-crop-controls"><label>Zoom <input type="range" min="1" max="3" step="0.01" value="1" data-crop-zoom></label>'+
     '<label>Horizontal <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-x></label>'+
     '<label>Vertical <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-y></label></div></div>'+
@@ -34,6 +34,10 @@ function createPhotoCropper(root, surface, asset) {
   const outputW=shape==='portrait'?720:720;
   const outputH=Math.round(outputW/ratio);
   canvas.width=outputW;canvas.height=outputH;
+  const cropRadius=shape==='circle'?'50%':shape==='square'?'8px':'12px';
+  canvas.style.borderRadius=cropRadius;
+  canvas.style.overflow='hidden';
+  canvas.setAttribute('data-crop-shape',shape);
   const draw=()=>{
     if(!loaded)return;
     const ctx=canvas.getContext('2d');

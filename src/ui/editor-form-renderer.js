@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.8.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.9.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -84,8 +84,25 @@ function renderPalette(configuration){
   return '<section class="editor-design-card"><div class="editor-panel-title"><div><span class="editor-eyebrow">DESIGN</span><h3>CV Color</h3></div><span class="editor-panel-help">Choose a professional accent color</span></div>'+
     '<div class="editor-palette" role="radiogroup" aria-label="CV color palette">'+PALETTE.map(color=>{
       const active=color.id===selected;
-      return '<button type="button" class="editor-color-swatch'+(active?' active':'')+'" title="'+esc(color.name)+'" aria-label="'+esc(color.name)+'" aria-checked="'+String(active)+'" role="radio" data-v2-editor-command="set-theme-color" data-v2-target="{}" data-v2-payload="'+attr({themeColor:color.id})+'"><span style="background:'+color.primary+'"></span><b>'+esc(color.name)+'</b></button>';
+      return '<button type="button" class="editor-color-swatch'+(active?' active':'')+'" title="'+esc(color.name)+'" aria-label="'+esc(color.name)+'" aria-checked="'+String(active)+'" role="radio" data-v2-editor-command="set-theme-color" data-v2-target="{}" data-v2-payload="'+attr({themeColor:color.id})+'"><span style="background:'+color.primary+'"></span></button>';
     }).join('')+'</div></section>';
+}
+
+function renderListField(sectionId,field,index,fieldIds,visible,itemLabel){
+  const fieldVisible=visible&&field.visibility!==false;
+  const up=moveOrder(fieldIds,index,-1),down=moveOrder(fieldIds,index,1);
+  const value=field.value==null?'':String(field.value);
+  const placeholder=sectionId==='skills'?'JavaScript, HTML, CSS, Git, Testing':'English, Urdu, Punjabi';
+  const hint=sectionId==='skills'
+    ? 'Write each skill separated by a comma. Example: JavaScript, HTML, CSS, Git.'
+    : 'Write each language separated by a comma. Example: English, Urdu, Punjabi.';
+  return '<div class="editor-list-field-card" data-v2-editor-field-wrapper="'+esc(sectionId+':'+field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
+    '<div class="editor-list-field-head"><div><span class="editor-entry-kicker">'+esc(itemLabel)+' '+(index+1)+'</span><strong>'+esc(sectionId==='skills'?'Skill list':'Language list')+'</strong></div>'+
+    '<div class="editor-inline-actions">'+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
+    (fieldVisible
+      ? '<label class="editor-list-field-label"><span>'+esc(itemLabel)+' content</span><input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'"><small class="editor-field-help">'+esc(hint)+'</small></label>'
+      : '<div class="editor-hidden-note">This '+esc(itemLabel.toLowerCase())+' is hidden from the CV.</div>')+
+    '</div>';
 }
 
 function renderPhotoCard(documentData,photoShape='circle'){
@@ -118,7 +135,11 @@ export function renderEditorForm(surface,documentData,options={}){
     const entries=orderItems(section.entries||[],configuration.entryOrder?.[sid]||[]);
     const entryIds=entries.map(e=>e.id);
     const sectionUp=moveOrder(sectionIds,sectionIndex,-1),sectionDown=moveOrder(sectionIds,sectionIndex,1);
-    const fieldHtml=!sectionHidden&&type!=='experience'&&type!=='education'?fields.map((field,index)=>renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join(''):'';
+    const fieldHtml=!sectionHidden&&type!=='experience'&&type!=='education'
+      ? (type==='skills'||type==='languages'
+        ? fields.map((field,index)=>renderListField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id),type==='skills'?'Skill':'Language')).join('')
+        : fields.map((field,index)=>renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join(''))
+      : '';
     const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id))).join(''):'';
     const addButton=type==='experience'?'Add Experience':type==='education'?'Add Education':('Add '+(section.title||labelFor(type)));
     const canAddEntry=section.repeatable;
@@ -127,7 +148,7 @@ export function renderEditorForm(surface,documentData,options={}){
       '<div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">'+esc(type==='experience'?'WORK':type==='education'?'EDU':type==='skills'?'SKILLS':type==='languages'?'LANG':type==='summary'?'SUMMARY':'SECTION')+'</span><div><h3>'+esc(section.title||labelFor(type))+'</h3><span class="editor-section-status">'+(sectionHidden?'Hidden from CV':'Visible in CV')+'</span></div></div>'+
       '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
-      (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:'New Field',value:''})+'">+ Add Field</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
+      (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
       '</section>';
   }).join('');
 

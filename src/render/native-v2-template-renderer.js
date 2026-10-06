@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.4.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.5.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -86,8 +86,10 @@ export function getVisibleEntries(snapshot, section) {
   const hidden = Array.isArray(snapshot?.configuration?.hiddenEntries)
     ? snapshot.configuration.hiddenEntries.map(String)
     : [];
+  const sectionId = String(section.id || section.type || '');
   return orderEntries(snapshot, section)
     .filter(entry => entry?.visibility !== false)
+    .filter(entry => !hidden.includes(sectionId + ':' + String(entry.id)))
     .filter(entry => !hidden.includes(String(entry.id)));
 }
 
@@ -320,14 +322,19 @@ function applyRepeats(root, snapshot) {
     const section = findCanonicalSection(snapshot, sectionType);
     const entries = mode === 'values'
       ? (() => {
+          const hiddenEntries = Array.isArray(snapshot?.configuration?.hiddenEntries) ? snapshot.configuration.hiddenEntries.map(String) : [];
+          const hiddenFields = Array.isArray(snapshot?.configuration?.hiddenFields) ? snapshot.configuration.hiddenFields.map(String) : [];
+          const sectionId = String(section?.id || sectionType || '');
           const entryValues = (Array.isArray(section?.entries) ? section.entries : [])
             .filter(entry => entry?.visibility !== false)
+            .filter(entry => !hiddenEntries.includes(sectionId + ':' + String(entry.id)) && !hiddenEntries.includes(String(entry.id)))
             .map(entry => entry.values || entry)
             .filter(Boolean);
           if (entryValues.length) return entryValues;
           const fields = Array.isArray(section?.fields) ? section.fields : [];
           return fields
             .filter(field => field?.visibility !== false)
+            .filter(field => !hiddenFields.includes(sectionId + ':' + String(field.id)) && !hiddenFields.includes(String(field.id)))
             .flatMap(field => {
               const raw = field?.value;
               if (raw == null) return [];
