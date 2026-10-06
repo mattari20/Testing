@@ -86,7 +86,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   refreshPreview();
 
   const rerenderTypes = new Set([
-    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
+    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-section-placement','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
     'upload-asset','remove-asset','undo','redo','restore'
   ]);
