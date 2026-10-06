@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.3';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.4.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -51,6 +51,20 @@ export function findCanonicalSection(snapshot, sectionType) {
   return sections.find(section => String(section.type) === String(sectionType)) || null;
 }
 
+function orderEntries(snapshot, section) {
+  const entries = Array.isArray(section?.entries) ? [...section.entries] : [];
+  const order = Array.isArray(snapshot?.configuration?.entryOrder?.[String(section?.id)])
+    ? snapshot.configuration.entryOrder[String(section.id)].map(String)
+    : [];
+  const rank = new Map(order.map((id,index)=>[id,index]));
+  return entries.sort((a,b)=>{
+    const ar=rank.has(String(a.id))?rank.get(String(a.id)):Number.MAX_SAFE_INTEGER;
+    const br=rank.has(String(b.id))?rank.get(String(b.id)):Number.MAX_SAFE_INTEGER;
+    if(ar!==br)return ar-br;
+    return (Number(a.order)||0)-(Number(b.order)||0);
+  });
+}
+
 function hasProfilePhoto(snapshot) {
   const assets = Array.isArray(snapshot?.careerData?.assets) ? snapshot.careerData.assets : [];
   return assets.some(item => String(item?.key || item?.id || '') === 'profile-photo' && meaningfulAsset(item));
@@ -72,7 +86,7 @@ export function getVisibleEntries(snapshot, section) {
   const hidden = Array.isArray(snapshot?.configuration?.hiddenEntries)
     ? snapshot.configuration.hiddenEntries.map(String)
     : [];
-  return (Array.isArray(section.entries) ? section.entries : [])
+  return orderEntries(snapshot, section)
     .filter(entry => entry?.visibility !== false)
     .filter(entry => !hidden.includes(String(entry.id)));
 }
@@ -386,6 +400,61 @@ function applyItemValueFallbacks(root, snapshot) {
   }
 }
 
+
+function applyTheme(root, snapshot) {
+  const themes = {
+    navy:{primary:'#30364F',dark:'#151927',light:'#D7DAE3',contrast:'#FFFFFF'},
+    blue:{primary:'#2563EB',dark:'#173B8F',light:'#DBE7FF',contrast:'#FFFFFF'},
+    teal:{primary:'#0F766E',dark:'#0B4F4A',light:'#D7F0ED',contrast:'#FFFFFF'},
+    green:{primary:'#166534',dark:'#0B3D1F',light:'#DCEFE2',contrast:'#FFFFFF'},
+    burgundy:{primary:'#8B1E3F',dark:'#4D1025',light:'#F0DCE4',contrast:'#FFFFFF'},
+    charcoal:{primary:'#374151',dark:'#1F2937',light:'#E5E7EB',contrast:'#FFFFFF'},
+    purple:{primary:'#6D28D9',dark:'#3B167D',light:'#E9DEFF',contrast:'#FFFFFF'},
+    orange:{primary:'#C2410C',dark:'#7C2D12',light:'#FCE2D4',contrast:'#FFFFFF'}
+  };
+  const theme=themes[String(snapshot?.configuration?.presentation?.themeColor||'navy')]||themes.navy;
+  root.style.setProperty('--primary',theme.primary);
+  root.style.setProperty('--primary-dark',theme.dark);
+  root.style.setProperty('--theme-color',theme.primary);
+  root.style.setProperty('--dark-bg',theme.light);
+  root.style.setProperty('--primary-light',theme.light);
+  root.style.setProperty('--primary-contrast',theme.contrast);
+}
+
+function applySectionOrder(root, snapshot) {
+  const configured = Array.isArray(snapshot?.configuration?.sectionOrder) ? snapshot.configuration.sectionOrder.map(String) : [];
+  if (!configured.length) return;
+  const rank = new Map(configured.map((id,index)=>[id,index]));
+  const headings = [...root.querySelectorAll('[data-v2-section]')];
+  const groups = [];
+  const seen = new Set();
+  for (const heading of headings) {
+    const type=String(heading.getAttribute('data-v2-section')||'');
+    if(!type || seen.has(type)) continue;
+    seen.add(type);
+    const section=findCanonicalSection(snapshot,type);
+    const parent=heading.parentElement;
+    if(!parent) continue;
+    const group=[heading];
+    const next=heading.nextElementSibling;
+    if(next) group.push(next);
+    groups.push({sectionId:String(section?.id||type),parent,group});
+  }
+  const byParent=new Map();
+  for(const group of groups){
+    if(!byParent.has(group.parent))byParent.set(group.parent,[]);
+    byParent.get(group.parent).push(group);
+  }
+  for(const [parent,parentGroups] of byParent){
+    parentGroups.sort((a,b)=>{
+      const ar=rank.has(a.sectionId)?rank.get(a.sectionId):Number.MAX_SAFE_INTEGER;
+      const br=rank.has(b.sectionId)?rank.get(b.sectionId):Number.MAX_SAFE_INTEGER;
+      return ar-br;
+    });
+    for(const item of parentGroups)for(const node of item.group)parent.appendChild(node);
+  }
+}
+
 function applySectionVisibility(root, snapshot) {
   for (const element of [...root.querySelectorAll('[data-v2-section][data-v2-visible-when]')]) {
     const binding = element.getAttribute('data-v2-visible-when') || '';
@@ -422,8 +491,10 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   const templateStyles = [...host.querySelectorAll('style')];
   templateStyles.forEach(style => root.prepend(style.cloneNode(true)));
 
+  applyTheme(root, snapshot);
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
+  applySectionOrder(root, snapshot);
   applyItemValueFallbacks(root, snapshot);
   applyVisibility(root, snapshot);
   applyValues(root, snapshot);
