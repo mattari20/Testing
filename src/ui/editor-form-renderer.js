@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.14.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.15.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -160,7 +160,7 @@ function renderPhotoCard(documentData,photoShape='circle',configuration={}){
   const shape=String(photoShape||'circle');
   const radius=shape==='circle'?'50%':shape==='square'?'8px':'14px';
   return '<section class="editor-photo-card" data-v2-editor-photo>'+
-    '<div class="editor-panel-title"><div><span class="editor-eyebrow">PHOTO</span><h3>Profile Photo</h3></div><div class="editor-photo-head-tools">'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')+(hasPhoto?'<button type="button" class="editor-inline-action action-remove photo-remove-top" title="Remove" aria-label="Remove photo" data-v2-editor-photo-remove="'+esc('profile-photo')+'">'+icon('Remove')+'</button>':'')+'</div></div>'+
+    '<div class="editor-panel-title"><div><span class="editor-eyebrow">PHOTO</span><h3>Profile Photo</h3></div><div class="editor-photo-head-tools">'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')++'</div></div>'+
     '<div class="editor-photo-layout"><div class="editor-photo-frame '+esc(shape)+'" style="border-radius:'+radius+'">'+(hasPhoto?'<img class="editor-photo-preview" src="'+esc(photo.url||photo.src)+'" alt="Profile photo preview">':'<div class="editor-photo-placeholder">No photo</div>')+'</div>'+
     '<div class="editor-photo-copy"><strong>'+(hasPhoto?'Photo ready':'Add a profile photo')+'</strong><p>'+(hasPhoto?'Crop and position the image without changing the template shape.':'Upload JPG, PNG or WebP up to 2 MB.')+'</p><div class="editor-photo-actions"><label class="editor-photo-upload">'+(hasPhoto?'Change Photo':'Upload Photo')+'<input type="file" accept="image/*" data-v2-editor-photo-input hidden></label>'+(hasPhoto?'<button type="button" class="editor-photo-crop" data-v2-editor-photo-crop="profile-photo">Adjust Crop</button>':'')+'</div></div></div></section>';
 }
