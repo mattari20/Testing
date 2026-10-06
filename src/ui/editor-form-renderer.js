@@ -59,7 +59,7 @@ function visibilityButton(kind,target,visible){
   return actionButton(visible?'Hide':'Show','set-visibility',{kind,...target},{visible:!visible});
 }
 function identityVisibilityButton(key,visible){
-  return actionButton(visible?'Hide':'Show','set-identity-visibility',{key},{visible:!visible});
+  return actionButton(visible?'Hide':'Show','set-visibility',{kind:'identity',key},{visible:!visible});
 }
 
 function renderField(sectionId,field,index,fieldIds,visible=true){
