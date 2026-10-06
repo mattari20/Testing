@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: 20
       - run: npm install --no-audit --no-fund
-      - name: Targeted editor contract validation
-        run: npm run test:m64-m67
+      - name: Targeted editor command and surface validation
+        run: npm run test:m64 && npm run test:m67
       - name: Editor form and interaction validation
         run: npm run test:m72-m75
       - name: Production editor runtime validation
