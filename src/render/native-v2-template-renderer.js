@@ -60,7 +60,7 @@ function entryDateKey(entry, sectionType) {
 }
 function orderEntries(snapshot, section) {
   const entries = Array.isArray(section?.entries) ? [...section.entries] : [];
-  const sortDirection = snapshot?.configuration?.presentation?.entrySort?.[String(section?.type)] || null;
+  const sortDirection = snapshot?.configuration?.presentation?.entrySort?.[String(section?.type)] || ((String(section?.type)==='experience' || String(section?.type)==='education') ? 'desc' : null);
   if (sortDirection && (String(section?.type)==='experience' || String(section?.type)==='education')) {
     return entries.sort((a,b)=>{
       const ad=entryDateKey(a,section.type), bd=entryDateKey(b,section.type);
