@@ -7,7 +7,7 @@ import { createEditorPersistenceAdapter, createEditorRecoveryController } from '
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.13.0';
+export const EDITOR_RUNTIME_VERSION = '1.14.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -80,6 +80,21 @@ export function mountV2EditorRuntime(root, input = {}) {
     }
   }
 
+  const repairProfessionalSummary=()=>{
+    const profile=mounted.surface.getState()?.session?.application?.masterProfile;
+    const sections=profile?.careerData?.sections||[];
+    let summary=sections.find(s=>String(s.type)==='summary');
+    if(!summary){
+      mounted.surface.dispatch(createEditorCommand({type:'add-section',payload:{id:'summary',type:'summary',title:'Professional Summary',visibility:true,repeatable:false,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'',visibility:true}]}}));
+      return true;
+    }
+    if(!Array.isArray(summary.fields)||summary.fields.length===0){
+      mounted.surface.dispatch(createEditorCommand({type:'add-field',target:{sectionId:summary.id},payload:{id:'summaryText',type:'textarea',label:'Summary',value:'',visibility:true}}));
+      return true;
+    }
+    return false;
+  };
+  repairProfessionalSummary();
   render();
   lifecycleBinding = bindEditorLifecycle(root, lifecycleController);
   const refreshPreview = () => previewRuntime?.refresh().catch(error => { console.error('[CV Builder V2] preview refresh failed:', error); });
