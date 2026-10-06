@@ -1,10 +1,10 @@
 import { createApplicationSnapshot } from '../application/cv-application.js';
 import { getNativeV2Template } from '../templates/v2-native-template-catalog.js';
-import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261006.1';
-import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261006.1';
+import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261006.2';
+import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261006.2';
 import { bindPreviewInlineEditing } from './editor-preview-inline-controller.js';
 
-export const EDITOR_LIVE_PREVIEW_RUNTIME_VERSION = '1.0.0';
+export const EDITOR_LIVE_PREVIEW_RUNTIME_VERSION = '1.1.0';
 
 const PREVIEW_COMMANDS = new Set([
   'set-identity','set-field','update-entry','add-entry','remove-entry','duplicate-entry',
@@ -68,6 +68,7 @@ export function createEditorLivePreviewRuntime(surface, root, options = {}) {
       metadata: template
     });
     const rendered = renderNativeTemplateSource(definition, snapshot, root.ownerDocument);
+    root.closest('[data-v2-editor-root]')?.setAttribute('data-v2-photo-shape', String(template?.photo?.shape || 'circle'));
     if (destroyed || token !== revision) return { stale: true };
 
     inlineBinding?.destroy();
