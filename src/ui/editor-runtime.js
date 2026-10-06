@@ -7,7 +7,7 @@ import { createEditorPersistenceAdapter, createEditorRecoveryController } from '
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.7.1';
+export const EDITOR_RUNTIME_VERSION = '1.8.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -51,7 +51,7 @@ export function mountV2EditorRuntime(root, input = {}) {
     const form = root.querySelector('[data-v2-editor-form]');
     if (form) {
       const holder = root.ownerDocument.createElement('div');
-      holder.innerHTML = renderEditorForm(mounted.surface, profile).html;
+      holder.innerHTML = renderEditorForm(mounted.surface, profile, { photoShape: input.photoShape || root.getAttribute('data-v2-photo-shape') || 'circle' }).html;
       form.replaceChildren(...holder.childNodes);
       fieldBinding = bindEditorFields(form, mounted.surface);
       actionBinding = bindEditorActions(form, mounted.surface);
@@ -86,7 +86,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   refreshPreview();
 
   const rerenderTypes = new Set([
-    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition',
+    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
     'upload-asset','remove-asset','undo','redo','restore'
   ]);
