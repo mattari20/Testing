@@ -4,7 +4,7 @@ import { addSection, removeSection, setSectionTitle, addField, removeField, setF
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
-export const EDITOR_EXECUTOR_VERSION='1.4.0';
+export const EDITOR_EXECUTOR_VERSION='1.5.0';
 const findSection=(profile,id)=>profile.careerData.sections.find(s=>s.id===id);
 const touch=o=>{o.revision+=1;o.updatedAt=new Date().toISOString();};
 const removeFromList=(list,id)=>list.filter(value=>value!==id);
@@ -65,7 +65,7 @@ export function executeEditorCommand(editorSession,command){
         languages:new Set(['stacked','inline','pills','compact'])
       };
       if(!allowed[section]?.has(style))throw new Error('Unsupported list style.');
-      configureTargetedCV(targetedCV,{presentation:{listStyles:{[section]:style}}});break;
+      configureTargetedCV(targetedCV,{presentation:{...targetedCV.configuration.presentation,listStyles:{...(targetedCV.configuration.presentation?.listStyles||{}),[section]:style}}});break;
     }
     case COMMAND_TYPE.SET_TEMPLATE:configureTargetedCV(targetedCV,{template:{id:String(p.templateId),version:p.version||null}});break;
     case COMMAND_TYPE.SET_VARIANT:configureTargetedCV(targetedCV,{presentation:{variant:p.variant||null}});break;
