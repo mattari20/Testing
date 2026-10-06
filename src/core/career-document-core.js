@@ -22,7 +22,7 @@ function normalizeCareerData(data = {}) {
   return { identity: isObject(data.identity) ? clone(data.identity) : {}, sections: Array.isArray(data.sections) ? data.sections.map(normalizeSection) : [], assets: Array.isArray(data.assets) ? clone(data.assets) : [], metadata: isObject(data.metadata) ? clone(data.metadata) : {} };
 }
 function normalizeConfig(config = {}) {
-  return { sectionOrder: Array.isArray(config.sectionOrder) ? [...config.sectionOrder] : [], hiddenSections: [...new Set(config.hiddenSections || [])], hiddenFields: [...new Set(config.hiddenFields || [])], hiddenEntries: [...new Set(config.hiddenEntries || [])], fieldOrder: isObject(config.fieldOrder) ? clone(config.fieldOrder) : {}, entryOrder: isObject(config.entryOrder) ? clone(config.entryOrder) : {}, presentation: isObject(config.presentation) ? clone(config.presentation) : {}, template: isObject(config.template) ? clone(config.template) : null, metadata: isObject(config.metadata) ? clone(config.metadata) : {} };
+  return { sectionOrder: Array.isArray(config.sectionOrder) ? [...config.sectionOrder] : [], hiddenSections: [...new Set(config.hiddenSections || [])], hiddenFields: [...new Set(config.hiddenFields || [])], hiddenEntries: [...new Set(config.hiddenEntries || [])], hiddenAssets: [...new Set(config.hiddenAssets || [])], fieldOrder: isObject(config.fieldOrder) ? clone(config.fieldOrder) : {}, entryOrder: isObject(config.entryOrder) ? clone(config.entryOrder) : {}, presentation: isObject(config.presentation) ? clone(config.presentation) : {}, template: isObject(config.template) ? clone(config.template) : null, metadata: isObject(config.metadata) ? clone(config.metadata) : {} };
 }
 const touch = object => { object.revision += 1; object.updatedAt = new Date().toISOString(); };
 
@@ -145,6 +145,14 @@ export function setTargetedEntryVisibility(cv, sectionId, entryId, visible) {
   cv.configuration.hiddenEntries = [...hidden];
   cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
 }
+export function setTargetedAssetVisibility(cv, assetId, visible) {
+  const id = String(assetId);
+  const hidden = new Set(cv.configuration.hiddenAssets || []);
+  if (visible) hidden.delete(id); else hidden.add(id);
+  cv.configuration.hiddenAssets = [...hidden];
+  cv.revision += 1; cv.state.revision += 1; cv.updatedAt = new Date().toISOString();
+}
+
 export function configureTargetedCV(cv, patch = {}) {
   const p = patch || {};
   cv.configuration = normalizeConfig({ ...cv.configuration, ...p, presentation: { ...cv.configuration.presentation, ...(isObject(p.presentation) ? p.presentation : {}) }, metadata: { ...cv.configuration.metadata, ...(isObject(p.metadata) ? p.metadata : {}) } });
