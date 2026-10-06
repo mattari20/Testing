@@ -22,7 +22,7 @@ jobs:
       - name: Targeted editor command and surface validation
         run: npm run test:m64 && npm run test:m67
       - name: Editor form and interaction validation
-        run: npm run test:m72-m75
+        run: npm run test:m72 && npm run test:m73 && npm run test:m75
       - name: Production editor runtime validation
         run: npm run test:m76-m81
       - name: Native V2 renderer validation
