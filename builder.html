@@ -86,6 +86,80 @@
     .tool-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;position:sticky;top:0;background:var(--surface);z-index:2;padding-bottom:8px;border-bottom:1px solid var(--border)}
     .tool-modal-head strong{font-size:17px}.tool-modal-head button{font-size:22px;line-height:1;padding:4px 10px;border:0;background:transparent}
     .editor-section-head,.editor-entry-head,.editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.editor-section-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.editor-section-title input{flex:1;min-width:120px}.editor-section-title span{font-size:11px;color:var(--muted);white-space:nowrap}.editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}.editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}.editor-photo-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}.editor-photo-head{display:flex;justify-content:space-between;gap:10px}.editor-photo-head strong{display:block;font-size:14px}.editor-photo-head span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.editor-photo-body{display:flex;align-items:center;gap:14px;margin-top:12px}.editor-photo-preview,.editor-photo-placeholder{width:78px;height:92px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:var(--soft)}.editor-photo-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:11px;padding:8px}.editor-photo-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-photo-upload,.editor-photo-remove{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:650;cursor:pointer;background:#fff}.editor-photo-upload{background:var(--brand);border-color:var(--brand);color:#fff}.editor-photo-remove{color:#9b1c1c}
+
+    /* V2 professional editor refresh */
+    #v2-editor{grid-template-columns:minmax(440px,.86fr) minmax(560px,1.14fr);gap:18px;align-items:start}
+    #v2-editor>section:first-child{min-width:0}
+    #v2-editor>section:nth-child(2){min-width:0}
+    [data-v2-editor-form]{padding:14px;max-height:calc(100vh - 150px);overflow:auto;background:#f7f9fc}
+    [data-v2-editor-form] section{border:0;border-radius:14px;padding:0;margin:0 0 12px;background:transparent}
+    .editor-design-card,.editor-photo-card,.editor-section-card{background:#fff!important;border:1px solid #dfe5ee!important;border-radius:14px!important;box-shadow:0 4px 14px rgba(16,24,40,.05);overflow:hidden}
+    .editor-design-card,.editor-photo-card{padding:15px!important}
+    .editor-section-card{padding:0!important}
+    .editor-section-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:linear-gradient(90deg,#eef4ff,#fff);border-bottom:1px solid #e1e7f0}
+    .editor-section-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
+    .editor-section-title-wrap h3{margin:0!important;font-size:14px!important;color:#172033}
+    .editor-section-status{display:block;color:#667085;font-size:11px;margin-top:2px}
+    .editor-section-icon{display:inline-flex;align-items:center;justify-content:center;min-width:58px;height:28px;padding:0 8px;border-radius:8px;background:#0d6efd;color:#fff;font-size:9px;font-weight:800;letter-spacing:.7px}
+    .editor-section-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+    .editor-section-actions .editor-inline-action{border:1px solid #dfe5ee!important;background:#fff!important;color:#475467!important}
+    .editor-section-content{padding:12px 14px 14px}
+    .editor-panel-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .editor-panel-title h3{margin:2px 0 0!important;font-size:14px!important}
+    .editor-eyebrow{font-size:9px;font-weight:800;letter-spacing:1.1px;color:#0d6efd}
+    .editor-panel-help{font-size:11px;color:#667085;text-align:right}
+    .editor-palette{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin-top:12px}
+    .editor-color-swatch{border:1px solid #e1e7f0!important;background:#fff!important;border-radius:10px!important;padding:7px 4px!important;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px!important;color:#475467!important}
+    .editor-color-swatch span{width:28px;height:28px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d0d5dd}
+    .editor-color-swatch.active{box-shadow:0 0 0 2px #0d6efd;border-color:#0d6efd!important}
+    .editor-photo-layout{display:flex;gap:14px;align-items:center;margin-top:12px}
+    .editor-photo-frame{width:96px;height:96px;flex:0 0 96px;overflow:hidden;border:2px solid #dfe5ee;background:#f2f4f7;display:flex;align-items:center;justify-content:center}
+    .editor-photo-frame.circle{border-radius:50%}.editor-photo-frame.square{border-radius:8px}.editor-photo-frame.portrait{width:82px;flex-basis:82px;height:108px}.editor-photo-frame.landscape{width:120px;flex-basis:120px;height:88px}
+    .editor-photo-preview{width:100%;height:100%;object-fit:cover;display:block}
+    .editor-photo-placeholder{font-size:10px;color:#667085;text-align:center}
+    .editor-photo-copy strong{font-size:13px}.editor-photo-copy p{margin:4px 0 9px;color:#667085;font-size:11px;line-height:1.45}
+    .editor-photo-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .editor-photo-upload,.editor-photo-remove,.editor-photo-crop,.editor-add-entry,.editor-add-field,.editor-add-section{display:inline-flex!important;align-items:center;justify-content:center;gap:5px;border-radius:9px!important;padding:8px 11px!important;font-size:11px!important;font-weight:700!important;cursor:pointer}
+    .editor-photo-upload{background:#0d6efd!important;border-color:#0d6efd!important;color:#fff!important}
+    .editor-photo-crop{background:#eef4ff!important;border-color:#c9dafc!important;color:#084298!important}
+    .editor-photo-remove{background:#fff!important;color:#9b1c1c!important}
+    .editor-entry-card{border:1px solid #e5e9f0!important;border-radius:11px!important;background:#fbfcfe!important;padding:11px!important;margin:0 0 9px!important}
+    .editor-entry-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+    .editor-entry-kicker{display:block;font-size:8px;font-weight:800;letter-spacing:1px;color:#0d6efd}
+    .editor-entry-head strong{font-size:12px;color:#344054}
+    .editor-entry-fields{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
+    .editor-entry-field{margin:0!important;font-size:11px!important;color:#667085!important}
+    .editor-entry-field>span{display:block;margin-bottom:4px;font-weight:700}
+    .editor-entry-field input{padding:8px!important;font-size:12px!important}
+    .editor-entry-field:nth-child(5){grid-column:1/-1}
+    .editor-field-card{border:1px solid #e5e9f0;background:#fbfcfe;border-radius:10px;padding:9px;margin:0 0 8px}
+    .editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:7px}
+    .editor-field-definition{display:grid;grid-template-columns:1fr 92px;gap:6px;min-width:0;flex:1}
+    .editor-field-definition input,.editor-field-definition select{font-size:11px!important;padding:7px!important}
+    .editor-identity-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 11px}
+    .editor-identity-field{margin:0!important;font-size:11px!important}
+    .editor-identity-field span{display:block;margin-bottom:4px;font-weight:700;color:#667085}
+    .editor-identity-field input{font-size:12px!important;padding:8px!important}
+    .editor-custom-title{padding:10px 14px 0}.editor-custom-title label{margin:0!important}.editor-custom-title input{margin-top:5px}
+    .editor-hidden-section-note,.editor-hidden-note{padding:9px 10px;background:#f8f9fb;border-radius:8px;color:#667085;font-size:11px}
+    .editor-field-help{display:block;margin-top:4px;color:#98a2b3;font-size:9px}
+    .editor-add-entry{width:100%;background:#eef4ff!important;border:1px dashed #9bbcf5!important;color:#084298!important;margin-top:4px}
+    .editor-add-field{background:#fff!important;border:1px dashed #cfd6e2!important;color:#475467!important}
+    .editor-add-section{width:100%;background:#0d6efd!important;color:#fff!important;border-color:#0d6efd!important;margin:2px 0 12px}
+    .editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}
+    .editor-inline-action{width:27px;height:27px;padding:0!important;margin:0!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#475467!important;font-size:12px!important}
+    .editor-inline-action:hover{background:#f2f4f7!important}
+    .editor-section-card.is-hidden{opacity:.82}
+    .editor-crop-modal{position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.62);display:flex;align-items:center;justify-content:center;padding:18px}
+    .editor-crop-dialog{width:min(760px,100%);background:#fff;border-radius:16px;box-shadow:0 28px 80px rgba(0,0,0,.28);padding:18px}
+    .editor-crop-head{display:flex;justify-content:space-between;gap:12px}.editor-crop-head h3{margin:2px 0 3px;font-size:17px}.editor-crop-head p{margin:0;color:#667085;font-size:11px}.editor-crop-head>button{border:0;font-size:24px;padding:0 7px;background:transparent}
+    .editor-crop-work{display:grid;grid-template-columns:1fr 250px;gap:18px;margin-top:16px;align-items:center}
+    .editor-crop-preview{background:#101828;border-radius:12px;padding:12px;display:flex;justify-content:center}.editor-crop-preview canvas{max-width:100%;max-height:360px;display:block}
+    .editor-crop-controls label{display:block;font-size:11px;font-weight:700;color:#475467;margin:12px 0}.editor-crop-controls input{width:100%}
+    .editor-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+    @media(max-width:1050px) and (min-width:761px){#v2-editor{grid-template-columns:minmax(390px,.95fr) minmax(440px,1.05fr)}.editor-palette{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:760px){.editor-palette{grid-template-columns:repeat(4,1fr)}.editor-entry-fields{grid-template-columns:1fr}.editor-entry-field:nth-child(5){grid-column:auto}.editor-identity-grid{grid-template-columns:1fr}.editor-crop-work{grid-template-columns:1fr}.editor-crop-preview canvas{max-height:260px}.editor-photo-layout{align-items:flex-start}.editor-panel-help{text-align:left}}
+
     @media(max-width:760px){
       .toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex;position:absolute;z-index:50;right:12px;top:calc(100% - 4px);background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:10px;flex-direction:column;align-items:stretch;min-width:190px}.toolbar-menu[open] .toolbar-secondary button{width:100%;text-align:left}.toolbar{position:relative}.workspace-menu>summary{display:block;padding:2px 0 8px}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex;width:100%;margin-top:6px}.workspace-menu[open] .workspace-actions button{flex:1 1 auto}
       .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
@@ -200,7 +274,7 @@
   </main>
 
   <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261006.2';
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261006.3';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
     import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
@@ -216,8 +290,8 @@
         sections: [
           {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.',visibility:true}],entries:[],repeatable:false},
           {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[
-            {id:'experience-1',values:{role:'Software Engineer',company:'Tech Solutions Ltd.',dates:'2023 — Present',description:'Built and maintained customer-facing web features, improved page performance, and collaborated with design and product teams to ship reliable releases.'},visibility:true,order:0},
-            {id:'experience-2',values:{role:'Junior Software Engineer',company:'Digital Works',dates:'2021 — 2023',description:'Developed responsive interfaces, integrated REST APIs, and resolved production issues while contributing to automated testing and code reviews.'},visibility:true,order:1}
+            {id:'experience-1',values:{role:'Software Engineer',company:'Tech Solutions Ltd.',startDate:'2023-01',endDate:'',description:'Built and maintained customer-facing web features, improved page performance, and collaborated with design and product teams to ship reliable releases.'},visibility:true,order:0},
+            {id:'experience-2',values:{role:'Junior Software Engineer',company:'Digital Works',startDate:'2021-01',endDate:'2023-01',description:'Developed responsive interfaces, integrated REST APIs, and resolved production issues while contributing to automated testing and code reviews.'},visibility:true,order:1}
           ],repeatable:true},
           {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'BS Computer Science',institution:'University of Lahore',dates:'2017 — 2021'},visibility:true,order:0}],repeatable:true},
           {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'JavaScript, HTML, CSS, REST APIs, Git, Testing, Problem Solving, Team Collaboration',visibility:true}],entries:[],repeatable:false},
