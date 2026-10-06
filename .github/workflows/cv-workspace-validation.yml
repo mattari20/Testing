@@ -24,6 +24,6 @@ jobs:
       - name: Editor form and interaction validation
         run: npm run test:m72 && npm run test:m73 && npm run test:m75
       - name: Production editor runtime validation
-        run: npm run test:m76-m81
+        run: npm run test:m76-m79 && npm run test:m80 && npm run test:m81
       - name: Native V2 renderer validation
         run: npm run test:m14 && npm run test:m15 && npm run test:m16
