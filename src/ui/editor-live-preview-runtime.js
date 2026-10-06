@@ -9,7 +9,7 @@ export const EDITOR_LIVE_PREVIEW_RUNTIME_VERSION = '1.3.0';
 const PREVIEW_COMMANDS = new Set([
   'set-identity','set-field','update-entry','add-entry','remove-entry','duplicate-entry',
   'add-section','remove-section','set-section-title','add-field','remove-field',
-  'set-field-definition','set-visibility','reorder','set-template','set-variant',
+  'set-field-definition','set-section-placement','set-visibility','reorder','set-template','set-variant',
   'upload-asset','remove-asset','undo','redo'
 ]);
 
