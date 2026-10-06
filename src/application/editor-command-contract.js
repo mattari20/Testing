@@ -6,7 +6,7 @@ export const COMMAND_TYPE = Object.freeze({
   ADD_FIELD:'add-field', REMOVE_FIELD:'remove-field', SET_FIELD_DEFINITION:'set-field-definition',
   ADD_ENTRY:'add-entry', UPDATE_ENTRY:'update-entry', REMOVE_ENTRY:'remove-entry', DUPLICATE_ENTRY:'duplicate-entry',
   REORDER:'reorder', SET_TEMPLATE:'set-template', SET_VARIANT:'set-variant',
-  SET_THEME_COLOR:'set-theme-color', UPLOAD_ASSET:'upload-asset', REMOVE_ASSET:'remove-asset',
+  SET_THEME_COLOR:'set-theme-color', SET_LIST_STYLE:'set-list-style', UPLOAD_ASSET:'upload-asset', REMOVE_ASSET:'remove-asset',
   UNDO:'undo', REDO:'redo'
 });
 

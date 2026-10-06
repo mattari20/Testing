@@ -97,6 +97,7 @@
     .editor-design-card,.editor-photo-card{padding:15px!important}
     .editor-section-card{padding:0!important}
     .editor-section-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:linear-gradient(90deg,#eef4ff,#fff);border-bottom:1px solid #e1e7f0}
+    .editor-section-banner-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}.editor-list-style-control{display:flex!important;align-items:center;gap:6px!important;margin:0!important;font-size:10px!important;color:#667085!important;font-weight:700!important}.editor-list-style-control span{white-space:nowrap}.editor-list-style-control select{width:auto!important;min-width:92px!important;padding:6px 8px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#344054!important}.editor-section-banner-tools .editor-section-actions{display:flex;align-items:center;gap:4px}
     .editor-section-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
     .editor-section-title-wrap h3{margin:0!important;font-size:14px!important;color:#172033}
     .editor-section-status{display:block;color:#667085;font-size:11px;margin-top:2px}
@@ -164,7 +165,7 @@
     .editor-crop-controls label{display:block;font-size:11px;font-weight:700;color:#475467;margin:12px 0}.editor-crop-controls input{width:100%}
     .editor-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
     @media(max-width:1050px) and (min-width:761px){#v2-editor{grid-template-columns:minmax(390px,.95fr) minmax(440px,1.05fr)}.editor-palette{grid-template-columns:repeat(4,1fr)}}
-    @media(max-width:760px){.editor-palette{grid-template-columns:repeat(4,1fr)}.editor-entry-fields{grid-template-columns:1fr}.editor-entry-field:nth-child(5){grid-column:auto}.editor-identity-grid{grid-template-columns:1fr}.editor-crop-work{grid-template-columns:1fr}.editor-crop-preview canvas{max-height:260px}.editor-photo-layout{align-items:flex-start}.editor-panel-help{text-align:left}}
+    @media(max-width:760px){.editor-section-banner-tools{align-items:flex-end;gap:5px}.editor-list-style-control span{display:none}.editor-list-style-control select{min-width:82px!important}.editor-palette{grid-template-columns:repeat(4,1fr)}.editor-entry-fields{grid-template-columns:1fr}.editor-entry-field:nth-child(5){grid-column:auto}.editor-identity-grid{grid-template-columns:1fr}.editor-crop-work{grid-template-columns:1fr}.editor-crop-preview canvas{max-height:260px}.editor-photo-layout{align-items:flex-start}.editor-panel-help{text-align:left}}
 
     @media(max-width:760px){
       .toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex;position:absolute;z-index:50;right:12px;top:calc(100% - 4px);background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:10px;flex-direction:column;align-items:stretch;min-width:190px}.toolbar-menu[open] .toolbar-secondary button{width:100%;text-align:left}.toolbar{position:relative}.workspace-menu>summary{display:block;padding:2px 0 8px}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex;width:100%;margin-top:6px}.workspace-menu[open] .workspace-actions button{flex:1 1 auto}
@@ -283,7 +284,7 @@
   </main>
 
   <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261006.4';
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261006.5';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
     import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
@@ -343,6 +344,29 @@
     sanitizeStoredJson('estudent_cv_workspace_v2_2027');
 
     const previewRoot = document.querySelector('[data-v2-editor-preview-root]');
+    const editorGrid = document.querySelector('#v2-editor');
+    const editorPanel = editorGrid?.children?.[0];
+    const previewPanel = editorGrid?.children?.[1];
+    const syncEditorPanelHeight = () => {
+      if (!editorPanel || !previewPanel) return;
+      if (window.matchMedia('(max-width: 760px)').matches) {
+        editorPanel.style.maxHeight = '';
+        editorPanel.style.overflow = '';
+        return;
+      }
+      const height = Math.round(previewPanel.getBoundingClientRect().height);
+      if (height > 0) {
+        editorPanel.style.maxHeight = height + 'px';
+        editorPanel.style.overflowY = 'auto';
+        editorPanel.style.overflowX = 'hidden';
+      }
+    };
+    window.addEventListener('resize', syncEditorPanelHeight);
+    const editorHeightObserver = typeof ResizeObserver === 'function' && previewPanel
+      ? new ResizeObserver(syncEditorPanelHeight)
+      : null;
+    editorHeightObserver?.observe(previewPanel);
+
     const previewPageSelect = document.querySelector('#preview-page-select');
     const previewPageLabel = document.querySelector('#preview-page-label');
     const templateSelect = document.querySelector('#template-select');
@@ -375,6 +399,8 @@
     const previewTools = document.querySelector('.preview-tools');
     previewTools.insertBefore(previewNavigation.controls, previewPageSelect);
     previewNavigation.controls.querySelectorAll('button').forEach(button => button.style.display = 'none');
+
+    syncEditorPanelHeight();
 
     const refreshPreviewControls = () => {
       const templateRoot = previewRoot.querySelector('[data-v2-template-root]');
