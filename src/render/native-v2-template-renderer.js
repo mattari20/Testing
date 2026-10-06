@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.5.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.6.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -409,6 +409,32 @@ function applyItemValueFallbacks(root, snapshot) {
 }
 
 
+function applyListStyles(root, snapshot) {
+  const styles = snapshot?.configuration?.presentation?.listStyles || {};
+  const selected = {
+    skills: String(styles.skills || 'tags'),
+    languages: String(styles.languages || 'stacked')
+  };
+  const styleElement = root.ownerDocument.createElement('style');
+  styleElement.textContent = `
+    [data-v2-template-root] .v2-list-skills-tags{display:inline-block!important;background:var(--primary-light)!important;color:var(--primary)!important;border:1px solid var(--primary)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 6px 0!important;font-size:10px!important;font-weight:700!important}
+    [data-v2-template-root] .v2-list-skills-inline{display:inline!important;background:none!important;border:0!important;padding:0!important;margin:0!important;color:inherit!important}
+    [data-v2-template-root] .v2-list-skills-inline:not(:last-child)::after{content:', ';white-space:pre}
+    [data-v2-template-root] .v2-list-skills-bullets{display:list-item!important;margin:0 0 5px 18px!important;padding:0!important}
+    [data-v2-template-root] .v2-list-skills-compact{display:block!important;margin:0 0 4px!important;padding:0!important}
+    [data-v2-template-root] .v2-list-languages-stacked{display:block!important;margin:0 0 10px!important}
+    [data-v2-template-root] .v2-list-languages-inline{display:inline!important;margin:0!important}
+    [data-v2-template-root] .v2-list-languages-inline:not(:last-child)::after{content:', ';white-space:pre}
+    [data-v2-template-root] .v2-list-languages-pills{display:inline-block!important;background:var(--primary)!important;color:var(--primary-contrast)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 6px 0!important;font-size:10px!important;font-weight:700!important}
+    [data-v2-template-root] .v2-list-languages-compact{display:block!important;margin:0 0 5px!important;padding:0!important}
+  `;
+  root.prepend(styleElement);
+  const skillClass='v2-list-skills-'+(selected.skills==='inline'||selected.skills==='bullets'||selected.skills==='compact'?selected.skills:'tags');
+  const languageClass='v2-list-languages-'+(selected.languages==='inline'||selected.languages==='pills'||selected.languages==='compact'?selected.languages:'stacked');
+  root.querySelectorAll('.skill-tag').forEach(element => element.classList.add(skillClass));
+  root.querySelectorAll('.lang-item').forEach(element => element.classList.add(languageClass));
+}
+
 function applyTheme(root, snapshot) {
   const themes = {
     navy:{primary:'#30364F',dark:'#151927',light:'#D7DAE3',contrast:'#FFFFFF'},
@@ -506,6 +532,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyTheme(root, snapshot);
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
+  applyListStyles(root, snapshot);
   applySectionOrder(root, snapshot);
   applyItemValueFallbacks(root, snapshot);
   applyVisibility(root, snapshot);
