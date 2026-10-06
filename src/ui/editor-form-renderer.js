@@ -68,7 +68,7 @@ function renderField(sectionId,field,index,fieldIds,visible=true){
     : '<div class="editor-hidden-note">This field is hidden from the CV.</div>';
   return '<div class="editor-field-card" data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
     '<div class="editor-field-head"><div class="editor-field-definition"><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field label" value="'+esc(field.label||labelFor(field.id))+'"><select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field type">'+typeOptions+'</select></div>'+
-    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+valueControl+'</div>';
+    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+valueControl+'</div>';
 }
 
 function summarySuggestionButton(section){
@@ -137,7 +137,7 @@ function renderListField(sectionId,field,index,fieldIds,visible,itemLabel){
     : 'Write each language separated by a comma. Example: English, Urdu, Punjabi.';
   return '<div class="editor-list-field-card" data-v2-editor-field-wrapper="'+esc(sectionId+':'+field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
     '<div class="editor-list-field-head"><div><span class="editor-entry-kicker">'+esc(itemLabel)+' '+(index+1)+'</span><strong>'+esc(sectionId==='skills'?'Skill list':'Language list')+'</strong></div>'+
-    '<div class="editor-inline-actions">'+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
+    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
     (fieldVisible
       ? '<label class="editor-list-field-label"><span>'+esc(itemLabel)+' content</span><input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'"><small class="editor-field-help">'+esc(hint)+'</small></label>'
       : '<div class="editor-hidden-note">This '+esc(itemLabel.toLowerCase())+' is hidden from the CV.</div>')+
