@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.9.0';
+export const EDITOR_DOM_VERSION = '1.9.1';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
