@@ -46,7 +46,7 @@ const nativeTemplates = [
     industry: ['General','Business','IT / Software'],
     style: ['Simple','Minimal','Clean'],
     outputs: { ...COMMON.outputs, docx: false, blankDocx: false },
-    photo: { supported: true },
+    photo: { supported: true, shape: 'circle' },
     ats: { profile: 'Standard', machineReadable: true },
     capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['simple','minimal','clean'] }
