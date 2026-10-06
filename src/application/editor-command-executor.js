@@ -57,6 +57,16 @@ export function executeEditorCommand(editorSession,command){
       if(!allowed.has(theme))throw new Error('Unsupported CV theme color.');
       configureTargetedCV(targetedCV,{presentation:{themeColor:theme}});break;
     }
+    case COMMAND_TYPE.SET_LIST_STYLE:{
+      const section=String(p.sectionType||target.sectionType||'');
+      const style=String(p.style||'');
+      const allowed={
+        skills:new Set(['tags','inline','bullets','compact']),
+        languages:new Set(['stacked','inline','pills','compact'])
+      };
+      if(!allowed[section]?.has(style))throw new Error('Unsupported list style.');
+      configureTargetedCV(targetedCV,{presentation:{listStyles:{[section]:style}}});break;
+    }
     case COMMAND_TYPE.SET_TEMPLATE:configureTargetedCV(targetedCV,{template:{id:String(p.templateId),version:p.version||null}});break;
     case COMMAND_TYPE.SET_VARIANT:configureTargetedCV(targetedCV,{presentation:{variant:p.variant||null}});break;
     case COMMAND_TYPE.UPLOAD_ASSET:{const asset={...p};const assetId=String(asset.id||target.assetId||'');masterProfile.careerData.assets=(masterProfile.careerData.assets||[]).filter(item=>String(item?.id||item?.key||'')!==assetId&&String(item?.key||'')!==String(asset.key||''));masterProfile.careerData.assets.push(asset);touch(masterProfile);break;}
