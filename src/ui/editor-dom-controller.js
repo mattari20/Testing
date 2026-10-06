@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.11.0';
+export const EDITOR_DOM_VERSION = '1.12.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -199,6 +199,15 @@ export function bindEditorFields(root, surface, options = {}) {
     }));
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-section-placement]').forEach(input => {
+    const handler = () => surface.dispatch(createEditorCommand({
+      type:'set-section-placement',
+      target:{sectionId:input.dataset.v2EditorSectionPlacement},
+      payload:{placement:input.value}
+    }));
+    input.addEventListener('change',handler);
+    listeners.push(()=>input.removeEventListener('change',handler));
   });
   root.querySelectorAll('[data-v2-editor-section-title]').forEach(input => {
     const handler = () => surface.dispatch(createEditorCommand({type:'set-section-title',target:{sectionId:input.dataset.v2EditorSectionTitle},payload:{title:input.value}}));
