@@ -1,8 +1,8 @@
-import { mountEditorPage } from './editor-page-controller.js';
-import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js';
-import { renderEditorForm } from './editor-form-renderer.js';
-import { bindEditorReorder } from './editor-reorder-controller.js';
-import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.1';
+import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261006.2';
+import { renderEditorForm } from './editor-form-renderer.js?v=20261006.2';
+import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
+import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.2';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
@@ -11,7 +11,7 @@ export const EDITOR_RUNTIME_VERSION = '1.7.1';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
-  const mounted = mountEditorPage(root, input);
+  const mounted = mountEditorPage(root, { ...input, bindDom:false });
   let fieldBinding = null;
   let actionBinding = null;
   let reorderBinding = null;
@@ -66,7 +66,6 @@ export function mountV2EditorRuntime(root, input = {}) {
     try {
       recoveryController.recover();
     } catch (error) {
-      // A broken recovery snapshot must never prevent the editor itself from booting.
       console.warn('[CV Builder V2] automatic recovery was skipped:', error);
       try {
         mounted.surface.restorePersistedState({
