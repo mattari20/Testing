@@ -90,7 +90,13 @@
     .editor-inline-action svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .editor-inline-action:hover{transform:translateY(-1px);background:#f8fbff!important;border-color:#b8c7df!important;box-shadow:0 4px 10px rgba(16,24,40,.10)}
     .editor-inline-action.action-hide,.editor-inline-action.action-show{color:#1769aa;border-color:#cfe0f6!important;background:#f4f9ff!important}
-    .editor-inline-action.action-remove{color:#b42318;border-color:#f0d1ce!important;background:#fff8f7!important}
+    .editor-inline-action.action-remove{color:#e11d48;border-color:#fecdd3!important;background:linear-gradient(180deg,#fff7f8,#fff)!important}
+    .editor-inline-action.action-remove svg{stroke-width:2}
+    .editor-inline-action.action-hide,.editor-inline-action.action-show{color:#2563eb;border-color:#bfdbfe!important;background:linear-gradient(180deg,#eff6ff,#fff)!important;box-shadow:0 2px 7px rgba(37,99,235,.12)}
+    .editor-inline-action.action-show{color:#7c3aed;border-color:#ddd6fe!important;background:linear-gradient(180deg,#f5f3ff,#fff)!important}
+    .editor-photo-head-tools{display:flex;align-items:center;gap:5px}
+    .editor-photo-head-tools .editor-inline-action{margin:0!important}
+    .editor-photo-head-tools .action-remove{color:#e11d48!important}
     .editor-inline-action.action-move-up,.editor-inline-action.action-move-down{color:#344054}
     .editor-identity-block{border:1px solid #e5e9f0;border-radius:12px;background:#fbfcfe;padding:12px;margin:0 0 10px}
     .editor-identity-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
@@ -100,6 +106,10 @@
     .editor-identity-input-wrap input{flex:1;min-width:0}
     .editor-identity-remove{width:28px;height:28px;flex:0 0 28px;border:1px solid #f0d1ce;border-radius:8px;background:#fff8f7;color:#b42318;display:inline-flex;align-items:center;justify-content:center}
     .editor-identity-remove svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    [data-v2-editor-form] textarea{resize:vertical;min-height:76px;line-height:1.45}
+    [data-v2-editor-form] .editor-field-card textarea{min-height:92px}
+    [data-v2-editor-form] .editor-entry-field textarea{min-height:88px}
+    .editor-summary-tools{margin:10px 0 0!important}
     .editor-summary-tools{display:flex;align-items:center;gap:9px;margin:0 0 9px;padding:9px 10px;border:1px solid #dbe7f8;border-radius:10px;background:linear-gradient(90deg,#f4f8ff,#fbfdff)}
     .editor-summary-tools span{font-size:10px;color:#667085}
     .editor-summary-suggest{border:1px solid #c8daf8;border-radius:8px;padding:7px 10px;background:#fff;color:#0d5bd7;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap}
@@ -315,7 +325,7 @@
     const initialProfile = {
       careerData: {
         assets: [],
-        identity: { fullName:'Ali Khan', jobTitle:'Software Engineer', email:'ali.khan@example.com', phone:'+92 300 1234567', location:'Lahore, Pakistan', website:'', linkedin:'', whatsapp:'', dateOfBirth:'', nationality:'', address:'', gender:'', maritalStatus:'' },
+        identity: { fullName:'Ali Khan', jobTitle:'Software Engineer', email:'ali.khan@example.com', phone:'+92 300 1234567', location:'Lahore, Pakistan', cnic:'', religion:'', website:'', linkedin:'', whatsapp:'', dateOfBirth:'', nationality:'', address:'', gender:'', maritalStatus:'' },
         sections: [
           {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.',visibility:true}],entries:[],repeatable:false},
           {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[
