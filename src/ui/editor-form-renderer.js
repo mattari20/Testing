@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.12.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.13.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -58,6 +58,9 @@ function actionButton(label,command,target,payload,extra=''){
 function visibilityButton(kind,target,visible){
   return actionButton(visible?'Hide':'Show','set-visibility',{kind,...target},{visible:!visible});
 }
+function identityVisibilityButton(key,visible){
+  return actionButton(visible?'Hide':'Show','set-identity-visibility',{key},{visible:!visible});
+}
 
 function renderField(sectionId,field,index,fieldIds,visible=true){
   const fieldVisible=visible&&field.visibility!==false;
@@ -71,7 +74,7 @@ function renderField(sectionId,field,index,fieldIds,visible=true){
     : '<div class="editor-hidden-note">This field is hidden from the CV.</div>';
   return '<div class="editor-field-card" data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
     '<div class="editor-field-head"><div class="editor-field-definition"><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field label" value="'+esc(field.label||labelFor(field.id))+'"><select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field type">'+typeOptions+'</select></div>'+
-    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+valueControl+'</div>';
+    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+valueControl+'</div>';
 }
 
 function summarySuggestionButton(section){
@@ -143,7 +146,7 @@ function renderListField(sectionId,field,index,fieldIds,visible,itemLabel){
     : 'Write each language separated by a comma. Example: English, Urdu, Punjabi.';
   return '<div class="editor-list-field-card" data-v2-editor-field-wrapper="'+esc(sectionId+':'+field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
     '<div class="editor-list-field-head"><div><span class="editor-entry-kicker">'+esc(itemLabel)+' '+(index+1)+'</span><strong>'+esc(sectionId==='skills'?'Skill list':'Language list')+'</strong></div>'+
-    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Remove','remove-field',{sectionId,fieldId:field.id})+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
+    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
     (fieldVisible
       ? '<label class="editor-list-field-label"><span>'+esc(itemLabel)+' content</span><input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'"><small class="editor-field-help">'+esc(hint)+'</small></label>'
       : '<div class="editor-hidden-note">This '+esc(itemLabel.toLowerCase())+' is hidden from the CV.</div>')+
@@ -182,7 +185,7 @@ export function renderEditorForm(surface,documentData,options={}){
     const addOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">+ '+esc(labelFor(key))+'</option>').join('')+'<option value="custom">+ Custom Field</option>';
     return '<section class="editor-identity-block"><div class="editor-identity-head"><div><span class="editor-eyebrow">'+esc(group.id==='identity'?'IDENTITY':group.id==='contact'?'CONTACT':'PERSONAL')+'</span><h4>'+esc(group.title)+'</h4></div>'+((group.id!=='identity'&&addOptions)?'<select class="editor-identity-add" data-v2-editor-identity-add aria-label="Add '+esc(group.title)+' field"><option value="">+ Add Field</option>'+addOptions+'</select>':'')+'</div><div class="editor-identity-grid">'+fields.map(key=>{
       const removable=group.id!=='identity';
-      return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(identity[key]??'')+'">'+(removable?'<button type="button" class="editor-identity-remove" title="Remove field" aria-label="Remove '+esc(labelFor(key))+'" data-v2-editor-command="remove-identity-field" data-v2-target="'+attr({key})+'">'+icon('Remove')+'</button>':'')+'</div></label>';
+      return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(identity[key]??'')+'">'+(removable?identityVisibilityButton(key,identity[key]!==undefined):'')+'</div></label>';
     }).join('')+'</div></section>';
   };
   const identityHtml=identityGroups.map(identityGroupHtml).join('');
