@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.6.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.7.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -51,11 +51,26 @@ export function findCanonicalSection(snapshot, sectionType) {
   return sections.find(section => String(section.type) === String(sectionType)) || null;
 }
 
+function entryDateKey(entry, sectionType) {
+  const values = entry?.values || {};
+  if (String(sectionType)==='experience') return String(values.startDate || values.dates || '').trim();
+  const raw = String(values.dates || values.startDate || '').trim();
+  const matches = raw.match(/(19\d{2}|20\d{2}|21\d{2})/g);
+  return matches?.[0] || raw;
+}
 function orderEntries(snapshot, section) {
   const entries = Array.isArray(section?.entries) ? [...section.entries] : [];
+  const sortDirection = snapshot?.configuration?.presentation?.entrySort?.[String(section?.type)] || ((String(section?.type)==='experience' || String(section?.type)==='education') ? 'desc' : null);
+  if (sortDirection && (String(section?.type)==='experience' || String(section?.type)==='education')) {
+    return entries.sort((a,b)=>{
+      const ad=entryDateKey(a,section.type), bd=entryDateKey(b,section.type);
+      if(ad && bd && ad!==bd) return sortDirection==='asc' ? ad.localeCompare(bd) : bd.localeCompare(ad);
+      if(ad!==bd) return ad ? -1 : 1;
+      return (Number(a.order)||0)-(Number(b.order)||0);
+    });
+  }
   const order = Array.isArray(snapshot?.configuration?.entryOrder?.[String(section?.id)])
-    ? snapshot.configuration.entryOrder[String(section.id)].map(String)
-    : [];
+    ? snapshot.configuration.entryOrder[String(section.id)].map(String) : [];
   const rank = new Map(order.map((id,index)=>[id,index]));
   return entries.sort((a,b)=>{
     const ar=rank.has(String(a.id))?rank.get(String(a.id)):Number.MAX_SAFE_INTEGER;
@@ -66,8 +81,9 @@ function orderEntries(snapshot, section) {
 }
 
 function hasProfilePhoto(snapshot) {
+  const hiddenAssets = Array.isArray(snapshot?.configuration?.hiddenAssets) ? snapshot.configuration.hiddenAssets.map(String) : [];
   const assets = Array.isArray(snapshot?.careerData?.assets) ? snapshot.careerData.assets : [];
-  return assets.some(item => String(item?.key || item?.id || '') === 'profile-photo' && meaningfulAsset(item));
+  return !hiddenAssets.includes('profile-photo') && assets.some(item => String(item?.key || item?.id || '') === 'profile-photo' && meaningfulAsset(item));
 }
 function meaningfulAsset(asset) {
   return Boolean(asset?.url || asset?.src);

@@ -1,4 +1,4 @@
-export const EDITOR_COMMAND_VERSION = '1.1.0';
+export const EDITOR_COMMAND_VERSION = '1.2.0';
 
 export const COMMAND_TYPE = Object.freeze({
   SET_FIELD:'set-field', SET_IDENTITY:'set-identity', SET_VISIBILITY:'set-visibility',

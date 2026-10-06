@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.9.1';
+export const EDITOR_DOM_VERSION = '1.10.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -97,8 +97,9 @@ export function bindEditorFields(root, surface, options = {}) {
       if (!target.sectionId || !target.entryId || !key) return;
       surface.dispatch(createEditorCommand({type:'update-entry',target,payload:{values:{[key]:input.value}}}));
     };
-    input.addEventListener('input', handler);
-    listeners.push(() => input.removeEventListener('input', handler));
+    const eventType = ['startDate','endDate','dates'].includes(String(input.dataset.v2EntryKey||'')) ? 'change' : 'input';
+    input.addEventListener(eventType, handler);
+    listeners.push(() => input.removeEventListener(eventType, handler));
   });
   root.querySelectorAll('[data-v2-editor-photo-input]').forEach(input => {
     const handler = () => {
@@ -136,6 +137,57 @@ export function bindEditorFields(root, surface, options = {}) {
     }));
     button.addEventListener('click', handler);
     listeners.push(() => button.removeEventListener('click', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-entry-sort]').forEach(input => {
+    const handler = () => surface.dispatch(createEditorCommand({
+      type:'set-entry-sort',
+      target:{sectionType:input.dataset.v2EditorEntrySort},
+      payload:{sectionType:input.dataset.v2EditorEntrySort,direction:input.value}
+    }));
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-identity-add]').forEach(input => {
+    const handler = () => {
+      const key=String(input.value||'').trim();
+      if(!key)return;
+      if(key==='custom'){
+        const view=root.ownerDocument?.defaultView;
+        const label=view?.prompt?.('Field name (for example: CNIC Number)')||'';
+        const normalized=String(label).trim().toLowerCase().replace(/[^a-z0-9]+(.)/g,(_,ch)=>String(ch).toUpperCase()).replace(/[^a-zA-Z0-9]/g,'');
+        if(!normalized)return;
+        surface.dispatch(createEditorCommand({type:'add-identity-field',payload:{key:normalized}}));
+      }else{
+        surface.dispatch(createEditorCommand({type:'add-identity-field',payload:{key}}));
+      }
+      input.value='';
+    };
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-summary-suggest]').forEach(button => {
+    const handler = () => {
+      const state=surface.getState();
+      const profile=state?.session?.application?.masterProfile;
+      const identity=profile?.careerData?.identity||{};
+      const sections=profile?.careerData?.sections||[];
+      const skills=sections.find(s=>String(s.type)==='skills')?.fields?.find(f=>f.visibility!==false)?.value||'';
+      const title=String(identity.jobTitle||'Professional');
+      const skillText=String(skills).split(/[,\\n]+/).map(v=>v.trim()).filter(Boolean).slice(0,5);
+      const skillPhrase=skillText.length?' with strengths in '+skillText.join(', '):'';
+      const suggestions=[
+        title+' with a strong focus on delivering reliable, user-centered solutions'+skillPhrase+'.',
+        'Results-driven '+title+' focused on building practical solutions, improving performance, and collaborating effectively across teams'+skillPhrase+'.',
+        'Motivated '+title+' with a commitment to quality, continuous improvement, and measurable results'+skillPhrase+'.'
+      ];
+      const current=sections.find(s=>String(s.type)==='summary');
+      const field=current?.fields?.find(f=>f.visibility!==false);
+      if(!field)return;
+      const next=suggestions.find(v=>v!==String(field.value||''))||suggestions[0];
+      surface.dispatch(createEditorCommand({type:'set-field',target:{sectionId:current.id,fieldId:field.id},payload:{value:next}}));
+    };
+    button.addEventListener('click',handler);
+    listeners.push(()=>button.removeEventListener('click',handler));
   });
   root.querySelectorAll('[data-v2-editor-list-style]').forEach(input => {
     const handler = () => surface.dispatch(createEditorCommand({
