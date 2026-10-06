@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.11.0';
+export const EDITOR_DOM_VERSION = '1.13.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -29,6 +29,7 @@ function createPhotoCropper(root, surface, asset) {
   const yInput=modal.querySelector('[data-crop-y]');
   const img=new Image();
   let loaded=false;
+  let rotation=0;
   const shape=String(root.closest('[data-v2-editor-root]')?.getAttribute('data-v2-photo-shape')||'circle');
   const ratio=shape==='portrait'?0.78:shape==='landscape'?1.35:1;
   const outputW=shape==='portrait'?720:720;
@@ -47,11 +48,22 @@ function createPhotoCropper(root, surface, asset) {
     const maxX=Math.max(0,(w-outputW)/2),maxY=Math.max(0,(h-outputH)/2);
     const dx=(outputW-w)/2+Number(xInput.value)*maxX;
     const dy=(outputH-h)/2+Number(yInput.value)*maxY;
-    ctx.drawImage(img,dx,dy,w,h);
+    ctx.save();
+    ctx.translate(outputW/2,outputH/2);
+    ctx.rotate(rotation*Math.PI/180);
+    ctx.drawImage(img,dx-outputW/2,dy-outputH/2,w,h);
+    ctx.restore();
   };
   img.onload=()=>{loaded=true;draw();};
   img.src=source;
   [zoom,xInput,yInput].forEach(input=>input.addEventListener('input',draw));
+  const rotateLeft=modal.querySelector('[data-crop-rotate-left]');
+  const rotateRight=modal.querySelector('[data-crop-rotate-right]');
+  const rotateReset=modal.querySelector('[data-crop-rotate-reset]');
+  rotateLeft.addEventListener('click',()=>{rotation=(rotation+270)%360;draw();});
+  rotateRight.addEventListener('click',()=>{rotation=(rotation+90)%360;draw();});
+  rotateReset.addEventListener('click',()=>{rotation=0;draw();});
+
   const close=()=>modal.remove();
   modal.querySelectorAll('[data-crop-cancel]').forEach(button=>button.addEventListener('click',close));
   modal.querySelector('[data-crop-apply]').addEventListener('click',()=>{
@@ -63,7 +75,7 @@ function createPhotoCropper(root, surface, asset) {
         surface.dispatch(createEditorCommand({
           type:'upload-asset',
           target:{assetId:'profile-photo'},
-          payload:{id:'profile-photo',key:'profile-photo',type:'image/png',url:String(reader.result||''),name:asset.name||'profile-photo-cropped.png',size:blob.size,metadata:{crop:{shape,zoom:Number(zoom.value),x:Number(xInput.value),y:Number(yInput.value)}}}
+          payload:{id:'profile-photo',key:'profile-photo',type:'image/png',url:String(reader.result||''),name:asset.name||'profile-photo-cropped.png',size:blob.size,metadata:{crop:{shape,zoom:Number(zoom.value),x:Number(xInput.value),y:Number(yInput.value),rotation}}}
         }));
         close();
       };
@@ -199,6 +211,15 @@ export function bindEditorFields(root, surface, options = {}) {
     }));
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-section-placement]').forEach(input => {
+    const handler = () => surface.dispatch(createEditorCommand({
+      type:'set-section-placement',
+      target:{sectionId:input.dataset.v2EditorSectionPlacement},
+      payload:{placement:input.value}
+    }));
+    input.addEventListener('change',handler);
+    listeners.push(()=>input.removeEventListener('change',handler));
   });
   root.querySelectorAll('[data-v2-editor-section-title]').forEach(input => {
     const handler = () => surface.dispatch(createEditorCommand({type:'set-section-title',target:{sectionId:input.dataset.v2EditorSectionTitle},payload:{title:input.value}}));

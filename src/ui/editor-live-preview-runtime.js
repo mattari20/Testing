@@ -1,7 +1,7 @@
 import { createApplicationSnapshot } from '../application/cv-application.js';
 import { getNativeV2Template } from '../templates/v2-native-template-catalog.js';
-import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261006.7';
-import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261006.7';
+import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261006.8';
+import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261006.8';
 import { bindPreviewInlineEditing } from './editor-preview-inline-controller.js';
 
 export const EDITOR_LIVE_PREVIEW_RUNTIME_VERSION = '1.3.0';
@@ -9,7 +9,7 @@ export const EDITOR_LIVE_PREVIEW_RUNTIME_VERSION = '1.3.0';
 const PREVIEW_COMMANDS = new Set([
   'set-identity','set-field','update-entry','add-entry','remove-entry','duplicate-entry',
   'add-section','remove-section','set-section-title','add-field','remove-field',
-  'set-field-definition','set-visibility','reorder','set-template','set-variant',
+  'set-field-definition','set-section-placement','set-visibility','reorder','set-template','set-variant',
   'upload-asset','remove-asset','undo','redo'
 ]);
 

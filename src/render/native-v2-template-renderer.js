@@ -509,6 +509,44 @@ function applySectionOrder(root, snapshot) {
   }
 }
 
+function applyCustomSections(root, snapshot) {
+  const sections = Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [];
+  const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenSections) ? snapshot.configuration.hiddenSections.map(String) : []);
+  const placements = snapshot?.configuration?.presentation?.sectionPlacement || {};
+  const main = root.querySelector('.cv-main') || root.querySelector('[data-v2-column="left"]');
+  const sidebar = root.querySelector('.cv-sidebar') || root.querySelector('[data-v2-column="right"]');
+  if (!main && !sidebar) return;
+  for (const section of sections) {
+    if (String(section?.type || '') !== 'custom') continue;
+    const sid = String(section.id || '');
+    if (!sid || section.visibility === false || hidden.has(sid)) continue;
+    const target = String(placements[sid] || 'left') === 'right' ? (sidebar || main) : (main || sidebar);
+    if (!target) continue;
+    const wrapper = root.ownerDocument.createElement('section');
+    wrapper.className = 'v2-custom-preview-section';
+    wrapper.setAttribute('data-v2-custom-section-id', sid);
+    const heading = root.ownerDocument.createElement('div');
+    heading.className = String(placements[sid] || 'left') === 'right' ? 'sidebar-label' : 'section-label';
+    heading.textContent = String(section.title || 'New Section');
+    wrapper.appendChild(heading);
+    const fields = Array.isArray(section.fields) ? section.fields : [];
+    for (const field of fields) {
+      if (field?.visibility === false) continue;
+      const value = field?.value == null ? '' : String(field.value);
+      if (!value.trim()) continue;
+      const row = root.ownerDocument.createElement('div');
+      row.className = 'v2-custom-field';
+      const label = root.ownerDocument.createElement('strong');
+      label.textContent = String(field.label || 'Field');
+      const content = root.ownerDocument.createElement('span');
+      content.textContent = value;
+      row.append(label, content);
+      wrapper.appendChild(row);
+    }
+    target.appendChild(wrapper);
+  }
+}
+
 function applyIdentityVisibility(root, snapshot) {
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
     ? snapshot.configuration.hiddenIdentityFields.map(String) : []);
@@ -558,6 +596,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
 
   applyTheme(root, snapshot);
   applyIdentityVisibility(root, snapshot);
+  applyCustomSections(root, snapshot);
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
   applyListStyles(root, snapshot);

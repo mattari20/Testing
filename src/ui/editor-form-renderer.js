@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.13.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.15.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -160,7 +160,7 @@ function renderPhotoCard(documentData,photoShape='circle',configuration={}){
   const shape=String(photoShape||'circle');
   const radius=shape==='circle'?'50%':shape==='square'?'8px':'14px';
   return '<section class="editor-photo-card" data-v2-editor-photo>'+
-    '<div class="editor-panel-title"><div><span class="editor-eyebrow">PHOTO</span><h3>Profile Photo</h3></div><div class="editor-photo-head-tools">'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')+(hasPhoto?'<button type="button" class="editor-inline-action action-remove photo-remove-top" title="Remove" aria-label="Remove photo" data-v2-editor-photo-remove="'+esc('profile-photo')+'">'+icon('Remove')+'</button>':'')+'</div></div>'+
+    '<div class="editor-panel-title"><div><span class="editor-eyebrow">PHOTO</span><h3>Profile Photo</h3></div><div class="editor-photo-head-tools">'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')++'</div></div>'+
     '<div class="editor-photo-layout"><div class="editor-photo-frame '+esc(shape)+'" style="border-radius:'+radius+'">'+(hasPhoto?'<img class="editor-photo-preview" src="'+esc(photo.url||photo.src)+'" alt="Profile photo preview">':'<div class="editor-photo-placeholder">No photo</div>')+'</div>'+
     '<div class="editor-photo-copy"><strong>'+(hasPhoto?'Photo ready':'Add a profile photo')+'</strong><p>'+(hasPhoto?'Crop and position the image without changing the template shape.':'Upload JPG, PNG or WebP up to 2 MB.')+'</p><div class="editor-photo-actions"><label class="editor-photo-upload">'+(hasPhoto?'Change Photo':'Upload Photo')+'<input type="file" accept="image/*" data-v2-editor-photo-input hidden></label>'+(hasPhoto?'<button type="button" class="editor-photo-crop" data-v2-editor-photo-crop="profile-photo">Adjust Crop</button>':'')+'</div></div></div></section>';
 }
@@ -198,6 +198,7 @@ export function renderEditorForm(surface,documentData,options={}){
     const fields=orderItems(section.fields||[],configuration.fieldOrder?.[sid]||[]);
     const fieldIds=fields.map(f=>f.id);
     const sortDirection=String(configuration?.presentation?.entrySort?.[type]||'desc');
+    const placement=String(configuration?.presentation?.sectionPlacement?.[sid]||'left');
     const entries=sortEntriesForEditor(orderItems(section.entries||[],configuration.entryOrder?.[sid]||[]),type,sortDirection);
     const entryIds=entries.map(e=>e.id);
     const sectionUp=moveOrder(sectionIds,sectionIndex,-1),sectionDown=moveOrder(sectionIds,sectionIndex,1);
@@ -213,7 +214,8 @@ export function renderEditorForm(surface,documentData,options={}){
     return '<section class="editor-section-card'+(sectionHidden?' is-hidden':'')+'" data-v2-editor-section="'+esc(sid)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(sid)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">'+
       '<div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">'+esc(type==='experience'?'WORK':type==='education'?'EDU':type==='skills'?'SKILLS':type==='languages'?'LANG':type==='summary'?'SUMMARY':'SECTION')+'</span><div><h3>'+esc(section.title||labelFor(type))+'</h3><span class="editor-section-status">'+(sectionHidden?'Hidden from CV':'Visible in CV')+'</span></div></div>'+
       '<div class="editor-section-banner-tools">'+((type==='skills'||type==='languages')&&!sectionHidden?listStyleControl(type,configuration):'')+((type==='experience'||type==='education')&&!sectionHidden?entrySortControl(type,configuration):'')+
-      '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
+      (!isCore?'<label class="editor-placement-control"><span>Show in</span><select data-v2-editor-section-placement="'+esc(sid)+'" aria-label="Section column"><option value="left"'+(placement==='left'?' selected':'')+'>Left column</option><option value="right"'+(placement==='right'?' selected':'')+'>Right column</option></select></label>':'')+
+      '<div class="editor-section-actions">+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
       (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+(type==='summary'?summarySuggestionButton(section):'')+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
       '</section>';
