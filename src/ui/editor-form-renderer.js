@@ -174,7 +174,7 @@ export function renderEditorForm(surface,documentData,options={}){
   if(customKeys.length) identityGroups[2].keys=[...identityGroups[2].keys,...customKeys];
   const identityGroupHtml=group=>{
     const fields=group.keys.filter(key=>identity[key]!==undefined || ['fullName','jobTitle','email','phone','location'].includes(key));
-    const addOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">+ '+esc(labelFor(key))+'</option>').join('');
+    const addOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">+ '+esc(labelFor(key))+'</option>').join('')+'<option value="custom">+ Custom Field</option>';
     return '<section class="editor-identity-block"><div class="editor-identity-head"><div><span class="editor-eyebrow">'+esc(group.id==='identity'?'IDENTITY':group.id==='contact'?'CONTACT':'PERSONAL')+'</span><h4>'+esc(group.title)+'</h4></div>'+((group.id!=='identity'&&addOptions)?'<select class="editor-identity-add" data-v2-editor-identity-add aria-label="Add '+esc(group.title)+' field"><option value="">+ Add Field</option>'+addOptions+'</select>':'')+'</div><div class="editor-identity-grid">'+fields.map(key=>{
       const removable=group.id!=='identity';
       return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(identity[key]??'')+'">'+(removable?'<button type="button" class="editor-identity-remove" title="Remove field" aria-label="Remove '+esc(labelFor(key))+'" data-v2-editor-command="remove-identity-field" data-v2-target="'+attr({key})+'">'+icon('Remove')+'</button>':'')+'</div></label>';
