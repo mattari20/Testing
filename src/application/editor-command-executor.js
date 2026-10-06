@@ -4,7 +4,7 @@ import { addSection, removeSection, setSectionTitle, addField, removeField, setF
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
-export const EDITOR_EXECUTOR_VERSION='1.6.0';
+export const EDITOR_EXECUTOR_VERSION='1.7.0';
 const findSection=(profile,id)=>profile.careerData.sections.find(s=>s.id===id);
 const touch=o=>{o.revision+=1;o.updatedAt=new Date().toISOString();};
 const removeFromList=(list,id)=>list.filter(value=>value!==id);
@@ -39,6 +39,7 @@ export function executeEditorCommand(editorSession,command){
       else if(target.kind==='field')setTargetedFieldVisibility(targetedCV,target.sectionId,target.fieldId,p.visible);
       else if(target.kind==='entry')setTargetedEntryVisibility(targetedCV,target.sectionId,target.entryId,p.visible);
       else if(target.kind==='asset')setTargetedAssetVisibility(targetedCV,target.assetId,p.visible);
+      else if(target.kind==='identity'){const key=String(target.key||'');if(!key)throw new Error('Identity key is required.');const list=Array.isArray(targetedCV.configuration.hiddenIdentityFields)?targetedCV.configuration.hiddenIdentityFields:[];targetedCV.configuration.hiddenIdentityFields=p.visible?removeFromList(list,key):Array.from(new Set([...list,key]));touch(targetedCV);}
       else throw new Error('Visibility target kind is required.'); break;
     case COMMAND_TYPE.ADD_SECTION:addSection(masterProfile,p);break;
     case COMMAND_TYPE.REMOVE_SECTION:{const section=findSection(masterProfile,target.sectionId);if(section&&CORE_SECTION_TYPES.has(String(section.type)))throw new Error('Core CV sections cannot be removed.');removeSection(masterProfile,target.sectionId);cleanupTargetedConfiguration(targetedCV,target.sectionId);touch(targetedCV);break;}
