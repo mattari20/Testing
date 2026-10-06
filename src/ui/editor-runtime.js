@@ -1,13 +1,13 @@
 import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
-import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261006.2';
-import { renderEditorForm } from './editor-form-renderer.js?v=20261006.2';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261006.3';
+import { renderEditorForm } from './editor-form-renderer.js?v=20261006.3';
 import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
-import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.2';
+import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.3';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.8.0';
+export const EDITOR_RUNTIME_VERSION = '1.9.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
