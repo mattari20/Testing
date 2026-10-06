@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.11.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.12.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -63,8 +63,11 @@ function renderField(sectionId,field,index,fieldIds,visible=true){
   const fieldVisible=visible&&field.visibility!==false;
   const up=moveOrder(fieldIds,index,-1),down=moveOrder(fieldIds,index,1);
   const typeOptions=['text','textarea','email','url','date'].map(type=>'<option value="'+type+'"'+(String(field.type||'text')===type?' selected':'')+'>'+type+'</option>').join('');
+  const fieldType=String(field.type||'text');
   const valueControl=fieldVisible
-    ? '<input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">'
+    ? (fieldType==='textarea'
+      ? '<textarea rows="5" data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">'+esc(field.value)+'</textarea>'
+      : '<input type="'+esc(fieldType==='email'||fieldType==='url'||fieldType==='date'?fieldType:'text')+'" data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(field.value)+'">')
     : '<div class="editor-hidden-note">This field is hidden from the CV.</div>';
   return '<div class="editor-field-card" data-v2-editor-field-wrapper="'+esc(sectionId)+':'+esc(field.id)+'" data-v2-editor-sortable="field" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
     '<div class="editor-field-head"><div class="editor-field-definition"><input data-v2-editor-field-label="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field label" value="'+esc(field.label||labelFor(field.id))+'"><select data-v2-editor-field-type="'+esc(sectionId)+':'+esc(field.id)+'" aria-label="Field type">'+typeOptions+'</select></div>'+
@@ -93,10 +96,10 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
   const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:Object.keys(values);
   const fields=entryVisible?entryKeys.map(key=>{
     const value=values[key]==null?'':values[key];
-    const inputType=isExperience&&(key==='startDate'||key==='endDate')?'month':'text';
+    const inputType=isExperience&&(key==='startDate'||key==='endDate')?'month':key==='description'?'textarea':'text';
     const extra=isExperience&&(key==='startDate'||key==='endDate')?' min="1900-01" max="2100-12"':'';
     const legacyHint=isExperience&&key==='startDate'&&!value&&values.dates?'<small class="editor-field-help">Legacy duration: '+esc(values.dates)+'. Enter Start/End month and year to replace it.</small>':'';
-    return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span><input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(value)+'">'+legacyHint+'</label>';
+    return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(inputType==='textarea'?'<textarea rows="4" data-v2-editor-entry-field':'<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'"'+(inputType==='textarea'? '>'+esc(value)+'</textarea>':' value="'+esc(value)+'">')+legacyHint+'</label>';
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
   return '<article class="editor-entry-card" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
     '<div class="editor-entry-head"><div><span class="editor-entry-kicker">ENTRY '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
@@ -152,9 +155,9 @@ function renderPhotoCard(documentData,photoShape='circle',configuration={}){
   const shape=String(photoShape||'circle');
   const radius=shape==='circle'?'50%':shape==='square'?'8px':'14px';
   return '<section class="editor-photo-card" data-v2-editor-photo>'+
-    '<div class="editor-panel-title"><div><span class="editor-eyebrow">PHOTO</span><h3>Profile Photo</h3></div><span class="editor-panel-help">Editor matches the selected CV template shape</span></div>'+
+    '<div class="editor-panel-title"><div><span class="editor-eyebrow">PHOTO</span><h3>Profile Photo</h3></div><div class="editor-photo-head-tools">'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')+(hasPhoto?'<button type="button" class="editor-inline-action action-remove photo-remove-top" title="Remove" aria-label="Remove photo" data-v2-editor-photo-remove="'+esc('profile-photo')+'">'+icon('Remove')+'</button>':'')+'</div></div>'+
     '<div class="editor-photo-layout"><div class="editor-photo-frame '+esc(shape)+'" style="border-radius:'+radius+'">'+(hasPhoto?'<img class="editor-photo-preview" src="'+esc(photo.url||photo.src)+'" alt="Profile photo preview">':'<div class="editor-photo-placeholder">No photo</div>')+'</div>'+
-    '<div class="editor-photo-copy"><strong>'+(hasPhoto?'Photo ready':'Add a profile photo')+'</strong><p>'+(hasPhoto?'Crop and position the image without changing the template shape.':'Upload JPG, PNG or WebP up to 2 MB.')+'</p><div class="editor-photo-actions"><label class="editor-photo-upload">'+(hasPhoto?'Change Photo':'Upload Photo')+'<input type="file" accept="image/*" data-v2-editor-photo-input hidden></label>'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')+(hasPhoto?'<button type="button" class="editor-photo-crop" data-v2-editor-photo-crop="profile-photo">Adjust Crop</button>':'')+(hasPhoto?'<button type="button" class="editor-photo-remove" data-v2-editor-photo-remove="profile-photo">Remove</button>':'')+'</div></div></div></section>';
+    '<div class="editor-photo-copy"><strong>'+(hasPhoto?'Photo ready':'Add a profile photo')+'</strong><p>'+(hasPhoto?'Crop and position the image without changing the template shape.':'Upload JPG, PNG or WebP up to 2 MB.')+'</p><div class="editor-photo-actions"><label class="editor-photo-upload">'+(hasPhoto?'Change Photo':'Upload Photo')+'<input type="file" accept="image/*" data-v2-editor-photo-input hidden></label>'+(hasPhoto?actionButton(photoVisible?'Hide':'Show','set-visibility',{kind:'asset',assetId:'profile-photo'},{visible:!photoVisible},'photo-visibility'):'')+(hasPhoto?'<button type="button" class="editor-photo-crop" data-v2-editor-photo-crop="profile-photo">Adjust Crop</button>':'')+'</div></div></div></section>';
 }
 
 export function renderEditorForm(surface,documentData,options={}){
@@ -167,13 +170,13 @@ export function renderEditorForm(surface,documentData,options={}){
   const identityGroups=[
     {id:'identity',title:'Name & Professional',keys:['fullName','jobTitle'],add:[]},
     {id:'contact',title:'Contact Information',keys:['email','phone','location','website','linkedin','whatsapp'],add:['website','linkedin','whatsapp']},
-    {id:'personal',title:'Personal Information',keys:['dateOfBirth','nationality','address','gender','maritalStatus'],add:['dateOfBirth','nationality','address','gender','maritalStatus']}
+    {id:'personal',title:'Personal Information',keys:['dateOfBirth','cnic','religion','nationality','address','gender','maritalStatus'],add:['dateOfBirth','cnic','religion','nationality','address','gender','maritalStatus']}
   ];
   const knownKeys=new Set(identityGroups.flatMap(group=>group.keys));
   const customKeys=Object.keys(identity).filter(key=>!knownKeys.has(key));
   if(customKeys.length) identityGroups[2].keys=[...identityGroups[2].keys,...customKeys];
   const identityGroupHtml=group=>{
-    const fields=group.keys.filter(key=>identity[key]!==undefined || ['fullName','jobTitle','email','phone','location'].includes(key));
+    const fields=group.keys.filter(key=>identity[key]!==undefined || ['fullName','jobTitle','email','phone','location','dateOfBirth','cnic','religion','nationality','address','gender','maritalStatus'].includes(key));
     const addOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">+ '+esc(labelFor(key))+'</option>').join('')+'<option value="custom">+ Custom Field</option>';
     return '<section class="editor-identity-block"><div class="editor-identity-head"><div><span class="editor-eyebrow">'+esc(group.id==='identity'?'IDENTITY':group.id==='contact'?'CONTACT':'PERSONAL')+'</span><h4>'+esc(group.title)+'</h4></div>'+((group.id!=='identity'&&addOptions)?'<select class="editor-identity-add" data-v2-editor-identity-add aria-label="Add '+esc(group.title)+' field"><option value="">+ Add Field</option>'+addOptions+'</select>':'')+'</div><div class="editor-identity-grid">'+fields.map(key=>{
       const removable=group.id!=='identity';
@@ -206,7 +209,7 @@ export function renderEditorForm(surface,documentData,options={}){
       '<div class="editor-section-banner-tools">'+((type==='skills'||type==='languages')&&!sectionHidden?listStyleControl(type,configuration):'')+((type==='experience'||type==='education')&&!sectionHidden?entrySortControl(type,configuration):'')+
       '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
-      (!sectionHidden?'<div class="editor-section-content">'+summarySuggestionButton(section)+fieldHtml+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
+      (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+(type==='summary'?summarySuggestionButton(section):'')+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
       '</section>';
   }).join('');
 
