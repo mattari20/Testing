@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.2';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.3.3';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -120,13 +120,36 @@ export function resolveNativeValue(snapshot, binding, context = {}) {
   return readPath(snapshot, path);
 }
 
+function formatMonthYear(value) {
+  const raw = String(value || '').trim();
+  if (!/^\d{4}-\d{2}$/.test(raw)) return raw;
+  const [year, month] = raw.split('-').map(Number);
+  if (!year || !month || month < 1 || month > 12) return raw;
+  return new Intl.DateTimeFormat('en-US', { month:'long', year:'numeric' }).format(new Date(year, month - 1, 1));
+}
+
+function resolveDurationValue(values) {
+  const start = String(values?.startDate || '').trim();
+  const end = String(values?.endDate || '').trim();
+  if (!start && !end) return undefined;
+  const startText = formatMonthYear(start);
+  const endText = end ? formatMonthYear(end) : 'Present';
+  if (!startText) return endText;
+  return startText + ' — ' + endText;
+}
+
 function resolveEntryValue(entry, key) {
   const values = isObject(entry?.values) ? entry.values : (isObject(entry) ? entry : {});
-  const candidates = ENTRY_ALIASES[String(key)] || [String(key)];
+  const requestedKey = String(key);
+  const candidates = ENTRY_ALIASES[requestedKey] || [requestedKey];
   for (const candidate of candidates) {
     if (values[candidate] !== undefined && values[candidate] !== null && String(values[candidate]).trim() !== '') {
       return values[candidate];
     }
+  }
+  if (requestedKey === 'dates' || requestedKey === 'duration') {
+    const duration = resolveDurationValue(values);
+    if (duration) return duration;
   }
   return undefined;
 }
