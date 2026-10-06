@@ -1,10 +1,10 @@
 import { addSection, removeSection, setSectionTitle, addField, removeField, setFieldDefinition, addEntry, duplicateEntry,
   setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV, createDocumentSnapshot,
-  setTargetedSectionVisibility, setTargetedFieldVisibility, setTargetedEntryVisibility
+  setTargetedSectionVisibility, setTargetedFieldVisibility, setTargetedEntryVisibility, setTargetedAssetVisibility
 } from '../core/career-document-core.js';
 import { COMMAND_TYPE } from './editor-command-contract.js';
 
-export const EDITOR_EXECUTOR_VERSION='1.5.0';
+export const EDITOR_EXECUTOR_VERSION='1.6.0';
 const findSection=(profile,id)=>profile.careerData.sections.find(s=>s.id===id);
 const touch=o=>{o.revision+=1;o.updatedAt=new Date().toISOString();};
 const removeFromList=(list,id)=>list.filter(value=>value!==id);
@@ -30,12 +30,15 @@ export function executeEditorCommand(editorSession,command){
   const {masterProfile,targetedCV}=editorSession.application; const target=command.target||{}; const p=command.payload||{};
   switch(command.type){
     case COMMAND_TYPE.SET_IDENTITY:{const key=String(target.key||p.key||'');if(!key)throw new Error('Identity key is required.');masterProfile.careerData.identity[key]=p.value==null?'':p.value;touch(masterProfile);break;}
+    case COMMAND_TYPE.ADD_IDENTITY_FIELD:{const key=String(p.key||'').trim();if(!/^[A-Za-z][A-Za-z0-9_]*$/.test(key))throw new Error('Identity field key is invalid.');if(masterProfile.careerData.identity[key]===undefined)masterProfile.careerData.identity[key]='';touch(masterProfile);break;}
+    case COMMAND_TYPE.REMOVE_IDENTITY_FIELD:{const key=String(target.key||p.key||'');if(!key)throw new Error('Identity key is required.');delete masterProfile.careerData.identity[key];touch(masterProfile);break;}
     case COMMAND_TYPE.SET_FIELD:{const section=findSection(masterProfile,target.sectionId);if(!section)throw new Error('Section not found: '+target.sectionId);const field=section.fields.find(f=>f.id===target.fieldId);if(!field)throw new Error('Field not found: '+target.fieldId);field.value=p.value==null?'':p.value;touch(masterProfile);break;}
     case COMMAND_TYPE.UPDATE_ENTRY:{const section=findSection(masterProfile,target.sectionId);const entry=section?.entries?.find(e=>e.id===target.entryId);if(!entry)throw new Error('Entry not found: '+target.entryId);entry.values={...entry.values,...(p.values||{})};if(p.visibility!==undefined)entry.visibility=p.visibility;touch(masterProfile);break;}
     case COMMAND_TYPE.SET_VISIBILITY:
       if(target.kind==='section')setTargetedSectionVisibility(targetedCV,target.sectionId,p.visible);
       else if(target.kind==='field')setTargetedFieldVisibility(targetedCV,target.sectionId,target.fieldId,p.visible);
       else if(target.kind==='entry')setTargetedEntryVisibility(targetedCV,target.sectionId,target.entryId,p.visible);
+      else if(target.kind==='asset')setTargetedAssetVisibility(targetedCV,target.assetId,p.visible);
       else throw new Error('Visibility target kind is required.'); break;
     case COMMAND_TYPE.ADD_SECTION:addSection(masterProfile,p);break;
     case COMMAND_TYPE.REMOVE_SECTION:{const section=findSection(masterProfile,target.sectionId);if(section&&CORE_SECTION_TYPES.has(String(section.type)))throw new Error('Core CV sections cannot be removed.');removeSection(masterProfile,target.sectionId);cleanupTargetedConfiguration(targetedCV,target.sectionId);touch(targetedCV);break;}
@@ -56,6 +59,13 @@ export function executeEditorCommand(editorSession,command){
       const allowed=new Set(['navy','blue','teal','green','burgundy','charcoal','purple','orange']);
       if(!allowed.has(theme))throw new Error('Unsupported CV theme color.');
       configureTargetedCV(targetedCV,{presentation:{themeColor:theme}});break;
+    }
+    case COMMAND_TYPE.SET_ENTRY_SORT:{
+      const section=String(p.sectionType||target.sectionType||'');
+      const direction=String(p.direction||'desc');
+      if(!new Set(['experience','education']).has(section))throw new Error('Unsupported sortable section.');
+      if(!new Set(['asc','desc']).has(direction))throw new Error('Unsupported sort direction.');
+      configureTargetedCV(targetedCV,{presentation:{...targetedCV.configuration.presentation,entrySort:{...(targetedCV.configuration.presentation?.entrySort||{}),[section]:direction}}});break;
     }
     case COMMAND_TYPE.SET_LIST_STYLE:{
       const section=String(p.sectionType||target.sectionType||'');
