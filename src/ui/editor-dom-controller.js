@@ -97,8 +97,9 @@ export function bindEditorFields(root, surface, options = {}) {
       if (!target.sectionId || !target.entryId || !key) return;
       surface.dispatch(createEditorCommand({type:'update-entry',target,payload:{values:{[key]:input.value}}}));
     };
-    input.addEventListener('input', handler);
-    listeners.push(() => input.removeEventListener('input', handler));
+    const eventType = ['startDate','endDate','dates'].includes(String(input.dataset.v2EntryKey||'')) ? 'change' : 'input';
+    input.addEventListener(eventType, handler);
+    listeners.push(() => input.removeEventListener(eventType, handler));
   });
   root.querySelectorAll('[data-v2-editor-photo-input]').forEach(input => {
     const handler = () => {
