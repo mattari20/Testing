@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.13.0';
+export const EDITOR_DOM_VERSION = '1.15.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -15,14 +15,18 @@ function createPhotoCropper(root, surface, asset) {
   if(!source)return null;
   const modal=documentRef.createElement('div');
   modal.className='editor-crop-modal';
-  modal.innerHTML='<div class="editor-crop-dialog" role="dialog" aria-modal="true" aria-label="Adjust profile photo">'+
+  modal.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:rgba(15,23,42,.68);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML='<div class="editor-crop-dialog" role="dialog" aria-modal="true" aria-label="Adjust profile photo" style="position:relative;width:min(820px,94vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 28px 90px rgba(0,0,0,.35);padding:20px;box-sizing:border-box;">'+
     '<div class="editor-crop-head"><div><span class="editor-eyebrow">PHOTO</span><h3>Adjust Photo Crop</h3><p>The crop shape follows the selected CV template.</p></div><button type="button" data-crop-cancel aria-label="Close">×</button></div>'+
     '<div class="editor-crop-work"><div class="editor-crop-preview" data-crop-preview><canvas data-crop-canvas></canvas></div>'+
-    '<div class="editor-crop-controls"><label>Zoom <input type="range" min="1" max="3" step="0.01" value="1" data-crop-zoom></label>'+
+    '<div class="editor-crop-controls"><div class="editor-crop-rotate-actions"><button type="button" data-crop-rotate-left>↶ Rotate Left</button><button type="button" data-crop-rotate-right>↷ Rotate Right</button><button type="button" data-crop-rotate-reset>Reset</button></div>'+
+    '<label>Zoom <input type="range" min="1" max="3" step="0.01" value="1" data-crop-zoom></label>'+
     '<label>Horizontal <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-x></label>'+
     '<label>Vertical <input type="range" min="-1" max="1" step="0.01" value="0" data-crop-y></label></div></div>'+
     '<div class="editor-crop-actions"><button type="button" data-crop-cancel>Cancel</button><button type="button" class="primary" data-crop-apply>Apply Crop</button></div></div>';
   documentRef.body.appendChild(modal);
+  const previousOverflow=documentRef.body.style.overflow;
+  documentRef.body.style.overflow='hidden';
   const canvas=modal.querySelector('[data-crop-canvas]');
   const zoom=modal.querySelector('[data-crop-zoom]');
   const xInput=modal.querySelector('[data-crop-x]');
@@ -64,7 +68,7 @@ function createPhotoCropper(root, surface, asset) {
   rotateRight.addEventListener('click',()=>{rotation=(rotation+90)%360;draw();});
   rotateReset.addEventListener('click',()=>{rotation=0;draw();});
 
-  const close=()=>modal.remove();
+  const close=()=>{modal.remove();documentRef.body.style.overflow=previousOverflow;};
   modal.querySelectorAll('[data-crop-cancel]').forEach(button=>button.addEventListener('click',close));
   modal.querySelector('[data-crop-apply]').addEventListener('click',()=>{
     if(!loaded)return;
@@ -202,6 +206,14 @@ export function bindEditorFields(root, surface, options = {}) {
     };
     button.addEventListener('click',handler);
     listeners.push(()=>button.removeEventListener('click',handler));
+  });
+  root.querySelectorAll('[data-v2-editor-rating-style]').forEach(input => {
+    const handler=()=>surface.dispatch(createEditorCommand({type:'set-rating-style',target:{sectionType:input.dataset.v2EditorRatingStyle},payload:{sectionType:input.dataset.v2EditorRatingStyle,style:input.value}}));
+    input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
+  });
+  root.querySelectorAll('[data-v2-editor-item-rating]').forEach(input => {
+    const handler=()=>surface.dispatch(createEditorCommand({type:'set-item-rating',target:{sectionType:input.dataset.v2EditorItemRating},payload:{sectionType:input.dataset.v2EditorItemRating,item:input.dataset.v2RatingItem,rating:Number(input.value)}}));
+    input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
   });
   root.querySelectorAll('[data-v2-editor-list-style]').forEach(input => {
     const handler = () => surface.dispatch(createEditorCommand({

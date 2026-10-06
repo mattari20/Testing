@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.7.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.8.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -443,12 +443,32 @@ function applyListStyles(root, snapshot) {
     [data-v2-template-root] .v2-list-languages-inline:not(:last-child)::after{content:', ';white-space:pre}
     [data-v2-template-root] .v2-list-languages-pills{display:inline-block!important;background:var(--primary)!important;color:var(--primary-contrast)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 6px 0!important;font-size:10px!important;font-weight:700!important}
     [data-v2-template-root] .v2-list-languages-compact{display:block!important;margin:0 0 5px!important;padding:0!important}
+    [data-v2-template-root] .v2-item-rating{display:inline-flex!important;gap:2px!important;margin-left:7px!important;vertical-align:middle!important;font-size:9px!important;letter-spacing:0!important;color:var(--primary)!important;white-space:nowrap!important}
+    [data-v2-template-root] .v2-item-rating-bar{display:inline-block!important;width:10px!important;height:4px!important;border-radius:3px!important;background:var(--primary-light)!important}
+    [data-v2-template-root] .v2-item-rating-bar.is-on{background:var(--primary)!important}
+    [data-v2-template-root] .v2-item-rating-dot{display:inline-block!important;width:6px!important;height:6px!important;border-radius:50%!important;background:var(--primary-light)!important}
+    [data-v2-template-root] .v2-item-rating-dot.is-on{background:var(--primary)!important}
+
   `;
   root.prepend(styleElement);
   const skillClass='v2-list-skills-'+(selected.skills==='inline'||selected.skills==='bullets'||selected.skills==='compact'?selected.skills:'tags');
   const languageClass='v2-list-languages-'+(selected.languages==='inline'||selected.languages==='pills'||selected.languages==='compact'?selected.languages:'stacked');
   root.querySelectorAll('.skill-tag').forEach(element => element.classList.add(skillClass));
   root.querySelectorAll('.lang-item').forEach(element => element.classList.add(languageClass));
+
+  const ratings=snapshot?.configuration?.presentation?.ratings||{};
+  const addRating=(element,type)=>{
+    const cfg=ratings[type]; if(!cfg || cfg.style==='off') return;
+    const name=String(element.textContent||'').trim(); if(!name)return;
+    const value=Math.max(0,Math.min(5,Number(cfg.values?.[name]||0)));
+    const badge=root.ownerDocument.createElement('span'); badge.className='v2-item-rating'; badge.setAttribute('aria-label',name+' rating '+value+' out of 5');
+    if(cfg.style==='stars'){badge.textContent='★★★★★'.slice(0,value)+'☆☆☆☆☆'.slice(0,5-value);}
+    else if(cfg.style==='dots'){for(let i=1;i<=5;i++){const dot=root.ownerDocument.createElement('i');dot.className='v2-item-rating-dot'+(i<=value?' is-on':'');badge.appendChild(dot);}}
+    else {for(let i=1;i<=5;i++){const bar=root.ownerDocument.createElement('i');bar.className='v2-item-rating-bar'+(i<=value?' is-on':'');badge.appendChild(bar);}}
+    element.appendChild(badge);
+  };
+  root.querySelectorAll('.skill-tag').forEach(el=>addRating(el,'skills'));
+  root.querySelectorAll('.lang-item').forEach(el=>addRating(el,'languages'));
 }
 
 function applyTheme(root, snapshot) {
