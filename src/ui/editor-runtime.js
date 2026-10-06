@@ -1,6 +1,6 @@
 import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
-import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261006.6';
-import { renderEditorForm } from './editor-form-renderer.js?v=20261006.6';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261006.7';
+import { renderEditorForm } from './editor-form-renderer.js?v=20261006.7';
 import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.5';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
@@ -86,7 +86,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   refreshPreview();
 
   const rerenderTypes = new Set([
-    'set-field','set-identity','update-entry','add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
+    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
     'upload-asset','remove-asset','undo','redo','restore'
   ]);

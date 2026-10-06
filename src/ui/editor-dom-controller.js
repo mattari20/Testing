@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.10.0';
+export const EDITOR_DOM_VERSION = '1.11.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -185,6 +185,8 @@ export function bindEditorFields(root, surface, options = {}) {
       if(!field)return;
       const next=suggestions.find(v=>v!==String(field.value||''))||suggestions[0];
       surface.dispatch(createEditorCommand({type:'set-field',target:{sectionId:current.id,fieldId:field.id},payload:{value:next}}));
+      const editorField=root.querySelector('[data-v2-editor-field="'+CSS.escape(String(current.id)+':'+String(field.id))+'"]');
+      if(editorField) editorField.value=next;
     };
     button.addEventListener('click',handler);
     listeners.push(()=>button.removeEventListener('click',handler));
