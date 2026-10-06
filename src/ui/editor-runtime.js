@@ -5,9 +5,10 @@ import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261006.6';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
+import { createEditorCommand } from '../application/editor-command-contract.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.14.0';
+export const EDITOR_RUNTIME_VERSION = '1.15.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -101,7 +102,7 @@ export function mountV2EditorRuntime(root, input = {}) {
   refreshPreview();
 
   const rerenderTypes = new Set([
-    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-section-placement','set-list-style','set-entry-sort','add-identity-field','remove-identity-field',
+    'add-section','remove-section','set-section-title','add-field','remove-field','set-field-definition','set-theme-color','set-section-placement','set-list-style','set-rating-style','set-item-rating','set-entry-sort','add-identity-field','remove-identity-field',
     'add-entry','remove-entry','duplicate-entry','set-visibility','reorder','set-template','set-variant',
     'upload-asset','remove-asset','undo','redo','restore'
   ]);
