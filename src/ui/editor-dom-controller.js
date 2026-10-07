@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.17.0';
+export const EDITOR_DOM_VERSION = '1.18.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -137,11 +137,17 @@ export function bindEditorFields(root, surface, options = {}) {
     listeners.push(() => input.removeEventListener('change', handler));
   });
   root.querySelectorAll('[data-v2-editor-photo-crop]').forEach(button => {
-    const handler = () => {
+    const handler = event => {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
       const state = surface.getState();
-      const assets = state.session.application.masterProfile.careerData.assets || [];
-      const asset = assets.find(item => String(item?.key || item?.id || '') === String(button.dataset.v2EditorPhotoCrop));
-      createPhotoCropper(root, surface, asset);
+      const assets = state?.session?.application?.masterProfile?.careerData?.assets || [];
+      const key=String(button.dataset.v2EditorPhotoCrop||'profile-photo');
+      const asset = assets.find(item => String(item?.key || item?.id || '') === key);
+      const previewSrc=button.closest('.editor-photo-card')?.querySelector('.editor-photo-preview')?.getAttribute('src')||'';
+      const resolvedAsset=asset||{key,id:key,url:previewSrc,name:'profile-photo.png'};
+      if(!String(resolvedAsset?.url||resolvedAsset?.src||'')) return;
+      createPhotoCropper(root, surface, resolvedAsset);
     };
     button.addEventListener('click', handler);
     listeners.push(() => button.removeEventListener('click', handler));
@@ -187,22 +193,29 @@ export function bindEditorFields(root, surface, options = {}) {
       const profile=state?.session?.application?.masterProfile;
       const identity=profile?.careerData?.identity||{};
       const sections=profile?.careerData?.sections||[];
-      const skills=sections.find(s=>String(s.type)==='skills')?.fields?.find(f=>f.visibility!==false)?.value||'';
-      const title=String(identity.jobTitle||'Professional');
-      const skillText=String(skills).split(/[,\\n]+/).map(v=>v.trim()).filter(Boolean).slice(0,5);
-      const skillPhrase=skillText.length?' with strengths in '+skillText.join(', '):'';
+      const skillsSection=sections.find(s=>String(s.type)==='skills');
+      const skills=skillsSection?.fields?.find(f=>f.visibility!==false)?.value||'';
+      const title=String(identity.jobTitle||'Professional').trim();
+      const skillText=String(skills).split(/[,\n]+/).map(v=>v.trim()).filter(Boolean).slice(0,6);
+      const lower=title.toLowerCase();
+      const skillPhrase=skillText.length?' Key strengths include '+skillText.join(', ')+'.':'';
+      let focus='delivering practical results, maintaining high standards, and contributing effectively to team goals';
+      if(/civil|structural|construction|site|architect|quantity survey|surveying|geotechnical/.test(lower)) focus='delivering safe, practical and cost-effective project outcomes, coordinating technical work, and maintaining quality and schedule standards';
+      else if(/software|developer|engineer|programmer|web|mobile|devops|data|cyber|it/.test(lower)) focus='building reliable solutions, improving performance, and delivering measurable technical results';
+      else if(/account|finance|bank|audit/.test(lower)) focus='maintaining accuracy, improving financial processes, and supporting sound business decisions';
+      else if(/teacher|lecturer|professor|education|trainer/.test(lower)) focus='supporting effective learning, communicating clearly, and helping learners achieve measurable progress';
+      else if(/marketing|sales|business development|hr|human resources/.test(lower)) focus='building strong professional relationships, improving business outcomes, and supporting sustainable growth';
+      else if(/doctor|nurse|medical|health|pharmac/.test(lower)) focus='delivering high-quality professional service, maintaining safety standards, and supporting positive outcomes';
       const suggestions=[
-        title+' with a strong focus on delivering reliable, user-centered solutions'+skillPhrase+'.',
-        'Results-driven '+title+' focused on building practical solutions, improving performance, and collaborating effectively across teams'+skillPhrase+'.',
-        'Motivated '+title+' with a commitment to quality, continuous improvement, and measurable results'+skillPhrase+'.'
+        title+' focused on '+focus+'.'+skillPhrase,
+        'Results-driven '+title+' with a strong commitment to '+focus+' and continuous professional improvement.'+skillPhrase,
+        'Motivated '+title+' experienced in '+focus+'.'+skillPhrase
       ];
       const current=sections.find(s=>String(s.type)==='summary');
       const field=current?.fields?.find(f=>f.visibility!==false);
       if(!field)return;
       const next=suggestions.find(v=>v!==String(field.value||''))||suggestions[0];
       surface.dispatch(createEditorCommand({type:'set-field',target:{sectionId:current.id,fieldId:field.id},payload:{value:next}}));
-      const editorField=root.querySelector('[data-v2-editor-field="'+CSS.escape(String(current.id)+':'+String(field.id))+'"]');
-      if(editorField) editorField.value=next;
     };
     button.addEventListener('click',handler);
     listeners.push(()=>button.removeEventListener('click',handler));

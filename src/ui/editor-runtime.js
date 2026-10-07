@@ -8,7 +8,7 @@ import { createEditorLifecycleController } from '../application/editor-lifecycle
 import { createEditorCommand } from '../application/editor-command-contract.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.16.0';
+export const EDITOR_RUNTIME_VERSION = '1.17.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
@@ -100,20 +100,26 @@ export function mountV2EditorRuntime(root, input = {}) {
     const profile=mounted.surface.getState()?.session?.application?.masterProfile;
     const identity=profile?.careerData?.identity;
     if(!identity)return;
-    const location=String(identity.location||'').trim();
+    let location=String(identity.location||'').trim();
     const address=String(identity.address||'').trim();
-    if(address){
-      if(!location){
-        mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:address}}));
-      }else{
-        const locLower=location.toLowerCase(), addrLower=address.toLowerCase();
-        if(locLower.endsWith(addrLower) && locLower!==addrLower){
-          const cleaned=location.slice(0,location.length-address.length).trim().replace(/[,:;-]+$/,'').trim();
-          if(cleaned) mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:cleaned}}));
-        }
+    const cleanRepeated=(value)=>{
+      const text=String(value||'').trim().replace(/\s+/g,' ');
+      const words=text.split(' ');
+      for(let i=Math.ceil(words.length/2);i<words.length;i++){
+        const a=words.slice(0,i).join(' ').replace(/[,:;-]+$/,'').toLowerCase();
+        const b=words.slice(i).join(' ').replace(/^[,:;-]+/,'').toLowerCase();
+        if(a&&b&&a===b)return words.slice(0,i).join(' ');
       }
-      mounted.surface.dispatch(createEditorCommand({type:'remove-identity-field',target:{key:'address'}}));
+      return text;
+    };
+    if(address && !location){
+      location=address;
+    }else if(address && location.toLowerCase().endsWith(address.toLowerCase()) && location.toLowerCase()!==address.toLowerCase()){
+      location=location.slice(0,location.length-address.length).trim().replace(/[,:;-]+$/,'').trim();
     }
+    const cleaned=cleanRepeated(location);
+    if(cleaned && cleaned!==String(identity.location||'')) mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:cleaned}}));
+    if(address) mounted.surface.dispatch(createEditorCommand({type:'remove-identity-field',target:{key:'address'}}));
   };
   repairIdentityLocation();
   render();
