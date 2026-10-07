@@ -38,9 +38,16 @@ The architecture is expected to support:
 
 The final architecture must be based on the audited production code and approved documentation, not assumptions.
 
+## Current implementation behavior contract
+
+The current implementation-level behavior, UI interaction patterns, visual conventions, editor/preview synchronization rules, identity behavior, photo/crop rules, ordering rules, print behavior, cache/versioning rules, and mandatory documentation update process are recorded in:
+
+`docs/03-implementation/CURRENT_IMPLEMENTATION_BEHAVIOR_AND_STYLE_CONTRACT.md`
+
+This document is the compatibility reference for future versions. A feature/fix is not considered fully complete until implementation, documentation, regression impact, and release evidence are aligned.
 
 ## Current release-readiness status
 
-The repository-level documentation and implementation reconciliation is complete through M208–M217. The final readiness matrix is documented in `docs/00-foundation/FINAL_RELEASE_READINESS.md`.
+The repository-level documentation and implementation reconciliation is complete through the existing milestone/release records. The final readiness matrix is documented in `docs/00-foundation/FINAL_RELEASE_READINESS.md`.
 
-Internal V2 productization is now carried through full runtime acceptance. The repository now contains executable runtime acceptance coverage and an explicit deployment boundary. Internal source work is complete; live deployment is intentionally still gated. Before Hostinger deployment, repository validation must be green and the remaining external evidence must be resolved: authoritative V1 T01 ATS/Simple sources, historical asset/credential reconciliation, Golden Baseline evidence, observed browser CI execution, and final V1 runtime retirement. Hostinger deployment is then performed only in an isolated V2 path, followed by live smoke and acceptance testing.
+Internal V2 productization is carried through runtime acceptance and controlled deployment boundaries. Production deployment and live acceptance must always be established by actual deployment/evidence, not by repository documentation alone.
