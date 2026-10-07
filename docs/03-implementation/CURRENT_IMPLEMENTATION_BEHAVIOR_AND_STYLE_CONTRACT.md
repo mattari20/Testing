@@ -847,3 +847,7 @@ All three must remain aligned.
 - Date of Birth is directly editable in the identity editor using a readable text value, with a separate calendar picker action; the canonical stored value remains ISO `YYYY-MM-DD`.
 - Experience Start Date and End Date are fully typeable month/year text controls. They accept readable month/year input and commit canonical `YYYY-MM` values on change, preventing native segmented month inputs from stealing focus after a single digit.
 - Additional personal-information rows inherit the template's existing personal-information/contact styling so labels and values use the same visual color treatment as the surrounding CV design.
+
+### Regression clarification — 2026-10-07 R4
+
+- Experience Start Date and End Date remain fully typeable month/year controls and now also provide a dedicated calendar/month picker button. Calendar selection writes the same canonical `YYYY-MM` value as manual entry, so sorting and preview behavior are identical regardless of input method.
