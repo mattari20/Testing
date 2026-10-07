@@ -99,11 +99,21 @@ export function mountV2EditorRuntime(root, input = {}) {
   const repairIdentityLocation=()=>{
     const profile=mounted.surface.getState()?.session?.application?.masterProfile;
     const identity=profile?.careerData?.identity;
-    if(!identity || identity.address===undefined)return;
-    if(!String(identity.location||'').trim() && String(identity.address||'').trim()){
-      mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:String(identity.address)}}));
+    if(!identity)return;
+    const location=String(identity.location||'').trim();
+    const address=String(identity.address||'').trim();
+    if(address){
+      if(!location){
+        mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:address}}));
+      }else{
+        const locLower=location.toLowerCase(), addrLower=address.toLowerCase();
+        if(locLower.endsWith(addrLower) && locLower!==addrLower){
+          const cleaned=location.slice(0,location.length-address.length).trim().replace(/[,:;-]+$/,'').trim();
+          if(cleaned) mounted.surface.dispatch(createEditorCommand({type:'set-identity',target:{key:'location'},payload:{value:cleaned}}));
+        }
+      }
+      mounted.surface.dispatch(createEditorCommand({type:'remove-identity-field',target:{key:'address'}}));
     }
-    mounted.surface.dispatch(createEditorCommand({type:'remove-identity-field',target:{key:'address'}}));
   };
   repairIdentityLocation();
   render();
