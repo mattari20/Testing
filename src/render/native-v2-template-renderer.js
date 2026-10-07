@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.9.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.0.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -602,6 +602,43 @@ function applyCustomSections(root, snapshot) {
       if(before)target.insertBefore(wrapper,before);else target.appendChild(wrapper);
     });
 }
+function identityLabel(key){
+  const labels={dateOfBirth:'Date of Birth',cnic:'CNIC',religion:'Religion',nationality:'Nationality',gender:'Gender',maritalStatus:'Marital Status',website:'Website',linkedin:'LinkedIn',whatsapp:'WhatsApp',location:'Location'};
+  return labels[String(key)]||String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase());
+}
+function applyIdentityExtras(root,snapshot){
+  const identity=isObject(snapshot?.careerData?.identity)?snapshot.careerData.identity:{};
+  const hidden=new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)?snapshot.configuration.hiddenIdentityFields.map(String):[]);
+  const sidebar=root.querySelector('.cv-sidebar')||root.querySelector('[data-v2-column="right"]');
+  if(!sidebar)return;
+  const personalLabel=[...sidebar.querySelectorAll(':scope > .sidebar-label')].find(el=>/personal information/i.test(String(el.textContent||'')));
+  if(!personalLabel)return;
+  const existing=new Set();
+  sidebar.querySelectorAll('[data-v2-value^="identity."]').forEach(el=>existing.add(String(el.getAttribute('data-v2-value')||'').slice('identity.'.length)));
+  const keys=[...new Set([
+    ...(Array.isArray(snapshot?.configuration?.identityFields)?snapshot.configuration.identityFields.map(String):[]),
+    ...Object.keys(identity)
+  ])].filter(key=>key!=='address' && key!=='fullName' && key!=='jobTitle' && key!=='email' && key!=='phone' && key!=='location');
+  const anchor=[...sidebar.children].find(el=>el!==personalLabel && el.hasAttribute?.('data-v2-section'));
+  const fragment=root.ownerDocument.createDocumentFragment();
+  for(const key of keys){
+    if(existing.has(key)||hidden.has(key))continue;
+    const value=identity[key];
+    if(!meaningful(value))continue;
+    const row=root.ownerDocument.createElement('div');
+    row.className='contact-row';
+    row.setAttribute('data-v2-identity-extra',key);
+    const label=root.ownerDocument.createElement('b');
+    label.textContent=identityLabel(key)+' :';
+    const span=root.ownerDocument.createElement('span');
+    span.setAttribute('data-v2-value','identity.'+key);
+    row.append(label,span);
+    fragment.appendChild(row);
+  }
+  if(fragment.childNodes.length){
+    if(anchor)sidebar.insertBefore(fragment,anchor); else sidebar.appendChild(fragment);
+  }
+}
 function applyIdentityVisibility(root, snapshot) {
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
     ? snapshot.configuration.hiddenIdentityFields.map(String) : []);
@@ -651,11 +688,12 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
 
   applyTheme(root, snapshot);
   applyIdentityVisibility(root, snapshot);
-  applyCustomSections(root, snapshot);
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
   applyListStyles(root, snapshot);
   applySectionOrder(root, snapshot);
+  applyCustomSections(root, snapshot);
+  applyIdentityExtras(root, snapshot);
   applyItemValueFallbacks(root, snapshot);
   applyVisibility(root, snapshot);
   applyValues(root, snapshot);
