@@ -117,6 +117,13 @@ function sortEntriesForEditor(entries,sectionType,direction){
   return list.sort((a,b)=>{const ad=key(a),bd=key(b);if(ad!==bd)return direction==='asc'?ad.localeCompare(bd):bd.localeCompare(ad);return (Number(a.order)||0)-(Number(b.order)||0);});
 }
 
+function formatMonthValue(value){
+  const raw=String(value||'').trim();
+  if(!/^\d{4}-\d{2}$/.test(raw))return raw;
+  const [year,month]=raw.split('-').map(Number);
+  if(!year||month<1||month>12)return raw;
+  return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,1)));
+}
 function renderEntry(sectionId,entry,index,entryIds,visible=true){
   const values=entry.values&&typeof entry.values==='object'?entry.values:{};
   const entryVisible=visible&&entry.visibility!==false;
@@ -127,12 +134,14 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
   const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:Object.keys(values);
   const fields=entryVisible?entryKeys.map(key=>{
     const value=values[key]==null?'':values[key];
-    const inputType=isExperience&&(key==='startDate'||key==='endDate')?'month':key==='description'?'textarea':'text';
-    const extra=isExperience&&(key==='startDate'||key==='endDate')?' min="1900-01" max="2100-12"':'';
+    const isMonthField=isExperience&&(key==='startDate'||key==='endDate');
+    const inputType=isMonthField?'text':key==='description'?'textarea':'text';
+    const inputValue=isMonthField?formatMonthValue(value):value;
+    const extra=isMonthField?' inputmode="text" placeholder="February 2026" autocomplete="off"':'';
     const legacyHint=isExperience&&key==='startDate'&&!value&&values.dates?'<small class="editor-field-help">Legacy duration: '+esc(values.dates)+'. Enter Start/End month and year to replace it.</small>':'';
     return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(inputType==='textarea'
       ? '<textarea rows="4" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'">'+esc(value)+'</textarea>'
-      : '<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(value)+'">')+legacyHint+'</label>';
+      : '<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-date="'+(isMonthField?'month':'')+'" data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">')+legacyHint+'</label>';
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
   return '<article class="editor-entry-card" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
     '<div class="editor-entry-head"><div><span class="editor-entry-kicker">ENTRY '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
