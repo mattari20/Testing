@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.18.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.19.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -61,6 +61,9 @@ function visibilityButton(kind,target,visible){
 function identityRemoveButton(key){
   return actionButton('Remove','remove-identity-field',{key});
 }
+function identityFieldActions(key,visible,removable){
+  return '<div class="editor-identity-actions">'+visibilityButton('identity',{key},visible)+(removable?identityRemoveButton(key):'')+'</div>';
+}
 function formatLongDate(value){
   const raw=String(value||'').trim();
   if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
@@ -74,10 +77,9 @@ function formatLongDate(value){
 function renderIdentityDateField(key,value,identityVisible,removable){
   const raw=String(value||'');
   const formatted=formatLongDate(raw);
-  return '<div class="editor-identity-date-wrap"><input class="editor-identity-date-display" type="text" value="'+esc(formatted)+'" placeholder="25th April, 2025" aria-label="Date of Birth" readonly>'+
+  return '<div class="editor-identity-field-control"><div class="editor-identity-date-wrap"><input class="editor-identity-date-display" type="text" value="'+esc(formatted)+'" placeholder="25th April, 2025" aria-label="Date of Birth" readonly'+(identityVisible?'':' disabled')+'>'+
     '<input class="editor-identity-date-picker" type="date" data-v2-editor-identity-field="'+esc(key)+'" aria-label="Choose Date of Birth" value="'+esc(raw)+'"'+(identityVisible?'':' disabled')+'>'+
-    '<span class="editor-date-calendar" aria-hidden="true">▣</span></div>'+
-    (removable?identityRemoveButton(key):'');
+    '<span class="editor-date-calendar" aria-hidden="true">▣</span></div>'+identityFieldActions(key,identityVisible,removable)+'</div>';
 }
 
 function renderField(sectionId,field,index,fieldIds,visible=true){
@@ -217,7 +219,9 @@ export function renderEditorForm(surface,documentData,options={}){
     ['website','Website'],['linkedin','LinkedIn'],['whatsapp','WhatsApp'],
     ['dateOfBirth','Date of Birth'],['cnic','CNIC'],['religion','Religion'],['nationality','Nationality'],['gender','Gender'],['maritalStatus','Marital Status']
   ];
-  const activeIdentityFields=new Set(Array.isArray(configuration.identityFields)?configuration.identityFields.map(String):[]);
+  const configuredIdentityFields=Array.isArray(configuration.identityFields)?configuration.identityFields.map(String):[];
+  const legacyPresentIdentityFields=OPTIONAL_IDENTITY_KEYS.map(item=>item[0]).filter(key=>identity[key]!==undefined);
+  const activeIdentityFields=new Set([...configuredIdentityFields,...legacyPresentIdentityFields]);
   const identityGroups=[
     {id:'identity',title:'Name & Professional',keys:['fullName','jobTitle'],add:[]},
     {id:'contact',title:'Contact Information',keys:['email','phone','location',...OPTIONAL_IDENTITY_KEYS.slice(0,3).map(item=>item[0])],add:OPTIONAL_IDENTITY_KEYS.slice(0,3).map(item=>item[0])},
@@ -231,9 +235,10 @@ export function renderEditorForm(surface,documentData,options={}){
       (group.id==='personal'?'<option value="custom">Add Custom Field…</option>':'');
     return '<section class="editor-identity-block"><div class="editor-identity-head"><div><span class="editor-eyebrow">'+esc(group.id==='identity'?'IDENTITY':group.id==='contact'?'CONTACT':'PERSONAL')+'</span><h4>'+esc(group.title)+'</h4></div>'+((group.id!=='identity'&&addOptions)?'<select class="editor-identity-add" data-v2-editor-identity-add aria-label="Add '+esc(group.title)+' field"><option value="">+ Add Field</option>'+addOptions+'</select>':'')+'</div><div class="editor-identity-grid">'+fields.map(key=>{
       const removable=!BASE_IDENTITY_KEYS.has(String(key));
+      const identityVisible=!hiddenIdentityFields.includes(String(key));
       const value=identity[key]??'';
-      if(key==='dateOfBirth') return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap">'+renderIdentityDateField(key,value,true,removable)+'</div></label>';
-      return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input type="text" data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(value)+'">'+(removable?identityRemoveButton(key):'')+'</div></label>';
+      if(key==='dateOfBirth') return '<label class="editor-identity-field'+(identityVisible?'':' is-hidden')+'"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap">'+renderIdentityDateField(key,value,identityVisible,removable)+'</div></label>';
+      return '<label class="editor-identity-field'+(identityVisible?'':' is-hidden')+'"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><div class="editor-identity-field-control"><input type="text" data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(value)+'"'+(identityVisible?'':' disabled')+'>'+identityFieldActions(key,identityVisible,removable)+'</div></div></label>';
     }).join('')+'</div></section>';
   };
   const identityHtml=identityGroups.map(identityGroupHtml).join('');
