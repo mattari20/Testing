@@ -831,3 +831,13 @@ Only then close the milestone.
 
 All three must remain aligned.
 
+
+
+### Regression clarifications — 2026-10-07 R2
+
+- Experience date display is canonical: when `startDate` and/or `endDate` exist, preview duration must be derived from those values and must not be masked by legacy `dates` text.
+- Experience and Education date-order controls are command-driven through the canonical `set-entry-sort` editor command. The command must exist in the command contract as well as the executor.
+- Date of Birth editor control uses a contained display/picker wrapper so the field and its visibility/remove actions remain inside the identity grid at all supported widths.
+- Personal-information rendering is template-independent: every populated, active identity field that is not already bound by a template must be rendered through the native renderer. Templates with no native Personal Information block receive a renderer-generated block in an appropriate column.
+- Custom sections are renderer-independent of template class names: the native renderer resolves `main`/column and `aside`/sidebar targets and renders custom sections in every native template, respecting section placement and configured section order.
+- These rules are regression requirements for every subsequent template and editor change.
