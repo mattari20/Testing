@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.0.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.1.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -188,19 +188,16 @@ function resolveDurationValue(values) {
 function resolveEntryValue(entry, key) {
   const values = isObject(entry?.values) ? entry.values : (isObject(entry) ? entry : {});
   const requestedKey = String(key);
-  const candidates = ENTRY_ALIASES[requestedKey] || [requestedKey];
-  for (const candidate of candidates) {
-    if (values[candidate] !== undefined && values[candidate] !== null && String(values[candidate]).trim() !== '') {
-      return values[candidate];
-    }
-  }
   if (requestedKey === 'dates' || requestedKey === 'duration') {
     const duration = resolveDurationValue(values);
     if (duration) return duration;
   }
+  const candidates = ENTRY_ALIASES[requestedKey] || [requestedKey];
+  for (const candidate of candidates) {
+    if (values[candidate] !== undefined && values[candidate] !== null && String(values[candidate]).trim() !== '') return values[candidate];
+  }
   return undefined;
 }
-
 function canonicalEntryKey(key, sectionType) {
   const raw = String(key);
   const map = {
@@ -544,29 +541,30 @@ function applySectionOrder(root, snapshot) {
 }
 
 function applyCustomSections(root, snapshot) {
-  const sections = Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [];
-  const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenSections) ? snapshot.configuration.hiddenSections.map(String) : []);
-  const placements = snapshot?.configuration?.presentation?.sectionPlacement || {};
-  const configuredOrder = Array.isArray(snapshot?.configuration?.sectionOrder) ? snapshot.configuration.sectionOrder.map(String) : [];
-  const rank = new Map(configuredOrder.map((id,index)=>[id,index]));
-  const main = root.querySelector('.cv-main') || root.querySelector('[data-v2-column="left"]');
-  const sidebar = root.querySelector('.cv-sidebar') || root.querySelector('[data-v2-column="right"]');
-  if (!main && !sidebar) return;
-
-  const staticGroupStart = (parent, targetRank) => {
-    const headings=[...parent.querySelectorAll(':scope > [data-v2-section]')];
+  const sections=Array.isArray(snapshot?.careerData?.sections)?snapshot.careerData.sections:[];
+  const hidden=new Set(Array.isArray(snapshot?.configuration?.hiddenSections)?snapshot.configuration.hiddenSections.map(String):[]);
+  const placements=snapshot?.configuration?.presentation?.sectionPlacement||{};
+  const configuredOrder=Array.isArray(snapshot?.configuration?.sectionOrder)?snapshot.configuration.sectionOrder.map(String):[];
+  const rank=new Map(configuredOrder.map((id,index)=>[id,index]));
+  const main=root.querySelector('.cv-main, main, [data-v2-column="left"]');
+  const sidebar=root.querySelector('.cv-sidebar, aside, [data-v2-column="right"]');
+  const fallback=main||sidebar||root;
+  const staticGroupStart=(parent,targetRank)=>{
+    const headings=[...parent.children].filter(el=>el.hasAttribute?.('data-v2-section'));
     for(const heading of headings){
       const type=String(heading.getAttribute('data-v2-section')||'');
       const section=findCanonicalSection(snapshot,type);
       const sectionId=String(section?.id||type);
       const sectionRank=rank.has(sectionId)?rank.get(sectionId):Number.MAX_SAFE_INTEGER;
-      if(sectionRank>targetRank) return heading;
+      if(sectionRank>targetRank)return heading;
     }
     return null;
   };
-
   sections.filter(section=>String(section?.type||'')==='custom')
-    .filter(section=>{const sid=String(section.id||'');return sid&&section.visibility!==false&&!hidden.has(sid);})
+    .filter(section=>{
+      const sid=String(section.id||'');
+      return sid&&section.visibility!==false&&!hidden.has(sid);
+    })
     .sort((a,b)=>{
       const ar=rank.has(String(a.id))?rank.get(String(a.id)):Number.MAX_SAFE_INTEGER;
       const br=rank.has(String(b.id))?rank.get(String(b.id)):Number.MAX_SAFE_INTEGER;
@@ -574,33 +572,32 @@ function applyCustomSections(root, snapshot) {
     })
     .forEach(section=>{
       const sid=String(section.id||'');
-      const target=String(placements[sid]||'left')==='right'?(sidebar||main):(main||sidebar);
+      const target=String(placements[sid]||'left')==='right'?(sidebar||fallback):(main||fallback);
       if(!target)return;
-      const wrapper=root.ownerDocument.createElement('section');
-      wrapper.className='v2-custom-preview-section';
-      wrapper.setAttribute('data-v2-custom-section-id',sid);
-      const heading=root.ownerDocument.createElement('div');
-      heading.className=String(placements[sid]||'left')==='right'?'sidebar-label':'section-label';
-      heading.textContent=String(section.title||'New Section');
-      wrapper.appendChild(heading);
-      const fields=Array.isArray(section.fields)?section.fields:[];
-      for(const field of fields){
+      const wrapper=root.ownerDocument.createElement('section'); wrapper.className='v2-custom-preview-section'; wrapper.setAttribute('data-v2-custom-section-id',sid);
+      const heading=root.ownerDocument.createElement('div'); heading.className='v2-custom-preview-heading'; heading.textContent=String(section.title||'New Section'); wrapper.appendChild(heading);
+      for(const field of Array.isArray(section.fields)?section.fields:[]){
         if(field?.visibility===false)continue;
         const value=field?.value==null?'':String(field.value);
         if(!value.trim())continue;
-        const row=root.ownerDocument.createElement('div');
-        row.className='v2-custom-field';
-        const label=root.ownerDocument.createElement('strong');
-        label.textContent=String(field.label||'Field');
-        const content=root.ownerDocument.createElement('span');
-        content.textContent=value;
-        row.append(label,content);
-        wrapper.appendChild(row);
+        const row=root.ownerDocument.createElement('div'); row.className='v2-custom-preview-field';
+        const label=root.ownerDocument.createElement('b'); label.textContent=String(field.label||'Field')+' :';
+        const content=root.ownerDocument.createElement('span'); content.textContent=value;
+        row.append(label,content); wrapper.appendChild(row);
       }
       const targetRank=rank.has(sid)?rank.get(sid):Number.MAX_SAFE_INTEGER;
       const before=staticGroupStart(target,targetRank);
-      if(before)target.insertBefore(wrapper,before);else target.appendChild(wrapper);
+      if(before)target.insertBefore(wrapper,before); else target.appendChild(wrapper);
     });
+  const style=root.ownerDocument.createElement('style');
+  style.textContent=`
+    [data-v2-template-root] .v2-custom-preview-section{display:block!important;margin:12px 0 14px!important;color:inherit!important}
+    [data-v2-template-root] .v2-custom-preview-heading{font-size:10.5pt!important;font-weight:750!important;text-transform:uppercase!important;letter-spacing:.7px!important;color:inherit!important;border-bottom:1px solid currentColor!important;padding-bottom:5px!important;margin:0 0 8px!important;opacity:.9}
+    [data-v2-template-root] .v2-custom-preview-field{display:flex!important;gap:8px!important;align-items:flex-start!important;margin:0 0 6px!important;font-size:9pt!important;line-height:1.4!important;word-break:break-word!important}
+    [data-v2-template-root] .v2-custom-preview-field b{font-weight:700!important;flex:0 0 auto!important}
+    [data-v2-template-root] .v2-custom-preview-field span{min-width:0!important}
+  `;
+  root.prepend(style);
 }
 function identityLabel(key){
   const labels={dateOfBirth:'Date of Birth',cnic:'CNIC',religion:'Religion',nationality:'Nationality',gender:'Gender',maritalStatus:'Marital Status',website:'Website',linkedin:'LinkedIn',whatsapp:'WhatsApp',location:'Location'};
@@ -609,35 +606,59 @@ function identityLabel(key){
 function applyIdentityExtras(root,snapshot){
   const identity=isObject(snapshot?.careerData?.identity)?snapshot.careerData.identity:{};
   const hidden=new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)?snapshot.configuration.hiddenIdentityFields.map(String):[]);
-  const sidebar=root.querySelector('.cv-sidebar')||root.querySelector('[data-v2-column="right"]');
-  if(!sidebar)return;
-  const personalLabel=[...sidebar.querySelectorAll(':scope > .sidebar-label')].find(el=>/personal information/i.test(String(el.textContent||'')));
-  if(!personalLabel)return;
-  const existing=new Set();
-  sidebar.querySelectorAll('[data-v2-value^="identity."]').forEach(el=>existing.add(String(el.getAttribute('data-v2-value')||'').slice('identity.'.length)));
-  const keys=[...new Set([
-    ...(Array.isArray(snapshot?.configuration?.identityFields)?snapshot.configuration.identityFields.map(String):[]),
-    ...Object.keys(identity)
-  ])].filter(key=>key!=='address' && key!=='fullName' && key!=='jobTitle' && key!=='email' && key!=='phone' && key!=='location');
-  const anchor=[...sidebar.children].find(el=>el!==personalLabel && el.hasAttribute?.('data-v2-section'));
-  const fragment=root.ownerDocument.createDocumentFragment();
-  for(const key of keys){
-    if(existing.has(key)||hidden.has(key))continue;
-    const value=identity[key];
-    if(!meaningful(value))continue;
-    const row=root.ownerDocument.createElement('div');
-    row.className='contact-row';
-    row.setAttribute('data-v2-identity-extra',key);
-    const label=root.ownerDocument.createElement('b');
-    label.textContent=identityLabel(key)+' :';
-    const span=root.ownerDocument.createElement('span');
-    span.setAttribute('data-v2-value','identity.'+key);
-    row.append(label,span);
-    fragment.appendChild(row);
+  const configured=new Set(Array.isArray(snapshot?.configuration?.identityFields)?snapshot.configuration.identityFields.map(String):[]);
+  const bound=new Set();
+  root.querySelectorAll('[data-v2-value^="identity."]').forEach(el=>{
+    const binding=String(el.getAttribute('data-v2-value')||'');
+    bound.add(binding.slice('identity.'.length));
+  });
+  const excluded=new Set(['fullName','jobTitle','email','phone']);
+  const keys=[...new Set([...configured,...Object.keys(identity)])].filter(key=>!excluded.has(String(key)));
+  const labelForKey=key=>{
+    const labels={location:'Location',dateOfBirth:'Date of Birth',cnic:'CNIC',religion:'Religion',nationality:'Nationality',gender:'Gender',maritalStatus:'Marital Status',website:'Website',linkedin:'LinkedIn',whatsapp:'WhatsApp'};
+    return labels[String(key)]||String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase());
+  };
+  const makeRow=key=>{
+    const row=root.ownerDocument.createElement('div'); row.className='v2-identity-extra-row'; row.setAttribute('data-v2-identity-extra',key);
+    const label=root.ownerDocument.createElement('b'); label.textContent=labelForKey(key)+' :';
+    const value=root.ownerDocument.createElement('span'); value.setAttribute('data-v2-value','identity.'+key);
+    row.append(label,value); return row;
+  };
+  const personalLabel=[...root.querySelectorAll('.sidebar-label,.section-label,.sidebar-title,.contact-title')]
+    .find(el=>/personal\s+information|personal\s+info/i.test(String(el.textContent||'')));
+  const missing=keys.filter(key=>!bound.has(key)&&!hidden.has(key)&&meaningful(identity[key]));
+  if(personalLabel){
+    const parent=personalLabel.parentElement;
+    if(parent&&missing.length){
+      const fragment=root.ownerDocument.createDocumentFragment();
+      missing.forEach(key=>fragment.appendChild(makeRow(key)));
+      const next=[...parent.children].find(el=>el!==personalLabel&&el.hasAttribute?.('data-v2-section'));
+      if(next) parent.insertBefore(fragment,next); else parent.appendChild(fragment);
+    }
+    return;
   }
-  if(fragment.childNodes.length){
-    if(anchor)sidebar.insertBefore(fragment,anchor); else sidebar.appendChild(fragment);
-  }
+  if(!missing.length)return;
+  const sidebar=root.querySelector('.cv-sidebar, aside, [data-v2-column="right"]');
+  const main=root.querySelector('.cv-main, main, [data-v2-column="left"]');
+  const target=sidebar||main||root;
+  const wrapper=root.ownerDocument.createElement('section'); wrapper.className='v2-identity-extra-section';
+  const heading=root.ownerDocument.createElement('div'); heading.className='v2-identity-extra-heading'; heading.textContent='Personal Information';
+  wrapper.appendChild(heading); missing.forEach(key=>wrapper.appendChild(makeRow(key)));
+  const firstSection=[...target.children].find(el=>el.hasAttribute?.('data-v2-section'));
+  if(firstSection) target.insertBefore(wrapper,firstSection);
+  else if(target===main){
+    const header=[...target.children].find(el=>el.tagName==='HEADER');
+    if(header&&header.nextSibling) target.insertBefore(wrapper,header.nextSibling); else target.appendChild(wrapper);
+  } else target.appendChild(wrapper);
+  const style=root.ownerDocument.createElement('style');
+  style.textContent=`
+    [data-v2-template-root] .v2-identity-extra-section{display:block!important;margin:10px 0 14px!important;color:inherit!important}
+    [data-v2-template-root] .v2-identity-extra-heading{font-size:10.5pt!important;font-weight:750!important;text-transform:uppercase!important;letter-spacing:.7px!important;color:inherit!important;border-bottom:1px solid currentColor!important;padding-bottom:5px!important;margin:0 0 8px!important;opacity:.9}
+    [data-v2-template-root] .v2-identity-extra-row{display:flex!important;gap:8px!important;align-items:flex-start!important;margin:0 0 6px!important;font-size:9pt!important;line-height:1.35!important;color:inherit!important;word-break:break-word!important}
+    [data-v2-template-root] .v2-identity-extra-row b{font-weight:700!important;flex:0 0 auto!important}
+    [data-v2-template-root] .v2-identity-extra-row span{min-width:0!important}
+  `;
+  root.prepend(style);
 }
 function applyIdentityVisibility(root, snapshot) {
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
