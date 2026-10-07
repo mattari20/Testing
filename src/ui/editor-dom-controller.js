@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.18.0';
+export const EDITOR_DOM_VERSION = '1.19.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -15,6 +15,23 @@ function formatLongDate(value){
   const mod100=day%100;
   const suffix=mod100>=11&&mod100<=13?'th':({1:'st',2:'nd',3:'rd'}[day%10]||'th');
   return day+suffix+' '+new Intl.DateTimeFormat('en-US',{month:'long',timeZone:'UTC'}).format(date)+', '+year;
+}
+function parseUserDate(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw))return raw;
+  const cleaned=raw.replace(/(\d{1,2})(st|nd|rd|th)\b/ig,'$1').replace(/,/g,' ').replace(/\s+/g,' ').trim();
+  const match=cleaned.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/)||cleaned.match(/^([A-Za-z]+)\s+(\d{1,2})\s+(\d{4})$/);
+  if(!match)return '';
+  const first=match[1],second=match[2],year=Number(match[3]);
+  const day=Number.isNaN(Number(first))?Number(second):Number(first);
+  const monthName=Number.isNaN(Number(first))?first:second;
+  const monthNames=['january','february','march','april','may','june','july','august','september','october','november','december'];
+  const month=monthNames.indexOf(String(monthName).toLowerCase())+1;
+  if(!month||!day||day<1||day>31||year<1900||year>2100)return '';
+  const date=new Date(Date.UTC(year,month-1,day));
+  if(date.getUTCFullYear()!==year||date.getUTCMonth()!==month-1||date.getUTCDate()!==day)return '';
+  return String(year).padStart(4,'0')+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0');
 }
 
 
@@ -91,6 +108,32 @@ export function bindEditorFields(root, surface, options = {}) {
     };
     input.addEventListener('input', handler);
     listeners.push(() => input.removeEventListener('input', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-identity-date-display]').forEach(input => {
+    const handler = () => {
+      const key=String(input.dataset.v2EditorIdentityDateDisplay||'dateOfBirth');
+      const parsed=parseUserDate(input.value);
+      if(!parsed){
+        const stateValue=String(surface.getState()?.session?.application?.masterProfile?.careerData?.identity?.[key]||'');
+        input.value=formatLongDate(stateValue);
+        return;
+      }
+      surface.dispatch(createEditorCommand({type:'set-identity',target:{key},payload:{value:parsed}}));
+      input.value=formatLongDate(parsed);
+    };
+    input.addEventListener('change', handler);
+    listeners.push(() => input.removeEventListener('change', handler));
+  });
+  root.querySelectorAll('[data-v2-editor-open-date]').forEach(button => {
+    const handler = event => {
+      event?.preventDefault?.();
+      const picker=button.closest('.editor-identity-date-wrap')?.querySelector('.editor-identity-date-picker');
+      if(!picker)return;
+      if(typeof picker.showPicker==='function'){ try { picker.showPicker(); return; } catch {} }
+      picker.click();
+    };
+    button.addEventListener('click', handler);
+    listeners.push(() => button.removeEventListener('click', handler));
   });
   root.querySelectorAll('[data-v2-editor-identity-field]').forEach(input => {
     const handler = () => {
