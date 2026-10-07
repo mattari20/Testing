@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.19.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.20.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -77,9 +77,10 @@ function formatLongDate(value){
 function renderIdentityDateField(key,value,identityVisible,removable){
   const raw=String(value||'');
   const formatted=formatLongDate(raw);
-  return '<div class="editor-identity-field-control"><div class="editor-identity-date-wrap"><input class="editor-identity-date-display" type="text" value="'+esc(formatted)+'" placeholder="25th April, 2025" aria-label="Date of Birth" readonly'+(identityVisible?'':' disabled')+'>'+
+  return '<div class="editor-identity-field-control"><div class="editor-identity-date-wrap"><input class="editor-identity-date-display" type="text" data-v2-editor-identity-date-display="'+esc(key)+'" value="'+esc(formatted)+'" placeholder="25th April, 2025" aria-label="Date of Birth"'+(identityVisible?'':' disabled')+'>'+
+    '<button type="button" class="editor-identity-date-button" data-v2-editor-open-date="'+esc(key)+'" aria-label="Choose Date of Birth"'+(identityVisible?'':' disabled')+'>▣</button>'+
     '<input class="editor-identity-date-picker" type="date" data-v2-editor-identity-field="'+esc(key)+'" aria-label="Choose Date of Birth" value="'+esc(raw)+'"'+(identityVisible?'':' disabled')+'>'+
-    '<span class="editor-date-calendar" aria-hidden="true">▣</span></div>'+identityFieldActions(key,identityVisible,removable)+'</div>';
+    '</div>'+identityFieldActions(key,identityVisible,removable)+'</div>';
 }
 
 function renderField(sectionId,field,index,fieldIds,visible=true){
