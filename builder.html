@@ -104,15 +104,13 @@
     .editor-identity-add{width:auto!important;min-width:112px!important;padding:7px 9px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:8px!important;background:#fff!important}
     .editor-identity-input-wrap{display:flex;gap:5px;align-items:center}
     .editor-identity-input-wrap input{flex:1;min-width:0}
-    .editor-identity-remove{width:28px;height:28px;flex:0 0 28px;border:1px solid #f0d1ce;border-radius:8px;background:#fff8f7;color:#b42318;display:inline-flex;align-items:center;justify-content:center}
+    .editor-identity-remove{width:28px;height:28px;flex:0 0 28px;border:1px solid #f0d1ce;border-radius:8px;background:#fff8f7;color:#b42318;display:inline-flex;align-items:center;justify-content:center}.editor-identity-date-wrap{position:relative;flex:1;min-width:0;height:36px}.editor-identity-date-display{position:absolute!important;inset:0;width:100%!important;z-index:1;background:#fff!important;padding-right:42px!important;pointer-events:none}.editor-identity-date-picker{position:absolute!important;inset:0;width:100%!important;height:100%!important;z-index:2;opacity:0!important;cursor:pointer}.editor-date-calendar{position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:3;pointer-events:none;font-size:14px;color:#667085}
     .editor-identity-remove svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     [data-v2-editor-form] textarea{resize:vertical;min-height:76px;line-height:1.45}
     [data-v2-editor-form] .editor-field-card textarea{min-height:92px}
     [data-v2-editor-form] .editor-entry-field textarea{min-height:88px}
     .editor-summary-tools{margin:10px 0 0!important}
-    .editor-summary-tools{display:flex;align-items:center;gap:9px;margin:0 0 9px;padding:9px 10px;border:1px solid #dbe7f8;border-radius:10px;background:linear-gradient(90deg,#f4f8ff,#fbfdff)}
-    .editor-summary-tools span{font-size:10px;color:#667085}
-    .editor-summary-suggest{border:1px solid #c8daf8;border-radius:8px;padding:7px 10px;background:#fff;color:#0d5bd7;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap}
+    .editor-summary-tools{display:flex;justify-content:flex-end;align-items:center;margin:10px 0 0!important;padding:0!important;border:0!important;background:transparent!important}.editor-summary-suggest{border:1px solid #c8daf8;border-radius:8px;padding:8px 12px;background:#fff;color:#0d5bd7;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.editor-summary-suggest:hover{background:#eef5ff}
     .editor-summary-suggest:hover{background:#eef5ff}
 .editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}.editor-photo-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}.editor-photo-head{display:flex;justify-content:space-between;gap:10px}.editor-photo-head strong{display:block;font-size:14px}.editor-photo-head span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.editor-photo-body{display:flex;align-items:center;gap:14px;margin-top:12px}.editor-photo-preview,.editor-photo-placeholder{width:78px;height:92px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:var(--soft)}.editor-photo-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:11px;padding:8px}.editor-photo-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-photo-upload,.editor-photo-remove{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:650;cursor:pointer;background:#fff}.editor-photo-upload{background:var(--brand);border-color:var(--brand);color:#fff}.editor-photo-remove{color:#9b1c1c}
 
@@ -187,16 +185,16 @@
     .editor-inline-action{width:27px;height:27px;padding:0!important;margin:0!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#475467!important;font-size:12px!important}
     .editor-inline-action:hover{background:#f2f4f7!important}
     .editor-section-card.is-hidden{opacity:.82}
-    .editor-crop-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2147483000!important;background:rgba(15,23,42,.68);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
-    .editor-crop-dialog{position:relative;width:min(760px,calc(100vw - 40px));height:min(700px,calc(100vh - 40px));overflow:hidden;background:#fff;border-radius:18px;box-shadow:0 28px 90px rgba(0,0,0,.32);padding:22px;box-sizing:border-box;display:grid;grid-template-rows:auto minmax(260px,1fr) auto auto;gap:14px}
-    .editor-crop-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.editor-crop-head h3{margin:2px 0 3px;font-size:18px}.editor-crop-head p{margin:0;color:#667085;font-size:11px}.editor-crop-close{width:34px;height:34px;border:1px solid #d0d5dd!important;border-radius:10px!important;background:#fff!important;color:#344054!important;font-size:22px!important;line-height:1!important;padding:0!important;margin:0!important}
-    .editor-crop-preview{background:#101828;border-radius:14px;padding:12px;display:flex;justify-content:center;align-items:center;min-height:0;overflow:hidden}.editor-crop-preview canvas{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain}
-    .editor-crop-controls{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:end}.editor-crop-control-group,.editor-crop-controls label{display:flex;flex-direction:column;gap:6px;margin:0;font-size:11px;font-weight:700;color:#344054}.editor-crop-controls input{width:100%;accent-color:#0d6efd}.editor-crop-rotate-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.editor-crop-rotate-actions button{border:1px solid #bfdbfe!important;background:#eff6ff!important;color:#2563eb!important;border-radius:8px!important;padding:7px 5px!important;font-size:10px!important;font-weight:700!important;margin:0!important}
+    .editor-crop-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2147483000!important;background:rgba(15,23,42,.68);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:hidden}
+    .editor-crop-dialog{position:relative;width:min(760px,calc(100vw - 32px));height:auto;max-height:calc(100vh - 32px);overflow:hidden;background:#fff;border-radius:18px;box-shadow:0 28px 90px rgba(0,0,0,.32);padding:18px;box-sizing:border-box;display:grid;grid-template-rows:auto minmax(180px,42vh) auto auto;gap:12px}
+    .editor-crop-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.editor-crop-head h3{margin:2px 0 3px;font-size:18px}.editor-crop-head p{margin:0;color:#667085;font-size:11px}.editor-crop-close{width:36px;height:36px;flex:0 0 36px;border:1px solid #d0d5dd!important;border-radius:10px!important;background:#fff!important;color:#344054!important;font-size:22px!important;line-height:1!important;padding:0!important;margin:0!important}
+    .editor-crop-preview{background:#101828;border-radius:14px;padding:10px;display:flex;justify-content:center;align-items:center;min-height:0;overflow:hidden}.editor-crop-preview canvas{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain}
+    .editor-crop-controls{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:9px;align-items:end}.editor-crop-control-group,.editor-crop-controls label{display:flex;flex-direction:column;gap:5px;margin:0;font-size:10px;font-weight:750;color:#344054}.editor-crop-controls input{width:100%;accent-color:#0d6efd}.editor-crop-rotate-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.editor-crop-rotate-actions button{border:1px solid #bfdbfe!important;background:#eff6ff!important;color:#2563eb!important;border-radius:8px!important;padding:7px 4px!important;font-size:10px!important;font-weight:700!important;margin:0!important;white-space:nowrap}
     .editor-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin:0}.editor-crop-secondary,.editor-crop-primary{min-width:110px!important;padding:9px 14px!important;margin:0!important}.editor-crop-primary{background:#0d6efd!important;border-color:#0d6efd!important;color:#fff!important}
     .editor-summary-field{padding:0}.editor-summary-field textarea{min-height:130px;resize:vertical}
     .editor-identity-add{min-width:145px!important;width:auto!important;background:#fff!important;font-weight:700!important;color:#344054!important}
     @media print{body{background:#fff!important}.site-header,.toolbar,.workspace-panel,.mobile-view-switch,#v2-editor>section:first-child,.preview-title,.preview-tools{display:none!important}#v2-editor{display:block!important;margin:0!important;padding:0!important}#v2-editor>section:nth-child(2){display:block!important;width:210mm!important;margin:0 auto!important;padding:0!important}#v2-editor>section:nth-child(2) [data-v2-editor-preview-root]{display:block!important;width:210mm!important;max-width:210mm!important;min-height:297mm!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;overflow:visible!important;background:#fff!important}.v2-preview-stage{display:block!important;width:210mm!important;overflow:visible!important}.v2-preview-stage>[data-v2-template-root]{transform:none!important;margin:0!important;box-shadow:none!important}}
-    @media(max-width:760px){.editor-crop-dialog{width:calc(100vw - 24px);height:calc(100vh - 24px);padding:16px;grid-template-rows:auto minmax(220px,1fr) auto auto}.editor-crop-controls{grid-template-columns:1fr 1fr}.editor-crop-control-group{grid-column:1 / -1}.editor-crop-preview canvas{max-height:100%}}
+    @media(max-width:760px){.editor-crop-dialog{width:calc(100vw - 24px);max-height:calc(100vh - 24px);padding:14px;grid-template-rows:auto minmax(170px,34vh) auto auto;gap:10px}.editor-crop-controls{grid-template-columns:1fr 1fr}.editor-crop-control-group{grid-column:1 / -1}.editor-crop-preview canvas{max-height:100%}.editor-crop-actions button{min-width:96px!important}}
     @media(max-width:1050px) and (min-width:761px){#v2-editor{grid-template-columns:minmax(390px,.95fr) minmax(440px,1.05fr)}.editor-palette{grid-template-columns:repeat(4,1fr)}}
     @media(max-width:760px){.editor-section-banner-tools{align-items:flex-end;gap:5px;flex-wrap:wrap}.editor-sort-control span,.editor-list-style-control span{display:none}.editor-list-style-control select{min-width:82px!important}.editor-palette{grid-template-columns:repeat(4,1fr)}.editor-entry-fields{grid-template-columns:1fr}.editor-entry-field:nth-child(5){grid-column:auto}.editor-identity-grid{grid-template-columns:1fr}.editor-crop-work{grid-template-columns:1fr}.editor-crop-preview canvas{max-height:260px}.editor-photo-layout{align-items:flex-start}.editor-panel-help{text-align:left}}
 
@@ -213,14 +211,12 @@
       .editor-inline-action{padding:5px 6px!important}
     }
     @media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important;margin:0!important;padding:0!important}
   .site-header,.toolbar,.workspace-panel,.mobile-view-switch,#v2-editor>section:first-child,.preview-title,.preview-tools{display:none!important}
-  body{background:#fff;margin:0}
-  .app-shell{max-width:none;margin:0;padding:0}
-  #v2-editor{display:block!important;margin:0;padding:0}
-  #v2-editor>section:nth-child(2){display:block!important;width:100%;margin:0;padding:0}
-  [data-v2-editor-preview-root]{display:block!important;border:0;box-shadow:none;padding:0;margin:0;min-height:0;max-height:none;overflow:visible}
-  .v2-preview-stage{display:block;width:auto;height:auto!important;min-height:0;overflow:visible}
-  .v2-preview-stage>[data-v2-template-root]{transform:none!important;margin:0 auto!important;box-shadow:none!important}
+  .app-shell,#v2-editor,#v2-editor>section:nth-child(2),[data-v2-editor-preview-root]{display:block!important;width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:#fff!important;overflow:visible!important}
+  .v2-preview-stage{display:block!important;width:210mm!important;margin:0!important;padding:0!important;overflow:visible!important}
+  .v2-preview-stage>[data-v2-template-root]{transform:none!important;margin:0!important;box-shadow:none!important}
 }
   </style>
 </head>
@@ -317,7 +313,7 @@
   </main>
 
   <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261006.7';
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261007.1';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
     import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
@@ -329,7 +325,7 @@
     const initialProfile = {
       careerData: {
         assets: [],
-        identity: { fullName:'Ali Khan', jobTitle:'Software Engineer', email:'ali.khan@example.com', phone:'+92 300 1234567', location:'Lahore, Pakistan', cnic:'', religion:'', website:'', linkedin:'', whatsapp:'', dateOfBirth:'', nationality:'', address:'', gender:'', maritalStatus:'' },
+        identity: { fullName:'Ali Khan', jobTitle:'Software Engineer', email:'ali.khan@example.com', phone:'+92 300 1234567', location:'Lahore, Pakistan' },
         sections: [
           {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.',visibility:true}],entries:[],repeatable:false},
           {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[
@@ -658,13 +654,21 @@
 
     document.querySelector('#print-btn').addEventListener('click', () => {
       const preview=document.querySelector('[data-v2-editor-preview-root]');
-      if(!preview){window.print();return;}
-      const bodyClass='v2-printing';
-      document.body.classList.add(bodyClass);
-      const cleanup=()=>document.body.classList.remove(bodyClass);
-      window.addEventListener('afterprint',cleanup,{once:true});
-      window.print();
-      setTimeout(cleanup,3000);
+      const templateRoot=preview?.querySelector('[data-v2-template-root]');
+      if(!templateRoot){window.print();return;}
+      const printWindow=window.open('', '_blank', 'width=1000,height=900');
+      if(!printWindow){window.print();return;}
+      const clone=templateRoot.cloneNode(true);
+      clone.querySelectorAll('[contenteditable]').forEach(node=>node.removeAttribute('contenteditable'));
+      clone.querySelectorAll('[data-v2-preview-edit],[data-v2-preview-target]').forEach(node=>{
+        node.removeAttribute('data-v2-preview-edit');node.removeAttribute('data-v2-preview-target');
+      });
+      const templateStyles=[...templateRoot.querySelectorAll('style')].map(style=>style.outerHTML).join('');
+      printWindow.document.open();
+      printWindow.document.write('<!doctype html><html><head><meta charset="utf-8"><title>CV — Print</title><style>@page{size:A4;margin:0}html,body{margin:0;padding:0;background:#fff}body{width:210mm;min-height:297mm}.print-cv{width:210mm;margin:0 auto}.print-cv [data-v2-template-root]{box-shadow:none!important;transform:none!important;margin:0!important}</style>'+templateStyles+'</head><body><main class="print-cv">'+clone.outerHTML+'</main></body></html>');
+      printWindow.document.close();
+      const doPrint=()=>{printWindow.focus();printWindow.print();};
+      if(printWindow.document.fonts?.ready) printWindow.document.fonts.ready.then(()=>setTimeout(doPrint,80)); else setTimeout(doPrint,250);
     });
 
     const initialActive = workspace.getState().activeDocumentId;
