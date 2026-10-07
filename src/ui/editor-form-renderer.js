@@ -141,7 +141,7 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
     const legacyHint=isExperience&&key==='startDate'&&!value&&values.dates?'<small class="editor-field-help">Legacy duration: '+esc(values.dates)+'. Enter Start/End month and year to replace it.</small>':'';
     const monthControls=isMonthField
       ? '<span class="editor-month-input-wrap"><input type="text" inputmode="text" placeholder="February 2026" autocomplete="off" data-v2-editor-entry-field data-v2-entry-date="month" data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">'+
-        '<button type="button" class="editor-month-picker-button" aria-hidden="true" tabindex="-1" title="Choose '+esc(labelFor(key))+'"><span aria-hidden="true">▣</span></button>'+
+        '<button type="button" class="editor-month-picker-button" aria-hidden="true" tabindex="-1" title="Choose '+esc(labelFor(key))+'"><svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M7 2.8v3.4M17 2.8v3.4M3 9h18"/></svg></button>'+
         '<input type="month" class="editor-month-picker-native" data-v2-month-picker="'+esc(key)+'" aria-label="Choose '+esc(labelFor(key))+'" value="'+esc(value)+'" min="1900-01" max="2100-12"></span>'
       : '';
     return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(isMonthField
