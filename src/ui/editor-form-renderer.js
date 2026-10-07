@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.17.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.18.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -58,8 +58,26 @@ function actionButton(label,command,target,payload,extra=''){
 function visibilityButton(kind,target,visible){
   return actionButton(visible?'Hide':'Show','set-visibility',{kind,...target},{visible:!visible});
 }
-function identityVisibilityButton(key,visible){
-  return actionButton(visible?'Hide':'Show','set-visibility',{kind:'identity',key},{visible:!visible});
+function identityRemoveButton(key){
+  return actionButton('Remove','remove-identity-field',{key});
+}
+function formatLongDate(value){
+  const raw=String(value||'').trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  const [year,month,day]=raw.split('-').map(Number);
+  if(!year||!month||!day)return raw;
+  const date=new Date(Date.UTC(year,month-1,day));
+  if(Number.isNaN(date.getTime()))return raw;
+  const ordinal=(n)=>{const mod100=n%100; if(mod100>=11&&mod100<=13)return n+'th'; switch(n%10){case 1:return n+'st';case 2:return n+'nd';case 3:return n+'rd';default:return n+'th';}};
+  return ordinal(day)+' '+new Intl.DateTimeFormat('en-US',{month:'long',timeZone:'UTC'}).format(date)+', '+year;
+}
+function renderIdentityDateField(key,value,identityVisible,removable){
+  const raw=String(value||'');
+  const formatted=formatLongDate(raw);
+  return '<div class="editor-identity-date-wrap"><input class="editor-identity-date-display" type="text" value="'+esc(formatted)+'" placeholder="25th April, 2025" aria-label="Date of Birth" readonly>'+
+    '<input class="editor-identity-date-picker" type="date" data-v2-editor-identity-field="'+esc(key)+'" aria-label="Choose Date of Birth" value="'+esc(raw)+'"'+(identityVisible?'':' disabled')+'>'+
+    '<span class="editor-date-calendar" aria-hidden="true">▣</span></div>'+
+    (removable?identityRemoveButton(key):'');
 }
 
 function renderField(sectionId,field,index,fieldIds,visible=true){
@@ -86,7 +104,7 @@ function renderSummaryField(sectionId,field,visible=true){
 
 function summarySuggestionButton(section){
   if(String(section?.type||'')!=='summary') return '';
-  return '<div class="editor-summary-tools"><button type="button" class="editor-summary-suggest" data-v2-summary-suggest>✦ Auto Suggestion</button><span>Generate a professional starter summary from your title and skills.</span></div>';
+  return '<div class="editor-summary-tools"><button type="button" class="editor-summary-suggest" data-v2-summary-suggest>✦ Auto Suggestion</button></div>';
 }
 
 function sortEntriesForEditor(entries,sectionType,direction){
@@ -194,23 +212,29 @@ export function renderEditorForm(surface,documentData,options={}){
   const hiddenEntries=Array.isArray(configuration.hiddenEntries)?configuration.hiddenEntries.map(String):[];
   const hiddenIdentityFields=Array.isArray(configuration.hiddenIdentityFields)?configuration.hiddenIdentityFields.map(String):[];
   const identity=documentData.careerData?.identity&&typeof documentData.careerData.identity==='object'?documentData.careerData.identity:{};
+  const BASE_IDENTITY_KEYS=new Set(['fullName','jobTitle','email','phone','location']);
+  const OPTIONAL_IDENTITY_KEYS=[
+    ['website','Website'],['linkedin','LinkedIn'],['whatsapp','WhatsApp'],
+    ['dateOfBirth','Date of Birth'],['cnic','CNIC'],['religion','Religion'],['nationality','Nationality'],['gender','Gender'],['maritalStatus','Marital Status']
+  ];
+  const activeIdentityFields=new Set(Array.isArray(configuration.identityFields)?configuration.identityFields.map(String):[]);
   const identityGroups=[
     {id:'identity',title:'Name & Professional',keys:['fullName','jobTitle'],add:[]},
-    {id:'contact',title:'Contact Information',keys:['email','phone','location','website','linkedin','whatsapp'],add:['website','linkedin','whatsapp']},
-    {id:'personal',title:'Personal Information',keys:['dateOfBirth','cnic','religion','nationality','gender','maritalStatus'],add:['dateOfBirth','cnic','religion','nationality','gender','maritalStatus']}
+    {id:'contact',title:'Contact Information',keys:['email','phone','location',...OPTIONAL_IDENTITY_KEYS.slice(0,3).map(item=>item[0])],add:OPTIONAL_IDENTITY_KEYS.slice(0,3).map(item=>item[0])},
+    {id:'personal',title:'Personal Information',keys:OPTIONAL_IDENTITY_KEYS.slice(3).map(item=>item[0]),add:OPTIONAL_IDENTITY_KEYS.slice(3).map(item=>item[0])}
   ];
-  const knownKeys=new Set(identityGroups.flatMap(group=>group.keys));
-  const customKeys=Object.keys(identity).filter(key=>!knownKeys.has(key));
+  const customKeys=Object.keys(identity).filter(key=>!BASE_IDENTITY_KEYS.has(key)&&!OPTIONAL_IDENTITY_KEYS.some(item=>item[0]===key));
   if(customKeys.length) identityGroups[2].keys=[...identityGroups[2].keys,...customKeys];
   const identityGroupHtml=group=>{
-    const fields=group.keys.filter(key=>identity[key]!==undefined || ['fullName','jobTitle','email','phone','location','dateOfBirth','cnic','religion','nationality','gender','maritalStatus'].includes(key));
-    const missingAddOptions=group.add.filter(key=>identity[key]===undefined).map(key=>'<option value="'+esc(key)+'">Add '+esc(labelFor(key))+'</option>').join('');
-    const addOptions=missingAddOptions+'<option value="custom">Add Custom Field…</option>';
+    const fields=group.keys.filter(key=>BASE_IDENTITY_KEYS.has(key)||activeIdentityFields.has(String(key)));
+    const addOptions=group.add.filter(key=>!activeIdentityFields.has(String(key))).map(key=>'<option value="'+esc(key)+'">Add '+esc(labelFor(key))+'</option>').join('')+
+      (group.id==='personal'?'<option value="custom">Add Custom Field…</option>':'');
     return '<section class="editor-identity-block"><div class="editor-identity-head"><div><span class="editor-eyebrow">'+esc(group.id==='identity'?'IDENTITY':group.id==='contact'?'CONTACT':'PERSONAL')+'</span><h4>'+esc(group.title)+'</h4></div>'+((group.id!=='identity'&&addOptions)?'<select class="editor-identity-add" data-v2-editor-identity-add aria-label="Add '+esc(group.title)+' field"><option value="">+ Add Field</option>'+addOptions+'</select>':'')+'</div><div class="editor-identity-grid">'+fields.map(key=>{
-      const removable=group.id!=='identity'; const identityVisible=!hiddenIdentityFields.includes(String(key));
-      const inputType=key==='dateOfBirth'?'date':'text';
-      return '<label class="editor-identity-field'+(identityVisible?'':' is-hidden')+'"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input type="'+inputType+'" data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(identity[key]??'')+'">'+(removable?identityVisibilityButton(key,identityVisible):'')+'</div></label>';
-    }).join('')+'</div></section>';
+      const removable=!BASE_IDENTITY_KEYS.has(String(key));
+      const value=identity[key]??'';
+      if(key==='dateOfBirth') return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap">'+renderIdentityDateField(key,value,true,removable)+'</div></label>';
+      return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input type="text" data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(value)+'">'+(removable?identityRemoveButton(key):'')+'</div></label>';
+    }).join('')}</div></section>';
   };
   const identityHtml=identityGroups.map(identityGroupHtml).join('');
   const sections=orderItems(documentData.careerData?.sections||[],configuration.sectionOrder||[]);
