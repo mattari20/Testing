@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.20.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.21.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -139,9 +139,16 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
     const inputValue=isMonthField?formatMonthValue(value):value;
     const extra=isMonthField?' inputmode="text" placeholder="February 2026" autocomplete="off"':'';
     const legacyHint=isExperience&&key==='startDate'&&!value&&values.dates?'<small class="editor-field-help">Legacy duration: '+esc(values.dates)+'. Enter Start/End month and year to replace it.</small>':'';
-    return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(inputType==='textarea'
-      ? '<textarea rows="4" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'">'+esc(value)+'</textarea>'
-      : '<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-date="'+(isMonthField?'month':'')+'" data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">')+legacyHint+'</label>';
+    const monthControls=isMonthField
+      ? '<span class="editor-month-input-wrap"><input type="text" inputmode="text" placeholder="February 2026" autocomplete="off" data-v2-editor-entry-field data-v2-entry-date="month" data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">'+
+        '<button type="button" class="editor-month-picker-button" data-v2-open-month-picker aria-label="Choose '+esc(labelFor(key))+'">📅</button>'+
+        '<input type="month" class="editor-month-picker-native" data-v2-month-picker="'+esc(key)+'" tabindex="-1" aria-hidden="true" value="'+esc(value)+'" min="1900-01" max="2100-12"></span>'
+      : '';
+    return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(isMonthField
+      ? monthControls
+      : inputType==='textarea'
+        ? '<textarea rows="4" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'">'+esc(value)+'</textarea>'
+        : '<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">')+legacyHint+'</label>';
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
   return '<article class="editor-entry-card" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
     '<div class="editor-entry-head"><div><span class="editor-entry-kicker">ENTRY '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
