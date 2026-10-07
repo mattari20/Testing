@@ -619,7 +619,7 @@ function applyIdentityExtras(root,snapshot){
     return labels[String(key)]||String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase());
   };
   const makeRow=key=>{
-    const row=root.ownerDocument.createElement('div'); row.className='v2-identity-extra-row'; row.setAttribute('data-v2-identity-extra',key);
+    const row=root.ownerDocument.createElement('div'); row.className='contact-row v2-identity-extra-row'; row.setAttribute('data-v2-identity-extra',key);
     const label=root.ownerDocument.createElement('b'); label.textContent=labelForKey(key)+' :';
     const value=root.ownerDocument.createElement('span'); value.setAttribute('data-v2-value','identity.'+key);
     row.append(label,value); return row;
@@ -654,9 +654,9 @@ function applyIdentityExtras(root,snapshot){
   style.textContent=`
     [data-v2-template-root] .v2-identity-extra-section{display:block!important;margin:10px 0 14px!important;color:inherit!important}
     [data-v2-template-root] .v2-identity-extra-heading{font-size:10.5pt!important;font-weight:750!important;text-transform:uppercase!important;letter-spacing:.7px!important;color:inherit!important;border-bottom:1px solid currentColor!important;padding-bottom:5px!important;margin:0 0 8px!important;opacity:.9}
-    [data-v2-template-root] .v2-identity-extra-row{display:flex!important;gap:8px!important;align-items:flex-start!important;margin:0 0 6px!important;font-size:9pt!important;line-height:1.35!important;color:inherit!important;word-break:break-word!important}
-    [data-v2-template-root] .v2-identity-extra-row b{font-weight:700!important;flex:0 0 auto!important}
-    [data-v2-template-root] .v2-identity-extra-row span{min-width:0!important}
+    [data-v2-template-root] .v2-identity-extra-row{display:flex!important;gap:8px!important;align-items:flex-start!important;margin:0 0 6px!important;font-size:9pt!important;line-height:1.35!important;word-break:break-word!important}
+    [data-v2-template-root] .v2-identity-extra-row b,
+    [data-v2-template-root] .v2-identity-extra-row span{font-weight:inherit!important;min-width:0!important}
   `;
   root.prepend(style);
 }
