@@ -6,6 +6,13 @@ function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
   catch { return fallback; }
 }
+function formatMonthValue(value){
+  const raw=String(value||'').trim();
+  if(!/^\d{4}-\d{2}$/.test(raw))return raw;
+  const [year,month]=raw.split('-').map(Number);
+  if(!year||month<1||month>12)return raw;
+  return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,1)));
+}
 function formatLongDate(value){
   const raw=String(value||'').trim();
   if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
@@ -15,6 +22,19 @@ function formatLongDate(value){
   const mod100=day%100;
   const suffix=mod100>=11&&mod100<=13?'th':({1:'st',2:'nd',3:'rd'}[day%10]||'th');
   return day+suffix+' '+new Intl.DateTimeFormat('en-US',{month:'long',timeZone:'UTC'}).format(date)+', '+year;
+}
+function parseUserMonth(value){
+  const raw=String(value||'').trim();
+  if(/^\d{4}-\d{2}$/.test(raw))return raw;
+  const cleaned=raw.replace(/,/g,' ').replace(/\s+/g,' ').trim();
+  const match=cleaned.match(/^([A-Za-z]+)\s+(\d{4})$/)||cleaned.match(/^(\d{4})\s+([A-Za-z]+)$/);
+  if(!match)return '';
+  const monthName=Number.isNaN(Number(match[1]))?match[1]:match[2];
+  const year=Number.isNaN(Number(match[1]))?Number(match[2]):Number(match[1]);
+  const months=['january','february','march','april','may','june','july','august','september','october','november','december'];
+  const month=months.indexOf(String(monthName).toLowerCase())+1;
+  if(!month||year<1900||year>2100)return '';
+  return String(year)+'-'+String(month).padStart(2,'0');
 }
 function parseUserDate(value){
   const raw=String(value||'').trim();
@@ -154,7 +174,14 @@ export function bindEditorFields(root, surface, options = {}) {
       const target = parseJson(input.dataset.v2EntryTarget);
       const key = String(input.dataset.v2EntryKey || '');
       if (!target.sectionId || !target.entryId || !key) return;
-      surface.dispatch(createEditorCommand({type:'update-entry',target,payload:{values:{[key]:input.value}}}));
+      const value = input.dataset.v2EntryDate === 'month' ? parseUserMonth(input.value) : input.value;
+      if(input.dataset.v2EntryDate === 'month' && !value){
+        const state=surface.getState();
+        const current=String(state?.session?.application?.masterProfile?.careerData?.sections?.find(s=>String(s?.id)===String(target.sectionId))?.entries?.find(e=>String(e?.id)===String(target.entryId))?.values?.[key]||'');
+        input.value=current?formatMonthValue(current):'';
+        return;
+      }
+      surface.dispatch(createEditorCommand({type:'update-entry',target,payload:{values:{[key]:value}}}));
     };
     const eventType = ['startDate','endDate','dates'].includes(String(input.dataset.v2EntryKey||'')) ? 'change' : 'input';
     input.addEventListener(eventType, handler);
