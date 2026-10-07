@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.8.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '2.9.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -113,7 +113,10 @@ function resolveIdentity(snapshot, key) {
   const identity = isObject(snapshot?.careerData?.identity) ? snapshot.careerData.identity : {};
   const candidates = IDENTITY_ALIASES[key] || [key];
   for (const candidate of candidates) {
-    if (identity[candidate] !== undefined && identity[candidate] !== null) return identity[candidate];
+    if (identity[candidate] !== undefined && identity[candidate] !== null) {
+      const value=identity[candidate];
+      return String(key)==='dateOfBirth' ? formatLongDate(value) : value;
+    }
   }
   return undefined;
 }
@@ -158,7 +161,18 @@ function formatMonthYear(value) {
   if (!/^\d{4}-\d{2}$/.test(raw)) return raw;
   const [year, month] = raw.split('-').map(Number);
   if (!year || !month || month < 1 || month > 12) return raw;
-  return new Intl.DateTimeFormat('en-US', { month:'long', year:'numeric' }).format(new Date(year, month - 1, 1));
+  return new Intl.DateTimeFormat('en-US', { month:'long', year:'numeric', timeZone:'UTC' }).format(new Date(Date.UTC(year, month - 1, 1)));
+}
+function formatLongDate(value){
+  const raw=String(value||'').trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  const [year,month,day]=raw.split('-').map(Number);
+  if(!year||!month||!day)return raw;
+  const date=new Date(Date.UTC(year,month-1,day));
+  if(Number.isNaN(date.getTime()))return raw;
+  const mod100=day%100;
+  const suffix=mod100>=11&&mod100<=13?'th':({1:'st',2:'nd',3:'rd'}[day%10]||'th');
+  return day+suffix+' '+new Intl.DateTimeFormat('en-US',{month:'long',timeZone:'UTC'}).format(date)+', '+year;
 }
 
 function resolveDurationValue(values) {
@@ -533,40 +547,61 @@ function applyCustomSections(root, snapshot) {
   const sections = Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [];
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenSections) ? snapshot.configuration.hiddenSections.map(String) : []);
   const placements = snapshot?.configuration?.presentation?.sectionPlacement || {};
+  const configuredOrder = Array.isArray(snapshot?.configuration?.sectionOrder) ? snapshot.configuration.sectionOrder.map(String) : [];
+  const rank = new Map(configuredOrder.map((id,index)=>[id,index]));
   const main = root.querySelector('.cv-main') || root.querySelector('[data-v2-column="left"]');
   const sidebar = root.querySelector('.cv-sidebar') || root.querySelector('[data-v2-column="right"]');
   if (!main && !sidebar) return;
-  for (const section of sections) {
-    if (String(section?.type || '') !== 'custom') continue;
-    const sid = String(section.id || '');
-    if (!sid || section.visibility === false || hidden.has(sid)) continue;
-    const target = String(placements[sid] || 'left') === 'right' ? (sidebar || main) : (main || sidebar);
-    if (!target) continue;
-    const wrapper = root.ownerDocument.createElement('section');
-    wrapper.className = 'v2-custom-preview-section';
-    wrapper.setAttribute('data-v2-custom-section-id', sid);
-    const heading = root.ownerDocument.createElement('div');
-    heading.className = String(placements[sid] || 'left') === 'right' ? 'sidebar-label' : 'section-label';
-    heading.textContent = String(section.title || 'New Section');
-    wrapper.appendChild(heading);
-    const fields = Array.isArray(section.fields) ? section.fields : [];
-    for (const field of fields) {
-      if (field?.visibility === false) continue;
-      const value = field?.value == null ? '' : String(field.value);
-      if (!value.trim()) continue;
-      const row = root.ownerDocument.createElement('div');
-      row.className = 'v2-custom-field';
-      const label = root.ownerDocument.createElement('strong');
-      label.textContent = String(field.label || 'Field');
-      const content = root.ownerDocument.createElement('span');
-      content.textContent = value;
-      row.append(label, content);
-      wrapper.appendChild(row);
-    }
-    target.appendChild(wrapper);
-  }
-}
 
+  const staticGroupStart = (parent, targetRank) => {
+    const headings=[...parent.querySelectorAll(':scope > [data-v2-section]')];
+    for(const heading of headings){
+      const type=String(heading.getAttribute('data-v2-section')||'');
+      const section=findCanonicalSection(snapshot,type);
+      const sectionId=String(section?.id||type);
+      const sectionRank=rank.has(sectionId)?rank.get(sectionId):Number.MAX_SAFE_INTEGER;
+      if(sectionRank>targetRank) return heading;
+    }
+    return null;
+  };
+
+  sections.filter(section=>String(section?.type||'')==='custom')
+    .filter(section=>{const sid=String(section.id||'');return sid&&section.visibility!==false&&!hidden.has(sid);})
+    .sort((a,b)=>{
+      const ar=rank.has(String(a.id))?rank.get(String(a.id)):Number.MAX_SAFE_INTEGER;
+      const br=rank.has(String(b.id))?rank.get(String(b.id)):Number.MAX_SAFE_INTEGER;
+      return ar-br;
+    })
+    .forEach(section=>{
+      const sid=String(section.id||'');
+      const target=String(placements[sid]||'left')==='right'?(sidebar||main):(main||sidebar);
+      if(!target)return;
+      const wrapper=root.ownerDocument.createElement('section');
+      wrapper.className='v2-custom-preview-section';
+      wrapper.setAttribute('data-v2-custom-section-id',sid);
+      const heading=root.ownerDocument.createElement('div');
+      heading.className=String(placements[sid]||'left')==='right'?'sidebar-label':'section-label';
+      heading.textContent=String(section.title||'New Section');
+      wrapper.appendChild(heading);
+      const fields=Array.isArray(section.fields)?section.fields:[];
+      for(const field of fields){
+        if(field?.visibility===false)continue;
+        const value=field?.value==null?'':String(field.value);
+        if(!value.trim())continue;
+        const row=root.ownerDocument.createElement('div');
+        row.className='v2-custom-field';
+        const label=root.ownerDocument.createElement('strong');
+        label.textContent=String(field.label||'Field');
+        const content=root.ownerDocument.createElement('span');
+        content.textContent=value;
+        row.append(label,content);
+        wrapper.appendChild(row);
+      }
+      const targetRank=rank.has(sid)?rank.get(sid):Number.MAX_SAFE_INTEGER;
+      const before=staticGroupStart(target,targetRank);
+      if(before)target.insertBefore(wrapper,before);else target.appendChild(wrapper);
+    });
+}
 function applyIdentityVisibility(root, snapshot) {
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
     ? snapshot.configuration.hiddenIdentityFields.map(String) : []);
