@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.21.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.22.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -141,7 +141,7 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
     const legacyHint=isExperience&&key==='startDate'&&!value&&values.dates?'<small class="editor-field-help">Legacy duration: '+esc(values.dates)+'. Enter Start/End month and year to replace it.</small>':'';
     const monthControls=isMonthField
       ? '<span class="editor-month-input-wrap"><input type="text" inputmode="text" placeholder="February 2026" autocomplete="off" data-v2-editor-entry-field data-v2-entry-date="month" data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">'+
-        '<button type="button" class="editor-month-picker-button" data-v2-open-month-picker aria-label="Choose '+esc(labelFor(key))+'">📅</button>'+
+        '<button type="button" class="editor-month-picker-button" data-v2-open-month-picker aria-label="Choose '+esc(labelFor(key))+'" title="Choose '+esc(labelFor(key))+'"><span aria-hidden="true">▣</span><span class="sr-only">Choose '+esc(labelFor(key))+'</span></button>'+
         '<input type="month" class="editor-month-picker-native" data-v2-month-picker="'+esc(key)+'" tabindex="-1" aria-hidden="true" value="'+esc(value)+'" min="1900-01" max="2100-12"></span>'
       : '';
     return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(isMonthField
