@@ -656,7 +656,7 @@
       const preview=document.querySelector('[data-v2-editor-preview-root]');
       const templateRoot=preview?.querySelector('[data-v2-template-root]');
       if(!templateRoot){window.print();return;}
-      const printWindow=window.open('', '_blank', 'noopener,noreferrer,width=1000,height=900');
+      const printWindow=window.open('', '_blank', 'width=1000,height=900');
       if(!printWindow){window.print();return;}
       const clone=templateRoot.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(node=>node.removeAttribute('contenteditable'));
