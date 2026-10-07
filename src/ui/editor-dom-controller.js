@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.19.0';
+export const EDITOR_DOM_VERSION = '1.20.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -168,6 +168,32 @@ export function bindEditorFields(root, surface, options = {}) {
     const eventType=input.type==='date'?'change':'input';
     input.addEventListener(eventType, handler);
     listeners.push(() => input.removeEventListener(eventType, handler));
+  });
+  root.querySelectorAll('[data-v2-open-month-picker]').forEach(button => {
+    const handler = event => {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const picker=button.closest('.editor-month-input-wrap')?.querySelector('[data-v2-month-picker]');
+      if(!picker)return;
+      if(typeof picker.showPicker==='function'){ try { picker.showPicker(); return; } catch {} }
+      picker.focus();
+      picker.click();
+    };
+    button.addEventListener('click', handler);
+    listeners.push(() => button.removeEventListener('click', handler));
+  });
+  root.querySelectorAll('[data-v2-month-picker]').forEach(picker => {
+    const handler = () => {
+      const targetInput=picker.closest('.editor-month-input-wrap')?.querySelector('[data-v2-editor-entry-field]');
+      const target=targetInput?parseJson(targetInput.dataset.v2EntryTarget):null;
+      const key=String(targetInput?.dataset.v2EntryKey||picker.dataset.v2MonthPicker||'');
+      const value=parseUserMonth(picker.value);
+      if(!target?.sectionId||!target?.entryId||!key||!value)return;
+      surface.dispatch(createEditorCommand({type:'update-entry',target,payload:{values:{[key]:value}}}));
+      if(targetInput) targetInput.value=formatMonthValue(value);
+    };
+    picker.addEventListener('change', handler);
+    listeners.push(() => picker.removeEventListener('change', handler));
   });
   root.querySelectorAll('[data-v2-editor-entry-field]').forEach(input => {
     const handler = () => {
