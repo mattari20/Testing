@@ -234,7 +234,7 @@ export function renderEditorForm(surface,documentData,options={}){
       const value=identity[key]??'';
       if(key==='dateOfBirth') return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap">'+renderIdentityDateField(key,value,true,removable)+'</div></label>';
       return '<label class="editor-identity-field"><span>'+esc(labelFor(key))+'</span><div class="editor-identity-input-wrap"><input type="text" data-v2-editor-identity-field="'+esc(key)+'" aria-label="'+esc(labelFor(key))+'" value="'+esc(value)+'">'+(removable?identityRemoveButton(key):'')+'</div></label>';
-    }).join('')}</div></section>';
+    }).join('')+'</div></section>';
   };
   const identityHtml=identityGroups.map(identityGroupHtml).join('');
   const sections=orderItems(documentData.careerData?.sections||[],configuration.sectionOrder||[]);
