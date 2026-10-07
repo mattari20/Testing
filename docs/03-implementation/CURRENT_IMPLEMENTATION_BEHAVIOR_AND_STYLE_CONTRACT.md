@@ -851,3 +851,9 @@ All three must remain aligned.
 ### Regression clarification — 2026-10-07 R4
 
 - Experience Start Date and End Date remain fully typeable month/year controls and now also provide a dedicated calendar/month picker button. Calendar selection writes the same canonical `YYYY-MM` value as manual entry, so sorting and preview behavior are identical regardless of input method.
+
+### Regression clarifications — 2026-10-07 R4
+
+- Experience Start Date and End Date calendar selection must use a directly clickable native month input positioned over the visible calendar affordance. The input must remain rendered and interactive; do not rely only on programmatic `showPicker()` against a 1px/pointer-events-none control.
+- The visible text input remains independently typeable and stores canonical `YYYY-MM` values.
+- The preview container must not retain unnecessary bottom padding beneath the scaled A4 page; side/top breathing room is retained while excess bottom space is removed.
