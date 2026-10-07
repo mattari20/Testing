@@ -841,3 +841,9 @@ All three must remain aligned.
 - Personal-information rendering is template-independent: every populated, active identity field that is not already bound by a template must be rendered through the native renderer. Templates with no native Personal Information block receive a renderer-generated block in an appropriate column.
 - Custom sections are renderer-independent of template class names: the native renderer resolves `main`/column and `aside`/sidebar targets and renders custom sections in every native template, respecting section placement and configured section order.
 - These rules are regression requirements for every subsequent template and editor change.
+
+### Regression clarifications — 2026-10-07 R3
+
+- Date of Birth is directly editable in the identity editor using a readable text value, with a separate calendar picker action; the canonical stored value remains ISO `YYYY-MM-DD`.
+- Experience Start Date and End Date are fully typeable month/year text controls. They accept readable month/year input and commit canonical `YYYY-MM` values on change, preventing native segmented month inputs from stealing focus after a single digit.
+- Additional personal-information rows inherit the template's existing personal-information/contact styling so labels and values use the same visual color treatment as the surrounding CV design.
