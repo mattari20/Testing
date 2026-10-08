@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.20.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.21.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -561,21 +561,13 @@ function getThemeColor(root) {
   const view = root?.ownerDocument?.defaultView;
   if (!view?.getComputedStyle) return null;
 
-  const style = view.getComputedStyle(root);
-
-  // The selected template theme is authoritative. applyTheme() writes these
-  // variables before Skills/Languages are rendered. Read them first so a
-  // legacy blue child selector can never hijack a purple/green/etc. theme.
-  const configuredTheme =
-    parseRgbColor(style.getPropertyValue('--theme-color'))
-    || parseRgbColor(style.getPropertyValue('--primary'));
-  if (configuredTheme) return configuredTheme;
-
-  // Fallback only for older/native templates that do not expose the shared
-  // theme variables. This keeps the system usable for future templates.
+  // Prefer the actual rendered accent used by the native template.
+  // This is more reliable than reading a custom property because a legacy
+  // template can retain an older --theme-color value while its visible
+  // section ribbons correctly use the current --primary theme.
   const accentSelectors = [
-    '.section-label',
     '.sidebar-label',
+    '.section-label',
     '.photo-ribbon',
     '.section-title',
     '.section-heading'
@@ -587,12 +579,22 @@ function getThemeColor(root) {
       const background = parseRgbColor(view.getComputedStyle(candidate).backgroundColor);
       if (!background) continue;
       const luminance = relativeLuminance(background);
-      if (luminance < 0.92 && (contrastRatio(background, {r:255,g:255,b:255,a:1}) >= 2.2
-        || contrastRatio(background, {r:31,g:41,b:55,a:1}) >= 2.2)) {
+      if (luminance < 0.92 && (
+        contrastRatio(background, {r:255,g:255,b:255,a:1}) >= 2.2 ||
+        contrastRatio(background, {r:31,g:41,b:55,a:1}) >= 2.2
+      )) {
         return background;
       }
     }
   }
+
+  // Fall back to the shared theme variables for templates without a visible
+  // accent node. This keeps the universal system usable for future templates.
+  const style = view.getComputedStyle(root);
+  const configuredTheme =
+    parseRgbColor(style.getPropertyValue('--primary'))
+    || parseRgbColor(style.getPropertyValue('--theme-color'));
+  if (configuredTheme) return configuredTheme;
 
   return parseRgbColor(style.color);
 }
@@ -748,7 +750,7 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.20.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.21.0');
 }
 
 function applyListStyles(root, snapshot) {
