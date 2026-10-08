@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.5.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.6.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -428,6 +428,19 @@ const PROFICIENCY_LABELS_FALLBACK = Object.freeze({
   languages: Object.freeze(['','Basic','Conversational','Proficient','Fluent','Native / Bilingual'])
 });
 
+const T01_SKILLS_RATING_COMPATIBILITY = Object.freeze({
+  tags: Object.freeze(['off']),
+  compact: Object.freeze(['off','text','stars']),
+  bullets: Object.freeze(['off','text','stars','bars','dots'])
+});
+
+function resolveAllowedProficiency(templateId,type,listStyle,contract){
+  if(String(templateId)==='t01-modern-minimalist-cv-design_modern' && String(type)==='skills'){
+    return T01_SKILLS_RATING_COMPATIBILITY[String(listStyle)] || Object.freeze(['off']);
+  }
+  return contract[type]?.proficiency || ['off'];
+}
+
 function renderProficiencyNode(root, type, entry, style) {
   const value = getSkillOrLanguageProficiency(entry);
   if (!value || style === 'off') return null;
@@ -472,10 +485,7 @@ function renderProficiencyNode(root, type, entry, style) {
       }
     }
     holder.appendChild(visual);
-    const score=root.ownerDocument.createElement('span');
-    score.className='v2-proficiency-score';
-    score.textContent=value+'/5';
-    holder.appendChild(score);
+    // Visual proficiency intentionally has no visible numeric score such as 5/5.
   }
   return holder;
 }
@@ -486,7 +496,11 @@ function applyListStyles(root, snapshot) {
   const presentation=snapshot?.configuration?.presentation||{};
   for (const type of ['skills','languages']) {
     const selected=String(presentation?.listStyles?.[type]||contract[type].default);
-    const proficiencyStyle=String(presentation?.ratings?.[type]?.style||contract[type].proficiencyDefault);
+    const allowed=resolveAllowedProficiency(templateId,type,selected,contract);
+    const configured=String(presentation?.ratings?.[type]?.style||contract[type].proficiencyDefault);
+    const proficiencyStyle=allowed.includes(configured)
+      ? configured
+      : (allowed.includes(contract[type].proficiencyDefault)?contract[type].proficiencyDefault:'off');
     const section=findCanonicalSection(snapshot,type);
     const entries=new Map((section?.entries||[]).map(entry=>[String(entry.id),entry]));
     root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
