@@ -182,35 +182,6 @@ function entrySortControl(sectionType,configuration){
   return '<label class="editor-sort-control"><span>Date order</span><select data-v2-editor-entry-sort="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' date order"><option value="desc"'+(selected==='desc'?' selected':'')+'>Newest first</option><option value="asc"'+(selected==='asc'?' selected':'')+'>Oldest first</option></select></label>';
 }
 
-const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
-  skills: {
-    tags: ['off','text','stars','bars','dots'],
-    inline: ['off'],
-    bullets: ['off','text','stars','bars','dots'],
-    compact: ['off','text','stars','dots']
-  },
-  languages: {
-    stacked: ['off','text','stars','bars','dots'],
-    inline: ['off'],
-    pills: ['off'],
-    compact: ['off','text','stars','dots']
-  }
-});
-
-function isRatingStyleCompatible(sectionType,listStyle,ratingStyle){
-  return (LIST_STYLE_RATING_COMPATIBILITY[sectionType]?.[listStyle] || ['off']).includes(ratingStyle);
-}
-
-function ratingStyleControl(sectionType,configuration){
-  const listStyle=String(configuration?.presentation?.listStyles?.[sectionType] || (sectionType==='skills'?'tags':'stacked'));
-  const compatible=LIST_STYLE_RATING_COMPATIBILITY[sectionType]?.[listStyle] || ['off'];
-  const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
-  const selected=compatible.includes(configured)?configured:'off';
-  const disabled=compatible.length===1 && compatible[0]==='off';
-  return '<label class="editor-rating-style-control" title="'+(disabled?'Proficiency is turned off for this display style.':'Choose a professional proficiency display.')+'"><span>Proficiency</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' proficiency display"'+(disabled?' disabled':'')+'>'+
-    [['off','Off'],['text','Level'],['bars','Bars'],['dots','Dots'],['stars','Stars']].map(([value,label])=>'<option value="'+value+'"'+(selected===value?' selected':'')+'>'+label+'</option>').join('')+
-    '</select></label>';
-}
 function listStyleControl(sectionType,configuration,templateId){
   const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
   const selected=String(configuration?.presentation?.listStyles?.[sectionType]||contract.default);
