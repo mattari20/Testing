@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.22.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.23.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -171,16 +171,16 @@ function entrySortControl(sectionType,configuration){
 
 const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
   skills: {
-    tags: ['off','stars','dots'],
+    tags: ['off','text','stars','bars','dots'],
     inline: ['off'],
-    bullets: ['off','stars','bars','dots'],
-    compact: ['off','stars','dots']
+    bullets: ['off','text','stars','bars','dots'],
+    compact: ['off','text','stars','dots']
   },
   languages: {
-    stacked: ['off','stars','bars','dots'],
+    stacked: ['off','text','stars','bars','dots'],
     inline: ['off'],
     pills: ['off'],
-    compact: ['off','stars','dots']
+    compact: ['off','text','stars','dots']
   }
 });
 
@@ -194,8 +194,8 @@ function ratingStyleControl(sectionType,configuration){
   const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
   const selected=compatible.includes(configured)?configured:'off';
   const disabled=compatible.length===1 && compatible[0]==='off';
-  return '<label class="editor-rating-style-control" title="'+(disabled?'Ratings are turned off for this display style.':'Choose how proficiency is shown.')+'"><span>Rating</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' rating style"'+(disabled?' disabled':'')+'>'+
-    [['off','Off'],['stars','Stars'],['bars','Bars'],['dots','Dots']].map(([value,label])=>'<option value="'+value+'"'+(selected===value?' selected':'')+'>'+label+'</option>').join('')+
+  return '<label class="editor-rating-style-control" title="'+(disabled?'Proficiency is turned off for this display style.':'Choose a professional proficiency display.')+'"><span>Proficiency</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' proficiency display"'+(disabled?' disabled':'')+'>'+
+    [['off','Off'],['text','Level'],['bars','Bars'],['dots','Dots'],['stars','Stars']].map(([value,label])=>'<option value="'+value+'"'+(selected===value?' selected':'')+'>'+label+'</option>').join('')+
     '</select></label>';
 }
 function listStyleControl(sectionType,configuration){
@@ -212,10 +212,14 @@ function listStyleControl(sectionType,configuration){
 function renderListField(sectionId,field,index,fieldIds,visible,itemLabel,configuration={}){
   const ratingConfig=configuration?.presentation?.ratings?.[sectionId]||{style:'off',values:{}};
   const items=String(field.value??'').split(/[,\\n]+/).map(v=>v.trim()).filter(Boolean);
-  const ratingHtml=items.length
-    ? '<div class="editor-rating-items"><div class="editor-rating-title">Optional '+esc(itemLabel)+' ratings</div>'+items.map(item=>{
+  const proficiencyLabels=sectionId==='languages'
+    ? ['No level','1 / 5 — Basic','2 / 5 — Conversational','3 / 5 — Working','4 / 5 — Fluent','5 / 5 — Native / Bilingual']
+    : ['No level','1 / 5 — Beginner','2 / 5 — Intermediate','3 / 5 — Proficient','4 / 5 — Advanced','5 / 5 — Expert'];
+  const listStyle=String(configuration?.presentation?.listStyles?.[sectionId]||(sectionId==='skills'?'tags':'stacked'));
+  const ratingHtml=items.length && ratingConfig.style!=='off' && isRatingStyleCompatible(sectionId,listStyle,String(ratingConfig.style))
+    ? '<div class="editor-rating-items"><div class="editor-rating-title">Set '+esc(itemLabel)+' proficiency level</div><div class="editor-rating-scale-help">Use the same 5-level scale for every item. The CV preview will use the selected display style.</div>'+items.map(item=>{
         const rating=Math.max(0,Math.min(5,Number(ratingConfig.values?.[item]||0)));
-        return '<div class="editor-rating-row"><span>'+esc(item)+'</span><select data-v2-editor-item-rating="'+esc(sectionId)+'" data-v2-rating-item="'+esc(item)+'" aria-label="'+esc(item)+' rating">'+[0,1,2,3,4,5].map(v=>'<option value="'+v+'"'+(v===rating?' selected':'')+'>'+ (v===0?'No rating':v+' / 5')+'</option>').join('')+'</select></div>';
+        return '<div class="editor-rating-row"><span>'+esc(item)+'</span><select data-v2-editor-item-rating="'+esc(sectionId)+'" data-v2-rating-item="'+esc(item)+'" aria-label="'+esc(item)+' proficiency level">'+proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===rating?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select></div>';
       }).join('')+'</div>' : '';
 
   const fieldVisible=visible&&field.visibility!==false;
@@ -229,7 +233,7 @@ function renderListField(sectionId,field,index,fieldIds,visible,itemLabel,config
     '<div class="editor-list-field-head"><div><span class="editor-entry-kicker">'+esc(itemLabel)+' '+(index+1)+'</span><strong>'+esc(sectionId==='skills'?'Skill list':'Language list')+'</strong></div>'+
     '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
     (fieldVisible
-      ? '<label class="editor-list-field-label"><span>'+esc(itemLabel)+' content</span><input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'"><small class="editor-field-help">'+esc(hint)+'</small></label>'
+      ? '<label class="editor-list-field-label"><span>'+esc(itemLabel)+' content</span><input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'"><small class="editor-field-help">'+esc(hint)+'</small></label>'+ratingHtml
       : '<div class="editor-hidden-note">This '+esc(itemLabel.toLowerCase())+' is hidden from the CV.</div>')+
     '</div>';
 }
