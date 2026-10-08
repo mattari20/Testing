@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.6.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.7.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -475,7 +475,13 @@ function renderProficiencyNode(root, type, entry, style) {
     if (style === 'stars') {
       visual.textContent = '★'.repeat(value) + '☆'.repeat(5 - value);
     } else if (style === 'dots') {
-      visual.textContent = '●'.repeat(value) + '○'.repeat(5 - value);
+      visual.classList.add('v2-proficiency-dots');
+      for (let i=1;i<=5;i++) {
+        const dot=root.ownerDocument.createElement('i');
+        dot.className='v2-proficiency-dot'+(i<=value?' is-on':'');
+        dot.setAttribute('aria-hidden','true');
+        visual.appendChild(dot);
+      }
     } else if (style === 'bars') {
       for (let i=1;i<=5;i++) {
         const bar=root.ownerDocument.createElement('i');
@@ -492,6 +498,18 @@ function renderProficiencyNode(root, type, entry, style) {
 
 function applyListStyles(root, snapshot) {
   const templateId=String(root.getAttribute('data-v2-template-id')||snapshot?.configuration?.template?.id||'');
+  if (!root.querySelector('[data-v2-proficiency-normalization]')) {
+    const style=root.ownerDocument.createElement('style');
+    style.setAttribute('data-v2-proficiency-normalization','true');
+    style.textContent=''
+      + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:6px!important;margin-bottom:6px!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="compact"]{display:inline-flex!important;align-items:center!important;margin-right:5px!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:list-item!important;}'
+      + '[data-v2-template-root] .v2-proficiency-dots{display:inline-flex!important;align-items:center!important;gap:3px!important;line-height:1!important;vertical-align:middle!important;}'
+      + '[data-v2-template-root] .v2-proficiency-dot{display:inline-block!important;width:.58em!important;height:.58em!important;min-width:.58em!important;flex:0 0 .58em!important;border:1px solid currentColor!important;border-radius:50%!important;box-sizing:border-box!important;line-height:1!important;}'
+      + '[data-v2-template-root] .v2-proficiency-dot.is-on{background:currentColor!important;}';
+    root.prepend(style);
+  }
   const contract=getSkillsLanguagesPresentationContract(templateId);
   const presentation=snapshot?.configuration?.presentation||{};
   for (const type of ['skills','languages']) {
