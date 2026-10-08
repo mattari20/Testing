@@ -344,19 +344,31 @@ export function bindEditorFields(root, surface, options = {}) {
         payload:{sectionType,style}
       }));
 
-      const incompatibleStyles = {
-        skills: new Set(['inline']),
-        languages: new Set(['inline','pills'])
-      };
-      if(incompatibleStyles[sectionType]?.has(style)){
-        const current = surface.getState()?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.[sectionType]?.style;
-        if(String(current || 'off') !== 'off'){
-          surface.dispatch(createEditorCommand({
-            type:'set-rating-style',
-            target:{sectionType},
-            payload:{sectionType,style:'off'}
-          }));
+      const allowedRatings = {
+        skills: {
+          tags: new Set(['off']),
+          compact: new Set(['off','text','stars']),
+          bullets: new Set(['off','text','stars','bars','dots'])
+        },
+        languages: {
+          stacked: new Set(['off','text','stars','bars','dots']),
+          inline: new Set(['off']),
+          pills: new Set(['off']),
+          compact: new Set(['off','text','stars'])
         }
+      };
+      const current = String(
+        surface.getState()?.session?.application?.targetedCV?.configuration?.presentation?.ratings?.[sectionType]?.style
+        || surface.getState()?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.[sectionType]?.style
+        || 'off'
+      );
+      const allowed = allowedRatings[sectionType]?.[style];
+      if (allowed && !allowed.has(current)) {
+        surface.dispatch(createEditorCommand({
+          type:'set-rating-style',
+          target:{sectionType},
+          payload:{sectionType,style:'off'}
+        }));
       }
     };
     input.addEventListener('change', handler);
