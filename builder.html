@@ -313,7 +313,7 @@
   </main>
 
   <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261008.3';
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261008.4';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
     import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
@@ -333,8 +333,8 @@
             {id:'experience-2',values:{role:'Junior Software Engineer',company:'Digital Works',startDate:'2021-01',endDate:'2023-01',description:'Developed responsive interfaces, integrated REST APIs, and resolved production issues while contributing to automated testing and code reviews.'},visibility:true,order:1}
           ],repeatable:true},
           {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'BS Computer Science',institution:'University of Lahore',dates:'2017 — 2021'},visibility:true,order:0}],repeatable:true},
-          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'JavaScript, HTML, CSS, REST APIs, Git, Testing, Problem Solving, Team Collaboration',visibility:true}],entries:[],repeatable:false},
-          {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[{id:'languagesText',type:'text',label:'Languages',value:'English, Urdu',visibility:true}],entries:[],repeatable:false}
+          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[],entries:[{id:'skill-1',values:{skill:'JavaScript',proficiency:5},visibility:true,order:0},{id:'skill-2',values:{skill:'HTML',proficiency:4},visibility:true,order:1},{id:'skill-3',values:{skill:'CSS',proficiency:4},visibility:true,order:2},{id:'skill-4',values:{skill:'REST APIs',proficiency:4},visibility:true,order:3},{id:'skill-5',values:{skill:'Git',proficiency:4},visibility:true,order:4},{id:'skill-6',values:{skill:'Testing',proficiency:3},visibility:true,order:5},{id:'skill-7',values:{skill:'Problem Solving',proficiency:5},visibility:true,order:6},{id:'skill-8',values:{skill:'Team Collaboration',proficiency:4},visibility:true,order:7}],repeatable:true},
+          {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[],entries:[{id:'language-1',values:{language:'English',proficiency:5},visibility:true,order:0},{id:'language-2',values:{language:'Urdu',proficiency:5},visibility:true,order:1}],repeatable:true}
         ]
       },
     cvData: {

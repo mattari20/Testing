@@ -1,3 +1,4 @@
+import { SKILLS_LANGUAGES_TEMPLATE_CONTRACTS } from './skills-languages-presentation-contract.js';
 import { TEMPLATE_STATUS, createTemplateDefinition } from './template-engine.js';
 
 export const V2_NATIVE_TEMPLATE_STATUS = Object.freeze({
@@ -22,6 +23,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't01-modern-minimalist-cv-design_ats',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t01-modern-minimalist-cv-design_ats'],
     name: 'T01 Modern Minimalist CV — ATS V2',
     version: '2.1.0',
     sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html',
@@ -38,6 +40,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't01-modern-minimalist-cv-design_simple',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t01-modern-minimalist-cv-design_simple'],
     name: 'T01 Modern Minimalist CV — Simple V2',
     version: '2.1.0',
     sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_simple.html',
@@ -54,11 +57,12 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't01-modern-minimalist-cv-design_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t01-modern-minimalist-cv-design_modern'],
     name: 'T01 Modern Minimalist CV — Native V2',
     version: '2.0.0',
     v1BaselineId: 't01-modern-minimalist-cv-design_modern',
     sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_modern.html',
-    supportedSections: ['photo','contact','summary','experience','education'],
+    supportedSections: ['photo','contact','summary','experience','education','skills','languages'],
     careerLevel: ['Student','Fresh Graduate','Professional'],
     industry: ['General','Business','IT / Software'],
     style: ['Modern','Minimal'],
@@ -70,6 +74,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't02-professional-cv-design_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t02-professional-cv-design_modern'],
     name: 'T02 Professional CV — Native V2',
     version: '2.0.0',
     v1BaselineId: 't02-professional-cv-design_modern',
@@ -86,6 +91,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't03-professional-cv-design_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t03-professional-cv-design_modern'],
     name: 'T03 Professional CV — Native V2',
     version: '2.0.0',
     v1BaselineId: 't03-professional-cv-design_modern',
@@ -102,6 +108,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't04-modern-blue-corporate_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t04-modern-blue-corporate_modern'],
     name: 'T04 Modern Blue Corporate — Native V2',
     version: '2.0.0',
     v1BaselineId: 't04-modern-blue-corporate_modern',
@@ -118,6 +125,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't05-simple-cv-graphic-web-designer_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t05-simple-cv-graphic-web-designer_modern'],
     name: 'T05 Simple CV Graphic Web Designer — Native V2',
     version: '2.0.0',
     v1BaselineId: 't05-simple-cv-graphic-web-designer_modern',
@@ -134,6 +142,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't06-professional-cv-graphic-designer_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t06-professional-cv-graphic-designer_modern'],
     name: 'T06 Professional CV Graphic Designer — Native V2',
     version: '2.0.0',
     v1BaselineId: 't06-professional-cv-graphic-designer_modern',
@@ -150,6 +159,7 @@ const nativeTemplates = [
   {
     ...COMMON,
     id: 't07-professional-cv-store-manager-incharge_modern',
+    skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t07-professional-cv-store-manager-incharge_modern'],
     name: 'T07 Professional CV Store Manager/Incharge — Native V2',
     version: '2.0.0',
     v1BaselineId: 't07-professional-cv-store-manager-incharge_modern',
