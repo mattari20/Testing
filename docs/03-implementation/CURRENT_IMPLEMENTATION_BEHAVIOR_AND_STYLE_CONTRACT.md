@@ -4,7 +4,7 @@
 **Baseline:** Production merge commit `316b48d30401844ff9be74d23c3592eeb01ed358`  
 **Branch at documentation capture:** `release/cv-builder-v2-production`  
 **Captured:** 2026-10-07  
-**Status:** ACTIVE — implementation reference and regression contract
+**Status:** ACTIVE — R7 Skills/Languages architecture refactor implemented on feature branch.
 
 ---
 
@@ -943,3 +943,27 @@ All three must remain aligned.
 - Stars use a fixed five-position representation, so a value of 4 renders as ★★★★☆ plus an explicit 4/5 score.
 - Bars and Dots use five bordered positions so empty positions remain visible instead of disappearing into the template background.
 - Existing ratings.*.values state is retained for compatibility; it is interpreted as proficiency values rather than discarded or migrated to a second data model.
+
+
+## R7 — Skills/Languages Architecture Refactor (2026-10-08)
+
+The Skills and Languages sections are now canonical repeatable entry collections.
+
+### Canonical data
+- Each Skill is one stable entry: `values.skill` + `values.proficiency`.
+- Each Language is one stable entry: `values.language` + `values.proficiency`.
+- Entry IDs own visibility, order, duplication and removal behavior.
+- Proficiency is entry data, not a name-keyed presentation map.
+- Legacy comma-separated fields are migration-only input and are automatically converted to entries.
+
+### Presentation
+- Section-level Display Style controls arrangement.
+- Section-level Proficiency control controls whether individual entry proficiency is displayed.
+- Individual entries retain their own 0–5 proficiency.
+- Template contracts declare default and supported Skills/Languages presentation variants.
+- Template switching changes presentation configuration only; career entries and proficiency values remain intact.
+- Template CSS owns the visual treatment. The renderer supplies semantic presentation/data hooks rather than a universal `!important` visual skin.
+- T04 Modern Blue Corporate uses its native language bar treatment when Languages proficiency is set to Bars; its default Languages proficiency presentation is Bars.
+
+### Regression coverage
+- `tests/m110/skills-languages-architecture.test.js` covers legacy migration, duplicate-name independence, proficiency migration, entry-level rating commands and template contracts.
