@@ -436,6 +436,21 @@ function applyItemValueFallbacks(root, snapshot) {
 }
 
 
+const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
+  skills: {
+    tags: ['off','stars','dots'],
+    inline: ['off'],
+    bullets: ['off','stars','bars','dots'],
+    compact: ['off','stars','dots']
+  },
+  languages: {
+    stacked: ['off','stars','bars','dots'],
+    inline: ['off'],
+    pills: ['off'],
+    compact: ['off','stars','dots']
+  }
+});
+
 function applyListStyles(root, snapshot) {
   const styles = snapshot?.configuration?.presentation?.listStyles || {};
   const selected = {
@@ -473,6 +488,8 @@ function applyListStyles(root, snapshot) {
   const ratings=snapshot?.configuration?.presentation?.ratings||{};
   const addRating=(element,type)=>{
     const cfg=ratings[type]; if(!cfg || cfg.style==='off') return;
+    const allowed=LIST_STYLE_RATING_COMPATIBILITY[type]?.[selected[type]] || ['off'];
+    if(!allowed.includes(String(cfg.style))) return;
     const name=String(element.textContent||'').trim(); if(!name)return;
     const value=Math.max(0,Math.min(5,Number(cfg.values?.[name]||0)));
     const badge=root.ownerDocument.createElement('span'); badge.className='v2-item-rating'; badge.setAttribute('aria-label',name+' rating '+value+' out of 5');
