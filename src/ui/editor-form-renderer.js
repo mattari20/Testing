@@ -171,16 +171,16 @@ function entrySortControl(sectionType,configuration){
 
 const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
   skills: {
-    tags: ['off','text','stars','bars','dots'],
-    inline: ['off'],
+    // T01 supports exactly three skills layouts. Tags intentionally carry no rating.
+    tags: ['off'],
     bullets: ['off','text','stars','bars','dots'],
-    compact: ['off','text','stars','dots']
+    compact: ['off','text','stars']
   },
   languages: {
     stacked: ['off','text','stars','bars','dots'],
     inline: ['off'],
     pills: ['off'],
-    compact: ['off','text','stars','dots']
+    compact: ['off','text','stars']
   }
 });
 
@@ -202,7 +202,7 @@ function listStyleControl(sectionType,configuration){
   const defaults={skills:'tags',languages:'stacked'};
   const selected=String(configuration?.presentation?.listStyles?.[sectionType]||defaults[sectionType]);
   const options=sectionType==='skills'
-    ? [['tags','Tags'],['inline','Inline (comma-separated)'],['bullets','Bullets'],['compact','Compact']]
+    ? [['tags','Tags'],['compact','Compact'],['bullets','Bullets']]
     : [['stacked','List'],['inline','Inline (comma-separated)'],['pills','Pills'],['compact','Compact']];
   return '<label class="editor-list-style-control"><span>Display style</span><select data-v2-editor-list-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' display style" title="Choose how '+esc(sectionType)+' are arranged">'+
     options.map(([value,label])=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+label+'</option>').join('')+
@@ -217,7 +217,7 @@ function renderListField(sectionId,field,index,fieldIds,visible,itemLabel,config
     : ['No level','1 / 5 — Beginner','2 / 5 — Intermediate','3 / 5 — Proficient','4 / 5 — Advanced','5 / 5 — Expert'];
   const listStyle=String(configuration?.presentation?.listStyles?.[sectionId]||(sectionId==='skills'?'tags':'stacked'));
   const ratingHtml=items.length && ratingConfig.style!=='off' && isRatingStyleCompatible(sectionId,listStyle,String(ratingConfig.style))
-    ? '<div class="editor-rating-items"><div class="editor-rating-title">Set '+esc(itemLabel)+' proficiency level</div><div class="editor-rating-scale-help">Use the same 5-level scale for every item. The CV preview will use the selected display style.</div>'+items.map(item=>{
+    ? '<div class="editor-rating-items"><div class="editor-rating-title">Set '+esc(itemLabel)+' proficiency</div><div class="editor-rating-scale-help">Choose one level for each item. The CV uses the selected visual style without numeric scores.</div>'+items.map(item=>{
         const rating=Math.max(0,Math.min(5,Number(ratingConfig.values?.[item]||0)));
         return '<div class="editor-rating-row"><span>'+esc(item)+'</span><select data-v2-editor-item-rating="'+esc(sectionId)+'" data-v2-rating-item="'+esc(item)+'" aria-label="'+esc(item)+' proficiency level">'+proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===rating?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select></div>';
       }).join('')+'</div>' : '';
