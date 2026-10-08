@@ -444,17 +444,20 @@ function applyListStyles(root, snapshot) {
   };
   const styleElement = root.ownerDocument.createElement('style');
   styleElement.textContent = `
-    [data-v2-template-root] .v2-list-skills-tags{display:inline-block!important;background:var(--primary-light)!important;color:var(--primary)!important;border:1px solid var(--primary)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 6px 0!important;font-size:10px!important;font-weight:700!important}
-    [data-v2-template-root] .v2-list-skills-inline{display:inline!important;background:none!important;border:0!important;padding:0!important;margin:0!important;color:inherit!important}
+    [data-v2-template-root] .v2-list-skills-tags{display:inline-flex!important;align-items:center!important;vertical-align:middle!important;background:var(--primary-light)!important;color:var(--primary)!important;border:1px solid var(--primary)!important;border-radius:999px!important;padding:3px 8px!important;margin:0 4px 5px 0!important;font-size:9px!important;font-weight:700!important;line-height:1.2!important}
+    [data-v2-template-root] .v2-list-skills-inline{display:inline!important;background:none!important;border:0!important;padding:0!important;margin:0!important;color:inherit!important;font-size:10px!important;font-weight:500!important}
     [data-v2-template-root] .v2-list-skills-inline:not(:last-child)::after{content:', ';white-space:pre}
-    [data-v2-template-root] .v2-list-skills-bullets{display:list-item!important;margin:0 0 5px 18px!important;padding:0!important}
-    [data-v2-template-root] .v2-list-skills-compact{display:block!important;margin:0 0 4px!important;padding:0!important}
-    [data-v2-template-root] .v2-list-languages-stacked{display:block!important;margin:0 0 10px!important}
-    [data-v2-template-root] .v2-list-languages-inline{display:inline!important;margin:0!important}
-    [data-v2-template-root] .v2-list-languages-inline:not(:last-child)::after{content:', ';white-space:pre}
-    [data-v2-template-root] .v2-list-languages-pills{display:inline-block!important;background:var(--primary)!important;color:var(--primary-contrast)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 6px 0!important;font-size:10px!important;font-weight:700!important}
-    [data-v2-template-root] .v2-list-languages-compact{display:block!important;margin:0 0 5px!important;padding:0!important}
-    [data-v2-template-root] .v2-item-rating{display:inline-flex!important;gap:2px!important;margin-left:7px!important;vertical-align:middle!important;font-size:9px!important;letter-spacing:0!important;color:var(--primary)!important;white-space:nowrap!important}
+    [data-v2-template-root] .v2-list-skills-bullets{display:list-item!important;margin:0 0 5px 17px!important;padding:0!important;line-height:1.35!important}
+    [data-v2-template-root] .v2-list-skills-compact{display:inline!important;margin:0!important;padding:0!important;font-size:9px!important;font-weight:600!important;line-height:1.3!important}
+    [data-v2-template-root] .v2-list-skills-compact:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
+    [data-v2-template-root] .v2-list-languages-stacked{display:block!important;margin:0 0 7px!important;line-height:1.35!important}
+    [data-v2-template-root] .v2-list-languages-inline{display:inline!important;margin:0!important;font-size:10px!important;font-weight:500!important}
+    [data-v2-template-root] .v2-list-languages-inline .lang-name{display:inline!important}
+    [data-v2-template-root] .v2-list-languages-inline:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
+    [data-v2-template-root] .v2-list-languages-pills{display:inline-flex!important;align-items:center!important;vertical-align:middle!important;background:var(--primary)!important;color:var(--primary-contrast)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 5px 0!important;font-size:9px!important;font-weight:700!important;line-height:1.2!important}
+    [data-v2-template-root] .v2-list-languages-compact{display:inline!important;margin:0!important;padding:0!important;font-size:9px!important;font-weight:600!important;line-height:1.3!important}
+    [data-v2-template-root] .v2-list-languages-compact:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
+    [data-v2-template-root] .v2-item-rating{display:inline-flex!important;align-items:center!important;gap:2px!important;margin-left:6px!important;vertical-align:middle!important;font-size:8px!important;letter-spacing:0!important;color:var(--primary)!important;white-space:nowrap!important}
     [data-v2-template-root] .v2-item-rating-bar{display:inline-block!important;width:10px!important;height:4px!important;border-radius:3px!important;background:var(--primary-light)!important}
     [data-v2-template-root] .v2-item-rating-bar.is-on{background:var(--primary)!important}
     [data-v2-template-root] .v2-item-rating-dot{display:inline-block!important;width:6px!important;height:6px!important;border-radius:50%!important;background:var(--primary-light)!important}
