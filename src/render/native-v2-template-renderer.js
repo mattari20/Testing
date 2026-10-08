@@ -1,6 +1,6 @@
-import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
+import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.8.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.9.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -435,10 +435,7 @@ const T01_SKILLS_RATING_COMPATIBILITY = Object.freeze({
 });
 
 function resolveAllowedProficiency(templateId,type,listStyle,contract){
-  if(String(templateId)==='t01-modern-minimalist-cv-design_modern' && String(type)==='skills'){
-    return T01_SKILLS_RATING_COMPATIBILITY[String(listStyle)] || Object.freeze(['off']);
-  }
-  return contract[type]?.proficiency || ['off'];
+  return getAllowedProficiencyForListStyle(contract[type],listStyle);
 }
 
 function renderProficiencyNode(root, type, entry, style) {
