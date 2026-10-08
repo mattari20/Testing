@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.16.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.17.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -561,9 +561,18 @@ function getThemeColor(root) {
   const view = root?.ownerDocument?.defaultView;
   if (!view?.getComputedStyle) return null;
 
-  // Prefer the actual rendered accent used by the template. Some native
-  // templates expose legacy/default CSS variables that can remain blue while
-  // the visible section ribbons are using the user's selected accent.
+  const style = view.getComputedStyle(root);
+
+  // The selected template theme is authoritative. applyTheme() writes these
+  // variables before Skills/Languages are rendered. Read them first so a
+  // legacy blue child selector can never hijack a purple/green/etc. theme.
+  const configuredTheme =
+    parseRgbColor(style.getPropertyValue('--theme-color'))
+    || parseRgbColor(style.getPropertyValue('--primary'));
+  if (configuredTheme) return configuredTheme;
+
+  // Fallback only for older/native templates that do not expose the shared
+  // theme variables. This keeps the system usable for future templates.
   const accentSelectors = [
     '.section-label',
     '.sidebar-label',
@@ -585,62 +594,49 @@ function getThemeColor(root) {
     }
   }
 
-  const style = view.getComputedStyle(root);
-  return parseRgbColor(style.getPropertyValue('--theme-color'))
-    || parseRgbColor(style.getPropertyValue('--primary'))
-    || parseRgbColor(style.color);
+  return parseRgbColor(style.color);
 }
 
 function applySkillsLanguagesColorSystem(element, root) {
   if (!element?.style) return;
+
+  // Detect the real surface behind each Skills/Languages item. Transparent
+  // wrappers are skipped until the first actual rendered background is found.
   const surface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
   const theme = getThemeColor(root || element) || {r:37,g:99,b:235,a:1};
   const white = {r:255,g:255,b:255,a:1};
   const dark = {r:31,g:41,b:55,a:1};
   const surfaceLuminance = relativeLuminance(surface);
 
-  let pillBackground;
-  let pillText;
-  let mode;
+  // Universal smart-pill rule:
+  //   • light/white surface -> theme-color pill + white text
+  //   • dark surface        -> white pill + theme-color text
+  // The small contrast fallbacks only protect future custom themes that are
+  // too light/dark for the preferred foreground.
+  const isDarkSurface = surfaceLuminance < 0.5;
+  let pillBackground = isDarkSurface ? white : theme;
+  let pillText = isDarkSurface ? theme : white;
+  let mode = isDarkSurface ? 'white-on-dark-surface' : 'theme-on-light-surface';
 
-  const themeWhiteContrast = contrastRatio(theme, white);
-  const themeDarkContrast = contrastRatio(theme, dark);
-  const themeSurfaceContrast = contrastRatio(theme, surface);
-
-  if (surfaceLuminance < 0.25) {
-    // Dark surface: a light pill is safer and cleaner than stacking a dark theme
-    // color on an already-dark sidebar/card.
-    pillBackground = white;
-    pillText = themeDarkContrast >= 4.5 ? theme : dark;
-    mode = 'light-surface';
-  } else if (themeSurfaceContrast >= 2.2 && themeWhiteContrast >= 4.5) {
-    // Normal light/medium surface: preserve the template brand color.
-    pillBackground = theme;
-    pillText = white;
-    mode = 'theme-fill';
-  } else if (themeSurfaceContrast >= 2.2 && themeDarkContrast >= 4.5) {
-    // Theme color is too light for white text, so use the same brand fill with
-    // a dark readable foreground.
-    pillBackground = theme;
+  if (!isDarkSurface && contrastRatio(theme, white) < 4.5) {
     pillText = dark;
-    mode = 'theme-fill-dark-text';
-  } else {
-    // Low-separation surface: use a subtle theme tint, preserving the section
-    // color without creating a heavy block or poor contrast.
-    pillBackground = mixColors(surface, theme, surfaceLuminance > 0.55 ? 0.16 : 0.24);
-    pillText = contrastRatio(pillBackground, theme) >= 4.5 ? theme : dark;
-    mode = 'soft-theme';
+    mode = 'theme-on-light-surface-dark-text';
   }
 
-  element.style.setProperty('--v2-skills-language-rating-color', surfaceLuminance < 0.25 ? '#FFFFFF' : rgbString(theme));
+  if (isDarkSurface && contrastRatio(white, theme) < 4.5) {
+    pillText = dark;
+    mode = 'white-on-dark-surface-dark-theme';
+  }
+
+  element.style.setProperty('--v2-skills-language-rating-color', isDarkSurface ? '#FFFFFF' : rgbString(theme));
   element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground));
   element.style.setProperty('--v2-skills-language-pill-text', rgbString(pillText));
   element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme));
-  element.setAttribute('data-v2-rating-contrast', surfaceLuminance < 0.25 ? 'light' : 'theme');
+  element.setAttribute('data-v2-rating-contrast', isDarkSurface ? 'light' : 'theme');
   element.setAttribute('data-v2-pill-mode', mode);
 
   // Apply resolved pill colors directly at item level so native selectors
-  // such as ".skill-tag { color:#000 !important; }" cannot override them.
+  // cannot override the universal Skills/Languages color decision.
   if (element.matches?.('[data-v2-list-style="pills"]')) {
     element.style.setProperty('background-color', rgbString(pillBackground), 'important');
     element.style.setProperty('color', rgbString(pillText), 'important');
