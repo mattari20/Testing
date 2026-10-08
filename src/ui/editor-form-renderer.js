@@ -222,7 +222,7 @@ function listStyleControl(sectionType,configuration,templateId){
 function ratingStyleControl(sectionType,configuration,templateId){
   const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
   const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
-  const selected=contract.proficiency.includes(configured)?configured:'off';
+  const selected=contract.proficiency.includes(configured)?configured:contract.proficiencyDefault;
   const labels={off:'Off',text:'Level',bars:'Bars',dots:'Dots',stars:'Stars'};
   return '<label class="editor-rating-style-control"><span>Proficiency</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' proficiency display">'+
     contract.proficiency.map(value=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+esc(labels[value]||value)+'</option>').join('')+
