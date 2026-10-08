@@ -1,4 +1,4 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.1.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.2.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -438,17 +438,22 @@ function applyItemValueFallbacks(root, snapshot) {
 
 const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
   skills: {
-    tags: ['off','stars','dots'],
+    tags: ['off','text','stars','bars','dots'],
     inline: ['off'],
-    bullets: ['off','stars','bars','dots'],
-    compact: ['off','stars','dots']
+    bullets: ['off','text','stars','bars','dots'],
+    compact: ['off','text','stars','dots']
   },
   languages: {
-    stacked: ['off','stars','bars','dots'],
+    stacked: ['off','text','stars','bars','dots'],
     inline: ['off'],
     pills: ['off'],
-    compact: ['off','stars','dots']
+    compact: ['off','text','stars','dots']
   }
+});
+
+const PROFICIENCY_LABELS = Object.freeze({
+  skills: ['', 'Beginner', 'Intermediate', 'Proficient', 'Advanced', 'Expert'],
+  languages: ['', 'Basic', 'Conversational', 'Proficient', 'Fluent', 'Native / Bilingual']
 });
 
 function applyListStyles(root, snapshot) {
@@ -472,14 +477,19 @@ function applyListStyles(root, snapshot) {
     [data-v2-template-root] .v2-list-languages-pills{display:inline-flex!important;align-items:center!important;vertical-align:middle!important;background:var(--primary)!important;color:var(--primary-contrast)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 5px 0!important;font-size:9px!important;font-weight:700!important;line-height:1.2!important}
     [data-v2-template-root] .v2-list-languages-compact{display:inline!important;margin:0!important;padding:0!important;font-size:9px!important;font-weight:600!important;line-height:1.3!important}
     [data-v2-template-root] .v2-list-languages-compact:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating{display:inline-flex!important;align-items:center!important;gap:2px!important;margin-left:6px!important;vertical-align:middle!important;font-size:8px!important;letter-spacing:0!important;color:var(--primary)!important;white-space:nowrap!important}
-    [data-v2-template-root] .v2-item-rating-bar{display:inline-block!important;width:10px!important;height:4px!important;border-radius:3px!important;background:var(--primary-light)!important}
+    [data-v2-template-root] .v2-item-rating{display:inline-flex!important;align-items:center!important;gap:4px!important;margin-left:7px!important;vertical-align:middle!important;white-space:nowrap!important;font-size:8px!important;font-weight:600!important;line-height:1!important}
+    [data-v2-template-root] .v2-item-rating-label{font-size:8px!important;font-weight:700!important;color:var(--primary)!important}
+    [data-v2-template-root] .v2-item-rating-score{font-size:7px!important;font-weight:700!important;color:var(--primary)!important;letter-spacing:0!important}
+    [data-v2-template-root] .v2-item-rating-star{display:inline-block!important;font-size:10px!important;line-height:1!important;color:var(--primary)!important}
+    [data-v2-template-root] .v2-item-rating-star.is-empty{color:#AAB3C2!important}
+    [data-v2-template-root] .v2-item-rating-bar{display:inline-block!important;width:14px!important;height:5px!important;border:1px solid var(--primary)!important;border-radius:3px!important;background:transparent!important;box-sizing:border-box!important}
     [data-v2-template-root] .v2-item-rating-bar.is-on{background:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating-dot{display:inline-block!important;width:6px!important;height:6px!important;border-radius:50%!important;background:var(--primary-light)!important}
+    [data-v2-template-root] .v2-item-rating-dot{display:inline-block!important;width:7px!important;height:7px!important;border:1px solid var(--primary)!important;border-radius:50%!important;background:transparent!important;box-sizing:border-box!important}
     [data-v2-template-root] .v2-item-rating-dot.is-on{background:var(--primary)!important}
-
+    [data-v2-template-root] .v2-item-rating-visual{display:inline-flex!important;align-items:center!important;gap:3px!important}
   `;
   root.prepend(styleElement);
+
   const skillClass='v2-list-skills-'+(selected.skills==='inline'||selected.skills==='bullets'||selected.skills==='compact'?selected.skills:'tags');
   const languageClass='v2-list-languages-'+(selected.languages==='inline'||selected.languages==='pills'||selected.languages==='compact'?selected.languages:'stacked');
   root.querySelectorAll('.skill-tag').forEach(element => element.classList.add(skillClass));
@@ -492,12 +502,52 @@ function applyListStyles(root, snapshot) {
     if(!allowed.includes(String(cfg.style))) return;
     const name=String(element.textContent||'').trim(); if(!name)return;
     const value=Math.max(0,Math.min(5,Number(cfg.values?.[name]||0)));
-    const badge=root.ownerDocument.createElement('span'); badge.className='v2-item-rating'; badge.setAttribute('aria-label',name+' rating '+value+' out of 5');
-    if(cfg.style==='stars'){badge.textContent='★★★★★'.slice(0,value)+'☆☆☆☆☆'.slice(0,5-value);}
-    else if(cfg.style==='dots'){for(let i=1;i<=5;i++){const dot=root.ownerDocument.createElement('i');dot.className='v2-item-rating-dot'+(i<=value?' is-on':'');badge.appendChild(dot);}}
-    else {for(let i=1;i<=5;i++){const bar=root.ownerDocument.createElement('i');bar.className='v2-item-rating-bar'+(i<=value?' is-on':'');badge.appendChild(bar);}}
+    if(value===0)return;
+
+    const level=PROFICIENCY_LABELS[type]?.[value]||'';
+    const badge=root.ownerDocument.createElement('span');
+    badge.className='v2-item-rating';
+    badge.setAttribute('data-v2-proficiency-level',String(value));
+    badge.setAttribute('title',level+' — '+value+' / 5');
+    badge.setAttribute('aria-label',name+' proficiency: '+level+', '+value+' out of 5');
+
+    if(cfg.style==='text'){
+      const label=root.ownerDocument.createElement('span');
+      label.className='v2-item-rating-label';
+      label.textContent=level;
+      badge.appendChild(label);
+    } else {
+      const visual=root.ownerDocument.createElement('span');
+      visual.className='v2-item-rating-visual';
+      if(cfg.style==='stars'){
+        for(let i=1;i<=5;i++){
+          const star=root.ownerDocument.createElement('span');
+          star.className='v2-item-rating-star'+(i<=value?'':' is-empty');
+          star.textContent=i<=value?'★':'☆';
+          visual.appendChild(star);
+        }
+      } else if(cfg.style==='dots'){
+        for(let i=1;i<=5;i++){
+          const dot=root.ownerDocument.createElement('i');
+          dot.className='v2-item-rating-dot'+(i<=value?' is-on':'');
+          visual.appendChild(dot);
+        }
+      } else {
+        for(let i=1;i<=5;i++){
+          const bar=root.ownerDocument.createElement('i');
+          bar.className='v2-item-rating-bar'+(i<=value?' is-on':'');
+          visual.appendChild(bar);
+        }
+      }
+      badge.appendChild(visual);
+      const score=root.ownerDocument.createElement('span');
+      score.className='v2-item-rating-score';
+      score.textContent=value+'/5';
+      badge.appendChild(score);
+    }
     element.appendChild(badge);
   };
+
   root.querySelectorAll('.skill-tag').forEach(el=>addRating(el,'skills'));
   root.querySelectorAll('.lang-item').forEach(el=>addRating(el,'languages'));
 }
