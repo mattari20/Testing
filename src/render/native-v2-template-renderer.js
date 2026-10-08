@@ -443,6 +443,19 @@ function renderProficiencyNode(root, type, entry, style) {
     text.className = 'v2-proficiency-label';
     text.textContent = label;
     holder.appendChild(text);
+  } else if (style === 'bars' && root.getAttribute('data-v2-template-id') === 't04-modern-blue-corporate_modern' && type === 'languages') {
+    const text = root.ownerDocument.createElement('span');
+    text.className = 'lang-level-text';
+    text.textContent = label;
+    holder.appendChild(text);
+    const bg = root.ownerDocument.createElement('span');
+    bg.className = 'lang-bar-bg';
+    const fill = root.ownerDocument.createElement('span');
+    fill.className = 'lang-bar-fill';
+    fill.style.width = String(value * 20) + '%';
+    fill.setAttribute('aria-hidden','true');
+    bg.appendChild(fill);
+    holder.appendChild(bg);
   } else {
     const visual = root.ownerDocument.createElement('span');
     visual.className = 'v2-proficiency-visual';
@@ -473,7 +486,7 @@ function applyListStyles(root, snapshot) {
   const presentation=snapshot?.configuration?.presentation||{};
   for (const type of ['skills','languages']) {
     const selected=String(presentation?.listStyles?.[type]||contract[type].default);
-    const proficiencyStyle=String(presentation?.ratings?.[type]?.style||'off');
+    const proficiencyStyle=String(presentation?.ratings?.[type]?.style||contract[type].proficiencyDefault);
     const section=findCanonicalSection(snapshot,type);
     const entries=new Map((section?.entries||[]).map(entry=>[String(entry.id),entry]));
     root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
