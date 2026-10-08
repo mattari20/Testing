@@ -1,4 +1,6 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.23.0';
+import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
+import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
+export const EDITOR_FORM_RENDERER_VERSION = '1.30.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -124,14 +126,20 @@ function formatMonthValue(value){
   if(!year||month<1||month>12)return raw;
   return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,1)));
 }
-function renderEntry(sectionId,entry,index,entryIds,visible=true){
+function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={}){
   const values=entry.values&&typeof entry.values==='object'?entry.values:{};
   const entryVisible=visible&&entry.visibility!==false;
   const up=moveOrder(entryIds,index,-1),down=moveOrder(entryIds,index,1);
-  const isExperience=String(sectionId).toLowerCase()==='experience';
-  const isEducation=String(sectionId).toLowerCase()==='education';
+  const type=String(sectionId).toLowerCase();
+  const isExperience=type==='experience';
+  const isEducation=type==='education';
+  const isSkillsLanguage=type==='skills'||type==='languages';
   const autoSorted=isExperience||isEducation;
-  const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:Object.keys(values);
+  const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:isSkillsLanguage?[type==='skills'?'skill':'language']:Object.keys(values).filter(key=>key!=='proficiency');
+  const proficiencyStyle=String(configuration?.presentation?.ratings?.[type]?.style||'off');
+  const proficiencyLabels=PROFICIENCY_LABELS[type]||[];
+  const proficiency=getSkillOrLanguageProficiency(entry);
+  const valueKey=isSkillsLanguage?(type==='skills'?'skill':'language'):'';
   const fields=entryVisible?entryKeys.map(key=>{
     const value=values[key]==null?'':values[key];
     const isMonthField=isExperience&&(key==='startDate'||key==='endDate');
@@ -150,9 +158,14 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true){
         ? '<textarea rows="4" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'">'+esc(value)+'</textarea>'
         : '<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">')+legacyHint+'</label>';
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
-  return '<article class="editor-entry-card" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
-    '<div class="editor-entry-head"><div><span class="editor-entry-kicker">ENTRY '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
-    '<div class="editor-entry-fields">'+fields+'</div></article>';
+  const proficiencyHtml=entryVisible&&isSkillsLanguage&&proficiencyStyle!=='off'
+    ? '<label class="editor-entry-field editor-entry-proficiency"><span>Proficiency</span><select data-v2-editor-entry-rating data-v2-rating-section="'+esc(type)+'" data-v2-rating-entry="'+esc(entry.id)+'" aria-label="'+esc(valueKey)+' proficiency level">'+
+      proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===proficiency?' selected':'')+'>'+esc(v===0?'No level':v+' / 5 — '+label)+'</option>').join('')+
+      '</select><small class="editor-field-help">This level belongs only to this '+esc(type==='skills'?'skill':'language')+'.</small></label>'
+    : '';
+  return '<article class="editor-entry-card editor-skills-language-entry" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
+    '<div class="editor-entry-head"><div><span class="editor-entry-kicker">'+esc(type==='skills'?'SKILL':type==='languages'?'LANGUAGE':'ENTRY')+' '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':type==='skills'?'Skill':type==='languages'?'Language':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
+    '<div class="editor-entry-fields">'+fields+proficiencyHtml+'</div></article>';
 }
 
 function renderPalette(configuration){
@@ -198,44 +211,22 @@ function ratingStyleControl(sectionType,configuration){
     [['off','Off'],['text','Level'],['bars','Bars'],['dots','Dots'],['stars','Stars']].map(([value,label])=>'<option value="'+value+'"'+(selected===value?' selected':'')+'>'+label+'</option>').join('')+
     '</select></label>';
 }
-function listStyleControl(sectionType,configuration){
-  const defaults={skills:'tags',languages:'stacked'};
-  const selected=String(configuration?.presentation?.listStyles?.[sectionType]||defaults[sectionType]);
-  const options=sectionType==='skills'
-    ? [['tags','Tags'],['inline','Inline (comma-separated)'],['bullets','Bullets'],['compact','Compact']]
-    : [['stacked','List'],['inline','Inline (comma-separated)'],['pills','Pills'],['compact','Compact']];
-  return '<label class="editor-list-style-control"><span>Display style</span><select data-v2-editor-list-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' display style" title="Choose how '+esc(sectionType)+' are arranged">'+
-    options.map(([value,label])=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+label+'</option>').join('')+
+function listStyleControl(sectionType,configuration,templateId){
+  const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
+  const selected=String(configuration?.presentation?.listStyles?.[sectionType]||contract.default);
+  const labels={tags:'Tags',inline:'Inline',bullets:'Bullets',compact:'Compact',stacked:'List',pills:'Pills'};
+  return '<label class="editor-list-style-control"><span>Display style</span><select data-v2-editor-list-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' display style">'+
+    contract.supported.map(value=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+esc(labels[value]||value)+'</option>').join('')+
     '</select></label>';
 }
-
-function renderListField(sectionId,field,index,fieldIds,visible,itemLabel,configuration={}){
-  const ratingConfig=configuration?.presentation?.ratings?.[sectionId]||{style:'off',values:{}};
-  const items=String(field.value??'').split(/[,\\n]+/).map(v=>v.trim()).filter(Boolean);
-  const proficiencyLabels=sectionId==='languages'
-    ? ['No level','1 / 5 — Basic','2 / 5 — Conversational','3 / 5 — Working','4 / 5 — Fluent','5 / 5 — Native / Bilingual']
-    : ['No level','1 / 5 — Beginner','2 / 5 — Intermediate','3 / 5 — Proficient','4 / 5 — Advanced','5 / 5 — Expert'];
-  const listStyle=String(configuration?.presentation?.listStyles?.[sectionId]||(sectionId==='skills'?'tags':'stacked'));
-  const ratingHtml=items.length && ratingConfig.style!=='off' && isRatingStyleCompatible(sectionId,listStyle,String(ratingConfig.style))
-    ? '<div class="editor-rating-items"><div class="editor-rating-title">Set '+esc(itemLabel)+' proficiency level</div><div class="editor-rating-scale-help">Use the same 5-level scale for every item. The CV preview will use the selected display style.</div>'+items.map(item=>{
-        const rating=Math.max(0,Math.min(5,Number(ratingConfig.values?.[item]||0)));
-        return '<div class="editor-rating-row"><span>'+esc(item)+'</span><select data-v2-editor-item-rating="'+esc(sectionId)+'" data-v2-rating-item="'+esc(item)+'" aria-label="'+esc(item)+' proficiency level">'+proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===rating?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select></div>';
-      }).join('')+'</div>' : '';
-
-  const fieldVisible=visible&&field.visibility!==false;
-  const up=moveOrder(fieldIds,index,-1),down=moveOrder(fieldIds,index,1);
-  const value=field.value==null?'':String(field.value);
-  const placeholder=sectionId==='skills'?'JavaScript, HTML, CSS, Git, Testing':'English, Urdu, Punjabi';
-  const hint=sectionId==='skills'
-    ? 'Write each skill separated by a comma. Example: JavaScript, HTML, CSS, Git.'
-    : 'Write each language separated by a comma. Example: English, Urdu, Punjabi.';
-  return '<div class="editor-list-field-card" data-v2-editor-field-wrapper="'+esc(sectionId+':'+field.id)+'" data-v2-editor-field-hidden="'+String(!fieldVisible)+'">'+
-    '<div class="editor-list-field-head"><div><span class="editor-entry-kicker">'+esc(itemLabel)+' '+(index+1)+'</span><strong>'+esc(sectionId==='skills'?'Skill list':'Language list')+'</strong></div>'+
-    '<div class="editor-inline-actions">'+visibilityButton('field',{sectionId,fieldId:field.id},fieldVisible)+actionButton('Move Up','reorder',{kind:'field',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'field',sectionId},{order:down})+'</div></div>'+
-    (fieldVisible
-      ? '<label class="editor-list-field-label"><span>'+esc(itemLabel)+' content</span><input data-v2-editor-field="'+esc(sectionId)+':'+esc(field.id)+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'"><small class="editor-field-help">'+esc(hint)+'</small></label>'+ratingHtml
-      : '<div class="editor-hidden-note">This '+esc(itemLabel.toLowerCase())+' is hidden from the CV.</div>')+
-    '</div>';
+function ratingStyleControl(sectionType,configuration,templateId){
+  const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
+  const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
+  const selected=contract.proficiency.includes(configured)?configured:'off';
+  const labels={off:'Off',text:'Level',bars:'Bars',dots:'Dots',stars:'Stars'};
+  return '<label class="editor-rating-style-control"><span>Proficiency</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' proficiency display">'+
+    contract.proficiency.map(value=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+esc(labels[value]||value)+'</option>').join('')+
+    '</select></label>';
 }
 
 function renderPhotoCard(documentData,photoShape='circle',configuration={}){
@@ -298,18 +289,16 @@ export function renderEditorForm(surface,documentData,options={}){
     const entries=sortEntriesForEditor(orderItems(section.entries||[],configuration.entryOrder?.[sid]||[]),type,sortDirection);
     const entryIds=entries.map(e=>e.id);
     const sectionUp=moveOrder(sectionIds,sectionIndex,-1),sectionDown=moveOrder(sectionIds,sectionIndex,1);
-    const fieldHtml=!sectionHidden&&type!=='experience'&&type!=='education'
-      ? (type==='skills'||type==='languages'
-        ? fields.map((field,index)=>renderListField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id),type==='skills'?'Skill':'Language',configuration)).join('')
-        : fields.map((field,index)=>type==='summary'?renderSummaryField(sid,field,!hasConfiguredKey(hiddenFields,sid+':'+field.id)):renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join(''))
+    const fieldHtml=!sectionHidden&&type!=='experience'&&type!=='education'&&type!=='skills'&&type!=='languages'
+      ? fields.map((field,index)=>type==='summary'?renderSummaryField(sid,field,!hasConfiguredKey(hiddenFields,sid+':'+field.id)):renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join('')
       : '';
-    const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id))).join(''):'';
-    const addButton=type==='experience'?'Add Experience':type==='education'?'Add Education':('Add '+(section.title||labelFor(type)));
+    const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id),configuration)).join(''):'';
+    const addButton=type==='skills'?'Add Skill':type==='languages'?'Add Language':type==='experience'?'Add Experience':type==='education'?'Add Education':('Add '+(section.title||labelFor(type)));
     const canAddEntry=section.repeatable;
-    const canAddField=!section.repeatable&&type!=='photo'&&type!=='summary';
+    const canAddField=!section.repeatable&&type!=='photo'&&type!=='summary'&&type!=='skills'&&type!=='languages';
     return '<section class="editor-section-card'+(sectionHidden?' is-hidden':'')+'" data-v2-editor-section="'+esc(sid)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(sid)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">'+
       '<div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">'+esc(type==='experience'?'WORK':type==='education'?'EDU':type==='skills'?'SKILLS':type==='languages'?'LANG':type==='summary'?'SUMMARY':'SECTION')+'</span><div><h3>'+esc(section.title||labelFor(type))+'</h3><span class="editor-section-status">'+(sectionHidden?'Hidden from CV':'Visible in CV')+'</span></div></div>'+
-      '<div class="editor-section-banner-tools">'+((type==='skills'||type==='languages')&&!sectionHidden?listStyleControl(type,configuration)+ratingStyleControl(type,configuration):'')+((type==='experience'||type==='education')&&!sectionHidden?entrySortControl(type,configuration):'')+
+      '<div class="editor-section-banner-tools">'+((type==='skills'||type==='languages')&&!sectionHidden?listStyleControl(type,configuration,String(configuration?.template?.id||''))+ratingStyleControl(type,configuration,String(configuration?.template?.id||'')):'')+((type==='experience'||type==='education')&&!sectionHidden?entrySortControl(type,configuration):'')+
       (!isCore?'<label class="editor-placement-control"><span>Show in</span><select data-v2-editor-section-placement="'+esc(sid)+'" aria-label="Section column"><option value="left"'+(placement==='left'?' selected':'')+'>Left column</option><option value="right"'+(placement==='right'?' selected':'')+'>Right column</option></select></label>':'')+
       '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
