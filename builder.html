@@ -168,6 +168,71 @@
     .editor-list-field-label{margin:0!important}.editor-list-field-label>span{display:block;margin-bottom:4px;font-size:11px;font-weight:700;color:#667085}
     .editor-list-field-label input{font-size:12px!important;padding:8px!important}
 
+    /* Skills / Languages — compact professional entry rows */
+    .editor-skills-language-entry{
+      display:grid!important;
+      grid-template-columns:minmax(70px,auto) minmax(0,1fr) minmax(118px,150px) auto!important;
+      align-items:end!important;
+      gap:8px!important;
+      padding:8px 9px!important;
+      margin:0 0 6px!important;
+    }
+    .editor-skills-language-entry .editor-entry-head{display:contents!important}
+    .editor-skills-language-entry .editor-entry-head>div:first-child{
+      min-width:70px!important;
+      display:flex!important;
+      flex-direction:column!important;
+      justify-content:center!important;
+      gap:1px!important;
+      margin:0!important;
+    }
+    .editor-skills-language-entry .editor-entry-kicker{margin:0!important}
+    .editor-skills-language-entry .editor-entry-head strong{font-size:11px!important;line-height:1.15!important}
+    .editor-skills-language-entry .editor-entry-fields{display:contents!important}
+    .editor-skills-language-entry .editor-entry-field{
+      min-width:0!important;
+      margin:0!important;
+      display:flex!important;
+      flex-direction:column!important;
+      gap:3px!important;
+    }
+    .editor-skills-language-entry .editor-entry-field>span{
+      margin:0!important;
+      font-size:9px!important;
+      line-height:1!important;
+      color:#667085!important;
+      font-weight:750!important;
+    }
+    .editor-skills-language-entry .editor-entry-field input,
+    .editor-skills-language-entry .editor-entry-field select{
+      width:100%!important;
+      min-width:0!important;
+      height:32px!important;
+      padding:6px 8px!important;
+      font-size:11px!important;
+      margin:0!important;
+    }
+    .editor-skills-language-entry .editor-field-help{display:none!important}
+    .editor-skills-language-entry .editor-inline-actions{
+      align-self:end!important;
+      height:32px!important;
+      gap:3px!important;
+    }
+    .editor-skills-language-entry .editor-inline-action{
+      width:28px!important;
+      height:28px!important;
+      border-radius:8px!important;
+    }
+    .editor-skills-language-entry[data-v2-editor-entry-hidden="true"]{opacity:.68}
+    @media(max-width:760px){
+      .editor-skills-language-entry{
+        grid-template-columns:minmax(70px,auto) minmax(0,1fr) auto!important;
+      }
+      .editor-skills-language-entry .editor-entry-field.editor-entry-proficiency{grid-column:2/-1}
+      .editor-skills-language-entry .editor-inline-actions{grid-column:3;grid-row:1}
+      .editor-skills-language-entry .editor-entry-field:not(.editor-entry-proficiency){grid-column:2/-1}
+    }
+
     .editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:7px}
     .editor-field-definition{display:grid;grid-template-columns:1fr 92px;gap:6px;min-width:0;flex:1}
     .editor-field-definition input,.editor-field-definition select{font-size:11px!important;padding:7px!important}
@@ -313,7 +378,7 @@
   </main>
 
   <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261008.4';
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261008.5';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
     import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';

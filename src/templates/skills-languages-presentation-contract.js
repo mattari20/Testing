@@ -8,7 +8,7 @@ const make = (skillsDefault, languagesDefault, skills, languages, skillProficien
 export const SKILLS_LANGUAGES_TEMPLATE_CONTRACTS = Object.freeze({
   't01-modern-minimalist-cv-design_ats': make('compact','compact',['compact','inline'],['compact','inline'],['off'],['off']),
   't01-modern-minimalist-cv-design_simple': make('tags','pills',['tags','compact','inline'],['pills','compact','inline']),
-  't01-modern-minimalist-cv-design_modern': make('tags','pills',['tags','compact','bullets','inline'],['pills','stacked','compact','inline']),
+  't01-modern-minimalist-cv-design_modern': make('tags','pills',['tags','compact','bullets'],['pills','stacked','compact','inline']),
   't02-professional-cv-design_modern': make('tags','stacked',['tags','compact','bullets'],['stacked','compact','inline']),
   't03-professional-cv-design_modern': make('tags','stacked',['tags','compact','bullets'],['stacked','compact','inline']),
   't04-modern-blue-corporate_modern': make('tags','stacked',['tags','compact','bullets'],['stacked','compact','inline'],['off','text','stars','bars','dots'],['off','text','bars','dots'], 'off', 'bars'),
