@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.17.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.18.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -597,12 +597,69 @@ function getThemeColor(root) {
   return parseRgbColor(style.color);
 }
 
+function collectSkillsLanguagesVisualNodes(element) {
+  if (!element) return [];
+  const nodes = [element];
+  const descendants = [...element.querySelectorAll?.('*') || []];
+
+  // Prefer the actual value wrapper when a template nests the visible pill
+  // inside the universal item. This remains template-agnostic.
+  for (const node of descendants) {
+    if (node.hasAttribute?.('data-v2-item-value')) nodes.push(node);
+  }
+
+  // Also include nested elements that explicitly look like a visual tag/pill.
+  // Do not touch generic containers: only elements with a pill/tag-like class
+  // are eligible here.
+  for (const node of descendants) {
+    const className = String(node.className || '').toLowerCase();
+    if (/(^|[-_])(skill|language|lang|tag|pill)([-_]|$)/.test(className)) nodes.push(node);
+  }
+
+  return [...new Set(nodes)];
+}
+
+function setSkillsLanguagesVisualColor(node, background, foreground, border) {
+  if (!node?.style) return;
+  const bg = rgbString(background);
+  const fg = rgbString(foreground);
+  const bd = rgbString(border);
+
+  // Set both longhand and shorthand background values. Some legacy templates
+  // use a background shorthand or !important declaration that can otherwise
+  // leave a stale blue fill visible.
+  node.style.setProperty('background-color', bg, 'important');
+  node.style.setProperty('background', bg, 'important');
+  node.style.setProperty('color', fg, 'important');
+  node.style.setProperty('border-color', bd, 'important');
+  node.style.setProperty('outline-color', bd, 'important');
+
+  // Only color descendants; never change their layout, dimensions or display.
+  node.querySelectorAll?.('*').forEach(child => {
+    if (child.matches?.('svg, i, .cv-icon, [class*="icon"], [data-v2-item-value]')) {
+      child.style.setProperty('color', fg, 'important');
+      child.style.setProperty('fill', fg, 'important');
+      child.style.setProperty('stroke', fg, 'important');
+    } else {
+      child.style.setProperty('color', fg, 'important');
+    }
+  });
+}
+
 function applySkillsLanguagesColorSystem(element, root) {
   if (!element?.style) return;
 
-  // Detect the real surface behind each Skills/Languages item. Transparent
-  // wrappers are skipped until the first actual rendered background is found.
-  const surface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
+  // Resolve the surface from the actual rendered item first, then walk upward
+  // through transparent ancestors. This makes the decision independent of
+  // template DOM depth.
+  const view = element.ownerDocument?.defaultView;
+  let surface = null;
+  if (view?.getComputedStyle) {
+    const ownBackground = parseRgbColor(view.getComputedStyle(element).backgroundColor);
+    if (ownBackground) surface = ownBackground;
+  }
+  surface = surface || findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
+
   const theme = getThemeColor(root || element) || {r:37,g:99,b:235,a:1};
   const white = {r:255,g:255,b:255,a:1};
   const dark = {r:31,g:41,b:55,a:1};
@@ -611,8 +668,6 @@ function applySkillsLanguagesColorSystem(element, root) {
   // Universal smart-pill rule:
   //   • light/white surface -> theme-color pill + white text
   //   • dark surface        -> white pill + theme-color text
-  // The small contrast fallbacks only protect future custom themes that are
-  // too light/dark for the preferred foreground.
   const isDarkSurface = surfaceLuminance < 0.5;
   let pillBackground = isDarkSurface ? white : theme;
   let pillText = isDarkSurface ? theme : white;
@@ -628,19 +683,27 @@ function applySkillsLanguagesColorSystem(element, root) {
     mode = 'white-on-dark-surface-dark-theme';
   }
 
-  element.style.setProperty('--v2-skills-language-rating-color', isDarkSurface ? '#FFFFFF' : rgbString(theme));
-  element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground));
-  element.style.setProperty('--v2-skills-language-pill-text', rgbString(pillText));
-  element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme));
+  const ratingColor = isDarkSurface ? white : theme;
+
+  element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
+  element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground), 'important');
+  element.style.setProperty('--v2-skills-language-pill-text', rgbString(pillText), 'important');
+  element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme), 'important');
   element.setAttribute('data-v2-rating-contrast', isDarkSurface ? 'light' : 'theme');
   element.setAttribute('data-v2-pill-mode', mode);
+  element.setAttribute('data-v2-color-source', 'universal-surface-aware');
 
-  // Apply resolved pill colors directly at item level so native selectors
-  // cannot override the universal Skills/Languages color decision.
-  if (element.matches?.('[data-v2-list-style="pills"]')) {
-    element.style.setProperty('background-color', rgbString(pillBackground), 'important');
-    element.style.setProperty('color', rgbString(pillText), 'important');
-    element.style.setProperty('border-color', rgbString(theme), 'important');
+  const isPill = element.matches?.('[data-v2-list-style="pills"]');
+  if (isPill) {
+    // Apply to the actual item AND any nested visual tag/pill node. This is
+    // the critical binding layer for legacy/native template selectors.
+    for (const node of collectSkillsLanguagesVisualNodes(element)) {
+      setSkillsLanguagesVisualColor(node, pillBackground, pillText, theme);
+    }
+  } else {
+    // Ratings, bullets and other non-pill styles still inherit the resolved
+    // theme-aware rating color without changing their layout.
+    element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
     element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
       valueNode.style.setProperty('color', rgbString(pillText), 'important');
     });
