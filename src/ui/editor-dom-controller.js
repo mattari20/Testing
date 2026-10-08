@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.30.0';
+export const EDITOR_DOM_VERSION = '1.31.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -348,6 +348,32 @@ export function bindEditorFields(root, surface, options = {}) {
         target:{sectionType},
         payload:{sectionType,style}
       }));
+
+      const state=surface.getState?.()||{};
+      const templateId=String(
+        state?.session?.application?.targetedCV?.configuration?.template?.id
+        || state?.session?.application?.masterProfile?.configuration?.template?.id
+        || ''
+      );
+      if(templateId==='t01-modern-minimalist-cv-design_modern' && sectionType==='skills'){
+        const allowed={
+          tags:new Set(['off']),
+          compact:new Set(['off','text','stars']),
+          bullets:new Set(['off','text','stars','bars','dots'])
+        }[style];
+        const current=String(
+          state?.session?.application?.targetedCV?.configuration?.presentation?.ratings?.skills?.style
+          || state?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.skills?.style
+          || 'off'
+        );
+        if(allowed && !allowed.has(current)){
+          surface.dispatch(createEditorCommand({
+            type:'set-rating-style',
+            target:{sectionType:'skills'},
+            payload:{sectionType:'skills',style:'off'}
+          }));
+        }
+      }
     };
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
