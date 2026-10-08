@@ -488,16 +488,68 @@ function renderProficiencyNode(root, type, entry, style) {
   return holder;
 }
 
+function parseRgbColor(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw || raw === 'transparent') return null;
+  const match = raw.match(/^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/);
+  if (!match) return null;
+  const alpha = match[4] == null ? 1 : Number(match[4]);
+  if (!Number.isFinite(alpha) || alpha <= 0) return null;
+  return { r:Number(match[1]), g:Number(match[2]), b:Number(match[3]), a:alpha };
+}
+
+function relativeLuminance(color) {
+  if (!color) return 1;
+  const channel = value => {
+    const s = Math.max(0, Math.min(255, Number(value) || 0)) / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * channel(color.r) + 0.7152 * channel(color.g) + 0.0722 * channel(color.b);
+}
+
+function findEffectiveBackground(element) {
+  const view = element?.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return null;
+  let current = element;
+  while (current && current.nodeType === 1) {
+    const style = view.getComputedStyle(current);
+    const background = parseRgbColor(style.backgroundColor);
+    if (background) return background;
+    current = current.parentElement;
+  }
+  return null;
+}
+
+function applySkillsLanguagesColorSystem(element) {
+  if (!element?.style) return;
+  const background = findEffectiveBackground(element);
+  // Transparent/light surfaces keep the template's own foreground/theme color.
+  // Dark surfaces switch the rating graphics to white for reliable contrast.
+  if (background && relativeLuminance(background) < 0.42) {
+    element.style.setProperty('--v2-skills-language-rating-color', '#FFFFFF');
+    element.setAttribute('data-v2-rating-contrast', 'light');
+  } else {
+    element.style.removeProperty('--v2-skills-language-rating-color');
+    element.setAttribute('data-v2-rating-contrast', 'theme');
+  }
+}
+
 function applyListStyles(root, snapshot) {
   const templateId=String(root.getAttribute('data-v2-template-id')||snapshot?.configuration?.template?.id||'');
   if (!root.querySelector('[data-v2-proficiency-normalization]')) {
     const style=root.ownerDocument.createElement('style');
     style.setAttribute('data-v2-proficiency-normalization','true');
     style.textContent=''
-      + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:6px!important;margin-bottom:5px!important;white-space:nowrap!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="tags"]:not(:last-child)::after{content:","!important;margin-left:2px!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="compact"]{display:inline-flex!important;align-items:center!important;margin-right:5px!important;white-space:nowrap!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:list-item!important;}'
+      + '[data-v2-template-root] [data-v2-skills-languages-item]{box-sizing:border-box!important;color:inherit!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:7px!important;margin-bottom:5px!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="tags"][data-v2-list-last="false"]::after{content:","!important;margin-left:3px!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="pills"]{display:inline-flex!important;align-items:center!important;width:auto!important;margin:0 5px 5px 0!important;padding:2px 8px!important;border:1px solid currentColor!important;border-radius:999px!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="compact"]{display:inline-flex!important;align-items:center!important;gap:4px!important;width:auto!important;margin:0 6px 3px 0!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="inline"]{display:inline!important;width:auto!important;margin:0 4px 0 0!important;white-space:normal!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="inline"][data-v2-list-last="false"]::after{content:" · "!important;opacity:.7!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:list-item!important;width:auto!important;margin:0 0 4px 0!important;padding-left:2px!important;list-style-type:disc!important;list-style-position:outside!important;white-space:normal!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="stacked"]{display:block!important;width:100%!important;margin:0 0 5px 0!important;white-space:normal!important;}'
+      + '[data-v2-template-root] .v2-proficiency{color:var(--v2-skills-language-rating-color,currentColor)!important;}'
       + '[data-v2-template-root] .v2-proficiency[data-v2-proficiency-style="text"]{display:inline-flex!important;align-items:center!important;margin-left:11px!important;padding-left:11px!important;border-left:1px solid currentColor!important;opacity:.84!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] .v2-proficiency[data-v2-proficiency-style="text"] .v2-proficiency-label{font-size:.8em!important;font-weight:700!important;letter-spacing:.01em!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] .v2-proficiency-visual{display:inline-flex!important;align-items:center!important;gap:4px!important;height:18px!important;vertical-align:middle!important;line-height:1!important;}'
@@ -509,8 +561,10 @@ function applyListStyles(root, snapshot) {
       + '[data-v2-template-root] .v2-proficiency-dot.is-on{background:currentColor!important;}';
     root.prepend(style);
   }
+
   const contract=getSkillsLanguagesPresentationContract(templateId);
   const presentation=snapshot?.configuration?.presentation||{};
+
   for (const type of ['skills','languages']) {
     const selected=String(presentation?.listStyles?.[type]||contract[type].default);
     const allowed=resolveAllowedProficiency(templateId,type,selected,contract);
@@ -519,20 +573,32 @@ function applyListStyles(root, snapshot) {
       ? configured
       : (allowed.includes(contract[type].proficiencyDefault)?contract[type].proficiencyDefault:'off');
     const section=findCanonicalSection(snapshot,type);
-    const entries=new Map((section?.entries||[]).map(entry=>[String(entry.id),entry]));
+    const visibleEntries=(section?.entries||[]).filter(entry=>entry?.visibility!==false);
+    const entries=new Map(visibleEntries.map(entry=>[String(entry.id),entry]));
+    const count=visibleEntries.length;
+
     root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
       element.setAttribute('data-v2-list-style',selected);
       const entryId=String(element.getAttribute('data-v2-skills-languages-entry-id')||'');
       const entry=entries.get(entryId);
       if(!entry) return;
+
+      const index=visibleEntries.findIndex(item=>String(item.id)===entryId);
+      element.setAttribute('data-v2-list-index',String(Math.max(0,index)));
+      element.setAttribute('data-v2-list-count',String(count));
+      element.setAttribute('data-v2-list-last',String(index === count - 1));
+
       element.setAttribute('data-v2-proficiency-style',proficiencyStyle);
       element.setAttribute('data-v2-proficiency-level',String(getSkillOrLanguageProficiency(entry)));
       element.querySelectorAll('.v2-proficiency').forEach(node=>node.remove());
+
       const node=renderProficiencyNode(root,type,entry,proficiencyStyle);
       if(node) {
         const valueNode=element.querySelector('[data-v2-item-value]');
         (valueNode?.parentElement||element).appendChild(node);
+        applySkillsLanguagesColorSystem(node);
       }
+      applySkillsLanguagesColorSystem(element);
     });
   }
 }
