@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
 import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
-export const EDITOR_FORM_RENDERER_VERSION = '1.31.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.32.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -152,14 +152,16 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={
         '<button type="button" class="editor-month-picker-button" data-v2-open-month-picker aria-label="Choose '+esc(labelFor(key))+'" title="Choose '+esc(labelFor(key))+'"><svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M7 2.8v3.4M17 2.8v3.4M3 9h18"/></svg></button>'+
         '<input type="month" class="editor-month-picker-native" data-v2-month-picker="'+esc(key)+'" aria-label="Choose '+esc(labelFor(key))+'" value="'+esc(value)+'" min="1900-01" max="2100-12"></span>'
       : '';
-    return '<label class="editor-entry-field"><span>'+esc(labelFor(key))+'</span>'+(isMonthField
+    const showFieldLabel = index === 0;
+    const fieldHint = type==='skills' ? 'Skill' : type==='languages' ? 'Language' : labelFor(key);
+    return '<label class="editor-entry-field">'+(showFieldLabel?'<span>'+esc(labelFor(key))+'</span>':'')+(isMonthField
       ? monthControls
       : inputType==='textarea'
-        ? '<textarea rows="4" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'">'+esc(value)+'</textarea>'
-        : '<input type="'+inputType+'"'+extra+' data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">')+legacyHint+'</label>';
+        ? '<textarea rows="4" placeholder="'+esc(fieldHint)+'" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'">'+esc(value)+'</textarea>'
+        : '<input type="'+inputType+'"'+extra+' placeholder="'+esc(fieldHint)+'" data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(inputValue)+'">')+legacyHint+'</label>';
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
   const proficiencyHtml=entryVisible&&isSkillsLanguage&&proficiencyStyle!=='off'
-    ? '<label class="editor-entry-field editor-entry-proficiency"><span>Proficiency</span><select data-v2-editor-entry-rating data-v2-rating-section="'+esc(type)+'" data-v2-rating-entry="'+esc(entry.id)+'" aria-label="'+esc(valueKey)+' proficiency level">'+
+    ? '<label class="editor-entry-field editor-entry-proficiency">'+(index===0?'<span>Proficiency</span>':'')+'<select title="Proficiency" data-v2-editor-entry-rating data-v2-rating-section="'+esc(type)+'" data-v2-rating-entry="'+esc(entry.id)+'" aria-label="'+esc(valueKey)+' proficiency level">'+
       proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===proficiency?' selected':'')+'>'+esc(v===0?'No level':label)+'</option>').join('')+
       '</select><small class="editor-field-help">This level belongs only to this '+esc(type==='skills'?'skill':'language')+'.</small></label>'
     : '';
