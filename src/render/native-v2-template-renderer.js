@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.19.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.20.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -748,7 +748,7 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.19.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.20.0');
 }
 
 function applyListStyles(root, snapshot) {
