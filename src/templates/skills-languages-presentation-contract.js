@@ -1,9 +1,33 @@
 export const SKILLS_LANGUAGES_PRESENTATION_VERSION = '1.0.0';
 
-const make = (skillsDefault, languagesDefault, skills, languages, skillProficiency=['off','text','stars','bars','dots'], languageProficiency=['off','text','stars','bars','dots'], skillProficiencyDefault='off', languageProficiencyDefault='off') => Object.freeze({
-  skills: Object.freeze({ default: skillsDefault, supported: Object.freeze(skills), proficiency: Object.freeze(skillProficiency), proficiencyDefault: skillProficiencyDefault }),
-  languages: Object.freeze({ default: languagesDefault, supported: Object.freeze(languages), proficiency: Object.freeze(languageProficiency), proficiencyDefault: languageProficiencyDefault })
+const PROFICIENCY_BY_LIST_STYLE = Object.freeze({
+  tags: Object.freeze(['off']),
+  pills: Object.freeze(['off']),
+  compact: Object.freeze(['off']),
+  inline: Object.freeze(['off']),
+  bullets: Object.freeze(['off','text','stars','bars','dots']),
+  stacked: Object.freeze(['off','text','stars','bars','dots'])
 });
+
+const makeSection = (defaultStyle, supported, proficiency, proficiencyDefault) => Object.freeze({
+  default: defaultStyle,
+  supported: Object.freeze(supported),
+  proficiency: Object.freeze(proficiency),
+  proficiencyDefault,
+  proficiencyByListStyle: PROFICIENCY_BY_LIST_STYLE
+});
+
+const make = (skillsDefault, languagesDefault, skills, languages, skillProficiency=['off','text','stars','bars','dots'], languageProficiency=['off','text','stars','bars','dots'], skillProficiencyDefault='off', languageProficiencyDefault='off') => Object.freeze({
+  skills: makeSection(skillsDefault, skills, skillProficiency, skillProficiencyDefault),
+  languages: makeSection(languagesDefault, languages, languageProficiency, languageProficiencyDefault)
+});
+
+export function getAllowedProficiencyForListStyle(sectionContract, listStyle) {
+  if (!sectionContract) return ['off'];
+  if (sectionContract.proficiency.length === 1 && sectionContract.proficiency[0] === 'off') return ['off'];
+  const configured = sectionContract.proficiencyByListStyle?.[String(listStyle)];
+  return configured || sectionContract.proficiency;
+}
 
 export const SKILLS_LANGUAGES_TEMPLATE_CONTRACTS = Object.freeze({
   't01-modern-minimalist-cv-design_ats': make('compact','compact',['compact','inline'],['compact','inline'],['off'],['off']),
@@ -32,7 +56,10 @@ export function resolveSkillsLanguagesPresentation(templateId, presentation={}) 
     const sectionContract = contract[type];
     if (!sectionContract.supported.includes(String(listStyles[type] || ''))) listStyles[type] = sectionContract.default;
     const configured = String(ratings[type]?.style || 'off');
-    const style = sectionContract.proficiency.includes(configured) ? configured : sectionContract.proficiencyDefault;
+    const allowed = getAllowedProficiencyForListStyle(sectionContract, listStyles[type]);
+    const style = allowed.includes(configured)
+      ? configured
+      : (allowed.includes(sectionContract.proficiencyDefault) ? sectionContract.proficiencyDefault : 'off');
     ratings[type] = { ...(ratings[type] || {}), style, values: {} };
   }
   return { ...current, listStyles, ratings };

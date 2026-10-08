@@ -4,7 +4,7 @@ import { createMasterProfile, createTargetedCV } from '../../src/core/career-doc
 import { createCVApplication } from '../../src/application/cv-application.js';
 import { executeEditorCommand } from '../../src/application/editor-command-executor.js';
 import { createEditorCommand } from '../../src/application/editor-command-contract.js';
-import { getSkillsLanguagesPresentationContract } from '../../src/templates/skills-languages-presentation-contract.js';
+import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle, resolveSkillsLanguagesPresentation } from '../../src/templates/skills-languages-presentation-contract.js';
 
 const oldProfileData = {
   id: 'profile-r7',
@@ -89,4 +89,44 @@ test('template contracts define independent defaults and supported presentation 
   assert.equal(t04.languages.proficiencyDefault,'bars');
   assert.ok(t04.languages.proficiency.includes('bars'));
   assert.notEqual(t01.languages.default,t04.languages.proficiencyDefault);
+});
+
+
+test('Skills and Languages share display-style rating compatibility', () => {
+  const contract=getSkillsLanguagesPresentationContract('t01-modern-minimalist-cv-design_modern');
+  assert.deepEqual(getAllowedProficiencyForListStyle(contract.skills,'tags'),['off']);
+  assert.deepEqual(getAllowedProficiencyForListStyle(contract.skills,'compact'),['off']);
+  assert.deepEqual(getAllowedProficiencyForListStyle(contract.skills,'bullets'),['off','text','stars','bars','dots']);
+  assert.deepEqual(getAllowedProficiencyForListStyle(contract.languages,'pills'),['off']);
+  assert.deepEqual(getAllowedProficiencyForListStyle(contract.languages,'compact'),['off']);
+  assert.deepEqual(getAllowedProficiencyForListStyle(contract.languages,'stacked'),['off','text','stars','bars','dots']);
+
+  const resolved=resolveSkillsLanguagesPresentation('t01-modern-minimalist-cv-design_modern',{
+    listStyles:{skills:'compact',languages:'pills'},
+    ratings:{skills:{style:'dots'},languages:{style:'stars'}}
+  });
+  assert.equal(resolved.ratings.skills.style,'off');
+  assert.equal(resolved.ratings.languages.style,'off');
+});
+
+test('changing a non-rating style clamps existing Skills and Languages ratings to Off', () => {
+  const app=createCVApplication({
+    profileData:{careerData:{sections:[
+      {id:'skills',type:'skills',fields:[],entries:[{id:'s1',values:{skill:'JavaScript',proficiency:5}}],repeatable:true},
+      {id:'languages',type:'languages',fields:[],entries:[{id:'l1',values:{language:'English',proficiency:4}}],repeatable:true}
+    ]}},
+    cvData:{configuration:{
+      template:{id:'t01-modern-minimalist-cv-design_modern',version:'2.0.0'},
+      presentation:{listStyles:{skills:'bullets',languages:'stacked'},ratings:{skills:{style:'dots'},languages:{style:'stars'}}}
+    }}
+  });
+  executeEditorCommand({application:{masterProfile:app.masterProfile,targetedCV:app.targetedCV}},createEditorCommand({
+    type:'set-list-style',target:{sectionType:'skills'},payload:{sectionType:'skills',style:'compact'}
+  }));
+  assert.equal(app.targetedCV.configuration.presentation.ratings.skills.style,'off');
+
+  executeEditorCommand({application:{masterProfile:app.masterProfile,targetedCV:app.targetedCV}},createEditorCommand({
+    type:'set-list-style',target:{sectionType:'languages'},payload:{sectionType:'languages',style:'pills'}
+  }));
+  assert.equal(app.targetedCV.configuration.presentation.ratings.languages.style,'off');
 });

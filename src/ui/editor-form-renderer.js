@@ -1,6 +1,6 @@
-import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
+import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
-export const EDITOR_FORM_RENDERER_VERSION = '1.32.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.33.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -195,10 +195,7 @@ function listStyleControl(sectionType,configuration,templateId){
 function ratingStyleControl(sectionType,configuration,templateId){
   const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
   const listStyle=String(configuration?.presentation?.listStyles?.[sectionType]||contract.default);
-  const isT01Modern=String(templateId)==='t01-modern-minimalist-cv-design_modern';
-  const allowed=isT01Modern&&sectionType==='skills'
-    ? ({tags:['off'],compact:['off','text','stars'],bullets:['off','text','stars','bars','dots']}[listStyle]||['off'])
-    : contract.proficiency;
+  const allowed=getAllowedProficiencyForListStyle(contract,listStyle);
   const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
   const selected=allowed.includes(configured)?configured:(allowed.includes(contract.proficiencyDefault)?contract.proficiencyDefault:'off');
   const disabled=allowed.length===1&&allowed[0]==='off';

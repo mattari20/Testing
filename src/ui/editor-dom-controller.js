@@ -1,6 +1,7 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
+import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.31.0';
+export const EDITOR_DOM_VERSION = '1.32.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -355,22 +356,19 @@ export function bindEditorFields(root, surface, options = {}) {
         || state?.session?.application?.masterProfile?.configuration?.template?.id
         || ''
       );
-      if(templateId==='t01-modern-minimalist-cv-design_modern' && sectionType==='skills'){
-        const allowed={
-          tags:new Set(['off']),
-          compact:new Set(['off','text','stars']),
-          bullets:new Set(['off','text','stars','bars','dots'])
-        }[style];
+      if(['skills','languages'].includes(sectionType)){
+        const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
+        const allowed=new Set(getAllowedProficiencyForListStyle(contract,style));
         const current=String(
-          state?.session?.application?.targetedCV?.configuration?.presentation?.ratings?.skills?.style
-          || state?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.skills?.style
+          state?.session?.application?.targetedCV?.configuration?.presentation?.ratings?.[sectionType]?.style
+          || state?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.[sectionType]?.style
           || 'off'
         );
-        if(allowed && !allowed.has(current)){
+        if(!allowed.has(current)){
           surface.dispatch(createEditorCommand({
             type:'set-rating-style',
-            target:{sectionType:'skills'},
-            payload:{sectionType:'skills',style:'off'}
+            target:{sectionType},
+            payload:{sectionType,style:'off'}
           }));
         }
       }
