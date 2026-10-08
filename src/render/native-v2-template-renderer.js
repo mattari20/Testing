@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.12.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.13.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -543,11 +543,11 @@ function applyListStyles(root, snapshot) {
       + '[data-v2-template-root] [data-v2-skills-languages-item]{box-sizing:border-box!important;color:inherit!important;}'
       + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:7px!important;margin-bottom:5px!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] [data-v2-list-style="tags"][data-v2-list-last="false"]::after{content:","!important;margin-left:3px!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="pills"]{display:inline-flex!important;align-items:center!important;width:auto!important;margin:0 5px 5px 0!important;padding:2px 8px!important;border:1px solid currentColor!important;border-radius:999px!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="pills"]{display:inline-flex!important;align-items:center!important;width:auto!important;margin:0 5px 5px 0!important;padding:2px 8px!important;border:1px solid currentColor!important;border-radius:999px!important;white-space:nowrap!important;vertical-align:top!important;}'
       + '[data-v2-template-root] [data-v2-list-style="compact"]{display:inline-flex!important;align-items:center!important;gap:4px!important;width:auto!important;margin:0 6px 3px 0!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] [data-v2-list-style="inline"]{display:inline!important;width:auto!important;margin:0 4px 0 0!important;white-space:normal!important;}'
       + '[data-v2-template-root] [data-v2-list-style="inline"][data-v2-list-last="false"]::after{content:" · "!important;opacity:.7!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:block!important;width:100%!important;box-sizing:border-box!important;margin:0 0 5px 0!important;padding:0 0 0 13px!important;position:relative!important;list-style:none!important;white-space:normal!important;flex:0 0 100%!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:block!important;width:auto!important;box-sizing:border-box!important;margin:0 0 5px 0!important;padding:0 0 0 13px!important;position:relative!important;list-style:none!important;white-space:normal!important;flex:0 0 100%!important;}'
       + '[data-v2-template-root] [data-v2-list-style="bullets"]::before{content:"•"!important;position:absolute!important;left:0!important;top:0!important;font-size:1em!important;line-height:1.35!important;}'
       + '[data-v2-template-root] [data-v2-list-style="stacked"]{display:block!important;width:100%!important;margin:0 0 5px 0!important;white-space:normal!important;}'
       + '[data-v2-template-root] .v2-proficiency{color:var(--v2-skills-language-rating-color,currentColor)!important;}'
