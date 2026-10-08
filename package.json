@@ -143,6 +143,7 @@
     "test:m109": "node --test tests/m109/editor-preview-layout-flow-evidence.test.js",
     "test:m106-m109": "npm run test:m106 && npm run test:m107 && npm run test:m108 && npm run test:m109",
     "test:m110": "node --test tests/m110/editor-preview-page-dom.test.js",
+    "test:r7-skills-languages": "node --test tests/m110/skills-languages-architecture.test.js",
     "test:m111": "node --test tests/m111/editor-preview-page-controller.test.js",
     "test:m112": "node --test tests/m112/editor-preview-page-runtime.test.js",
     "test:m113": "node --test tests/m113/editor-preview-page-evidence.test.js",
