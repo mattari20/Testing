@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
 import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
-export const EDITOR_FORM_RENDERER_VERSION = '1.30.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.31.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -160,11 +160,11 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={
   }).join(''):'<div class="editor-hidden-note">This entry is hidden from the CV.</div>';
   const proficiencyHtml=entryVisible&&isSkillsLanguage&&proficiencyStyle!=='off'
     ? '<label class="editor-entry-field editor-entry-proficiency"><span>Proficiency</span><select data-v2-editor-entry-rating data-v2-rating-section="'+esc(type)+'" data-v2-rating-entry="'+esc(entry.id)+'" aria-label="'+esc(valueKey)+' proficiency level">'+
-      proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===proficiency?' selected':'')+'>'+esc(v===0?'No level':v+' / 5 — '+label)+'</option>').join('')+
+      proficiencyLabels.map((label,v)=>'<option value="'+v+'"'+(v===proficiency?' selected':'')+'>'+esc(v===0?'No level':label)+'</option>').join('')+
       '</select><small class="editor-field-help">This level belongs only to this '+esc(type==='skills'?'skill':'language')+'.</small></label>'
     : '';
   return '<article class="editor-entry-card editor-skills-language-entry" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
-    '<div class="editor-entry-head"><div><span class="editor-entry-kicker">'+esc(type==='skills'?'SKILL':type==='languages'?'LANGUAGE':'ENTRY')+' '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':type==='skills'?'Skill':type==='languages'?'Language':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id})+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
+    '<div class="editor-entry-head"><div><span class="editor-entry-kicker">'+esc(type==='skills'?'SKILL':type==='languages'?'LANGUAGE':'ENTRY')+' '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':type==='skills'?'Skill':type==='languages'?'Language':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+(isSkillsLanguage?'':actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id}))+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
     '<div class="editor-entry-fields">'+fields+proficiencyHtml+'</div></article>';
 }
 
@@ -192,11 +192,17 @@ function listStyleControl(sectionType,configuration,templateId){
 }
 function ratingStyleControl(sectionType,configuration,templateId){
   const contract=getSkillsLanguagesPresentationContract(templateId)[sectionType];
+  const listStyle=String(configuration?.presentation?.listStyles?.[sectionType]||contract.default);
+  const isT01Modern=String(templateId)==='t01-modern-minimalist-cv-design_modern';
+  const allowed=isT01Modern&&sectionType==='skills'
+    ? ({tags:['off'],compact:['off','text','stars'],bullets:['off','text','stars','bars','dots']}[listStyle]||['off'])
+    : contract.proficiency;
   const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
-  const selected=contract.proficiency.includes(configured)?configured:contract.proficiencyDefault;
+  const selected=allowed.includes(configured)?configured:(allowed.includes(contract.proficiencyDefault)?contract.proficiencyDefault:'off');
+  const disabled=allowed.length===1&&allowed[0]==='off';
   const labels={off:'Off',text:'Level',bars:'Bars',dots:'Dots',stars:'Stars'};
-  return '<label class="editor-rating-style-control"><span>Proficiency</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' proficiency display">'+
-    contract.proficiency.map(value=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+esc(labels[value]||value)+'</option>').join('')+
+  return '<label class="editor-rating-style-control" title="'+(disabled?'Proficiency is turned off for this display style.':'Choose a professional proficiency display.')+'"><span>Proficiency</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' proficiency display"'+(disabled?' disabled':'')+'>'+
+    allowed.map(value=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+esc(labels[value]||value)+'</option>').join('')+
     '</select></label>';
 }
 
