@@ -169,9 +169,32 @@ function entrySortControl(sectionType,configuration){
   return '<label class="editor-sort-control"><span>Date order</span><select data-v2-editor-entry-sort="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' date order"><option value="desc"'+(selected==='desc'?' selected':'')+'>Newest first</option><option value="asc"'+(selected==='asc'?' selected':'')+'>Oldest first</option></select></label>';
 }
 
+const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
+  skills: {
+    tags: ['off','stars','dots'],
+    inline: ['off'],
+    bullets: ['off','stars','bars','dots'],
+    compact: ['off','stars','dots']
+  },
+  languages: {
+    stacked: ['off','stars','bars','dots'],
+    inline: ['off'],
+    pills: ['off'],
+    compact: ['off','stars','dots']
+  }
+});
+
+function isRatingStyleCompatible(sectionType,listStyle,ratingStyle){
+  return (LIST_STYLE_RATING_COMPATIBILITY[sectionType]?.[listStyle] || ['off']).includes(ratingStyle);
+}
+
 function ratingStyleControl(sectionType,configuration){
-  const selected=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
-  return '<label class="editor-rating-style-control"><span>Rating</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' rating style">'+
+  const listStyle=String(configuration?.presentation?.listStyles?.[sectionType] || (sectionType==='skills'?'tags':'stacked'));
+  const compatible=LIST_STYLE_RATING_COMPATIBILITY[sectionType]?.[listStyle] || ['off'];
+  const configured=String(configuration?.presentation?.ratings?.[sectionType]?.style||'off');
+  const selected=compatible.includes(configured)?configured:'off';
+  const disabled=compatible.length===1 && compatible[0]==='off';
+  return '<label class="editor-rating-style-control" title="'+(disabled?'Ratings are turned off for this display style.':'Choose how proficiency is shown.')+'"><span>Rating</span><select data-v2-editor-rating-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' rating style"'+(disabled?' disabled':'')+'>'+
     [['off','Off'],['stars','Stars'],['bars','Bars'],['dots','Dots']].map(([value,label])=>'<option value="'+value+'"'+(selected===value?' selected':'')+'>'+label+'</option>').join('')+
     '</select></label>';
 }
@@ -179,9 +202,9 @@ function listStyleControl(sectionType,configuration){
   const defaults={skills:'tags',languages:'stacked'};
   const selected=String(configuration?.presentation?.listStyles?.[sectionType]||defaults[sectionType]);
   const options=sectionType==='skills'
-    ? [['tags','Tags'],['inline','Inline'],['bullets','Bullets'],['compact','Compact']]
-    : [['stacked','Stacked'],['inline','Inline'],['pills','Pills'],['compact','Compact']];
-  return '<label class="editor-list-style-control"><span>Display style</span><select data-v2-editor-list-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' display style">'+
+    ? [['tags','Tags'],['inline','Inline (comma-separated)'],['bullets','Bullets'],['compact','Compact']]
+    : [['stacked','List'],['inline','Inline (comma-separated)'],['pills','Pills'],['compact','Compact']];
+  return '<label class="editor-list-style-control"><span>Display style</span><select data-v2-editor-list-style="'+esc(sectionType)+'" aria-label="'+esc(sectionType)+' display style" title="Choose how '+esc(sectionType)+' are arranged">'+
     options.map(([value,label])=>'<option value="'+value+'"'+(value===selected?' selected':'')+'>'+label+'</option>').join('')+
     '</select></label>';
 }

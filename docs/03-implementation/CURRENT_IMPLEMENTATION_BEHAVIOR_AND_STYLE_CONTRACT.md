@@ -275,26 +275,42 @@ Current display style concepts include:
 
 ### Skills
 
-- Tags;
-- Inline;
-- Bullets;
-- Compact.
+- **Tags** — compact theme-colored pills; supports Off, Stars, or Dots ratings.
+- **Inline (comma-separated)** — plain text on one flowing line; ratings are automatically Off.
+- **Bullets** — clean vertical list; supports Off, Stars, Bars, or Dots ratings.
+- **Compact** — dense inline text separated by bullets; supports Off, Stars, or Dots ratings.
 
 ### Languages
 
-- Stacked;
-- Inline;
-- Pills;
-- Compact.
+- **List** — clean vertical language list; supports Off, Stars, Bars, or Dots ratings.
+- **Inline (comma-separated)** — one flowing line; ratings are automatically Off.
+- **Pills** — theme-colored language pills; ratings are automatically Off because ratings visually conflict with the pill treatment.
+- **Compact** — dense inline language labels separated by bullets; supports Off, Stars, or Dots ratings.
 
-Optional ratings are independently configurable:
+### Rating compatibility
 
-- Off;
-- Stars;
-- Bars;
-- Dots.
+Rating is an optional presentation layer and never changes the underlying skill/language value.
 
-Ratings are presentation metadata and must not overwrite the underlying skill/language value.
+The editor enforces a compatibility matrix so a user cannot accidentally create a visually broken combination:
+
+| Section | Display style | Allowed rating |
+| --- | --- | --- |
+| Skills | Tags | Off, Stars, Dots |
+| Skills | Inline | Off only |
+| Skills | Bullets | Off, Stars, Bars, Dots |
+| Skills | Compact | Off, Stars, Dots |
+| Languages | List | Off, Stars, Bars, Dots |
+| Languages | Inline | Off only |
+| Languages | Pills | Off only |
+| Languages | Compact | Off, Stars, Dots |
+
+When an incompatible display style is selected, the system automatically changes the section rating to **Off** and disables the Rating selector while that style is active. Returning to a compatible style re-enables the selector with Off selected.
+
+The renderer independently enforces the same matrix so stale or legacy configuration cannot produce an invalid visual combination.
+
+**Regression rule:**
+
+> Display style must always produce a predictable, professional layout, and rating must never distort the selected list style.
 
 ---
 

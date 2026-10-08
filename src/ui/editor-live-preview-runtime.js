@@ -1,7 +1,7 @@
 import { createApplicationSnapshot } from '../application/cv-application.js';
 import { getNativeV2Template } from '../templates/v2-native-template-catalog.js';
-import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261007.2';
-import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261007.4';
+import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261008.1';
+import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261008.1';
 import { bindPreviewInlineEditing } from './editor-preview-inline-controller.js';
 
 export const EDITOR_LIVE_PREVIEW_RUNTIME_VERSION = '1.5.0';

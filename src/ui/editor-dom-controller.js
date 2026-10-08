@@ -335,11 +335,30 @@ export function bindEditorFields(root, surface, options = {}) {
     input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
   });
   root.querySelectorAll('[data-v2-editor-list-style]').forEach(input => {
-    const handler = () => surface.dispatch(createEditorCommand({
-      type:'set-list-style',
-      target:{sectionType:input.dataset.v2EditorListStyle},
-      payload:{sectionType:input.dataset.v2EditorListStyle,style:input.value}
-    }));
+    const handler = () => {
+      const sectionType = String(input.dataset.v2EditorListStyle || '');
+      const style = String(input.value || '');
+      surface.dispatch(createEditorCommand({
+        type:'set-list-style',
+        target:{sectionType},
+        payload:{sectionType,style}
+      }));
+
+      const incompatibleStyles = {
+        skills: new Set(['inline']),
+        languages: new Set(['inline','pills'])
+      };
+      if(incompatibleStyles[sectionType]?.has(style)){
+        const current = surface.getState()?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.[sectionType]?.style;
+        if(String(current || 'off') !== 'off'){
+          surface.dispatch(createEditorCommand({
+            type:'set-rating-style',
+            target:{sectionType},
+            payload:{sectionType,style:'off'}
+          }));
+        }
+      }
+    };
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
   });
