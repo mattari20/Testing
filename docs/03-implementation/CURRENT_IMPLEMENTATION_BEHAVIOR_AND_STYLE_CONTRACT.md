@@ -269,50 +269,102 @@ Manual entry order and date-based sorting must remain clearly distinguished.
 
 ## 9. Skills and Languages
 
-Skills and Languages use list-oriented controls.
+Skills and Languages use list-oriented controls plus a shared **5-level proficiency model**.
 
-Current display style concepts include:
+The proficiency value is stored per item on a canonical 0–5 scale:
 
-### Skills
+- 0 — no proficiency level selected;
+- 1 — level 1;
+- 2 — level 2;
+- 3 — level 3;
+- 4 — level 4;
+- 5 — level 5.
 
-- **Tags** — compact theme-colored pills; supports Off, Stars, or Dots ratings.
-- **Inline (comma-separated)** — plain text on one flowing line; ratings are automatically Off.
-- **Bullets** — clean vertical list; supports Off, Stars, Bars, or Dots ratings.
-- **Compact** — dense inline text separated by bullets; supports Off, Stars, or Dots ratings.
+The editor does not ask users to type a rating number. It provides a clear per-item proficiency selector with semantic labels.
 
-### Languages
+### Skills proficiency labels
 
-- **List** — clean vertical language list; supports Off, Stars, Bars, or Dots ratings.
-- **Inline (comma-separated)** — one flowing line; ratings are automatically Off.
-- **Pills** — theme-colored language pills; ratings are automatically Off because ratings visually conflict with the pill treatment.
-- **Compact** — dense inline language labels separated by bullets; supports Off, Stars, or Dots ratings.
+| Value | Label |
+| ---: | --- |
+| 1 | Beginner |
+| 2 | Intermediate |
+| 3 | Proficient |
+| 4 | Advanced |
+| 5 | Expert |
 
-### Rating compatibility
+### Language proficiency labels
 
-Rating is an optional presentation layer and never changes the underlying skill/language value.
+| Value | Label |
+| ---: | --- |
+| 1 | Basic |
+| 2 | Conversational |
+| 3 | Proficient |
+| 4 | Fluent |
+| 5 | Native / Bilingual |
 
-The editor enforces a compatibility matrix so a user cannot accidentally create a visually broken combination:
+These labels provide meaning behind the visual level and avoid making a recruiter guess what a self-assigned graphic score means.
 
-| Section | Display style | Allowed rating |
+### Display style concepts
+
+#### Skills
+
+- **Tags** — compact theme-colored pills.
+- **Inline (comma-separated)** — plain flowing text; proficiency is automatically Off.
+- **Bullets** — clean vertical list.
+- **Compact** — dense inline text separated by bullets.
+
+#### Languages
+
+- **List** — clean vertical language list.
+- **Inline (comma-separated)** — one flowing line; proficiency is automatically Off.
+- **Pills** — theme-colored language pills; proficiency is automatically Off.
+- **Compact** — dense inline language labels separated by bullets.
+
+### Proficiency display modes
+
+When the selected list style supports proficiency, the editor provides:
+
+- **Level** — text label such as Advanced or Fluent; this is the recommended professional/readability mode.
+- **Bars** — five clearly separated segments, with the selected level filled.
+- **Dots** — five clearly separated circles, with the selected level filled.
+- **Stars** — five-star scale, for example ★★★★☆ 4/5.
+- **Off** — no proficiency shown.
+
+Bars, dots, and stars always use a fixed five-position visual scale. A value of 4 therefore means exactly 4 of 5, not 80% or an arbitrary percentage. The preview also exposes the semantic level and 4/5 score through accessible text/title metadata.
+
+### Proficiency compatibility
+
+The existing rating storage remains backward compatible but is now treated as proficiency rather than a generic visual rating.
+
+| Section | Display style | Allowed proficiency display |
 | --- | --- | --- |
-| Skills | Tags | Off, Stars, Dots |
+| Skills | Tags | Off, Level, Stars, Bars, Dots |
 | Skills | Inline | Off only |
-| Skills | Bullets | Off, Stars, Bars, Dots |
-| Skills | Compact | Off, Stars, Dots |
-| Languages | List | Off, Stars, Bars, Dots |
+| Skills | Bullets | Off, Level, Stars, Bars, Dots |
+| Skills | Compact | Off, Level, Stars, Dots |
+| Languages | List | Off, Level, Stars, Bars, Dots |
 | Languages | Inline | Off only |
 | Languages | Pills | Off only |
-| Languages | Compact | Off, Stars, Dots |
+| Languages | Compact | Off, Level, Stars, Dots |
 
-When an incompatible display style is selected, the system automatically changes the section rating to **Off** and disables the Rating selector while that style is active. Returning to a compatible style re-enables the selector with Off selected.
+When an incompatible display style is selected, the system automatically changes proficiency to Off and disables the Proficiency selector while that list style is active. Returning to a compatible style re-enables the selector.
 
-The renderer independently enforces the same matrix so stale or legacy configuration cannot produce an invalid visual combination.
+The editor renders the per-item proficiency controls only when a compatible proficiency display is enabled. The renderer independently enforces the same matrix so stale or legacy configuration cannot produce an invalid visual combination.
 
-**Regression rule:**
+**Professional design rule:**
 
-> Display style must always produce a predictable, professional layout, and rating must never distort the selected list style.
+> Proficiency is a semantic 5-level value first and a visual treatment second. The visual must never be the only source of meaning.
 
----
+**Regression rules:**
+
+> A selected value of 4 must render as four filled positions out of five for Stars, Bars, and Dots.
+
+> Bars and Dots must remain visibly distinguishable even when empty positions are present.
+
+> The Level display must render the semantic proficiency word, not only a graphic.
+
+> Per-item proficiency values must persist independently for every skill/language item.
+
 
 ## 10. Professional Summary
 
@@ -882,3 +934,12 @@ All three must remain aligned.
 - The experience month picker must not depend on `showPicker()` or `click()` against a hidden/1px control. Programmatic opening is permitted only from the direct user click on the visible calendar button, with the native input kept co-located at the same screen position. This prevents Chrome from opening the native month chooser at an unrelated screen position.
 - Manual typing remains available in the visible text input and continues to normalize to canonical `YYYY-MM`.
 - The native month picker and manual text input must update the same canonical state path and therefore produce identical sorting and preview results.
+
+### Regression clarification — 2026-10-08 R6
+
+- Skills and Languages now use a shared canonical five-level proficiency value (0–5) with section-specific semantic labels.
+- The editor exposes per-item proficiency controls whenever the selected list style supports proficiency.
+- The preferred professional display is the semantic Level label; visual Bars, Dots, and Stars remain optional presentation modes.
+- Stars use a fixed five-position representation, so a value of 4 renders as ★★★★☆ plus an explicit 4/5 score.
+- Bars and Dots use five bordered positions so empty positions remain visible instead of disappearing into the template background.
+- Existing ratings.*.values state is retained for compatibility; it is interpreted as proficiency values rather than discarded or migrated to a second data model.
