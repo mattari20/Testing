@@ -640,6 +640,26 @@ function setSkillsLanguagesVisualColor(node, background, foreground, border) {
   });
 }
 
+function getEffectiveSkillsLanguagesTextColor(element, root) {
+  const view = element?.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return getThemeColor(root || element) || {r:31,g:41,b:55,a:1};
+
+  // For non-pill styles, preserve the native template's own text color.
+  // This is important for templates such as T03 where sidebar body text is
+  // explicitly black while the sidebar container itself is white.
+  const candidates = [
+    element?.querySelector?.('[data-v2-item-value]'),
+    element
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const color = parseRgbColor(view.getComputedStyle(candidate).color);
+    if (color) return color;
+  }
+
+  return getThemeColor(root || element) || {r:31,g:41,b:55,a:1};
+}
+
 function applySkillsLanguagesColorSystem(element, root) {
   if (!element?.style) return;
 
@@ -665,7 +685,13 @@ function applySkillsLanguagesColorSystem(element, root) {
     mode += '-dark-text';
   }
 
+  // Non-pill styles must keep the template's native body-text color.
+  // The pill foreground logic above is intentionally not reused here because
+  // white is appropriate on a theme-colored pill but can be wrong for plain
+  // Tags/Inline/Compact/List text on a light sidebar.
+  const nativeTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
   const ratingColor = isDarkSurface ? white : theme;
+  const textColor = nativeTextColor;
 
   element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
   element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground), 'important');
@@ -687,9 +713,9 @@ function applySkillsLanguagesColorSystem(element, root) {
       setSkillsLanguagesVisualColor(node, pillBackground, pillText, theme);
     }
   } else {
-    element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
+    element.style.setProperty('--v2-skills-language-rating-color', rgbString(textColor), 'important');
     element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
-      valueNode.style.setProperty('color', rgbString(pillText), 'important');
+      valueNode.style.setProperty('color', rgbString(textColor), 'important');
     });
   }
 }
