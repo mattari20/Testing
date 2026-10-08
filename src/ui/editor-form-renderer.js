@@ -1,4 +1,4 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.23.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.24.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
