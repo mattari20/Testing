@@ -557,15 +557,34 @@ function findEffectiveBackground(element) {
   return null;
 }
 
-function getComputedColor(element, property, fallback) {
-  const view = element?.ownerDocument?.defaultView;
-  if (!view?.getComputedStyle) return fallback;
-  return parseRgbColor(view.getComputedStyle(element).getPropertyValue(property)) || fallback;
-}
-
 function getThemeColor(root) {
   const view = root?.ownerDocument?.defaultView;
   if (!view?.getComputedStyle) return null;
+
+  // Prefer the actual rendered accent used by the template. Some native
+  // templates expose legacy/default CSS variables that can remain blue while
+  // the visible section ribbons are using the user's selected accent.
+  const accentSelectors = [
+    '.section-label',
+    '.sidebar-label',
+    '.photo-ribbon',
+    '.section-title',
+    '.section-heading'
+  ];
+
+  for (const selector of accentSelectors) {
+    const candidates = [...root.querySelectorAll(selector)];
+    for (const candidate of candidates) {
+      const background = parseRgbColor(view.getComputedStyle(candidate).backgroundColor);
+      if (!background) continue;
+      const luminance = relativeLuminance(background);
+      if (luminance < 0.92 && (contrastRatio(background, {r:255,g:255,b:255,a:1}) >= 2.2
+        || contrastRatio(background, {r:31,g:41,b:55,a:1}) >= 2.2)) {
+        return background;
+      }
+    }
+  }
+
   const style = view.getComputedStyle(root);
   return parseRgbColor(style.getPropertyValue('--theme-color'))
     || parseRgbColor(style.getPropertyValue('--primary'))
@@ -619,6 +638,17 @@ function applySkillsLanguagesColorSystem(element, root) {
   element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme));
   element.setAttribute('data-v2-rating-contrast', surfaceLuminance < 0.25 ? 'light' : 'theme');
   element.setAttribute('data-v2-pill-mode', mode);
+
+  // Apply resolved pill colors directly at item level so native selectors
+  // such as ".skill-tag { color:#000 !important; }" cannot override them.
+  if (element.matches?.('[data-v2-list-style="pills"]')) {
+    element.style.setProperty('background-color', rgbString(pillBackground), 'important');
+    element.style.setProperty('color', rgbString(pillText), 'important');
+    element.style.setProperty('border-color', rgbString(theme), 'important');
+    element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
+      valueNode.style.setProperty('color', rgbString(pillText), 'important');
+    });
+  }
 }
 
 function applyListStyles(root, snapshot) {
