@@ -1,4 +1,6 @@
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.2.0';
+import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
+import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.5.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -347,34 +349,16 @@ function applyRepeats(root, snapshot) {
     const sectionType = parts[0];
     const mode = parts[1] || 'entries';
     const section = findCanonicalSection(snapshot, sectionType);
+    const hiddenEntries = Array.isArray(snapshot?.configuration?.hiddenEntries) ? snapshot.configuration.hiddenEntries.map(String) : [];
+    const sectionId = String(section?.id || sectionType || '');
+    const visibleEntries = (Array.isArray(section?.entries) ? section.entries : [])
+      .filter(entry => entry?.visibility !== false)
+      .filter(entry => !hiddenEntries.includes(sectionId + ':' + String(entry.id)) && !hiddenEntries.includes(String(entry.id)));
     const entries = mode === 'values'
-      ? (() => {
-          const hiddenEntries = Array.isArray(snapshot?.configuration?.hiddenEntries) ? snapshot.configuration.hiddenEntries.map(String) : [];
-          const hiddenFields = Array.isArray(snapshot?.configuration?.hiddenFields) ? snapshot.configuration.hiddenFields.map(String) : [];
-          const sectionId = String(section?.id || sectionType || '');
-          const entryValues = (Array.isArray(section?.entries) ? section.entries : [])
-            .filter(entry => entry?.visibility !== false)
-            .filter(entry => !hiddenEntries.includes(sectionId + ':' + String(entry.id)) && !hiddenEntries.includes(String(entry.id)))
-            .map(entry => entry.values || entry)
-            .filter(Boolean);
-          if (entryValues.length) return entryValues;
-          const fields = Array.isArray(section?.fields) ? section.fields : [];
-          return fields
-            .filter(field => field?.visibility !== false)
-            .filter(field => !hiddenFields.includes(sectionId + ':' + String(field.id)) && !hiddenFields.includes(String(field.id)))
-            .flatMap(field => {
-              const raw = field?.value;
-              if (raw == null) return [];
-              if (sectionType === 'skills' || sectionType === 'languages') {
-                return String(raw).split(/[,\n]+/).map(value => value.trim()).filter(Boolean).map(value => ({
-                  [sectionType === 'skills' ? 'skill' : 'language']: value,
-                  value
-                }));
-              }
-              return [{ value: raw }];
-            });
-        })()
-      : getVisibleEntries(snapshot, section);
+      ? visibleEntries
+          .map(entry => ({ entry, item: entry.values || entry }))
+          .filter(({item}) => item && Object.values(item).some(value => String(value ?? '').trim()))
+      : getVisibleEntries(snapshot, section).map(entry => ({ entry, item: entry }));
 
     if (!section || !isCanonicalSectionVisible(snapshot, section)) {
       container.remove();
@@ -382,24 +366,24 @@ function applyRepeats(root, snapshot) {
     }
 
     const prototype = container.cloneNode(true);
-    const repeatAttribute = prototype.getAttribute('data-v2-repeat');
     prototype.removeAttribute('data-v2-repeat');
     prototype.removeAttribute('data-v2-item');
-    const repeatItem = prototype.getAttribute('data-v2-repeat-item');
     prototype.removeAttribute('data-v2-repeat-item');
 
-    // This native T01 form uses the repeated element itself as the prototype.
     const parent = container.parentNode;
     if (!parent) continue;
     const fragment = container.ownerDocument.createDocumentFragment();
 
-    for (const item of entries) {
+    for (const record of entries) {
+      const {entry,item}=record;
       const cloneNode = prototype.cloneNode(true);
-      if (mode === 'entries') {
-        cloneNode.setAttribute('data-v2-preview-entry-id', String(item.id || ''));
-        cloneNode.setAttribute('data-v2-preview-section-type', String(sectionType));
+      cloneNode.setAttribute('data-v2-preview-entry-id', String(entry.id || ''));
+      cloneNode.setAttribute('data-v2-preview-section-type', String(sectionType));
+      if (sectionType === 'skills' || sectionType === 'languages') {
+        cloneNode.setAttribute('data-v2-skills-languages-item', sectionType);
+        cloneNode.setAttribute('data-v2-skills-languages-entry-id', String(entry.id || ''));
       }
-      const context = mode === 'values' ? { item } : { entry: item };
+      const context = mode === 'values' ? { item, entry } : { entry };
       applyValues(cloneNode, snapshot, context);
       if (mode === 'values') {
         for (const element of cloneNode.querySelectorAll('[data-v2-item-value]')) {
@@ -413,7 +397,6 @@ function applyRepeats(root, snapshot) {
       applyVisibility(cloneNode, snapshot, context);
       fragment.appendChild(cloneNode);
     }
-
     parent.replaceChild(fragment, container);
   }
 }
@@ -436,120 +419,74 @@ function applyItemValueFallbacks(root, snapshot) {
 }
 
 
-const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
-  skills: {
-    tags: ['off','text','stars','bars','dots'],
-    inline: ['off'],
-    bullets: ['off','text','stars','bars','dots'],
-    compact: ['off','text','stars','dots']
-  },
-  languages: {
-    stacked: ['off','text','stars','bars','dots'],
-    inline: ['off'],
-    pills: ['off'],
-    compact: ['off','text','stars','dots']
-  }
+const PROFICIENCY_LABELS_FALLBACK = Object.freeze({
+  skills: Object.freeze(['','Beginner','Intermediate','Proficient','Advanced','Expert']),
+  languages: Object.freeze(['','Basic','Conversational','Proficient','Fluent','Native / Bilingual'])
 });
 
-const PROFICIENCY_LABELS = Object.freeze({
-  skills: ['', 'Beginner', 'Intermediate', 'Proficient', 'Advanced', 'Expert'],
-  languages: ['', 'Basic', 'Conversational', 'Proficient', 'Fluent', 'Native / Bilingual']
-});
+function renderProficiencyNode(root, type, entry, style) {
+  const value = getSkillOrLanguageProficiency(entry);
+  if (!value || style === 'off') return null;
+  const label = (PROFICIENCY_LABELS[type] || PROFICIENCY_LABELS_FALLBACK[type] || [])[value] || '';
+  const holder = root.ownerDocument.createElement('span');
+  holder.className = 'v2-proficiency';
+  holder.setAttribute('data-v2-proficiency-style', style);
+  holder.setAttribute('data-v2-proficiency-level', String(value));
+  holder.setAttribute('aria-label', label + ', ' + value + ' out of 5');
+  holder.setAttribute('title', label + ' — ' + value + ' / 5');
+  if (style === 'text') {
+    const text = root.ownerDocument.createElement('span');
+    text.className = 'v2-proficiency-label';
+    text.textContent = label;
+    holder.appendChild(text);
+  } else {
+    const visual = root.ownerDocument.createElement('span');
+    visual.className = 'v2-proficiency-visual';
+    if (style === 'stars') {
+      visual.textContent = '★'.repeat(value) + '☆'.repeat(5 - value);
+    } else if (style === 'dots') {
+      visual.textContent = '●'.repeat(value) + '○'.repeat(5 - value);
+    } else if (style === 'bars') {
+      for (let i=1;i<=5;i++) {
+        const bar=root.ownerDocument.createElement('i');
+        bar.className='v2-proficiency-bar'+(i<=value?' is-on':'');
+        bar.setAttribute('aria-hidden','true');
+        visual.appendChild(bar);
+      }
+    }
+    holder.appendChild(visual);
+    const score=root.ownerDocument.createElement('span');
+    score.className='v2-proficiency-score';
+    score.textContent=value+'/5';
+    holder.appendChild(score);
+  }
+  return holder;
+}
 
 function applyListStyles(root, snapshot) {
-  const styles = snapshot?.configuration?.presentation?.listStyles || {};
-  const selected = {
-    skills: String(styles.skills || 'tags'),
-    languages: String(styles.languages || 'stacked')
-  };
-  const styleElement = root.ownerDocument.createElement('style');
-  styleElement.textContent = `
-    [data-v2-template-root] .v2-list-skills-tags{display:inline-flex!important;align-items:center!important;vertical-align:middle!important;background:var(--primary-light)!important;color:var(--primary)!important;border:1px solid var(--primary)!important;border-radius:999px!important;padding:3px 8px!important;margin:0 4px 5px 0!important;font-size:9px!important;font-weight:700!important;line-height:1.2!important}
-    [data-v2-template-root] .v2-list-skills-inline{display:inline!important;background:none!important;border:0!important;padding:0!important;margin:0!important;color:inherit!important;font-size:10px!important;font-weight:500!important}
-    [data-v2-template-root] .v2-list-skills-inline:not(:last-child)::after{content:', ';white-space:pre}
-    [data-v2-template-root] .v2-list-skills-bullets{display:list-item!important;margin:0 0 5px 17px!important;padding:0!important;line-height:1.35!important}
-    [data-v2-template-root] .v2-list-skills-compact{display:inline!important;margin:0!important;padding:0!important;font-size:9px!important;font-weight:600!important;line-height:1.3!important}
-    [data-v2-template-root] .v2-list-skills-compact:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
-    [data-v2-template-root] .v2-list-languages-stacked{display:block!important;margin:0 0 7px!important;line-height:1.35!important}
-    [data-v2-template-root] .v2-list-languages-inline{display:inline!important;margin:0!important;font-size:10px!important;font-weight:500!important}
-    [data-v2-template-root] .v2-list-languages-inline .lang-name{display:inline!important}
-    [data-v2-template-root] .v2-list-languages-inline:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
-    [data-v2-template-root] .v2-list-languages-pills{display:inline-flex!important;align-items:center!important;vertical-align:middle!important;background:var(--primary)!important;color:var(--primary-contrast)!important;border-radius:999px!important;padding:4px 9px!important;margin:0 4px 5px 0!important;font-size:9px!important;font-weight:700!important;line-height:1.2!important}
-    [data-v2-template-root] .v2-list-languages-compact{display:inline!important;margin:0!important;padding:0!important;font-size:9px!important;font-weight:600!important;line-height:1.3!important}
-    [data-v2-template-root] .v2-list-languages-compact:not(:last-child)::after{content:' • ';white-space:pre;color:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating{display:inline-flex!important;align-items:center!important;gap:4px!important;margin-left:7px!important;vertical-align:middle!important;white-space:nowrap!important;font-size:8px!important;font-weight:600!important;line-height:1!important}
-    [data-v2-template-root] .v2-item-rating-label{font-size:8px!important;font-weight:700!important;color:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating-score{font-size:7px!important;font-weight:700!important;color:var(--primary)!important;letter-spacing:0!important}
-    [data-v2-template-root] .v2-item-rating-star{display:inline-block!important;font-size:10px!important;line-height:1!important;color:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating-star.is-empty{color:#AAB3C2!important}
-    [data-v2-template-root] .v2-item-rating-bar{display:inline-block!important;width:14px!important;height:5px!important;border:1px solid var(--primary)!important;border-radius:3px!important;background:transparent!important;box-sizing:border-box!important}
-    [data-v2-template-root] .v2-item-rating-bar.is-on{background:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating-dot{display:inline-block!important;width:7px!important;height:7px!important;border:1px solid var(--primary)!important;border-radius:50%!important;background:transparent!important;box-sizing:border-box!important}
-    [data-v2-template-root] .v2-item-rating-dot.is-on{background:var(--primary)!important}
-    [data-v2-template-root] .v2-item-rating-visual{display:inline-flex!important;align-items:center!important;gap:3px!important}
-  `;
-  root.prepend(styleElement);
-
-  const skillClass='v2-list-skills-'+(selected.skills==='inline'||selected.skills==='bullets'||selected.skills==='compact'?selected.skills:'tags');
-  const languageClass='v2-list-languages-'+(selected.languages==='inline'||selected.languages==='pills'||selected.languages==='compact'?selected.languages:'stacked');
-  root.querySelectorAll('.skill-tag').forEach(element => element.classList.add(skillClass));
-  root.querySelectorAll('.lang-item').forEach(element => element.classList.add(languageClass));
-
-  const ratings=snapshot?.configuration?.presentation?.ratings||{};
-  const addRating=(element,type)=>{
-    const cfg=ratings[type]; if(!cfg || cfg.style==='off') return;
-    const allowed=LIST_STYLE_RATING_COMPATIBILITY[type]?.[selected[type]] || ['off'];
-    if(!allowed.includes(String(cfg.style))) return;
-    const name=String(element.textContent||'').trim(); if(!name)return;
-    const value=Math.max(0,Math.min(5,Number(cfg.values?.[name]||0)));
-    if(value===0)return;
-
-    const level=PROFICIENCY_LABELS[type]?.[value]||'';
-    const badge=root.ownerDocument.createElement('span');
-    badge.className='v2-item-rating';
-    badge.setAttribute('data-v2-proficiency-level',String(value));
-    badge.setAttribute('title',level+' — '+value+' / 5');
-    badge.setAttribute('aria-label',name+' proficiency: '+level+', '+value+' out of 5');
-
-    if(cfg.style==='text'){
-      const label=root.ownerDocument.createElement('span');
-      label.className='v2-item-rating-label';
-      label.textContent=level;
-      badge.appendChild(label);
-    } else {
-      const visual=root.ownerDocument.createElement('span');
-      visual.className='v2-item-rating-visual';
-      if(cfg.style==='stars'){
-        for(let i=1;i<=5;i++){
-          const star=root.ownerDocument.createElement('span');
-          star.className='v2-item-rating-star'+(i<=value?'':' is-empty');
-          star.textContent=i<=value?'★':'☆';
-          visual.appendChild(star);
-        }
-      } else if(cfg.style==='dots'){
-        for(let i=1;i<=5;i++){
-          const dot=root.ownerDocument.createElement('i');
-          dot.className='v2-item-rating-dot'+(i<=value?' is-on':'');
-          visual.appendChild(dot);
-        }
-      } else {
-        for(let i=1;i<=5;i++){
-          const bar=root.ownerDocument.createElement('i');
-          bar.className='v2-item-rating-bar'+(i<=value?' is-on':'');
-          visual.appendChild(bar);
-        }
+  const templateId=String(root.getAttribute('data-v2-template-id')||snapshot?.configuration?.template?.id||'');
+  const contract=getSkillsLanguagesPresentationContract(templateId);
+  const presentation=snapshot?.configuration?.presentation||{};
+  for (const type of ['skills','languages']) {
+    const selected=String(presentation?.listStyles?.[type]||contract[type].default);
+    const proficiencyStyle=String(presentation?.ratings?.[type]?.style||'off');
+    const section=findCanonicalSection(snapshot,type);
+    const entries=new Map((section?.entries||[]).map(entry=>[String(entry.id),entry]));
+    root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
+      element.setAttribute('data-v2-list-style',selected);
+      const entryId=String(element.getAttribute('data-v2-skills-languages-entry-id')||'');
+      const entry=entries.get(entryId);
+      if(!entry) return;
+      element.setAttribute('data-v2-proficiency-style',proficiencyStyle);
+      element.setAttribute('data-v2-proficiency-level',String(getSkillOrLanguageProficiency(entry)));
+      element.querySelectorAll('.v2-proficiency').forEach(node=>node.remove());
+      const node=renderProficiencyNode(root,type,entry,proficiencyStyle);
+      if(node) {
+        const valueNode=element.querySelector('[data-v2-item-value]');
+        (valueNode?.parentElement||element).appendChild(node);
       }
-      badge.appendChild(visual);
-      const score=root.ownerDocument.createElement('span');
-      score.className='v2-item-rating-score';
-      score.textContent=value+'/5';
-      badge.appendChild(score);
-    }
-    element.appendChild(badge);
-  };
-
-  root.querySelectorAll('.skill-tag').forEach(el=>addRating(el,'skills'));
-  root.querySelectorAll('.lang-item').forEach(el=>addRating(el,'languages'));
+    });
+  }
 }
 
 function applyTheme(root, snapshot) {
