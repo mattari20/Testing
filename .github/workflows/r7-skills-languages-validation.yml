@@ -1,0 +1,16 @@
+name: R7 Skills Languages Validation
+on:
+  push:
+    branches:
+      - feat/r7-skills-languages-architecture
+jobs:
+  r7:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: npm run test:r7-skills-languages && npm run test:m64 && npm run test:m72 && npm run test:m14 && npm run test:m15
