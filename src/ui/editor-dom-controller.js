@@ -1,6 +1,6 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 
-export const EDITOR_DOM_VERSION = '1.20.0';
+export const EDITOR_DOM_VERSION = '1.30.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -330,9 +330,14 @@ export function bindEditorFields(root, surface, options = {}) {
     const handler=()=>surface.dispatch(createEditorCommand({type:'set-rating-style',target:{sectionType:input.dataset.v2EditorRatingStyle},payload:{sectionType:input.dataset.v2EditorRatingStyle,style:input.value}}));
     input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
   });
-  root.querySelectorAll('[data-v2-editor-item-rating]').forEach(input => {
-    const handler=()=>surface.dispatch(createEditorCommand({type:'set-item-rating',target:{sectionType:input.dataset.v2EditorItemRating},payload:{sectionType:input.dataset.v2EditorItemRating,item:input.dataset.v2RatingItem,rating:Number(input.value)}}));
-    input.addEventListener('change',handler); listeners.push(()=>input.removeEventListener('change',handler));
+  root.querySelectorAll('[data-v2-editor-entry-rating]').forEach(input => {
+    const handler=()=>surface.dispatch(createEditorCommand({
+      type:'set-item-rating',
+      target:{sectionType:input.dataset.v2RatingSection,entryId:input.dataset.v2RatingEntry},
+      payload:{sectionType:input.dataset.v2RatingSection,entryId:input.dataset.v2RatingEntry,rating:Number(input.value)}
+    }));
+    input.addEventListener('change',handler);
+    listeners.push(()=>input.removeEventListener('change',handler));
   });
   root.querySelectorAll('[data-v2-editor-list-style]').forEach(input => {
     const handler = () => {
@@ -343,21 +348,6 @@ export function bindEditorFields(root, surface, options = {}) {
         target:{sectionType},
         payload:{sectionType,style}
       }));
-
-      const incompatibleStyles = {
-        skills: new Set(['inline']),
-        languages: new Set(['inline','pills'])
-      };
-      if(incompatibleStyles[sectionType]?.has(style)){
-        const current = surface.getState()?.session?.application?.masterProfile?.configuration?.presentation?.ratings?.[sectionType]?.style;
-        if(String(current || 'off') !== 'off'){
-          surface.dispatch(createEditorCommand({
-            type:'set-rating-style',
-            target:{sectionType},
-            payload:{sectionType,style:'off'}
-          }));
-        }
-      }
     };
     input.addEventListener('change', handler);
     listeners.push(() => input.removeEventListener('change', handler));
