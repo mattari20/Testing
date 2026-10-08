@@ -1,6 +1,5 @@
 import { createMasterProfile, createTargetedCV, createDocumentSnapshot } from '../core/career-document-core.js';
 import { migrateSkillsLanguagesProfile, migrateSkillsLanguagesTargetedCV } from '../core/skills-languages.js';
-import { createMasterProfile, createTargetedCV, createDocumentSnapshot } from '../core/career-document-core.js';
 import { createDocumentLifecycle } from '../core/document-lifecycle.js';
 import { assembleDocument } from '../assembly/document-assembly-engine.js';
 
