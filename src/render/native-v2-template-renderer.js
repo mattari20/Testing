@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.7.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.8.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -472,23 +472,18 @@ function renderProficiencyNode(root, type, entry, style) {
   } else {
     const visual = root.ownerDocument.createElement('span');
     visual.className = 'v2-proficiency-visual';
-    if (style === 'stars') {
-      visual.textContent = '★'.repeat(value) + '☆'.repeat(5 - value);
-    } else if (style === 'dots') {
-      visual.classList.add('v2-proficiency-dots');
-      for (let i=1;i<=5;i++) {
-        const dot=root.ownerDocument.createElement('i');
-        dot.className='v2-proficiency-dot'+(i<=value?' is-on':'');
-        dot.setAttribute('aria-hidden','true');
-        visual.appendChild(dot);
+    for (let i=1;i<=5;i++) {
+      const item = root.ownerDocument.createElement('i');
+      item.setAttribute('aria-hidden','true');
+      if (style === 'stars') {
+        item.className = 'v2-proficiency-star v2-proficiency-visual-item' + (i<=value?' is-on':'');
+        item.textContent = i<=value ? '★' : '☆';
+      } else if (style === 'dots') {
+        item.className = 'v2-proficiency-dot v2-proficiency-visual-item' + (i<=value?' is-on':'');
+      } else if (style === 'bars') {
+        item.className = 'v2-proficiency-bar v2-proficiency-visual-item' + (i<=value?' is-on':'');
       }
-    } else if (style === 'bars') {
-      for (let i=1;i<=5;i++) {
-        const bar=root.ownerDocument.createElement('i');
-        bar.className='v2-proficiency-bar'+(i<=value?' is-on':'');
-        bar.setAttribute('aria-hidden','true');
-        visual.appendChild(bar);
-      }
+      visual.appendChild(item);
     }
     holder.appendChild(visual);
     // Visual proficiency intentionally has no visible numeric score such as 5/5.
@@ -505,8 +500,14 @@ function applyListStyles(root, snapshot) {
       + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:6px!important;margin-bottom:6px!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] [data-v2-list-style="compact"]{display:inline-flex!important;align-items:center!important;margin-right:5px!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:list-item!important;}'
-      + '[data-v2-template-root] .v2-proficiency-dots{display:inline-flex!important;align-items:center!important;gap:3px!important;line-height:1!important;vertical-align:middle!important;}'
-      + '[data-v2-template-root] .v2-proficiency-dot{display:inline-block!important;width:.58em!important;height:.58em!important;min-width:.58em!important;flex:0 0 .58em!important;border:1px solid currentColor!important;border-radius:50%!important;box-sizing:border-box!important;line-height:1!important;}'
+      + '[data-v2-template-root] .v2-proficiency[data-v2-proficiency-style="text"]{margin-left:8px!important;padding-left:8px!important;border-left:1px solid currentColor!important;opacity:.82!important;}'
+      + '[data-v2-template-root] .v2-proficiency[data-v2-proficiency-style="text"] .v2-proficiency-label{font-size:.78em!important;font-weight:700!important;letter-spacing:.01em!important;white-space:nowrap!important;}'
+      + '[data-v2-template-root] .v2-proficiency-visual{display:inline-flex!important;align-items:center!important;gap:3px!important;height:12px!important;vertical-align:middle!important;line-height:1!important;}'
+      + '[data-v2-template-root] .v2-proficiency-visual-item{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:10px!important;height:10px!important;min-width:10px!important;max-width:10px!important;box-sizing:border-box!important;flex:0 0 10px!important;margin:0!important;padding:0!important;line-height:10px!important;vertical-align:middle!important;}'
+      + '[data-v2-template-root] .v2-proficiency-star{font-size:11px!important;font-family:Arial,sans-serif!important;font-weight:700!important;}'
+      + '[data-v2-template-root] .v2-proficiency-bar{height:6px!important;border:1px solid currentColor!important;border-radius:2px!important;}'
+      + '[data-v2-template-root] .v2-proficiency-bar.is-on{background:currentColor!important;}'
+      + '[data-v2-template-root] .v2-proficiency-dot{width:8px!important;height:8px!important;min-width:8px!important;max-width:8px!important;flex-basis:8px!important;border:1px solid currentColor!important;border-radius:50%!important;}'
       + '[data-v2-template-root] .v2-proficiency-dot.is-on{background:currentColor!important;}';
     root.prepend(style);
   }
