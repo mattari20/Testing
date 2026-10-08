@@ -1,3 +1,5 @@
+import { getSkillsLanguagesPresentationContract, resolveSkillsLanguagesPresentation } from '../templates/skills-languages-presentation-contract.js';
+import { getSkillOrLanguageEntry } from '../core/skills-languages.js';
 import { addSection, removeSection, setSectionTitle, addField, removeField, setFieldDefinition, addEntry, duplicateEntry,
   setSectionOrder, setFieldOrder, setEntryOrder, configureTargetedCV, createDocumentSnapshot,
   setTargetedSectionVisibility, setTargetedFieldVisibility, setTargetedEntryVisibility, setTargetedAssetVisibility
@@ -29,8 +31,35 @@ export function executeEditorCommand(editorSession,command){
   if(!editorSession?.application)throw new Error('Editor session is required.');
   const {masterProfile,targetedCV}=editorSession.application; const target=command.target||{}; const p=command.payload||{};
   switch(command.type){
-    case COMMAND_TYPE.SET_RATING_STYLE:{const type=String(target.sectionType||p.sectionType||'');if(!['skills','languages'].includes(type))throw new Error('Ratings are supported for skills and languages only.');const style=['off','text','stars','bars','dots'].includes(String(p.style))?String(p.style):'off';targetedCV.configuration.presentation=targetedCV.configuration.presentation||{};targetedCV.configuration.presentation.ratings=targetedCV.configuration.presentation.ratings||{};targetedCV.configuration.presentation.ratings[type]=targetedCV.configuration.presentation.ratings[type]||{style:'off',values:{}};targetedCV.configuration.presentation.ratings[type].style=style;touch(targetedCV);break;}
-    case COMMAND_TYPE.SET_ITEM_RATING:{const type=String(target.sectionType||p.sectionType||'');if(!['skills','languages'].includes(type))throw new Error('Ratings are supported for skills and languages only.');const item=String(p.item||'').trim();if(!item)throw new Error('Rating item is required.');const rating=Math.max(0,Math.min(5,Number(p.rating)||0));targetedCV.configuration.presentation=targetedCV.configuration.presentation||{};targetedCV.configuration.presentation.ratings=targetedCV.configuration.presentation.ratings||{};targetedCV.configuration.presentation.ratings[type]=targetedCV.configuration.presentation.ratings[type]||{style:'off',values:{}};targetedCV.configuration.presentation.ratings[type].values=targetedCV.configuration.presentation.ratings[type].values||{};targetedCV.configuration.presentation.ratings[type].values[item]=rating;touch(targetedCV);break;}
+    case COMMAND_TYPE.SET_RATING_STYLE:{
+      const type=String(target.sectionType||p.sectionType||'');
+      if(!['skills','languages'].includes(type))throw new Error('Proficiency is supported for skills and languages only.');
+      const templateId=String(targetedCV.configuration?.template?.id||'');
+      const contract=getSkillsLanguagesPresentationContract(templateId)[type];
+      const style=String(p.style||'off');
+      if(!contract.proficiency.includes(style))throw new Error('Unsupported proficiency display for '+type+' in the selected template.');
+      targetedCV.configuration.presentation=resolveSkillsLanguagesPresentation(templateId,{
+        ...targetedCV.configuration.presentation,
+        ratings:{
+          ...(targetedCV.configuration.presentation?.ratings||{}),
+          [type]:{...(targetedCV.configuration.presentation?.ratings?.[type]||{}),style,values:{}}
+        }
+      });
+      touch(targetedCV);
+      break;
+    }
+    case COMMAND_TYPE.SET_ITEM_RATING:{
+      const type=String(target.sectionType||p.sectionType||'');
+      if(!['skills','languages'].includes(type))throw new Error('Proficiency is supported for skills and languages only.');
+      const section=findSection(masterProfile,type);
+      const entryId=String(target.entryId||p.entryId||'').trim();
+      const entry=getSkillOrLanguageEntry(section,entryId);
+      if(!entry)throw new Error('Skill/Language entry not found: '+entryId);
+      const rating=Math.max(0,Math.min(5,Number(p.rating)||0));
+      entry.values={...(entry.values||{}),proficiency:rating};
+      touch(masterProfile);
+      break;
+    }
     case COMMAND_TYPE.SET_SECTION_PLACEMENT:{const section=findSection(masterProfile,target.sectionId);if(!section||CORE_SECTION_TYPES.has(String(section.type)))throw new Error('Custom section placement only.');const placement=['left','right'].includes(String(p.placement))?String(p.placement):'left';targetedCV.configuration.presentation=targetedCV.configuration.presentation||{};targetedCV.configuration.presentation.sectionPlacement=targetedCV.configuration.presentation.sectionPlacement||{};targetedCV.configuration.presentation.sectionPlacement[String(section.id)]=placement;touch(targetedCV);break;}
     case COMMAND_TYPE.SET_IDENTITY:{const key=String(target.key||p.key||'');if(!key)throw new Error('Identity key is required.');masterProfile.careerData.identity[key]=p.value==null?'':p.value;touch(masterProfile);break;}
     case COMMAND_TYPE.ADD_IDENTITY_FIELD:{const key=String(p.key||'').trim();if(!/^[A-Za-z][A-Za-z0-9_]*$/.test(key))throw new Error('Identity field key is invalid.');if(masterProfile.careerData.identity[key]===undefined)masterProfile.careerData.identity[key]='';const active=Array.isArray(targetedCV.configuration.identityFields)?targetedCV.configuration.identityFields:[];targetedCV.configuration.identityFields=Array.from(new Set([...active,key]));touch(masterProfile);touch(targetedCV);break;}
@@ -74,14 +103,18 @@ export function executeEditorCommand(editorSession,command){
     case COMMAND_TYPE.SET_LIST_STYLE:{
       const section=String(p.sectionType||target.sectionType||'');
       const style=String(p.style||'');
-      const allowed={
-        skills:new Set(['tags','inline','bullets','compact']),
-        languages:new Set(['stacked','inline','pills','compact'])
-      };
-      if(!allowed[section]?.has(style))throw new Error('Unsupported list style.');
-      configureTargetedCV(targetedCV,{presentation:{...targetedCV.configuration.presentation,listStyles:{...(targetedCV.configuration.presentation?.listStyles||{}),[section]:style}}});break;
+      if(!['skills','languages'].includes(section))throw new Error('Unsupported list style section.');
+      const templateId=String(targetedCV.configuration?.template?.id||'');
+      const allowed=getSkillsLanguagesPresentationContract(templateId)[section]?.supported||[];
+      if(!allowed.includes(style))throw new Error('Unsupported list style for '+section+' in the selected template.');
+      configureTargetedCV(targetedCV,{presentation:resolveSkillsLanguagesPresentation(templateId,{...targetedCV.configuration.presentation,listStyles:{...(targetedCV.configuration.presentation?.listStyles||{}),[section]:style}})});break;
     }
-    case COMMAND_TYPE.SET_TEMPLATE:configureTargetedCV(targetedCV,{template:{id:String(p.templateId),version:p.version||null}});break;
+    case COMMAND_TYPE.SET_TEMPLATE:{
+      const templateId=String(p.templateId||'');
+      const nextPresentation=resolveSkillsLanguagesPresentation(templateId,targetedCV.configuration.presentation||{});
+      configureTargetedCV(targetedCV,{template:{id:templateId,version:p.version||null},presentation:nextPresentation});
+      break;
+    }
     case COMMAND_TYPE.SET_VARIANT:configureTargetedCV(targetedCV,{presentation:{variant:p.variant||null}});break;
     case COMMAND_TYPE.UPLOAD_ASSET:{const asset={...p};const assetId=String(asset.id||target.assetId||'');masterProfile.careerData.assets=(masterProfile.careerData.assets||[]).filter(item=>String(item?.id||item?.key||'')!==assetId&&String(item?.key||'')!==String(asset.key||''));masterProfile.careerData.assets.push(asset);touch(masterProfile);break;}
     case COMMAND_TYPE.REMOVE_ASSET:masterProfile.careerData.assets=(masterProfile.careerData.assets||[]).filter(a=>String(a?.id||a?.key||'')!==String(target.assetId));touch(masterProfile);break;
