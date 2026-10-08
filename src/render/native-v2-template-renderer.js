@@ -438,16 +438,15 @@ function applyItemValueFallbacks(root, snapshot) {
 
 const LIST_STYLE_RATING_COMPATIBILITY = Object.freeze({
   skills: {
-    tags: ['off','text','stars','bars','dots'],
-    inline: ['off'],
+    tags: ['off'],
     bullets: ['off','text','stars','bars','dots'],
-    compact: ['off','text','stars','dots']
+    compact: ['off','text','stars']
   },
   languages: {
     stacked: ['off','text','stars','bars','dots'],
     inline: ['off'],
     pills: ['off'],
-    compact: ['off','text','stars','dots']
+    compact: ['off','text','stars']
   }
 });
 
@@ -508,8 +507,8 @@ function applyListStyles(root, snapshot) {
     const badge=root.ownerDocument.createElement('span');
     badge.className='v2-item-rating';
     badge.setAttribute('data-v2-proficiency-level',String(value));
-    badge.setAttribute('title',level+' — '+value+' / 5');
-    badge.setAttribute('aria-label',name+' proficiency: '+level+', '+value+' out of 5');
+    badge.setAttribute('title',level || (value + ' of 5'));
+    badge.setAttribute('aria-label',name+' proficiency: '+(level || ('level '+value))+' out of 5');
 
     if(cfg.style==='text'){
       const label=root.ownerDocument.createElement('span');
@@ -540,10 +539,8 @@ function applyListStyles(root, snapshot) {
         }
       }
       badge.appendChild(visual);
-      const score=root.ownerDocument.createElement('span');
-      score.className='v2-item-rating-score';
-      score.textContent=value+'/5';
-      badge.appendChild(score);
+      // Visual ratings are intentionally score-free (no "5/5" or "3/5" text).
+      // The visual itself communicates the level more cleanly and professionally.
     }
     element.appendChild(badge);
   };
