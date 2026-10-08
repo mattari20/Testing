@@ -45,7 +45,7 @@ test('entry proficiency is independent and survives duplicate names', () => {
 
 test('targeted CV migration moves legacy ratings into entry data and clears name-keyed ratings', () => {
   const app=createCVApplication({
-    profileData:oldProfileData.careerData,
+    profileData:oldProfileData,
     cvData:{
       title:'R7 Test',
       configuration:{
