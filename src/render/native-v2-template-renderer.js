@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.18.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.19.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -602,15 +602,9 @@ function collectSkillsLanguagesVisualNodes(element) {
   const nodes = [element];
   const descendants = [...element.querySelectorAll?.('*') || []];
 
-  // Prefer the actual value wrapper when a template nests the visible pill
-  // inside the universal item. This remains template-agnostic.
-  for (const node of descendants) {
-    if (node.hasAttribute?.('data-v2-item-value')) nodes.push(node);
-  }
-
-  // Also include nested elements that explicitly look like a visual tag/pill.
-  // Do not touch generic containers: only elements with a pill/tag-like class
-  // are eligible here.
+  // Some native templates wrap the visible pill in a dedicated tag/language
+  // node. Color that node too, but never paint the value text wrapper itself;
+  // doing so can create a second nested pill/background inside the real pill.
   for (const node of descendants) {
     const className = String(node.className || '').toLowerCase();
     if (/(^|[-_])(skill|language|lang|tag|pill)([-_]|$)/.test(className)) nodes.push(node);
@@ -649,38 +643,26 @@ function setSkillsLanguagesVisualColor(node, background, foreground, border) {
 function applySkillsLanguagesColorSystem(element, root) {
   if (!element?.style) return;
 
-  // Resolve the surface from the actual rendered item first, then walk upward
-  // through transparent ancestors. This makes the decision independent of
-  // template DOM depth.
-  const view = element.ownerDocument?.defaultView;
-  let surface = null;
-  if (view?.getComputedStyle) {
-    const ownBackground = parseRgbColor(view.getComputedStyle(element).backgroundColor);
-    if (ownBackground) surface = ownBackground;
-  }
-  surface = surface || findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
-
+  // IMPORTANT: the element itself may already have the legacy blue pill
+  // background. It is never the surface. Resolve the real surface only from
+  // ancestors so the color decision cannot become self-referential.
+  const surface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
   const theme = getThemeColor(root || element) || {r:37,g:99,b:235,a:1};
   const white = {r:255,g:255,b:255,a:1};
   const dark = {r:31,g:41,b:55,a:1};
   const surfaceLuminance = relativeLuminance(surface);
 
   // Universal smart-pill rule:
-  //   • light/white surface -> theme-color pill + white text
-  //   • dark surface        -> white pill + theme-color text
+  //   light surface -> selected theme pill + accessible foreground
+  //   dark surface  -> white pill + selected theme foreground
   const isDarkSurface = surfaceLuminance < 0.5;
   let pillBackground = isDarkSurface ? white : theme;
   let pillText = isDarkSurface ? theme : white;
   let mode = isDarkSurface ? 'white-on-dark-surface' : 'theme-on-light-surface';
 
-  if (!isDarkSurface && contrastRatio(theme, white) < 4.5) {
+  if (contrastRatio(pillBackground, pillText) < 4.5) {
     pillText = dark;
-    mode = 'theme-on-light-surface-dark-text';
-  }
-
-  if (isDarkSurface && contrastRatio(white, theme) < 4.5) {
-    pillText = dark;
-    mode = 'white-on-dark-surface-dark-theme';
+    mode += '-dark-text';
   }
 
   const ratingColor = isDarkSurface ? white : theme;
@@ -691,23 +673,56 @@ function applySkillsLanguagesColorSystem(element, root) {
   element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme), 'important');
   element.setAttribute('data-v2-rating-contrast', isDarkSurface ? 'light' : 'theme');
   element.setAttribute('data-v2-pill-mode', mode);
-  element.setAttribute('data-v2-color-source', 'universal-surface-aware');
+  element.setAttribute('data-v2-color-source', 'universal-surface-aware-v3');
+  element.setAttribute('data-v2-pill-background', rgbString(pillBackground));
+  element.setAttribute('data-v2-pill-foreground', rgbString(pillText));
+  element.setAttribute('data-v2-pill-theme', rgbString(theme));
 
   const isPill = element.matches?.('[data-v2-list-style="pills"]');
   if (isPill) {
-    // Apply to the actual item AND any nested visual tag/pill node. This is
-    // the critical binding layer for legacy/native template selectors.
+    // Apply directly to the final visual node with inline !important styles.
+    // This is intentionally item-level only: no template parent/container/grid
+    // layout properties are changed.
     for (const node of collectSkillsLanguagesVisualNodes(element)) {
       setSkillsLanguagesVisualColor(node, pillBackground, pillText, theme);
     }
   } else {
-    // Ratings, bullets and other non-pill styles still inherit the resolved
-    // theme-aware rating color without changing their layout.
     element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
     element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
       valueNode.style.setProperty('color', rgbString(pillText), 'important');
     });
   }
+}
+
+function applyFinalSkillsLanguagesColorSystem(root) {
+  if (!root) return;
+
+  const items = [...root.querySelectorAll('[data-v2-skills-languages-item]')];
+  for (const element of items) {
+    if (element.getAttribute('data-v2-list-style') !== 'pills') continue;
+    applySkillsLanguagesColorSystem(element, root);
+  }
+
+  // Keep one final stylesheet at the end of the root's style order as a
+  // fallback for native templates that declare legacy !important colors.
+  // Actual item inline styles above remain authoritative.
+  let style = root.querySelector('[data-v2-skills-languages-final-color-style]');
+  if (!style) {
+    style = root.ownerDocument.createElement('style');
+    style.setAttribute('data-v2-skills-languages-final-color-style', 'true');
+    root.appendChild(style);
+  }
+  style.textContent =
+    '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"]{' +
+      'background:var(--v2-skills-language-pill-bg)!important;' +
+      'background-color:var(--v2-skills-language-pill-bg)!important;' +
+      'color:var(--v2-skills-language-pill-text)!important;' +
+      'border-color:var(--v2-skills-language-pill-border)!important;' +
+    '}' +
+    '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
+      'color:var(--v2-skills-language-pill-text)!important;' +
+    '}';
+  root.setAttribute('data-v2-skills-languages-color-system','3.19.0');
 }
 
 function applyListStyles(root, snapshot) {
@@ -1040,6 +1055,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyVisibility(root, snapshot);
   applyValues(root, snapshot);
   applyPreviewEditTargets(root, snapshot);
+  applyFinalSkillsLanguagesColorSystem(root);
   removeUndefinedTextNodes(root);
 
   return {
