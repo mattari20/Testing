@@ -20,8 +20,9 @@ function normalizeEntry(sectionType, entry, legacyRatings={}) {
   const key = sectionType === 'skills' ? 'skill' : 'language';
   const value = String(values[key] ?? values.value ?? entry?.value ?? '').trim();
   if (!value) return null;
-  const legacy = Number(legacyRatings[value] || 0);
-  const proficiency = Math.max(0, Math.min(5, Number(values.proficiency ?? values.level ?? legacy) || 0));
+  const legacy = Math.max(0, Math.min(5, Number(legacyRatings[value] || 0) || 0));
+  const configured = Number(values.proficiency ?? values.level);
+  const proficiency = Math.max(0, Math.min(5, configured > 0 ? configured : legacy));
   return {
     id: String(entry?.id || makeId(sectionType === 'skills' ? 'skill' : 'language')),
     values: { ...values, [key]: value, proficiency },
