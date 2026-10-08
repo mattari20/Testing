@@ -14,6 +14,7 @@
     "test:m9": "node --test tests/m9/security-privacy.test.js",
     "test:core": "node --test tests/m1/career-document-core.test.js tests/m2/document-lifecycle.test.js tests/m3/template-engine.test.js tests/m4/layout-pagination.test.js tests/m5/preview-engine.test.js tests/m6/export-engine.test.js tests/m7/import-migration.test.js tests/m8/intelligence-engine.test.js tests/m9/security-privacy.test.js tests/m10/template-compatibility-variants.test.js tests/m11/document-assembly.test.js tests/m12/template-render.test.js tests/m13/v1-asset-manifest.test.js tests/m13/v1-template-normalizer.test.js",
     "test:m10": "node --test tests/m10/template-compatibility-variants.test.js",
+    "test:m110": "node --test tests/m110/skills-languages-architecture.test.js",
     "test:templates": "node --test tests/m3/template-engine.test.js tests/m10/template-compatibility-variants.test.js",
     "test:m11": "node --test tests/m11/document-assembly.test.js",
     "test:pipeline": "node --test tests/m11/document-assembly.test.js tests/m10/template-compatibility-variants.test.js",
