@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.11.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.12.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -541,9 +541,6 @@ function applyListStyles(root, snapshot) {
     style.setAttribute('data-v2-proficiency-normalization','true');
     style.textContent=''
       + '[data-v2-template-root] [data-v2-skills-languages-item]{box-sizing:border-box!important;color:inherit!important;}'
-      + '[data-v2-template-root] [data-v2-skills-languages-list-container]{box-sizing:border-box!important;width:100%!important;clear:both!important;}'
-      + '[data-v2-template-root] [data-v2-skills-languages-list-container][data-v2-list-container-style="tags"],[data-v2-template-root] [data-v2-skills-languages-list-container][data-v2-list-container-style="pills"],[data-v2-template-root] [data-v2-skills-languages-list-container][data-v2-list-container-style="compact"]{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;justify-content:flex-start!important;gap:0!important;margin-top:7px!important;}'
-      + '[data-v2-template-root] [data-v2-skills-languages-list-container][data-v2-list-container-style="inline"],[data-v2-template-root] [data-v2-skills-languages-list-container][data-v2-list-container-style="bullets"],[data-v2-template-root] [data-v2-skills-languages-list-container][data-v2-list-container-style="stacked"]{display:block!important;}'
       + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:7px!important;margin-bottom:5px!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] [data-v2-list-style="tags"][data-v2-list-last="false"]::after{content:","!important;margin-left:3px!important;}'
       + '[data-v2-template-root] [data-v2-list-style="pills"]{display:inline-flex!important;align-items:center!important;width:auto!important;margin:0 5px 5px 0!important;padding:2px 8px!important;border:1px solid currentColor!important;border-radius:999px!important;white-space:nowrap!important;}'
@@ -583,11 +580,6 @@ function applyListStyles(root, snapshot) {
 
     root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
       element.setAttribute('data-v2-list-style',selected);
-      const listContainer=element.parentElement;
-      if(listContainer) {
-        listContainer.setAttribute('data-v2-skills-languages-list-container','true');
-        listContainer.setAttribute('data-v2-list-container-style',selected);
-      }
       const entryId=String(element.getAttribute('data-v2-skills-languages-entry-id')||'');
       const entry=entries.get(entryId);
       if(!entry) return;
