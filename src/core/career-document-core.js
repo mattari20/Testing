@@ -1,3 +1,5 @@
+import { migrateSkillsLanguagesSection } from './skills-languages.js';
+
 export const M1_SCHEMA_VERSION = '2.0.0';
 
 const isObject = v => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -15,7 +17,22 @@ function normalizeEntry(entry = {}) {
 }
 function normalizeSection(section = {}) {
   assert(isObject(section), 'Section must be an object.');
-  return { id: String(section.id || makeId('section')), type: String(section.type || 'custom'), title: String(section.title || ''), visibility: section.visibility !== false, order: Number.isFinite(section.order) ? section.order : 0, fields: Array.isArray(section.fields) ? section.fields.map(normalizeField) : [], entries: Array.isArray(section.entries) ? section.entries.map(normalizeEntry) : [], repeatable: section.repeatable === true, metadata: isObject(section.metadata) ? clone(section.metadata) : {} };
+  const normalized = {
+    id: String(section.id || makeId('section')),
+    type: String(section.type || 'custom'),
+    title: String(section.title || ''),
+    visibility: section.visibility !== false,
+    order: Number.isFinite(section.order) ? section.order : 0,
+    fields: Array.isArray(section.fields) ? section.fields.map(normalizeField) : [],
+    entries: Array.isArray(section.entries) ? section.entries.map(normalizeEntry) : [],
+    repeatable: section.repeatable === true,
+    metadata: isObject(section.metadata) ? clone(section.metadata) : {}
+  };
+  if (normalized.type === 'skills' || normalized.type === 'languages') {
+    const migrated = migrateSkillsLanguagesSection(normalized);
+    return { ...migrated, order: normalized.order };
+  }
+  return normalized;
 }
 function normalizeCareerData(data = {}) {
   assert(isObject(data), 'Career data must be an object.');
