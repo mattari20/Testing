@@ -505,7 +505,7 @@ function parseRgbColor(value) {
       a: alpha
     };
   }
-  const match = raw.match(/^rgba?\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)(?:\\s*,\\s*([0-9.]+))?\\s*\\)$/);
+  const match = raw.match(/^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/);
   if (!match) return null;
   const alpha = match[4] == null ? 1 : Number(match[4]);
   if (!Number.isFinite(alpha) || alpha <= 0) return null;
