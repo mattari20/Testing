@@ -169,6 +169,29 @@ export function bindEditorFields(root, surface, options = {}) {
     input.addEventListener(eventType, handler);
     listeners.push(() => input.removeEventListener(eventType, handler));
   });
+  root.querySelectorAll('[data-v2-open-month-picker]').forEach(button => {
+    const handler = event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const picker = button.closest('.editor-month-input-wrap')?.querySelector('[data-v2-month-picker]');
+      if(!picker) return;
+      try {
+        if(typeof picker.showPicker === 'function'){
+          picker.showPicker();
+        }else{
+          picker.focus();
+          picker.click();
+        }
+      }catch(error){
+        try{
+          picker.focus();
+          picker.click();
+        }catch(_error){}
+      }
+    };
+    button.addEventListener('click', handler);
+    listeners.push(() => button.removeEventListener('click', handler));
+  });
   root.querySelectorAll('[data-v2-month-picker]').forEach(picker => {
     const handler = () => {
       const targetInput=picker.closest('.editor-month-input-wrap')?.querySelector('[data-v2-editor-entry-field]');

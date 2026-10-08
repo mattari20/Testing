@@ -862,7 +862,7 @@ All three must remain aligned.
 ### Regression clarification — 2026-10-07 R5
 
 - Experience Start Date and End Date must present the calendar affordance **inside the date field, aligned to the right**, not as a second row beneath the field.
-- The visible calendar icon is presentation only; the transparent native `input[type="month"]` is the actual clickable/focusable control and is positioned directly over the icon.
-- The experience month picker must not depend on programmatic `showPicker()` or `click()` calls against a hidden/1px control. This prevents Chrome from opening the native month chooser at an unrelated screen position.
+- The visible calendar button is the complete clickable control. Its click handler opens the co-located transparent native `input[type="month"]` through the browser picker API during the direct user gesture. The native input remains physically aligned with the button so the browser anchors the picker correctly.
+- The experience month picker must not depend on `showPicker()` or `click()` against a hidden/1px control. Programmatic opening is permitted only from the direct user click on the visible calendar button, with the native input kept co-located at the same screen position. This prevents Chrome from opening the native month chooser at an unrelated screen position.
 - Manual typing remains available in the visible text input and continues to normalize to canonical `YYYY-MM`.
 - The native month picker and manual text input must update the same canonical state path and therefore produce identical sorting and preview results.
