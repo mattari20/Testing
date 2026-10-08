@@ -185,6 +185,15 @@
       justify-content:center!important;
       gap:1px!important;
       margin:0!important;
+      grid-column:1!important;
+      grid-row:1!important;
+      order:1!important;
+    }
+    .editor-skills-language-entry .editor-entry-head>div:first-child + .editor-inline-actions{
+      grid-column:4!important;
+      grid-row:1!important;
+      order:4!important;
+      justify-self:end!important;
     }
     .editor-skills-language-entry .editor-entry-kicker{margin:0!important}
     .editor-skills-language-entry .editor-entry-head strong{font-size:11px!important;line-height:1.15!important}
@@ -195,6 +204,16 @@
       display:flex!important;
       flex-direction:column!important;
       gap:3px!important;
+      order:2!important;
+    }
+    .editor-skills-language-entry .editor-entry-field:not(.editor-entry-proficiency){
+      grid-column:2!important;
+      grid-row:1!important;
+    }
+    .editor-skills-language-entry .editor-entry-field.editor-entry-proficiency{
+      grid-column:3!important;
+      grid-row:1!important;
+      order:3!important;
     }
     .editor-skills-language-entry .editor-entry-field>span{
       margin:0!important;
@@ -217,6 +236,7 @@
       align-self:end!important;
       height:32px!important;
       gap:3px!important;
+      justify-self:end!important;
     }
     .editor-skills-language-entry .editor-inline-action{
       width:28px!important;
@@ -228,9 +248,10 @@
       .editor-skills-language-entry{
         grid-template-columns:minmax(70px,auto) minmax(0,1fr) auto!important;
       }
-      .editor-skills-language-entry .editor-entry-field.editor-entry-proficiency{grid-column:2/-1}
-      .editor-skills-language-entry .editor-inline-actions{grid-column:3;grid-row:1}
-      .editor-skills-language-entry .editor-entry-field:not(.editor-entry-proficiency){grid-column:2/-1}
+      .editor-skills-language-entry .editor-entry-head>div:first-child{grid-column:1!important;grid-row:1!important}
+      .editor-skills-language-entry .editor-entry-head>div:first-child + .editor-inline-actions{grid-column:3!important;grid-row:1!important}
+      .editor-skills-language-entry .editor-entry-field.editor-entry-proficiency{grid-column:2/-1!important;grid-row:2!important}
+      .editor-skills-language-entry .editor-entry-field:not(.editor-entry-proficiency){grid-column:2!important;grid-row:1!important}
     }
 
     .editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:7px}
@@ -378,7 +399,7 @@
   </main>
 
   <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261008.5';
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261008.6';
     import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
     import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
     import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
