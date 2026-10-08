@@ -4,7 +4,7 @@ import { createMasterProfile, createTargetedCV } from '../../src/core/career-doc
 import { createCVApplication } from '../../src/application/cv-application.js';
 import { executeEditorCommand } from '../../src/application/editor-command-executor.js';
 import { createEditorCommand } from '../../src/application/editor-command-contract.js';
-import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle, resolveSkillsLanguagesPresentation } from '../../src/templates/skills-languages-presentation-contract.js';
+import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle, resolveSkillsLanguagesPresentation, UNIVERSAL_SKILLS_LANGUAGES_LIST_STYLES, UNIVERSAL_SKILLS_LANGUAGES_PROFICIENCY_STYLES } from '../../src/templates/skills-languages-presentation-contract.js';
 
 const oldProfileData = {
   id: 'profile-r7',
@@ -91,6 +91,37 @@ test('template contracts define independent defaults and supported presentation 
   assert.notEqual(t01.languages.default,t04.languages.proficiencyDefault);
 });
 
+
+test('all current templates and future fallback expose the universal style library', () => {
+  const templateIds = [
+    't01-modern-minimalist-cv-design_ats',
+    't01-modern-minimalist-cv-design_simple',
+    't01-modern-minimalist-cv-design_modern',
+    't02-professional-cv-design_modern',
+    't03-professional-cv-design_modern',
+    't04-modern-blue-corporate_modern',
+    't05-simple-cv-graphic-web-designer_modern',
+    't06-professional-cv-graphic-designer_modern',
+    't07-professional-cv-store-manager-incharge_modern'
+  ];
+
+  assert.deepEqual(UNIVERSAL_SKILLS_LANGUAGES_LIST_STYLES, ['tags','pills','compact','inline','bullets','stacked']);
+  assert.deepEqual(UNIVERSAL_SKILLS_LANGUAGES_PROFICIENCY_STYLES, ['off','text','stars','bars','dots']);
+
+  for (const templateId of [...templateIds, 'future-template-that-does-not-exist-yet']) {
+    const contract=getSkillsLanguagesPresentationContract(templateId);
+    for (const type of ['skills','languages']) {
+      assert.deepEqual(contract[type].supported, UNIVERSAL_SKILLS_LANGUAGES_LIST_STYLES);
+      assert.deepEqual(contract[type].proficiency, UNIVERSAL_SKILLS_LANGUAGES_PROFICIENCY_STYLES);
+      assert.deepEqual(getAllowedProficiencyForListStyle(contract[type],'tags'),['off']);
+      assert.deepEqual(getAllowedProficiencyForListStyle(contract[type],'pills'),['off']);
+      assert.deepEqual(getAllowedProficiencyForListStyle(contract[type],'compact'),['off']);
+      assert.deepEqual(getAllowedProficiencyForListStyle(contract[type],'inline'),['off']);
+      assert.deepEqual(getAllowedProficiencyForListStyle(contract[type],'bullets'),['off','text','stars','bars','dots']);
+      assert.deepEqual(getAllowedProficiencyForListStyle(contract[type],'stacked'),['off','text','stars','bars','dots']);
+    }
+  }
+});
 
 test('Skills and Languages share display-style rating compatibility', () => {
   const contract=getSkillsLanguagesPresentationContract('t01-modern-minimalist-cv-design_modern');
