@@ -356,8 +356,12 @@ function applyRepeats(root, snapshot) {
       .filter(entry => !hiddenEntries.includes(sectionId + ':' + String(entry.id)) && !hiddenEntries.includes(String(entry.id)));
     const entries = mode === 'values'
       ? visibleEntries
-          .map(entry => ({ entry, item: entry.values || entry }))
-          .filter(({item}) => item && Object.values(item).some(value => String(value ?? '').trim()))
+          .map(entry => {
+            const values = entry.values || entry;
+            const key = sectionType === 'skills' ? 'skill' : sectionType === 'languages' ? 'language' : 'value';
+            return { entry, item: { ...values, value: values?.[key] ?? values?.value ?? '' } };
+          })
+          .filter(({item}) => item && String(item.value || '').trim())
       : getVisibleEntries(snapshot, section).map(entry => ({ entry, item: entry }));
 
     if (!section || !isCanonicalSectionVisible(snapshot, section)) {
