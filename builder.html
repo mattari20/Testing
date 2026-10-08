@@ -168,6 +168,74 @@
     .editor-list-field-label{margin:0!important}.editor-list-field-label>span{display:block;margin-bottom:4px;font-size:11px;font-weight:700;color:#667085}
     .editor-list-field-label input{font-size:12px!important;padding:8px!important}
 
+    /* Skills / Languages — compact single-line editor rows */
+    .editor-list-field-card{
+      display:grid!important;
+      grid-template-columns:minmax(76px,auto) minmax(0,1fr) minmax(118px,150px) auto!important;
+      align-items:end!important;
+      gap:8px!important;
+      padding:8px 9px!important;
+      margin:0 0 6px!important;
+    }
+    .editor-list-field-head{display:contents!important}
+    .editor-list-field-head>div:first-child{
+      min-width:76px!important;
+      display:flex!important;
+      flex-direction:column!important;
+      justify-content:center!important;
+      gap:1px!important;
+      margin:0!important;
+    }
+    .editor-list-field-head .editor-entry-kicker{margin:0!important}
+    .editor-list-field-head strong{font-size:11px!important;line-height:1.15!important}
+    .editor-list-entry-row{display:contents!important}
+    .editor-list-field-label,
+    .editor-list-proficiency-control{
+      min-width:0!important;
+      margin:0!important;
+      display:flex!important;
+      flex-direction:column!important;
+      gap:3px!important;
+    }
+    .editor-list-field-label>span,
+    .editor-list-proficiency-control>span{
+      margin:0!important;
+      font-size:9px!important;
+      line-height:1!important;
+      color:#667085!important;
+      font-weight:750!important;
+    }
+    .editor-list-field-label input,
+    .editor-list-proficiency-control select{
+      width:100%!important;
+      min-width:0!important;
+      height:32px!important;
+      padding:6px 8px!important;
+      font-size:11px!important;
+      margin:0!important;
+    }
+    .editor-list-field-card .editor-inline-actions{
+      align-self:end!important;
+      height:32px!important;
+      gap:3px!important;
+    }
+    .editor-list-field-card .editor-inline-action{
+      width:28px!important;
+      height:28px!important;
+      border-radius:8px!important;
+    }
+    .editor-list-field-card.is-hidden{opacity:.68}
+    .editor-list-field-card.is-hidden .editor-list-field-head>div:first-child{grid-column:1/-1}
+    .editor-list-field-card.is-hidden .editor-inline-actions{grid-column:4}
+    @media(max-width:760px){
+      .editor-list-field-card{
+        grid-template-columns:minmax(72px,auto) minmax(0,1fr) auto!important;
+      }
+      .editor-list-proficiency-control{grid-column:2/-1}
+      .editor-list-field-card .editor-inline-actions{grid-column:3;grid-row:1}
+      .editor-list-field-label{grid-column:2/-1}
+    }
+
     .editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:7px}
     .editor-field-definition{display:grid;grid-template-columns:1fr 92px;gap:6px;min-width:0;flex:1}
     .editor-field-definition input,.editor-field-definition select{font-size:11px!important;padding:7px!important}
