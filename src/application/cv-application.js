@@ -25,6 +25,11 @@ export function createCVApplication(input = {}) {
       masterProfileId: profile.id,
       ...(input.cvData || {})
     });
+    const legacyRatings = targetedCV?.configuration?.presentation?.ratings || {};
+    const profileInput = JSON.parse(JSON.stringify(profile));
+    profileInput.__legacyPresentation = { ratings: legacyRatings };
+    profile = migrateSkillsLanguagesProfile(profileInput);
+    delete profile.__legacyPresentation;
     targetedCV = migrateSkillsLanguagesTargetedCV(targetedCV, profile);
   }
   const lifecycle = createDocumentLifecycle({
