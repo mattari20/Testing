@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.14.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.15.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -491,7 +491,21 @@ function renderProficiencyNode(root, type, entry, style) {
 function parseRgbColor(value) {
   const raw = String(value || '').trim().toLowerCase();
   if (!raw || raw === 'transparent') return null;
-  const match = raw.match(/^rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)$/);
+  const hex = raw.match(/^#([0-9a-f]{3,8})$/i);
+  if (hex) {
+    const h = hex[1];
+    const expanded = h.length <= 4 ? h.split('').map(ch => ch + ch).join('') : h;
+    const hasAlpha = expanded.length === 8;
+    const alpha = hasAlpha ? parseInt(expanded.slice(6,8),16) / 255 : 1;
+    if (alpha <= 0) return null;
+    return {
+      r: parseInt(expanded.slice(0,2),16),
+      g: parseInt(expanded.slice(2,4),16),
+      b: parseInt(expanded.slice(4,6),16),
+      a: alpha
+    };
+  }
+  const match = raw.match(/^rgba?\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)(?:\\s*,\\s*([0-9.]+))?\\s*\\)$/);
   if (!match) return null;
   const alpha = match[4] == null ? 1 : Number(match[4]);
   if (!Number.isFinite(alpha) || alpha <= 0) return null;
@@ -507,10 +521,33 @@ function relativeLuminance(color) {
   return 0.2126 * channel(color.r) + 0.7152 * channel(color.g) + 0.0722 * channel(color.b);
 }
 
+function contrastRatio(a,b) {
+  if (!a || !b) return 1;
+  const l1 = relativeLuminance(a);
+  const l2 = relativeLuminance(b);
+  return (Math.max(l1,l2)+0.05) / (Math.min(l1,l2)+0.05);
+}
+
+function mixColors(a,b,amount) {
+  if (!a) return b;
+  if (!b) return a;
+  const t = Math.max(0, Math.min(1, Number(amount) || 0));
+  return {
+    r:Math.round(a.r + (b.r-a.r)*t),
+    g:Math.round(a.g + (b.g-a.g)*t),
+    b:Math.round(a.b + (b.b-a.b)*t),
+    a:1
+  };
+}
+
+function rgbString(color) {
+  return color ? 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')' : '';
+}
+
 function findEffectiveBackground(element) {
   const view = element?.ownerDocument?.defaultView;
   if (!view?.getComputedStyle) return null;
-  let current = element;
+  let current = element?.parentElement || null;
   while (current && current.nodeType === 1) {
     const style = view.getComputedStyle(current);
     const background = parseRgbColor(style.backgroundColor);
@@ -520,18 +557,68 @@ function findEffectiveBackground(element) {
   return null;
 }
 
-function applySkillsLanguagesColorSystem(element) {
+function getComputedColor(element, property, fallback) {
+  const view = element?.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return fallback;
+  return parseRgbColor(view.getComputedStyle(element).getPropertyValue(property)) || fallback;
+}
+
+function getThemeColor(root) {
+  const view = root?.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return null;
+  const style = view.getComputedStyle(root);
+  return parseRgbColor(style.getPropertyValue('--theme-color'))
+    || parseRgbColor(style.getPropertyValue('--primary'))
+    || parseRgbColor(style.color);
+}
+
+function applySkillsLanguagesColorSystem(element, root) {
   if (!element?.style) return;
-  const background = findEffectiveBackground(element);
-  // Transparent/light surfaces keep the template's own foreground/theme color.
-  // Dark surfaces switch the rating graphics to white for reliable contrast.
-  if (background && relativeLuminance(background) < 0.42) {
-    element.style.setProperty('--v2-skills-language-rating-color', '#FFFFFF');
-    element.setAttribute('data-v2-rating-contrast', 'light');
+  const surface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
+  const theme = getThemeColor(root || element) || {r:37,g:99,b:235,a:1};
+  const white = {r:255,g:255,b:255,a:1};
+  const dark = {r:31,g:41,b:55,a:1};
+  const surfaceLuminance = relativeLuminance(surface);
+
+  let pillBackground;
+  let pillText;
+  let mode;
+
+  const themeWhiteContrast = contrastRatio(theme, white);
+  const themeDarkContrast = contrastRatio(theme, dark);
+  const themeSurfaceContrast = contrastRatio(theme, surface);
+
+  if (surfaceLuminance < 0.25) {
+    // Dark surface: a light pill is safer and cleaner than stacking a dark theme
+    // color on an already-dark sidebar/card.
+    pillBackground = white;
+    pillText = themeDarkContrast >= 4.5 ? theme : dark;
+    mode = 'light-surface';
+  } else if (themeSurfaceContrast >= 2.2 && themeWhiteContrast >= 4.5) {
+    // Normal light/medium surface: preserve the template brand color.
+    pillBackground = theme;
+    pillText = white;
+    mode = 'theme-fill';
+  } else if (themeSurfaceContrast >= 2.2 && themeDarkContrast >= 4.5) {
+    // Theme color is too light for white text, so use the same brand fill with
+    // a dark readable foreground.
+    pillBackground = theme;
+    pillText = dark;
+    mode = 'theme-fill-dark-text';
   } else {
-    element.style.removeProperty('--v2-skills-language-rating-color');
-    element.setAttribute('data-v2-rating-contrast', 'theme');
+    // Low-separation surface: use a subtle theme tint, preserving the section
+    // color without creating a heavy block or poor contrast.
+    pillBackground = mixColors(surface, theme, surfaceLuminance > 0.55 ? 0.16 : 0.24);
+    pillText = contrastRatio(pillBackground, theme) >= 4.5 ? theme : dark;
+    mode = 'soft-theme';
   }
+
+  element.style.setProperty('--v2-skills-language-rating-color', surfaceLuminance < 0.25 ? '#FFFFFF' : rgbString(theme));
+  element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground));
+  element.style.setProperty('--v2-skills-language-pill-text', rgbString(pillText));
+  element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme));
+  element.setAttribute('data-v2-rating-contrast', surfaceLuminance < 0.25 ? 'light' : 'theme');
+  element.setAttribute('data-v2-pill-mode', mode);
 }
 
 function applyListStyles(root, snapshot) {
@@ -541,12 +628,13 @@ function applyListStyles(root, snapshot) {
     style.setAttribute('data-v2-proficiency-normalization','true');
     style.textContent=''
       + '[data-v2-template-root] [data-v2-skills-languages-item]{box-sizing:border-box!important;color:inherit!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline-block!important;margin-right:7px!important;margin-bottom:5px!important;white-space:nowrap!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="tags"][data-v2-list-last="false"]::after{content:","!important;margin-left:3px!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="pills"]{display:inline-flex!important;align-items:center!important;width:auto!important;margin:0 6px 6px 0!important;padding:4px 9px!important;background:var(--theme-color,currentColor)!important;color:var(--primary-contrast,#FFFFFF)!important;border:1px solid var(--theme-color,currentColor)!important;border-radius:999px!important;white-space:nowrap!important;vertical-align:top!important;font-weight:600!important;line-height:1.15!important;box-sizing:border-box!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="tags"]{display:inline!important;width:auto!important;margin:0 5px 0 0!important;padding:0!important;white-space:normal!important;vertical-align:baseline!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="tags"] [data-v2-item-value]{display:inline!important;white-space:normal!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="pills"]{display:inline-flex!important;align-items:center!important;width:auto!important;margin:0 6px 6px 0!important;padding:4px 9px!important;background:var(--v2-skills-language-pill-bg,var(--theme-color,currentColor))!important;color:var(--v2-skills-language-pill-text,var(--primary-contrast,#FFFFFF))!important;border:1px solid var(--v2-skills-language-pill-border,var(--theme-color,currentColor))!important;border-radius:999px!important;white-space:nowrap!important;vertical-align:top!important;font-weight:600!important;line-height:1.15!important;box-sizing:border-box!important;}
       + '[data-v2-template-root] [data-v2-list-style="compact"]{display:inline-flex!important;align-items:center!important;gap:4px!important;width:auto!important;margin:0 6px 3px 0!important;white-space:nowrap!important;}'
       + '[data-v2-template-root] [data-v2-list-style="inline"]{display:inline!important;width:auto!important;margin:0 5px 0 0!important;white-space:normal!important;}'
-      + '[data-v2-template-root] [data-v2-list-style="inline"][data-v2-list-last="false"]::after{content:" · "!important;opacity:.7!important;}'
+      + '[data-v2-template-root] .v2-list-separator{display:inline!important;margin:0 4px!important;opacity:.7!important;white-space:pre!important;}'
+      + '[data-v2-template-root] [data-v2-list-style="inline"]{vertical-align:baseline!important;}'
       + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:block!important;width:auto!important;box-sizing:border-box!important;margin:0 0 5px 0!important;padding:0 0 0 13px!important;position:relative!important;list-style:none!important;white-space:normal!important;flex:0 0 100%!important;}'
       + '[data-v2-template-root] [data-v2-list-style="bullets"]::before{content:"•"!important;position:absolute!important;left:0!important;top:0!important;font-size:1em!important;line-height:1.35!important;}'
       + '[data-v2-template-root] [data-v2-list-style="stacked"]{display:block!important;width:100%!important;margin:0 0 5px 0!important;white-space:normal!important;}'
@@ -593,13 +681,35 @@ function applyListStyles(root, snapshot) {
       element.setAttribute('data-v2-proficiency-level',String(getSkillOrLanguageProficiency(entry)));
       element.querySelectorAll('.v2-proficiency').forEach(node=>node.remove());
 
+      if (selected === 'tags' || selected === 'inline') {
+        element.querySelectorAll('.v2-list-separator').forEach(node => node.remove());
+        if (selected === 'tags' && index < count - 1) {
+          const valueNode = element.querySelector('[data-v2-item-value]');
+          if (valueNode) {
+            const separator = root.ownerDocument.createElement('span');
+            separator.className = 'v2-list-separator';
+            separator.setAttribute('aria-hidden','true');
+            separator.textContent = ',';
+            valueNode.appendChild(separator);
+          }
+        } else if (selected === 'inline' && index < count - 1) {
+          const valueNode = element.querySelector('[data-v2-item-value]');
+          if (valueNode) {
+            const separator = root.ownerDocument.createElement('span');
+            separator.className = 'v2-list-separator';
+            separator.setAttribute('aria-hidden','true');
+            separator.textContent = ' · ';
+            valueNode.appendChild(separator);
+          }
+        }
+      }
       const node=renderProficiencyNode(root,type,entry,proficiencyStyle);
       if(node) {
         const valueNode=element.querySelector('[data-v2-item-value]');
         (valueNode?.parentElement||element).appendChild(node);
-        applySkillsLanguagesColorSystem(node);
+        applySkillsLanguagesColorSystem(node, root);
       }
-      applySkillsLanguagesColorSystem(element);
+      applySkillsLanguagesColorSystem(element, root);
     });
   }
 }
