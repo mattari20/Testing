@@ -766,15 +766,30 @@ function applySkillsLanguagesColorSystem(element, root) {
       }
     }
 
-    const correctedTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
+    // Resolve foreground against the actual sidebar/page surface after legacy
+    // item fills have been removed. Some templates assign a theme-colored
+    // foreground with reduced opacity, which becomes nearly invisible on a
+    // matching colored sidebar. Prefer a WCAG-readable foreground universally.
     const effectiveSurface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
+    const nativeTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
+    const foregroundCandidates = [nativeTextColor, dark, white, theme];
+    const correctedTextColor = foregroundCandidates
+      .map(color => ({color, contrast: contrastRatio(color, effectiveSurface)}))
+      .sort((a, b) => b.contrast - a.contrast)[0].color;
     const effectiveRatingColor = contrastRatio(theme, effectiveSurface) >= 4.5
       ? theme
       : (contrastRatio(white, effectiveSurface) >= 4.5 ? white : dark);
     element.style.setProperty('--v2-skills-language-rating-color', rgbString(effectiveRatingColor), 'important');
-    element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
-      valueNode.style.setProperty('color', rgbString(correctedTextColor), 'important');
-    });
+    element.style.setProperty('color', rgbString(correctedTextColor), 'important');
+    element.style.setProperty('opacity', '1', 'important');
+    for (const node of visualNodes) {
+      node.style.setProperty('color', rgbString(correctedTextColor), 'important');
+      node.style.setProperty('opacity', '1', 'important');
+      node.querySelectorAll?.('*').forEach(child => {
+        child.style.setProperty('color', rgbString(correctedTextColor), 'important');
+        child.style.setProperty('opacity', '1', 'important');
+      });
+    }
   }
 }
 
