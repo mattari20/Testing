@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.22.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.23.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -716,7 +716,7 @@ function applySkillsLanguagesColorSystem(element, root) {
   element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
   element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground), 'important');
   element.style.setProperty('--v2-skills-language-pill-text', rgbString(pillText), 'important');
-  element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme), 'important');
+  element.style.setProperty('--v2-skills-language-pill-border', rgbString(pillBorder), 'important');
   element.setAttribute('data-v2-rating-contrast', isDarkSurface ? 'light' : 'theme');
   element.setAttribute('data-v2-pill-mode', mode);
   element.setAttribute('data-v2-color-source', 'universal-surface-aware-v3');
@@ -730,7 +730,7 @@ function applySkillsLanguagesColorSystem(element, root) {
     // This is intentionally item-level only: no template parent/container/grid
     // layout properties are changed.
     for (const node of collectSkillsLanguagesVisualNodes(element)) {
-      setSkillsLanguagesVisualColor(node, pillBackground, pillText, theme);
+      setSkillsLanguagesVisualColor(node, pillBackground, pillText, pillBorder);
     }
   } else {
     element.style.setProperty('--v2-skills-language-rating-color', rgbString(textColor), 'important');
@@ -768,7 +768,7 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.22.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.23.0');
 }
 
 function applyListStyles(root, snapshot) {
