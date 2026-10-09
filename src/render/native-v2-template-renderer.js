@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.25.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.26.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -806,7 +806,7 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.25.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.26.0');
 }
 
 function applySkillsLanguagesItemLayout(element, listStyle) {
@@ -986,7 +986,11 @@ function applySectionOrder(root, snapshot) {
       const br=rank.has(b.sectionId)?rank.get(b.sectionId):Number.MAX_SAFE_INTEGER;
       return ar-br;
     });
-    for(const item of parentGroups)for(const node of item.group)parent.appendChild(node);
+    // Keep each repeated section run contiguous when reordering. Skills and
+    // Languages values are expanded into sibling nodes; treating a run as one
+    // unit prevents a later section heading from splitting those values.
+    const orderedNodes = parentGroups.flatMap(item => item.group);
+    for (const node of orderedNodes) parent.appendChild(node);
   }
 }
 
