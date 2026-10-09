@@ -953,6 +953,14 @@ function applyTheme(root, snapshot) {
 }
 
 function applySectionOrder(root, snapshot) {
+  // Section labels must start on a fresh line. Some legacy templates contain
+  // floated inline tags; without clearing those floats, later labels can sit
+  // beside unfinished Skills/Languages rows and visually split a section.
+  for (const heading of root.querySelectorAll('[data-v2-section]')) {
+    heading.style.setProperty('clear', 'both', 'important');
+    heading.style.setProperty('float', 'none', 'important');
+  }
+
   const configured = Array.isArray(snapshot?.configuration?.sectionOrder) ? snapshot.configuration.sectionOrder.map(String) : [];
   if (!configured.length) return;
   const rank = new Map(configured.map((id,index)=>[id,index]));
