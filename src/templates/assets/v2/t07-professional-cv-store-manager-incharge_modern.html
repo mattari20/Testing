@@ -171,10 +171,15 @@
         padding: 6px 12px;
         margin: 15px 0 15px 0;
         border-radius: 5px 5px 0 5px;
-        display: inline-flex;       /* Snugly wraps text and icon */
+        display: table;             /* Start each section on its own line */
+        width: max-content;
+        max-width: 100%;
+        clear: both;
+        float: none;
         align-items: center;
         gap: 8px;
-        position: relative;         /* Allows the line to anchor to this area */
+        position: relative;
+        box-sizing: border-box;
     }
 
     

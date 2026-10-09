@@ -1,6 +1,6 @@
 import { createApplicationSnapshot } from '../application/cv-application.js';
 import { getNativeV2Template } from '../templates/v2-native-template-catalog.js';
-import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261008.2';
+import { loadNativeTemplateSource } from '../templates/native-template-source-loader.js?v=20261009.6';
 import { renderNativeTemplateSource, createNativeRenderDefinition } from '../render/native-v2-template-renderer.js?v=20261009.5';
 import { bindPreviewInlineEditing } from './editor-preview-inline-controller.js';
 
