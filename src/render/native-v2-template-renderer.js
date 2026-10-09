@@ -812,23 +812,62 @@ function applyT02DarkSidebarTextContrast(root) {
   if (root?.getAttribute?.('data-v2-template-id') !== 't02-professional-cv-design_modern') return;
   const view = root.ownerDocument?.defaultView;
   if (!view?.getComputedStyle) return;
-  const sidebar = root.querySelector('.t02-professional-cv-design_modern [class*="sidebar"], .t02-professional-cv-design_modern .left-column, .t02-professional-cv-design_modern .cv-sidebar');
+
+  // T02 owns its Skills/Languages colors. Resolve the sidebar even when the
+  // template root itself carries the sidebar class.
+  const sidebarSelector = '[class*="sidebar"], .left-column, .cv-sidebar';
+  const sidebar = (root.matches?.(sidebarSelector) ? root : null)
+    || root.querySelector(sidebarSelector);
   if (!sidebar) return;
-  const surface = parseRgbColor(view.getComputedStyle(sidebar).backgroundColor) || {r:44,g:62,b:80,a:1};
-  if (relativeLuminance(surface) >= 0.5) return;
+
+  const surface = parseRgbColor(view.getComputedStyle(sidebar).backgroundColor)
+    || {r:44,g:62,b:80,a:1};
+  const isDarkSurface = relativeLuminance(surface) < 0.5;
   const white = {r:255,g:255,b:255,a:1};
   const dark = {r:31,g:41,b:55,a:1};
-  const foreground = contrastRatio(white, surface) >= contrastRatio(dark, surface) ? white : dark;
-  root.querySelectorAll('[data-v2-skills-languages-item]:not([data-v2-list-style="pills"])').forEach(item => {
+  const readableText = isDarkSurface
+    ? (contrastRatio(white, surface) >= contrastRatio(dark, surface) ? white : dark)
+    : (contrastRatio(dark, surface) >= contrastRatio(white, surface) ? dark : white);
+
+  // Use T02's own visible section accent as the pill text color. The pill
+  // remains white, so it reads clearly on the dark sidebar without changing
+  // the native pill/tag geometry.
+  let sectionAccent = null;
+  for (const selector of ['.sidebar-label', '.section-label', '.section-title', '.section-heading']) {
+    const node = root.querySelector(selector);
+    if (!node) continue;
+    sectionAccent = parseRgbColor(view.getComputedStyle(node).backgroundColor);
+    if (sectionAccent && relativeLuminance(sectionAccent) < 0.98) break;
+    sectionAccent = null;
+  }
+  if (!sectionAccent) sectionAccent = getThemeColor(root) || {r:37,g:99,b:235,a:1};
+
+  root.querySelectorAll('[data-v2-skills-languages-item]').forEach(item => {
     if (!sidebar.contains(item)) return;
-    const color = rgbString(foreground);
-    item.style.setProperty('color', color, 'important');
-    item.style.setProperty('opacity', '1', 'important');
-    item.querySelectorAll('*').forEach(node => {
-      node.style.setProperty('color', color, 'important');
-      node.style.setProperty('-webkit-text-fill-color', color, 'important');
-      node.style.setProperty('opacity', '1', 'important');
-    });
+    const isPill = item.getAttribute('data-v2-list-style') === 'pills';
+    const foreground = isPill ? sectionAccent : readableText;
+    const foregroundCss = rgbString(foreground);
+
+    if (isPill) {
+      // Template-scoped item colors only: preserve existing pill shape/layout.
+      item.style.setProperty('background', 'rgb(255, 255, 255)', 'important');
+      item.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
+      item.style.setProperty('color', foregroundCss, 'important');
+      item.style.setProperty('border-color', foregroundCss, 'important');
+      item.querySelectorAll('*').forEach(node => {
+        node.style.setProperty('color', foregroundCss, 'important');
+        node.style.setProperty('-webkit-text-fill-color', foregroundCss, 'important');
+        node.style.setProperty('opacity', '1', 'important');
+      });
+    } else {
+      item.style.setProperty('color', foregroundCss, 'important');
+      item.style.setProperty('opacity', '1', 'important');
+      item.querySelectorAll('*').forEach(node => {
+        node.style.setProperty('color', foregroundCss, 'important');
+        node.style.setProperty('-webkit-text-fill-color', foregroundCss, 'important');
+        node.style.setProperty('opacity', '1', 'important');
+      });
+    }
   });
 }
 
