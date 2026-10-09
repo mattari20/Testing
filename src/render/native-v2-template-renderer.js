@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.24.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.25.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -746,9 +746,34 @@ function applySkillsLanguagesColorSystem(element, root) {
       setSkillsLanguagesVisualColor(node, pillBackground, pillText, pillBorder);
     }
   } else {
-    element.style.setProperty('--v2-skills-language-rating-color', rgbString(textColor), 'important');
+    // Legacy templates sometimes paint a tinted block behind each list/bars
+    // row. On dark sidebars this creates low-contrast burgundy-on-burgundy
+    // rows. Remove only those item-level fills when they blend into the
+    // surrounding surface; do not alter any parent/sidebar/grid layout.
+    const view = element.ownerDocument?.defaultView;
+    const visualNodes = collectSkillsLanguagesVisualNodes(element);
+    for (const node of visualNodes) {
+      if (!view?.getComputedStyle) continue;
+      const computed = view.getComputedStyle(node);
+      const background = parseRgbColor(computed.backgroundColor);
+      if (!background || background.a < 0.05) continue;
+      const parentSurface = findEffectiveBackground(node);
+      if (parentSurface && contrastRatio(background, parentSurface) < 2.2) {
+        node.style.setProperty('background', 'transparent', 'important');
+        node.style.setProperty('background-color', 'transparent', 'important');
+        node.style.setProperty('box-shadow', 'none', 'important');
+        node.style.setProperty('border-color', 'transparent', 'important');
+      }
+    }
+
+    const correctedTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
+    const effectiveSurface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
+    const effectiveRatingColor = contrastRatio(theme, effectiveSurface) >= 4.5
+      ? theme
+      : (contrastRatio(white, effectiveSurface) >= 4.5 ? white : dark);
+    element.style.setProperty('--v2-skills-language-rating-color', rgbString(effectiveRatingColor), 'important');
     element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
-      valueNode.style.setProperty('color', rgbString(textColor), 'important');
+      valueNode.style.setProperty('color', rgbString(correctedTextColor), 'important');
     });
   }
 }
@@ -781,7 +806,7 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.24.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.25.0');
 }
 
 function applySkillsLanguagesItemLayout(element, listStyle) {
