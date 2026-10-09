@@ -673,13 +673,32 @@ function applySkillsLanguagesColorSystem(element, root) {
   const dark = {r:31,g:41,b:55,a:1};
   const surfaceLuminance = relativeLuminance(surface);
 
-  // Universal smart-pill rule:
-  //   light surface -> selected theme pill + accessible foreground
-  //   dark surface  -> white pill + selected theme foreground
+  // When theme and surface are too similar, keep the theme fill and use a
+  // white outline/text. On light surfaces use an outlined white pill. On dark
+  // surfaces retain a white pill with theme-colored text.
   const isDarkSurface = surfaceLuminance < 0.5;
-  let pillBackground = isDarkSurface ? white : theme;
-  let pillText = isDarkSurface ? theme : white;
-  let mode = isDarkSurface ? 'white-on-dark-surface' : 'theme-on-light-surface';
+  const isThemeBlendingIntoSurface = contrastRatio(surface, theme) < 2.0;
+  let pillBackground;
+  let pillText;
+  let pillBorder;
+  let mode;
+
+  if (isThemeBlendingIntoSurface) {
+    pillBackground = theme;
+    pillText = white;
+    pillBorder = white;
+    mode = 'theme-fill-white-outline';
+  } else if (!isDarkSurface) {
+    pillBackground = white;
+    pillText = theme;
+    pillBorder = theme;
+    mode = 'outlined-on-light-surface';
+  } else {
+    pillBackground = white;
+    pillText = theme;
+    pillBorder = theme;
+    mode = 'white-on-dark-surface';
+  }
 
   if (contrastRatio(pillBackground, pillText) < 4.5) {
     pillText = dark;
