@@ -866,6 +866,8 @@ function applyFinalSkillsLanguagesColorSystem(root) {
       '-webkit-text-fill-color:currentColor!important;' +
       'opacity:1!important;' +
     '}';
+  // Template-scoped contrast correction runs last so shared rendering cannot overwrite T02's native dark-sidebar text.
+  applyT02DarkSidebarTextContrast(root);
   root.setAttribute('data-v2-skills-languages-color-system','3.27.0');
 }
 
