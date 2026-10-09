@@ -784,12 +784,23 @@ function applySkillsLanguagesColorSystem(element, root) {
     element.style.setProperty('opacity', '1', 'important');
     for (const node of visualNodes) {
       node.style.setProperty('color', rgbString(correctedTextColor), 'important');
+      node.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
       node.style.setProperty('opacity', '1', 'important');
       node.querySelectorAll?.('*').forEach(child => {
         child.style.setProperty('color', rgbString(correctedTextColor), 'important');
+        child.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
         child.style.setProperty('opacity', '1', 'important');
       });
     }
+    // The inline/compact/list renderer can produce separators or plain text
+    // wrappers that do not carry a recognizable legacy class. Force the same
+    // contrast-safe foreground on every non-pill value within this item.
+    element.querySelectorAll?.('[data-v2-item-value], .v2-list-separator, .v2-proficiency, .v2-proficiency *')
+      .forEach(node => {
+        node.style.setProperty('color', rgbString(correctedTextColor), 'important');
+        node.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
+        node.style.setProperty('opacity', '1', 'important');
+      });
   }
 }
 
@@ -820,8 +831,14 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '}' +
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
+    '}' +
+    '[data-v2-template-root] [data-v2-skills-languages-item]:not([data-v2-list-style="pills"]) [data-v2-item-value],' +
+    '[data-v2-template-root] [data-v2-skills-languages-item]:not([data-v2-list-style="pills"]) .v2-list-separator{' +
+      'color:inherit!important;' +
+      '-webkit-text-fill-color:currentColor!important;' +
+      'opacity:1!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.26.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.27.0');
 }
 
 function applySkillsLanguagesItemLayout(element, listStyle) {
