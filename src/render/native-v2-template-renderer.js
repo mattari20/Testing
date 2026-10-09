@@ -804,6 +804,30 @@ function applySkillsLanguagesColorSystem(element, root) {
   }
 }
 
+function applyT02DarkSidebarTextContrast(root) {
+  if (root?.getAttribute?.('data-v2-template-id') !== 't02-professional-cv-design_modern') return;
+  const view = root.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return;
+  const sidebar = root.querySelector('.t02-professional-cv-design_modern [class*="sidebar"], .t02-professional-cv-design_modern .left-column, .t02-professional-cv-design_modern .cv-sidebar');
+  if (!sidebar) return;
+  const surface = parseRgbColor(view.getComputedStyle(sidebar).backgroundColor) || {r:44,g:62,b:80,a:1};
+  if (relativeLuminance(surface) >= 0.5) return;
+  const white = {r:255,g:255,b:255,a:1};
+  const dark = {r:31,g:41,b:55,a:1};
+  const foreground = contrastRatio(white, surface) >= contrastRatio(dark, surface) ? white : dark;
+  root.querySelectorAll('[data-v2-skills-languages-item]:not([data-v2-list-style="pills"])').forEach(item => {
+    if (!sidebar.contains(item)) return;
+    const color = rgbString(foreground);
+    item.style.setProperty('color', color, 'important');
+    item.style.setProperty('opacity', '1', 'important');
+    item.querySelectorAll('*').forEach(node => {
+      node.style.setProperty('color', color, 'important');
+      node.style.setProperty('-webkit-text-fill-color', color, 'important');
+      node.style.setProperty('opacity', '1', 'important');
+    });
+  });
+}
+
 function applyFinalSkillsLanguagesColorSystem(root) {
   if (!root) return;
 
@@ -1214,6 +1238,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyValues(root, snapshot);
   applyPreviewEditTargets(root, snapshot);
   applyFinalSkillsLanguagesColorSystem(root);
+  applyT02DarkSidebarTextContrast(root);
   removeUndefinedTextNodes(root);
 
   return {
