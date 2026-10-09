@@ -766,42 +766,70 @@ function applySkillsLanguagesColorSystem(element, root) {
       }
     }
 
-    // Resolve foreground against the actual sidebar/page surface after legacy
-    // item fills have been removed. Some templates assign a theme-colored
-    // foreground with reduced opacity, which becomes nearly invisible on a
-    // matching colored sidebar. Prefer a WCAG-readable foreground universally.
-    const effectiveSurface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
-    const nativeTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
-    const foregroundCandidates = [nativeTextColor, dark, white, theme];
-    const correctedTextColor = foregroundCandidates
-      .map(color => ({color, contrast: contrastRatio(color, effectiveSurface)}))
-      .sort((a, b) => b.contrast - a.contrast)[0].color;
-    const effectiveRatingColor = contrastRatio(theme, effectiveSurface) >= 4.5
-      ? theme
-      : (contrastRatio(white, effectiveSurface) >= 4.5 ? white : dark);
-    element.style.setProperty('--v2-skills-language-rating-color', rgbString(effectiveRatingColor), 'important');
-    element.style.setProperty('color', rgbString(correctedTextColor), 'important');
-    element.style.setProperty('opacity', '1', 'important');
-    for (const node of visualNodes) {
-      node.style.setProperty('color', rgbString(correctedTextColor), 'important');
-      node.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
-      node.style.setProperty('opacity', '1', 'important');
-      node.querySelectorAll?.('*').forEach(child => {
-        child.style.setProperty('color', rgbString(correctedTextColor), 'important');
-        child.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
-        child.style.setProperty('opacity', '1', 'important');
+    if (root?.getAttribute?.('data-v2-template-id') === 't03-professional-cv-design_modern') {
+      // Preserve T03's pre-contrast-patch behavior: only normalize the value
+      // node, without forcing opacity or recoloring all nested template nodes.
+      const restoredTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
+      element.querySelectorAll?.('[data-v2-item-value]').forEach(valueNode => {
+        valueNode.style.setProperty('color', rgbString(restoredTextColor), 'important');
       });
-    }
-    // The inline/compact/list renderer can produce separators or plain text
-    // wrappers that do not carry a recognizable legacy class. Force the same
-    // contrast-safe foreground on every non-pill value within this item.
-    element.querySelectorAll?.('[data-v2-item-value], .v2-list-separator, .v2-proficiency, .v2-proficiency *')
-      .forEach(node => {
+    } else {
+      // Other templates receive a readable foreground against the actual
+      // surface, including legacy text-fill and opacity rules.
+      const effectiveSurface = findEffectiveBackground(element) || {r:255,g:255,b:255,a:1};
+      const nativeTextColor = getEffectiveSkillsLanguagesTextColor(element, root);
+      const foregroundCandidates = [nativeTextColor, dark, white, theme];
+      const correctedTextColor = foregroundCandidates
+        .map(color => ({color, contrast: contrastRatio(color, effectiveSurface)}))
+        .sort((a, b) => b.contrast - a.contrast)[0].color;
+      const effectiveRatingColor = contrastRatio(theme, effectiveSurface) >= 4.5
+        ? theme
+        : (contrastRatio(white, effectiveSurface) >= 4.5 ? white : dark);
+      element.style.setProperty('--v2-skills-language-rating-color', rgbString(effectiveRatingColor), 'important');
+      element.style.setProperty('color', rgbString(correctedTextColor), 'important');
+      element.style.setProperty('opacity', '1', 'important');
+      for (const node of visualNodes) {
         node.style.setProperty('color', rgbString(correctedTextColor), 'important');
         node.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
         node.style.setProperty('opacity', '1', 'important');
-      });
+        node.querySelectorAll?.('*').forEach(child => {
+          child.style.setProperty('color', rgbString(correctedTextColor), 'important');
+          child.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
+          child.style.setProperty('opacity', '1', 'important');
+        });
+      }
+      element.querySelectorAll?.('[data-v2-item-value], .v2-list-separator, .v2-proficiency, .v2-proficiency *')
+        .forEach(node => {
+          node.style.setProperty('color', rgbString(correctedTextColor), 'important');
+          node.style.setProperty('-webkit-text-fill-color', rgbString(correctedTextColor), 'important');
+          node.style.setProperty('opacity', '1', 'important');
+        });
+    }
   }
+}
+
+function applyT02DarkSidebarTextContrast(root) {
+  if (root?.getAttribute?.('data-v2-template-id') !== 't02-professional-cv-design_modern') return;
+  const view = root.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return;
+  const sidebar = root.querySelector('.t02-professional-cv-design_modern [class*="sidebar"], .t02-professional-cv-design_modern .left-column, .t02-professional-cv-design_modern .cv-sidebar');
+  if (!sidebar) return;
+  const surface = parseRgbColor(view.getComputedStyle(sidebar).backgroundColor) || {r:44,g:62,b:80,a:1};
+  if (relativeLuminance(surface) >= 0.5) return;
+  const white = {r:255,g:255,b:255,a:1};
+  const dark = {r:31,g:41,b:55,a:1};
+  const foreground = contrastRatio(white, surface) >= contrastRatio(dark, surface) ? white : dark;
+  root.querySelectorAll('[data-v2-skills-languages-item]:not([data-v2-list-style="pills"])').forEach(item => {
+    if (!sidebar.contains(item)) return;
+    const color = rgbString(foreground);
+    item.style.setProperty('color', color, 'important');
+    item.style.setProperty('opacity', '1', 'important');
+    item.querySelectorAll('*').forEach(node => {
+      node.style.setProperty('color', color, 'important');
+      node.style.setProperty('-webkit-text-fill-color', color, 'important');
+      node.style.setProperty('opacity', '1', 'important');
+    });
+  });
 }
 
 function applyFinalSkillsLanguagesColorSystem(root) {
@@ -1214,6 +1242,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyValues(root, snapshot);
   applyPreviewEditTargets(root, snapshot);
   applyFinalSkillsLanguagesColorSystem(root);
+  applyT02DarkSidebarTextContrast(root);
   removeUndefinedTextNodes(root);
 
   return {
