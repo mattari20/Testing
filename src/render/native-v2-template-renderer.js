@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.23.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.24.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -643,22 +643,35 @@ function setSkillsLanguagesVisualColor(node, background, foreground, border) {
 
 function getEffectiveSkillsLanguagesTextColor(element, root) {
   const view = element?.ownerDocument?.defaultView;
-  if (!view?.getComputedStyle) return getThemeColor(root || element) || {r:31,g:41,b:55,a:1};
+  const theme = getThemeColor(root || element) || {r:31,g:41,b:55,a:1};
+  const dark = {r:31,g:41,b:55,a:1};
+  const white = {r:255,g:255,b:255,a:1};
+  if (!view?.getComputedStyle) return theme;
 
-  // For non-pill styles, preserve the native template's own text color.
-  // This is important for templates such as T03 where sidebar body text is
-  // explicitly black while the sidebar container itself is white.
-  const candidates = [
-    element?.querySelector?.('[data-v2-item-value]'),
-    element
-  ].filter(Boolean);
-
+  // Keep the template's native text color when it is readable, but repair
+  // low-contrast values on legacy colored skill rows or dark sidebars.
+  const valueNode = element?.matches?.('[data-v2-item-value]')
+    ? element
+    : element?.querySelector?.('[data-v2-item-value]');
+  const candidates = [valueNode, element].filter(Boolean);
+  let nativeColor = null;
   for (const candidate of candidates) {
     const color = parseRgbColor(view.getComputedStyle(candidate).color);
-    if (color) return color;
+    if (color) {
+      nativeColor = color;
+      break;
+    }
   }
+  nativeColor = nativeColor || theme;
+  const surface = findEffectiveBackground(valueNode || element)
+    || findEffectiveBackground(element)
+    || {r:255,g:255,b:255,a:1};
+  if (contrastRatio(nativeColor, surface) >= 4.5) return nativeColor;
 
-  return getThemeColor(root || element) || {r:31,g:41,b:55,a:1};
+  const readable = [theme, dark, white]
+    .map(color => ({color, contrast: contrastRatio(color, surface)}))
+    .sort((a,b) => b.contrast - a.contrast);
+  return readable.find(item => item.contrast >= 4.5)?.color || readable[0].color;
 }
 
 function applySkillsLanguagesColorSystem(element, root) {
@@ -768,7 +781,36 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.23.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.24.0');
+}
+
+function applySkillsLanguagesItemLayout(element, listStyle) {
+  if (!element?.style) return;
+  const layout = {
+    tags:    {display:'inline', width:'auto', whiteSpace:'normal'},
+    pills:   {display:'inline-flex', width:'auto', maxWidth:'100%', whiteSpace:'normal'},
+    compact: {display:'inline-flex', width:'auto', maxWidth:'100%', whiteSpace:'normal'},
+    inline:  {display:'inline', width:'auto', whiteSpace:'normal'},
+    bullets: {display:'block', width:'auto', maxWidth:'100%', whiteSpace:'normal', overflowWrap:'anywhere'},
+    stacked: {display:'block', width:'100%', maxWidth:'100%', whiteSpace:'normal', overflowWrap:'anywhere'}
+  }[String(listStyle)];
+  if (!layout) return;
+
+  // Inline item-level normalization beats legacy template selectors without
+  // touching the template's parent containers, grids, or section ordering.
+  for (const [property, value] of Object.entries(layout)) {
+    element.style.setProperty(property.replace(/[A-Z]/g, match => '-' + match.toLowerCase()), value, 'important');
+  }
+  element.style.setProperty('box-sizing', 'border-box', 'important');
+  element.setAttribute('data-v2-item-layout-normalized', 'true');
+
+  const valueNodes = element.querySelectorAll?.('[data-v2-item-value]') || [];
+  for (const valueNode of valueNodes) {
+    valueNode.style.setProperty('visibility', 'visible', 'important');
+    valueNode.style.setProperty('opacity', '1', 'important');
+    valueNode.style.setProperty('overflow-wrap', 'anywhere', 'important');
+    valueNode.style.setProperty('max-width', '100%', 'important');
+  }
 }
 
 function applyListStyles(root, snapshot) {
@@ -818,6 +860,7 @@ function applyListStyles(root, snapshot) {
 
     root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
       element.setAttribute('data-v2-list-style',selected);
+      applySkillsLanguagesItemLayout(element, selected);
       const entryId=String(element.getAttribute('data-v2-skills-languages-entry-id')||'');
       const entry=entries.get(entryId);
       if(!entry) return;
