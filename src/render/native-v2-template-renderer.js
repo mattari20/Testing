@@ -1,6 +1,6 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.22.0';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.23.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -673,13 +673,32 @@ function applySkillsLanguagesColorSystem(element, root) {
   const dark = {r:31,g:41,b:55,a:1};
   const surfaceLuminance = relativeLuminance(surface);
 
-  // Universal smart-pill rule:
-  //   light surface -> selected theme pill + accessible foreground
-  //   dark surface  -> white pill + selected theme foreground
+  // When theme and surface are too similar, keep the theme fill and use a
+  // white outline/text. On light surfaces use an outlined white pill. On dark
+  // surfaces retain a white pill with theme-colored text.
   const isDarkSurface = surfaceLuminance < 0.5;
-  let pillBackground = isDarkSurface ? white : theme;
-  let pillText = isDarkSurface ? theme : white;
-  let mode = isDarkSurface ? 'white-on-dark-surface' : 'theme-on-light-surface';
+  const isThemeBlendingIntoSurface = contrastRatio(surface, theme) < 2.0;
+  let pillBackground;
+  let pillText;
+  let pillBorder;
+  let mode;
+
+  if (isThemeBlendingIntoSurface) {
+    pillBackground = theme;
+    pillText = white;
+    pillBorder = white;
+    mode = 'theme-fill-white-outline';
+  } else if (!isDarkSurface) {
+    pillBackground = white;
+    pillText = theme;
+    pillBorder = theme;
+    mode = 'outlined-on-light-surface';
+  } else {
+    pillBackground = white;
+    pillText = theme;
+    pillBorder = theme;
+    mode = 'white-on-dark-surface';
+  }
 
   if (contrastRatio(pillBackground, pillText) < 4.5) {
     pillText = dark;
@@ -697,7 +716,7 @@ function applySkillsLanguagesColorSystem(element, root) {
   element.style.setProperty('--v2-skills-language-rating-color', rgbString(ratingColor), 'important');
   element.style.setProperty('--v2-skills-language-pill-bg', rgbString(pillBackground), 'important');
   element.style.setProperty('--v2-skills-language-pill-text', rgbString(pillText), 'important');
-  element.style.setProperty('--v2-skills-language-pill-border', rgbString(theme), 'important');
+  element.style.setProperty('--v2-skills-language-pill-border', rgbString(pillBorder), 'important');
   element.setAttribute('data-v2-rating-contrast', isDarkSurface ? 'light' : 'theme');
   element.setAttribute('data-v2-pill-mode', mode);
   element.setAttribute('data-v2-color-source', 'universal-surface-aware-v3');
@@ -711,7 +730,7 @@ function applySkillsLanguagesColorSystem(element, root) {
     // This is intentionally item-level only: no template parent/container/grid
     // layout properties are changed.
     for (const node of collectSkillsLanguagesVisualNodes(element)) {
-      setSkillsLanguagesVisualColor(node, pillBackground, pillText, theme);
+      setSkillsLanguagesVisualColor(node, pillBackground, pillText, pillBorder);
     }
   } else {
     element.style.setProperty('--v2-skills-language-rating-color', rgbString(textColor), 'important');
@@ -749,7 +768,7 @@ function applyFinalSkillsLanguagesColorSystem(root) {
     '[data-v2-template-root] [data-v2-skills-languages-item][data-v2-list-style="pills"] [data-v2-item-value]{' +
       'color:var(--v2-skills-language-pill-text)!important;' +
     '}';
-  root.setAttribute('data-v2-skills-languages-color-system','3.22.0');
+  root.setAttribute('data-v2-skills-languages-color-system','3.23.0');
 }
 
 function applyListStyles(root, snapshot) {
