@@ -34,3 +34,7 @@ assert.ok(atsHtml.indexOf('class="ats-header"') < atsHtml.indexOf('data-v2-secti
 assert.ok(atsHtml.indexOf('data-v2-section="summary"') < atsHtml.indexOf('data-v2-section="experience"'));
 
 assert.match(atsHtml, /identity\.whatsapp/);
+
+const rendererSource = fs.readFileSync(new URL('../../src/render/native-v2-template-renderer.js', import.meta.url), 'utf8');
+assert.match(rendererSource, /if\s*\(type\s*===\s*'identity'\)\s*continue/);
+assert.match(rendererSource, /if\s*\(isAtsT01\s*&&\s*atsHeader\)\s*\{\s*atsHeader\.insertAdjacentElement\('afterend',\s*wrapper\)/);
