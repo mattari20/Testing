@@ -938,6 +938,7 @@ function applyListStyles(root, snapshot) {
       + '[data-v2-template-root] [data-v2-list-style="inline"]{vertical-align:baseline!important;}'
       + '[data-v2-template-root] [data-v2-list-style="bullets"]{display:block!important;width:auto!important;box-sizing:border-box!important;margin:0 0 5px 0!important;padding:0 0 0 13px!important;position:relative!important;list-style:none!important;white-space:normal!important;flex:0 0 100%!important;}'
       + '[data-v2-template-root] [data-v2-list-style="bullets"]::before{content:"•"!important;position:absolute!important;left:0!important;top:0!important;font-size:1em!important;line-height:1.35!important;}'
+      + '[data-v2-template-id="t02-professional-cv-design_modern"] [data-v2-skills-languages-item][data-v2-list-style="bullets"]::before{color:inherit!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;}'
       + '[data-v2-template-root] [data-v2-list-style="stacked"]{display:block!important;width:100%!important;margin:0 0 5px 0!important;white-space:normal!important;}'
       + '[data-v2-template-root] .v2-proficiency{color:var(--v2-skills-language-rating-color,currentColor)!important;}'
       + '[data-v2-template-root] .v2-proficiency[data-v2-proficiency-style="text"]{display:inline-flex!important;align-items:center!important;margin-left:11px!important;padding-left:11px!important;border-left:1px solid currentColor!important;opacity:.84!important;white-space:nowrap!important;}'
