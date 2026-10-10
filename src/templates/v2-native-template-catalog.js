@@ -150,7 +150,7 @@ const nativeTemplates = [
     supportedSections: ['photo','skills','achievements','languages','summary','education','experience'],
     careerLevel: ['Student','Fresh Graduate','Professional'],
     industry: ['Design','Creative','Media'],
-    style: ['Graphic Design','Creative','Professional'],
+    style: ['Designer','Creative','Modern'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
     capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
