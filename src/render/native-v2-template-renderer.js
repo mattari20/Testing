@@ -1,6 +1,7 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { getSkillOrLanguageProficiency, getSkillOrLanguageValue, PROFICIENCY_LABELS } from '../core/skills-languages.js';
-export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.26.0';
+import { applyReusableCvIcons } from '../core/cv-icon-registry.js';
+export const NATIVE_TEMPLATE_RENDERER_VERSION = '3.27.0';
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -1243,6 +1244,10 @@ function applyT01ProfessionalSidebarPolish(root) {
   const white = {r:255,g:255,b:255,a:1};
   const accentCss = rgbString(accent);
   const whiteCss = rgbString(white);
+  // Align the generated final sidebar section with the native section rhythm;
+  // do not leave a large blank band after Languages.
+  const sidebarContent = sidebar.querySelector(':scope > .sidebar-content');
+  if (sidebarContent) sidebarContent.style.setProperty('padding-bottom', '0', 'important');
 
   // Preserve each template-native layout and list style. Only normalize the
   // foreground and item surfaces within T01's dark sidebar.
@@ -1272,7 +1277,7 @@ function applyT01ProfessionalSidebarPolish(root) {
   root.querySelectorAll('.v2-identity-extra-section').forEach(section => {
     if (!sidebar.contains(section)) return;
     section.style.setProperty('color', whiteCss, 'important');
-    section.style.setProperty('margin', '16px 25px 20px', 'important');
+    section.style.setProperty('margin', '12px 25px 16px', 'important');
     const heading = section.querySelector('.v2-identity-extra-heading');
     if (heading) {
       heading.style.setProperty('font-size', '10.5pt', 'important');
@@ -1356,6 +1361,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyPreviewEditTargets(root, snapshot);
   applyFinalSkillsLanguagesColorSystem(root);
   applyT01ProfessionalSidebarPolish(root);
+  applyReusableCvIcons(root);
   applyT02DarkSidebarTextContrast(root);
   removeUndefinedTextNodes(root);
 
