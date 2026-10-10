@@ -44,6 +44,7 @@ assert.ok(t04Source.includes('background: transparent !important;'));
 assert.ok(t04Source.includes('.skill-tag [data-v2-item-value]'));
 assert.ok(t04Source.includes('.t04-modern-blue-corporate_modern .lang-item { margin-bottom: 12px; }'));
 assert.ok(t04Source.includes('.t04-modern-blue-corporate_modern .lang-name { font-weight: 700; font-size: 13px; color: #333; }'));
+assert.ok(t04Source.includes('class="skill-tag lang-item"><span class="lang-name" data-v2-item-value="skill"'));
 assert.ok(!t04Source.includes('T04 Skills: mirror the clean, readable language-list rhythm.'));
 
 console.log('Native V2 template renderer tests passed.');
