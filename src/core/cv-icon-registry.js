@@ -37,7 +37,7 @@ export function applyReusableCvIcons(root) {
     return svg;
   };
   root.querySelectorAll('.section-title,.section-label,.sidebar-title').forEach(heading => {
-    if (heading.querySelector('.cv-icon')) return;
+    if (heading.querySelector('.cv-icon, i[class], svg, [data-icon]')) return;
     const label = (heading.textContent || '').trim().toLowerCase().replace(/[^a-z ]/g, '');
     const key = /experience|work history/.test(label) ? 'experience'
       : /education|qualification/.test(label) ? 'education'
