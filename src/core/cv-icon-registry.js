@@ -16,7 +16,6 @@ const ICONS = Object.freeze({
   award: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 13v5M8 21h8M9 18h6"/>',
   projects: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6M7 16h8"/>',
   default: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>'
-  default: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>'
 });
 const ICON_ALIASES = Object.freeze({
   'fa-briefcase':'experience','fa-graduation-cap':'education','fa-phone':'phone','fa-phone-alt':'phone','fa-whatsapp':'whatsapp','fa-envelope':'email',
