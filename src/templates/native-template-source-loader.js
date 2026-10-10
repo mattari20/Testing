@@ -1,5 +1,5 @@
-import { getNativeV2Template } from './v2-native-template-catalog.js';
-export const NATIVE_TEMPLATE_SOURCE_LOADER_VERSION = '1.2.0';
+import { getNativeV2Template } from './v2-native-template-catalog.js?v=20261010.2';
+export const NATIVE_TEMPLATE_SOURCE_LOADER_VERSION = '1.2.1';
 export function getNativeTemplateSourceDescriptor(templateId) { const template=getNativeV2Template(templateId); if(!template) throw new Error('Native V2 template not found: '+templateId); return Object.freeze({id:template.id,version:template.version,sourcePath:template.sourcePath}); }
 export async function loadNativeTemplateSource(templateId,options={}) { const d=getNativeTemplateSourceDescriptor(templateId); const fetcher=options.fetcher||globalThis.fetch; if(typeof fetcher!=='function') throw new Error('A fetch implementation is required.'); const requestPath=/^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(d.sourcePath) ? d.sourcePath : '/'+d.sourcePath.replace(/^\/+/, '');
- const cacheBustedPath=requestPath+(requestPath.includes('?')?'&':'?')+'v=20261009.6'; const response=await fetcher(cacheBustedPath); if(!response.ok) throw new Error('Template source request failed: '+response.status); const sourceHtml=await response.text(); if(!sourceHtml.trim()) throw new Error('Template source is empty.'); return Object.freeze({...d,sourceHtml}); }
+ const cacheBustedPath=requestPath+(requestPath.includes('?')?'&':'?')+'__cvb=20261010.2'; const response=await fetcher(cacheBustedPath); if(!response.ok) throw new Error('Template source request failed: '+response.status); const sourceHtml=await response.text(); if(!sourceHtml.trim()) throw new Error('Template source is empty.'); return Object.freeze({...d,sourceHtml}); }
