@@ -28,3 +28,7 @@ assert.match(atsHtml, /ats-grid\{display:block\}/);
 assert.match(atsHtml, /\.v2-proficiency\{display:none!important\}/);
 assert.match(atsHtml, /data-v2-section="achievements"/);
 assert.doesNotMatch(atsHtml, /overflow:hidden/);
+
+assert.equal((atsHtml.match(/data-v2-value="identity\.fullName"/g) || []).length, 1);
+assert.ok(atsHtml.indexOf('class="ats-header"') < atsHtml.indexOf('data-v2-section="summary"'));
+assert.ok(atsHtml.indexOf('data-v2-section="summary"') < atsHtml.indexOf('data-v2-section="experience"'));

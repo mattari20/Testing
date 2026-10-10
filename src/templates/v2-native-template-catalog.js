@@ -26,7 +26,7 @@ const nativeTemplates = [
     skillsLanguagesPresentation: SKILLS_LANGUAGES_TEMPLATE_CONTRACTS['t01-modern-minimalist-cv-design_ats'],
     name: 'T01 Modern Minimalist CV — ATS V2',
     version: '2.2.0',
-    sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html?v=20261010.1',
+    sourcePath: 'src/templates/assets/v2/t01-modern-minimalist-cv-design_ats.html?v=20261010.2',
     supportedSections: ['summary','experience','education','skills','languages','achievements'],
     careerLevel: ['Student','Fresh Graduate','Professional'],
     industry: ['General','IT / Software','Business','Engineering'],
