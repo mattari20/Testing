@@ -44,4 +44,4 @@ assert.match(atsHtml, /ats-personal-label/);
 assert.ok(atsHtml.includes('data-v2-value="identity.cnic"'));
 assert.ok(atsHtml.includes('data-v2-value="identity.religion"'));
 assert.ok(atsHtml.indexOf('class="ats-header"') < atsHtml.indexOf('ats-personal-section'));
-assert.ok(atsHtml.indexOf('class="ats-personal-section"') < atsHtml.indexOf('data-v2-section="summary"'));
+assert.ok(atsHtml.indexOf('ats-personal-section') < atsHtml.indexOf('data-v2-section="summary"'));
