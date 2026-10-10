@@ -1214,9 +1214,15 @@ function applyIdentityExtras(root,snapshot){
   const heading=root.ownerDocument.createElement('div'); heading.className='v2-identity-extra-heading'; heading.textContent='Personal Information';
   wrapper.appendChild(heading); missing.forEach(key=>wrapper.appendChild(makeRow(key)));
   const firstSection=[...target.children].find(el=>el.hasAttribute?.('data-v2-section'));
+  const isAtsT01=root.getAttribute('data-v2-template-id')==='t01-modern-minimalist-cv-design_ats';
+  const atsHeader=isAtsT01 ? root.querySelector(':scope > .ats-header') : null;
+  // T01 ATS keeps the name/title/contact masthead first; generated optional
+  // personal fields follow it, never precede the candidate identity.
   // T01 sidebar order: portrait first, then the native Contact/Skills/Languages
   // stack, with Personal Information last in that same left column.
-  if(isT01 && target.matches?.('aside, .cv-sidebar')) {
+  if(isAtsT01 && atsHeader) {
+    atsHeader.insertAdjacentElement('afterend',wrapper);
+  } else if(isT01 && target.matches?.('aside, .cv-sidebar')) {
     const nativeSidebarContent=target.querySelector(':scope > .sidebar-content');
     if(nativeSidebarContent) nativeSidebarContent.insertAdjacentElement('afterend',wrapper);
     else target.appendChild(wrapper);
