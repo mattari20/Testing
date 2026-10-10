@@ -35,6 +35,13 @@ assert.equal(resolveNativeValue(snapshot, 'company', { values: { company: 'Compa
 const definition = createNativeRenderDefinition({ id: 't01-modern-minimalist-cv-design_modern', sourceHtml: '<div data-v2-template-root></div>' });
 assert.equal(definition.id, 't01-modern-minimalist-cv-design_modern');
 
+const rendererSource = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../../src/render/native-v2-template-renderer.js'), 'utf8');
+assert.ok(rendererSource.includes("T01's Personal Info rows use the same label/value treatment as CNIC"));
+assert.ok(rendererSource.includes("border-bottom', '1px dashed rgba(0,0,0,.16)'"));
+assert.ok(rendererSource.includes("['nationality', 'Nationality'], ['location', 'Location']"));
+assert.ok(rendererSource.includes("data-v2-t01-personal-info-row"));
+
+
 
 const testDir = dirname(fileURLToPath(import.meta.url));
 const t04Source = readFileSync(resolve(testDir, '../../src/templates/assets/v2/t04-modern-blue-corporate_modern.html'), 'utf8');

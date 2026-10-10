@@ -1282,33 +1282,79 @@ function applyT01ProfessionalSidebarPolish(root) {
     });
   });
 
-  // Give the generated personal-information block the same restrained,
-  // readable hierarchy as T01's native sidebar sections.
+  // T01's Personal Info rows use the same label/value treatment as CNIC
+  // and Religion: accent-coloured labels, readable values, and fine dividers.
   root.querySelectorAll('.v2-identity-extra-section').forEach(section => {
     if (!sidebar.contains(section)) return;
-    section.style.setProperty('color', whiteCss, 'important');
+    section.style.setProperty('color', '#333333', 'important');
     section.style.setProperty('margin', '12px 25px 16px', 'important');
     const heading = section.querySelector('.v2-identity-extra-heading');
     if (heading) {
       heading.style.setProperty('font-size', '10.5pt', 'important');
       heading.style.setProperty('font-weight', '700', 'important');
       heading.style.setProperty('letter-spacing', '.8px', 'important');
-      heading.style.setProperty('border-bottom', '1px solid rgba(255,255,255,.35)', 'important');
+      heading.style.setProperty('border-bottom', '1px solid rgba(0,0,0,.2)', 'important');
       heading.style.setProperty('padding-bottom', '5px', 'important');
       heading.style.setProperty('margin-bottom', '9px', 'important');
     }
     section.querySelectorAll('.v2-identity-extra-row').forEach(row => {
       row.style.setProperty('display', 'grid', 'important');
       row.style.setProperty('grid-template-columns', 'minmax(76px, auto) minmax(0, 1fr)', 'important');
+      row.style.setProperty('align-items', 'start', 'important');
       row.style.setProperty('gap', '7px', 'important');
-      row.style.setProperty('margin-bottom', '7px', 'important');
+      row.style.setProperty('margin-bottom', '0', 'important');
+      row.style.setProperty('padding', '5px 0', 'important');
+      row.style.setProperty('border-bottom', '1px dashed rgba(0,0,0,.16)', 'important');
       row.style.setProperty('font-size', '8.5pt', 'important');
-      row.querySelectorAll('b, span').forEach(node => {
-        node.style.setProperty('color', whiteCss, 'important');
-        node.style.setProperty('-webkit-text-fill-color', whiteCss, 'important');
-      });
+      row.style.setProperty('line-height', '1.35', 'important');
+      const label = row.querySelector('b, strong, .contact-label, .personal-info-label');
+      const value = row.querySelector('[data-v2-value], span:not(.contact-label)');
+      if (label) {
+        label.style.setProperty('color', accentCss, 'important');
+        label.style.setProperty('-webkit-text-fill-color', accentCss, 'important');
+        label.style.setProperty('font-weight', '700', 'important');
+      }
+      if (value) {
+        value.style.setProperty('color', '#555555', 'important');
+        value.style.setProperty('-webkit-text-fill-color', '#555555', 'important');
+        value.style.setProperty('min-width', '0', 'important');
+        value.style.setProperty('overflow-wrap', 'anywhere', 'important');
+      }
     });
   });
+
+  // Some T01 personal fields are already bound by the template and therefore
+  // do not pass through the generated-row builder. Normalize their existing
+  // label/value row only when it contains the matching identity binding.
+  for (const [key, labelText] of [['nationality', 'Nationality'], ['location', 'Location']]) {
+    const valueNode = root.querySelector('[data-v2-value="identity.' + key + '"]');
+    if (!valueNode || !sidebar.contains(valueNode)) continue;
+    let row = valueNode.parentElement;
+    for (let depth = 0; row && row !== sidebar && depth < 5; depth++, row = row.parentElement) {
+      const text = String(row.textContent || '').trim();
+      if (!new RegExp('^' + labelText + '\\s*:?', 'i').test(text)) continue;
+      row.setAttribute('data-v2-t01-personal-info-row', key);
+      row.style.setProperty('display', 'grid', 'important');
+      row.style.setProperty('grid-template-columns', 'minmax(76px, auto) minmax(0, 1fr)', 'important');
+      row.style.setProperty('align-items', 'start', 'important');
+      row.style.setProperty('gap', '7px', 'important');
+      row.style.setProperty('margin-bottom', '0', 'important');
+      row.style.setProperty('padding', '5px 0', 'important');
+      row.style.setProperty('border-bottom', '1px dashed rgba(0,0,0,.16)', 'important');
+      row.style.setProperty('font-size', '8.5pt', 'important');
+      row.style.setProperty('line-height', '1.35', 'important');
+      row.querySelectorAll('b, strong, label, .contact-label, .personal-info-label').forEach(node => {
+        node.style.setProperty('color', accentCss, 'important');
+        node.style.setProperty('-webkit-text-fill-color', accentCss, 'important');
+        node.style.setProperty('font-weight', '700', 'important');
+      });
+      valueNode.style.setProperty('color', '#555555', 'important');
+      valueNode.style.setProperty('-webkit-text-fill-color', '#555555', 'important');
+      valueNode.style.setProperty('min-width', '0', 'important');
+      valueNode.style.setProperty('overflow-wrap', 'anywhere', 'important');
+      break;
+    }
+  }
 }
 function applyIdentityVisibility(root, snapshot) {
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
