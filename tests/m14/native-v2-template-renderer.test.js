@@ -54,4 +54,13 @@ assert.ok(t04Source.includes('.t04-modern-blue-corporate_modern .lang-name { fon
 assert.ok(t04Source.includes('class="skill-tag lang-item"><span class="lang-name" data-v2-item-value="skill"'));
 assert.ok(!t04Source.includes('T04 Skills: mirror the clean, readable language-list rhythm.'));
 
+const t05Source = readFileSync(resolve(testDir, '../../src/templates/assets/v2/t05-simple-cv-graphic-web-designer_modern.html'), 'utf8');
+assert.ok(t05Source.includes('.T05-Simple-CV-Graphics-Web-Designer .item-description {'));
+assert.ok(t05Source.includes('grid-template-columns: 95px 1fr;'));
+assert.ok(rendererSource.includes("const isT05=templateId==='t05-simple-cv-graphic-web-designer_modern';"));
+assert.ok(rendererSource.includes("row.className=isT05?'item-description':'contact-row v2-identity-extra-row';"));
+assert.ok(rendererSource.includes("const list=parent.querySelector('.list-item');"));
+assert.ok(rendererSource.includes('if(list) list.appendChild(fragment);'));
+
+
 console.log('Native V2 template renderer tests passed.');
