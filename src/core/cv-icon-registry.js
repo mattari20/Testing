@@ -10,6 +10,12 @@ const ICONS = Object.freeze({
   gender: '<circle cx="10" cy="14" r="5"/><path d="m14 10 6-6M15 4h5v5M10 19v3M7 21h6"/>',
   nationality: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
   religion: '<path d="M12 3v18M5 8h14M7 8l5-5 5 5M7 21h10"/>',
+  summary: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  experience: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/>',
+  education: '<path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c4 3 8 3 12 0v-5M22 9v6"/>',
+  award: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4Z"/><path d="M8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 13v5M8 21h8M9 18h6"/>',
+  projects: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6M7 16h8"/>',
+  default: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>'
   default: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>'
 });
 const ICON_ALIASES = Object.freeze({
@@ -21,17 +27,34 @@ const ICON_ALIASES = Object.freeze({
 });
 export function applyReusableCvIcons(root) {
   if (!root?.querySelectorAll || !root.ownerDocument) return;
-  root.querySelectorAll('i[class]').forEach(oldIcon => {
-    const classes = [...oldIcon.classList];
-    const key = classes.map(name => ICON_ALIASES[name]).find(Boolean);
-    if (!key && !classes.some(name => /^(fa|fas|far|fab|fa-solid|fa-regular|fa-brands)$/.test(name))) return;
+  const createIcon = (key) => {
     const svg = root.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 24 24');
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('focusable', 'false');
-    svg.setAttribute('class', 'cv-icon cv-icon-' + (key || 'default'));
+    svg.setAttribute('class', 'cv-icon cv-icon-' + key);
     svg.style.cssText = 'width:1em;height:1em;display:inline-block;flex:0 0 1em;vertical-align:-0.16em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:inherit;';
-    svg.innerHTML = ICONS[key || 'default'];
-    oldIcon.replaceWith(svg);
+    svg.innerHTML = ICONS[key] || ICONS.default;
+    return svg;
+  };
+  root.querySelectorAll('.section-title,.section-label,.sidebar-title').forEach(heading => {
+    if (heading.querySelector('.cv-icon')) return;
+    const label = (heading.textContent || '').trim().toLowerCase().replace(/[^a-z ]/g, '');
+    const key = /experience|work history/.test(label) ? 'experience'
+      : /education|qualification/.test(label) ? 'education'
+      : /award|achievement|honou?r/.test(label) ? 'award'
+      : /summary|profile|about/.test(label) ? 'summary'
+      : /project/.test(label) ? 'projects' : null;
+    if (!key) return;
+    const icon = createIcon(key);
+    icon.style.marginRight = '0.45em';
+    icon.style.verticalAlign = '-0.12em';
+    heading.prepend(icon);
+  });
+  root.querySelectorAll('i[class]').forEach(oldIcon => {
+    const classes = [...oldIcon.classList];
+    const key = classes.map(name => ICON_ALIASES[name]).find(Boolean);
+    if (!key && !classes.some(name => /^(fa|fas|far|fab|fa-solid|fa-regular|fa-brands)$/.test(name))) return;
+    oldIcon.replaceWith(createIcon(key || 'default'));
   });
 }
