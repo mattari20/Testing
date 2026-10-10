@@ -1228,7 +1228,10 @@ function applyIdentityExtras(root,snapshot){
           personalGroup.setAttribute('data-v2-t06-personal-info','');
           const heading=root.ownerDocument.createElement('div');
           heading.className='section-label';
-          heading.textContent='Personal Information';
+          const headingIcon=root.ownerDocument.createElement('i');
+          headingIcon.className='fas fa-id-card';
+          headingIcon.setAttribute('aria-hidden','true');
+          heading.append(headingIcon,root.ownerDocument.createTextNode('Personal Information'));
           personalGroup.appendChild(heading);
           contactInfo.insertAdjacentElement('afterend',personalGroup);
         }
