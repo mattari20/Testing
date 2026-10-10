@@ -1173,6 +1173,7 @@ function applyIdentityExtras(root,snapshot){
   const templateId=root.getAttribute('data-v2-template-id');
   const isT01=templateId==='t01-modern-minimalist-cv-design_modern';
   const isT05=templateId==='t05-simple-cv-graphic-web-designer_modern';
+  const isT06=templateId==='t06-professional-cv-graphic-designer_modern';
   // T01 reserves contact details for contact channels/address; CNIC belongs in
   // the Personal Information group, so remove its legacy contact row first.
   if(isT01){
@@ -1206,6 +1207,50 @@ function applyIdentityExtras(root,snapshot){
   const personalLabel=[...root.querySelectorAll('.sidebar-label,.section-label,.sidebar-title,.contact-title')]
     .find(el=>/personal\s+information|personal\s+info/i.test(String(el.textContent||'')));
   const missing=keys.filter(key=>!bound.has(key)&&!hidden.has(key)&&meaningful(identity[key]));
+  if(isT06){
+    // T06 separates contact channels from personal details while reusing the
+    // template's native contact-item label/value layout and typography.
+    const contactInfo=root.querySelector('aside .contact-info');
+    if(contactInfo){
+      const personalKeys=['dateOfBirth','cnic','religion','nationality','gender','maritalStatus','location'];
+      const personalValues=personalKeys.filter(key=>!hidden.has(key)&&meaningful(identity[key]));
+      const existingRows=personalKeys.map(key=>({
+        key,
+        row:root.querySelector('[data-v2-visible-when="identity.'+key+'"]')
+      })).filter(item=>item.row&&contactInfo.contains(item.row)&&meaningful(identity[item.key]));
+      const existingKeys=new Set(existingRows.map(item=>item.key));
+      const generatedKeys=personalValues.filter(key=>!existingKeys.has(key));
+      if(existingRows.length||generatedKeys.length){
+        let personalGroup=root.querySelector('[data-v2-t06-personal-info]');
+        if(!personalGroup){
+          personalGroup=root.ownerDocument.createElement('div');
+          personalGroup.className='contact-info t06-personal-info';
+          personalGroup.setAttribute('data-v2-t06-personal-info','');
+          const heading=root.ownerDocument.createElement('div');
+          heading.className='section-label';
+          heading.textContent='Personal Information';
+          personalGroup.appendChild(heading);
+          contactInfo.insertAdjacentElement('afterend',personalGroup);
+        }
+        existingRows.forEach(({row})=>personalGroup.appendChild(row));
+        const icons={dateOfBirth:'fa-cake-candles',cnic:'fa-id-card',religion:'fa-pray',nationality:'fa-flag',gender:'fa-user',maritalStatus:'fa-heart',location:'fa-map-marker-alt'};
+        generatedKeys.forEach(key=>{
+          const row=root.ownerDocument.createElement('div');
+          row.className='contact-item';
+          row.setAttribute('data-v2-identity-extra',key);
+          const label=root.ownerDocument.createElement('b');
+          const icon=root.ownerDocument.createElement('i');
+          icon.className='fas '+(icons[key]||'fa-circle-info');
+          label.append(icon,root.ownerDocument.createTextNode(labelForKey(key)));
+          const value=root.ownerDocument.createElement('span');
+          value.setAttribute('data-v2-value','identity.'+key);
+          row.append(label,value);
+          personalGroup.appendChild(row);
+        });
+      }
+    }
+    return;
+  }
   if(personalLabel){
     const parent=personalLabel.parentElement;
     if(parent&&missing.length){
