@@ -970,6 +970,17 @@ function applyListStyles(root, snapshot) {
     root.querySelectorAll('[data-v2-skills-languages-item="'+type+'"]').forEach(element=>{
       element.setAttribute('data-v2-list-style',selected);
       applySkillsLanguagesItemLayout(element, selected);
+
+      // T02's sidebar uses a column flex layout. A generic bullets rule with
+      // flex-basis:100% consumes the full column height for each language,
+      // clipping every row after the first. Keep T02 language bullets content-
+      // sized while allowing the skills flex-wrap container to retain full rows.
+      if (templateId === 't02-professional-cv-design_modern' && type === 'languages' && selected === 'bullets') {
+        element.style.setProperty('flex', '0 0 auto', 'important');
+        element.style.setProperty('width', '100%', 'important');
+        element.style.setProperty('align-self', 'stretch', 'important');
+      }
+
       const entryId=String(element.getAttribute('data-v2-skills-languages-entry-id')||'');
       const entry=entries.get(entryId);
       if(!entry) return;
