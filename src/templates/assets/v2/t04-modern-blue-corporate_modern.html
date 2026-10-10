@@ -399,52 +399,44 @@
     .t04-modern-blue-corporate_modern [data-v2-list-style="stacked"]{display:block!important}
     .t04-modern-blue-corporate_modern [data-v2-list-style="pills"]{display:inline-flex!important}
 
-    /* T04 Skills: make each selected display style control its own surface.
-       The legacy .skill-tag fill is retained only for the template's native Tags style. */
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="pills"]{
-        align-items:center!important;
-        border:1px solid var(--v2-skills-language-pill-border,var(--primary))!important;
-        border-radius:999px!important;
-        padding:3px 8px!important;
-        margin:2px 4px 3px 0!important;
-        box-shadow:none!important;
-        white-space:normal!important;
-        vertical-align:middle!important;
-    }
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="compact"],
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="inline"],
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="bullets"]{
+    /* T04 Skills: mirror the clean, readable language-list rhythm.
+       Skills are shown as one plain-text row per item; never stack legacy orange tags. */
+    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"]{
+        display:block!important;
+        position:relative!important;
+        box-sizing:border-box!important;
+        width:auto!important;
+        max-width:100%!important;
+        margin:0 0 5px 0!important;
+        padding:0 0 0 12px!important;
         background:transparent!important;
         background-color:transparent!important;
         border:0!important;
         border-radius:0!important;
         box-shadow:none!important;
         color:inherit!important;
-        padding:0!important;
+        font-size:12px!important;
         font-weight:400!important;
+        line-height:1.45!important;
         white-space:normal!important;
+        overflow-wrap:anywhere!important;
+        word-break:normal!important;
+        vertical-align:baseline!important;
     }
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="compact"]{
+    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"]::before{
+        content:"•"!important;
+        position:absolute!important;
+        left:0!important;
+        top:0!important;
+        color:var(--primary)!important;
+        background:transparent!important;
+        border:0!important;
+        box-shadow:none!important;
+    }
+    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"] .v2-proficiency{
         display:inline-flex!important;
-        align-items:baseline!important;
-        margin:0 7px 3px 0!important;
+        margin-left:5px!important;
         vertical-align:baseline!important;
-    }
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="inline"]{
-        display:inline!important;
-        margin:0!important;
-        vertical-align:baseline!important;
-    }
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="inline"]:not(:last-child)::after{
-        content:" · ";
-        color:var(--primary);
-        white-space:pre;
-    }
-    .t04-modern-blue-corporate_modern [data-v2-skills-languages-item="skills"][data-v2-list-style="bullets"]{
-        display:list-item!important;
-        list-style:disc outside!important;
-        margin:0 0 4px 16px!important;
-        padding-left:2px!important;
     }
     .t04-modern-blue-corporate_modern .v2-proficiency{display:inline-flex;align-items:center;gap:4px;margin-left:6px;vertical-align:middle;white-space:nowrap;font-size:.82em;font-weight:600;line-height:1}
     .t04-modern-blue-corporate_modern .v2-proficiency-label{font-weight:600}
