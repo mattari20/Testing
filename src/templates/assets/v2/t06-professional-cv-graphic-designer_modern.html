@@ -195,9 +195,10 @@
         margin-bottom: 10px;
         margin-top: 15px;
         font-size: 14pt;
-        color: #000000;
+        color: var(--primary);
         text-transform: uppercase;
-        margin-right: 15px;
+        margin-right: 0;
+        width: 100%;
         white-space: nowrap;
     }
 
@@ -220,9 +221,9 @@
     .t06-professional-cv-graphic-designer_modern .section-label > .line {
         flex: 1 1 auto;
         min-width: 12px;
-        height: 3px;
+        height: 2px;
         background-color: var(--primary);
-        margin-left: 12px;
+        margin-left: 10px;
         align-self: center;
     }
 
@@ -244,7 +245,7 @@
         display: block;
         flex: 1 1 auto;
         min-width: 10px;
-        height: 3px;
+        height: 2px;
         background-color: var(--primary);
         margin-left: 10px;
         align-self: center;
@@ -266,9 +267,16 @@
 
     .t06-professional-cv-graphic-designer_modern .section-label i {
         margin-right: 8px;
-        font-size: 0.95em;
-        width: 24px;
+        font-size: 0.9em;
+        width: 18px;
+        min-width: 18px;
         text-align: center;
+        flex: 0 0 18px;
+    }
+
+    .t06-professional-cv-graphic-designer_modern main .content-block {
+        text-align: justify;
+        text-justify: inter-word;
     }
 
     .t06-professional-cv-graphic-designer_modern .content-block {
@@ -471,7 +479,7 @@
 
                     
                     <div  data-v2-visible-when="identity.religion" class="contact-item">
-                        <b><i class="fas fa-pray"></i>Religion</b>
+                        <b><i class="fas fa-book-open"></i>Religion</b>
                         <span data-v2-value="identity.religion"></span>
                     </div>
                     
@@ -529,7 +537,7 @@
                 <section>
                     
                     <div  data-v2-section="summary" data-v2-visible-when="section:summary" class="section-label" data-v2-layout-block data-v2-layout-block-id="v2-summary-5" data-v2-layout-kind="section-heading">
-                        <h3><i class="fas fa-bullseye"></i>Objective</h3>
+                        <h3><i class="fas fa-flag"></i>Objective</h3>
                         <div class="line"></div>
                     </div>
                     <div class="content-block">
