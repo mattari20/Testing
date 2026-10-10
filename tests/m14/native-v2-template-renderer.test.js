@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
 import {
   findCanonicalSection,
   isCanonicalSectionVisible,
@@ -31,5 +34,15 @@ assert.equal(resolveNativeValue(snapshot, 'company', { values: { company: 'Compa
 
 const definition = createNativeRenderDefinition({ id: 't01-modern-minimalist-cv-design_modern', sourceHtml: '<div data-v2-template-root></div>' });
 assert.equal(definition.id, 't01-modern-minimalist-cv-design_modern');
+
+
+const testDir = dirname(fileURLToPath(import.meta.url));
+const t04Source = readFileSync(resolve(testDir, '../../src/templates/assets/v2/t04-modern-blue-corporate_modern.html'), 'utf8');
+assert.match(t04Source, /data-v2-skills-languages-item="skills"\]\[data-v2-list-style="pills"/);
+assert.match(t04Source, /data-v2-skills-languages-item="skills"\]\[data-v2-list-style="compact"/);
+assert.match(t04Source, /data-v2-skills-languages-item="skills"\]\[data-v2-list-style="inline"/);
+assert.match(t04Source, /data-v2-skills-languages-item="skills"\]\[data-v2-list-style="bullets"/);
+assert.match(t04Source, /data-v2-list-style="inline"\]:not\(:last-child\)::after/);
+assert.match(t04Source, /list-style:disc outside!important/);
 
 console.log('Native V2 template renderer tests passed.');
