@@ -8,6 +8,10 @@
 .t01-modern-minimalist-cv-design-ats .ats-contact{font-size:9pt;color:var(--ats-muted);display:block;line-height:1.5;overflow-wrap:anywhere}
 .t01-modern-minimalist-cv-design-ats .ats-section{margin:12px 0 0;min-width:0}
 .t01-modern-minimalist-cv-design-ats .ats-heading{font-size:10.5pt;font-weight:700;color:var(--ats-accent);text-transform:uppercase;letter-spacing:.55px;border-bottom:1.5px solid var(--ats-accent);padding:0 0 4px;margin:0 0 7px;break-after:avoid-page;page-break-after:avoid}
+.t01-modern-minimalist-cv-design-ats .ats-personal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px;font-size:9pt}
+.t01-modern-minimalist-cv-design-ats .ats-personal-row{display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:7px;align-items:start;padding:3px 0;border-bottom:1px dotted #d7deea;min-width:0;break-inside:avoid}
+.t01-modern-minimalist-cv-design-ats .ats-personal-label{font-size:8pt;font-weight:700;color:var(--ats-accent);overflow-wrap:anywhere}
+.t01-modern-minimalist-cv-design-ats .ats-personal-value{font-size:9pt;color:#293449;overflow-wrap:anywhere;min-width:0}
 .t01-modern-minimalist-cv-design-ats .ats-summary{font-size:9.5pt;color:#293449;white-space:normal;overflow-wrap:anywhere}
 .t01-modern-minimalist-cv-design-ats .ats-entry{margin:0 0 9px;break-inside:avoid-page;page-break-inside:avoid}
 .t01-modern-minimalist-cv-design-ats .ats-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;min-width:0}
@@ -33,12 +37,22 @@
   .t01-modern-minimalist-cv-design-ats{width:210mm;max-width:none}
 }
 </style>
-<div class="t01-modern-minimalist-cv-design-ats" data-v2-template-root data-v2-template-id="t01-modern-minimalist-cv-design_ats" data-v2-template-version="2.2.1">
+<div class="t01-modern-minimalist-cv-design-ats" data-v2-template-root data-v2-template-id="t01-modern-minimalist-cv-design_ats" data-v2-template-version="2.2.2">
 <header class="ats-header" data-v2-section="identity" data-v2-layout-block data-v2-layout-block-id="v2-ats-header-1" data-v2-layout-kind="header">
 <h1 class="ats-name" data-v2-visible-when="identity.fullName"><span data-v2-value="identity.fullName"></span></h1>
 <div class="ats-title" data-v2-visible-when="identity.jobTitle"><span data-v2-value="identity.jobTitle"></span></div>
 <div class="ats-contact"><span data-v2-visible-when="identity.email"><span data-v2-value="identity.email"></span></span><span data-v2-visible-when="identity.phone"> · <span data-v2-value="identity.phone"></span></span><span data-v2-visible-when="identity.whatsapp"> · WhatsApp: <span data-v2-value="identity.whatsapp"></span></span><span data-v2-visible-when="identity.address"> · <span data-v2-value="identity.address"></span></span><span data-v2-visible-when="identity.linkedin"> · <span data-v2-value="identity.linkedin"></span></span><span data-v2-visible-when="identity.website"> · <span data-v2-value="identity.website"></span></span></div>
 </header>
+<section class="ats-section ats-personal-section">
+<div class="ats-heading">Personal Information</div>
+<div class="ats-personal-grid">
+<div class="ats-personal-row" data-v2-visible-when="identity.cnic"><span class="ats-personal-label">CNIC</span><span class="ats-personal-value" data-v2-value="identity.cnic"></span></div>
+<div class="ats-personal-row" data-v2-visible-when="identity.religion"><span class="ats-personal-label">Religion</span><span class="ats-personal-value" data-v2-value="identity.religion"></span></div>
+<div class="ats-personal-row" data-v2-visible-when="identity.nationality"><span class="ats-personal-label">Nationality</span><span class="ats-personal-value" data-v2-value="identity.nationality"></span></div>
+<div class="ats-personal-row" data-v2-visible-when="identity.gender"><span class="ats-personal-label">Gender</span><span class="ats-personal-value" data-v2-value="identity.gender"></span></div>
+<div class="ats-personal-row" data-v2-visible-when="identity.maritalStatus"><span class="ats-personal-label">Marital Status</span><span class="ats-personal-value" data-v2-value="identity.maritalStatus"></span></div>
+<div class="ats-personal-row" data-v2-visible-when="identity.dateOfBirth"><span class="ats-personal-label">Date of Birth</span><span class="ats-personal-value" data-v2-value="identity.dateOfBirth"></span></div>
+</div></section>
 <section class="ats-section" data-v2-section="summary" data-v2-visible-when="section:summary" data-v2-layout-block data-v2-layout-block-id="v2-ats-summary-2" data-v2-layout-kind="section-heading"><div class="ats-heading">Professional Summary</div><div class="ats-summary"><span data-v2-value="section:summary:text"></span></div></section>
 <section class="ats-section" data-v2-section="experience" data-v2-visible-when="section:experience" data-v2-layout-block data-v2-layout-block-id="v2-ats-experience-3" data-v2-layout-kind="experience-entry"><div class="ats-heading">Professional Experience</div><div class="ats-entry" data-v2-repeat="experience:entries" data-v2-item="experience-entry"><div class="ats-row"><span class="ats-company"><span data-v2-entry-value="company"></span></span><span class="ats-date"><span data-v2-entry-value="duration"></span></span></div><div class="ats-role"><span data-v2-entry-value="title"></span></div><div class="ats-desc"><span data-v2-entry-value="desc"></span></div></div></section>
 <section class="ats-section" data-v2-section="education" data-v2-visible-when="section:education" data-v2-layout-block data-v2-layout-block-id="v2-ats-education-4" data-v2-layout-kind="education-entry"><div class="ats-heading">Education</div><div class="ats-entry" data-v2-repeat="education:entries" data-v2-item="education-entry"><div class="ats-row"><span class="ats-institute"><span data-v2-entry-value="institute"></span></span><span class="ats-date"><span data-v2-entry-value="year"></span></span></div><div class="ats-degree"><span data-v2-entry-value="degree"></span></div><div class="ats-desc"><span data-v2-entry-value="grade"></span></div></div></section>
