@@ -813,61 +813,44 @@ function applyT02DarkSidebarTextContrast(root) {
   const view = root.ownerDocument?.defaultView;
   if (!view?.getComputedStyle) return;
 
-  // T02 owns its Skills/Languages colors. Resolve the sidebar even when the
-  // template root itself carries the sidebar class.
-  const sidebarSelector = '[class*="sidebar"], .left-column, .cv-sidebar';
-  const sidebar = (root.matches?.(sidebarSelector) ? root : null)
-    || root.querySelector(sidebarSelector);
+  // T02's sidebar is a native <aside>, not a class containing "sidebar".
+  const sidebar = root.querySelector('aside');
   if (!sidebar) return;
 
   const surface = parseRgbColor(view.getComputedStyle(sidebar).backgroundColor)
+    || parseRgbColor(view.getComputedStyle(root).getPropertyValue('--primary'))
     || {r:44,g:62,b:80,a:1};
-  const isDarkSurface = relativeLuminance(surface) < 0.5;
   const white = {r:255,g:255,b:255,a:1};
   const dark = {r:31,g:41,b:55,a:1};
-  const readableText = isDarkSurface
+  const readableText = relativeLuminance(surface) < 0.5
     ? (contrastRatio(white, surface) >= contrastRatio(dark, surface) ? white : dark)
     : (contrastRatio(dark, surface) >= contrastRatio(white, surface) ? dark : white);
 
-  // Use T02's own visible section accent as the pill text color. The pill
-  // remains white, so it reads clearly on the dark sidebar without changing
-  // the native pill/tag geometry.
-  let sectionAccent = null;
-  for (const selector of ['.sidebar-label', '.section-label', '.section-title', '.section-heading']) {
-    const node = root.querySelector(selector);
-    if (!node) continue;
-    sectionAccent = parseRgbColor(view.getComputedStyle(node).backgroundColor);
-    if (sectionAccent && relativeLuminance(sectionAccent) < 0.98) break;
-    sectionAccent = null;
-  }
-  if (!sectionAccent) sectionAccent = getThemeColor(root) || {r:37,g:99,b:235,a:1};
+  // Pills are white on T02's colored sidebar; their text and border use the
+  // template accent. Other styles inherit a readable text color from the
+  // actual sidebar surface. No layout or spacing rules are changed.
+  const accent = parseRgbColor(view.getComputedStyle(root).getPropertyValue('--accent-color'))
+    || parseRgbColor(view.getComputedStyle(root).getPropertyValue('--primary'))
+    || {r:52,g:152,b:219,a:1};
 
   root.querySelectorAll('[data-v2-skills-languages-item]').forEach(item => {
     if (!sidebar.contains(item)) return;
     const isPill = item.getAttribute('data-v2-list-style') === 'pills';
-    const foreground = isPill ? sectionAccent : readableText;
+    const foreground = isPill ? accent : readableText;
     const foregroundCss = rgbString(foreground);
 
+    item.style.setProperty('color', foregroundCss, 'important');
+    item.style.setProperty('opacity', '1', 'important');
     if (isPill) {
-      // Template-scoped item colors only: preserve existing pill shape/layout.
       item.style.setProperty('background', 'rgb(255, 255, 255)', 'important');
       item.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-      item.style.setProperty('color', foregroundCss, 'important');
       item.style.setProperty('border-color', foregroundCss, 'important');
-      item.querySelectorAll('*').forEach(node => {
-        node.style.setProperty('color', foregroundCss, 'important');
-        node.style.setProperty('-webkit-text-fill-color', foregroundCss, 'important');
-        node.style.setProperty('opacity', '1', 'important');
-      });
-    } else {
-      item.style.setProperty('color', foregroundCss, 'important');
-      item.style.setProperty('opacity', '1', 'important');
-      item.querySelectorAll('*').forEach(node => {
-        node.style.setProperty('color', foregroundCss, 'important');
-        node.style.setProperty('-webkit-text-fill-color', foregroundCss, 'important');
-        node.style.setProperty('opacity', '1', 'important');
-      });
     }
+    item.querySelectorAll('*').forEach(node => {
+      node.style.setProperty('color', foregroundCss, 'important');
+      node.style.setProperty('-webkit-text-fill-color', foregroundCss, 'important');
+      node.style.setProperty('opacity', '1', 'important');
+    });
   });
 }
 
