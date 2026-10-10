@@ -1203,7 +1203,14 @@ function applyIdentityExtras(root,snapshot){
   const heading=root.ownerDocument.createElement('div'); heading.className='v2-identity-extra-heading'; heading.textContent='Personal Information';
   wrapper.appendChild(heading); missing.forEach(key=>wrapper.appendChild(makeRow(key)));
   const firstSection=[...target.children].find(el=>el.hasAttribute?.('data-v2-section'));
-  if(firstSection) target.insertBefore(wrapper,firstSection);
+  // T01's portrait is the visual anchor of its sidebar. Keep it first and place
+  // fallback personal information immediately after the photo, not above it.
+  if(root.getAttribute('data-v2-template-id')==='t01-modern-minimalist-cv-design_modern' && target.matches?.('aside, .cv-sidebar')) {
+    const photo=target.querySelector(':scope > [data-v2-section="photo"], :scope > .profile-photo-container');
+    if(photo) photo.insertAdjacentElement('afterend',wrapper);
+    else if(firstSection) target.insertBefore(wrapper,firstSection);
+    else target.appendChild(wrapper);
+  } else if(firstSection) target.insertBefore(wrapper,firstSection);
   else if(target===main){
     const header=[...target.children].find(el=>el.tagName==='HEADER');
     if(header&&header.nextSibling) target.insertBefore(wrapper,header.nextSibling); else target.appendChild(wrapper);
@@ -1217,6 +1224,71 @@ function applyIdentityExtras(root,snapshot){
     [data-v2-template-root] .v2-identity-extra-row span{font-weight:inherit!important;min-width:0!important}
   `;
   root.prepend(style);
+}
+function applyT01ProfessionalSidebarPolish(root) {
+  if (root?.getAttribute?.('data-v2-template-id') !== 't01-modern-minimalist-cv-design_modern') return;
+  const view = root.ownerDocument?.defaultView;
+  if (!view?.getComputedStyle) return;
+  const sidebar = root.querySelector('aside');
+  if (!sidebar) return;
+
+  const accent = parseRgbColor(view.getComputedStyle(root).getPropertyValue('--primary'))
+    || parseRgbColor(view.getComputedStyle(root).getPropertyValue('--theme-color'))
+    || {r:26,g:51,b:101,a:1};
+  const white = {r:255,g:255,b:255,a:1};
+  const accentCss = rgbString(accent);
+  const whiteCss = rgbString(white);
+
+  // Preserve each template-native layout and list style. Only normalize the
+  // foreground and item surfaces within T01's dark sidebar.
+  root.querySelectorAll('[data-v2-skills-languages-item]').forEach(item => {
+    if (!sidebar.contains(item)) return;
+    const isPill = item.getAttribute('data-v2-list-style') === 'pills';
+    if (isPill) {
+      item.style.setProperty('background', whiteCss, 'important');
+      item.style.setProperty('background-color', whiteCss, 'important');
+      item.style.setProperty('color', accentCss, 'important');
+      item.style.setProperty('-webkit-text-fill-color', accentCss, 'important');
+      item.style.setProperty('border-color', whiteCss, 'important');
+    } else {
+      item.style.setProperty('color', whiteCss, 'important');
+      item.style.setProperty('-webkit-text-fill-color', whiteCss, 'important');
+    }
+    item.style.setProperty('opacity', '1', 'important');
+    item.querySelectorAll('*').forEach(node => {
+      node.style.setProperty('color', isPill ? accentCss : whiteCss, 'important');
+      node.style.setProperty('-webkit-text-fill-color', isPill ? accentCss : whiteCss, 'important');
+      node.style.setProperty('opacity', '1', 'important');
+    });
+  });
+
+  // Give the generated personal-information block the same restrained,
+  // readable hierarchy as T01's native sidebar sections.
+  root.querySelectorAll('.v2-identity-extra-section').forEach(section => {
+    if (!sidebar.contains(section)) return;
+    section.style.setProperty('color', whiteCss, 'important');
+    section.style.setProperty('margin', '16px 25px 20px', 'important');
+    const heading = section.querySelector('.v2-identity-extra-heading');
+    if (heading) {
+      heading.style.setProperty('font-size', '10.5pt', 'important');
+      heading.style.setProperty('font-weight', '700', 'important');
+      heading.style.setProperty('letter-spacing', '.8px', 'important');
+      heading.style.setProperty('border-bottom', '1px solid rgba(255,255,255,.35)', 'important');
+      heading.style.setProperty('padding-bottom', '5px', 'important');
+      heading.style.setProperty('margin-bottom', '9px', 'important');
+    }
+    section.querySelectorAll('.v2-identity-extra-row').forEach(row => {
+      row.style.setProperty('display', 'grid', 'important');
+      row.style.setProperty('grid-template-columns', 'minmax(76px, auto) minmax(0, 1fr)', 'important');
+      row.style.setProperty('gap', '7px', 'important');
+      row.style.setProperty('margin-bottom', '7px', 'important');
+      row.style.setProperty('font-size', '8.5pt', 'important');
+      row.querySelectorAll('b, span').forEach(node => {
+        node.style.setProperty('color', whiteCss, 'important');
+        node.style.setProperty('-webkit-text-fill-color', whiteCss, 'important');
+      });
+    });
+  });
 }
 function applyIdentityVisibility(root, snapshot) {
   const hidden = new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)
@@ -1278,6 +1350,7 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   applyValues(root, snapshot);
   applyPreviewEditTargets(root, snapshot);
   applyFinalSkillsLanguagesColorSystem(root);
+  applyT01ProfessionalSidebarPolish(root);
   applyT02DarkSidebarTextContrast(root);
   removeUndefinedTextNodes(root);
 
