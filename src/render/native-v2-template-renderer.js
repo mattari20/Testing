@@ -1217,7 +1217,7 @@ function applyIdentityExtras(root,snapshot){
       const existingRows=personalKeys.map(key=>({
         key,
         row:root.querySelector('[data-v2-visible-when="identity.'+key+'"]')
-      })).filter(item=>item.row&&contactInfo.contains(item.row)&&!hidden.has(item.key)&&meaningful(identity[item.key]));
+      })).filter(item=>item.row&&contactInfo.contains(item.row)&&meaningful(identity[item.key]));
       const existingKeys=new Set(existingRows.map(item=>item.key));
       const generatedKeys=personalValues.filter(key=>!existingKeys.has(key));
       if(existingRows.length||generatedKeys.length){
