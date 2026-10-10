@@ -1170,7 +1170,9 @@ function applyIdentityExtras(root,snapshot){
   const identity=isObject(snapshot?.careerData?.identity)?snapshot.careerData.identity:{};
   const hidden=new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)?snapshot.configuration.hiddenIdentityFields.map(String):[]);
   const configured=new Set(Array.isArray(snapshot?.configuration?.identityFields)?snapshot.configuration.identityFields.map(String):[]);
-  const isT01=root.getAttribute('data-v2-template-id')==='t01-modern-minimalist-cv-design_modern';
+  const templateId=root.getAttribute('data-v2-template-id');
+  const isT01=templateId==='t01-modern-minimalist-cv-design_modern';
+  const isT05=templateId==='t05-simple-cv-graphic-web-designer_modern';
   // T01 reserves contact details for contact channels/address; CNIC belongs in
   // the Personal Information group, so remove its legacy contact row first.
   if(isT01){
@@ -1188,10 +1190,18 @@ function applyIdentityExtras(root,snapshot){
     return labels[String(key)]||String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase());
   };
   const makeRow=key=>{
-    const row=root.ownerDocument.createElement('div'); row.className='contact-row v2-identity-extra-row'; row.setAttribute('data-v2-identity-extra',key);
-    const label=root.ownerDocument.createElement('b'); label.textContent=labelForKey(key)+' :';
+    const row=root.ownerDocument.createElement('div');
+    row.className=isT05?'item-description':'contact-row v2-identity-extra-row';
+    row.setAttribute('data-v2-identity-extra',key);
+    const label=root.ownerDocument.createElement('b'); label.textContent=labelForKey(key)+':';
     const value=root.ownerDocument.createElement('span'); value.setAttribute('data-v2-value','identity.'+key);
-    row.append(label,value); return row;
+    if(isT05){
+      row.append(label,value);
+    } else {
+      label.textContent=labelForKey(key)+' :';
+      row.append(label,value);
+    }
+    return row;
   };
   const personalLabel=[...root.querySelectorAll('.sidebar-label,.section-label,.sidebar-title,.contact-title')]
     .find(el=>/personal\s+information|personal\s+info/i.test(String(el.textContent||'')));
@@ -1201,8 +1211,17 @@ function applyIdentityExtras(root,snapshot){
     if(parent&&missing.length){
       const fragment=root.ownerDocument.createDocumentFragment();
       missing.forEach(key=>fragment.appendChild(makeRow(key)));
-      const next=[...parent.children].find(el=>el!==personalLabel&&el.hasAttribute?.('data-v2-section'));
-      if(next) parent.insertBefore(fragment,next); else parent.appendChild(fragment);
+      if(isT05){
+        // T05's native CNIC/Religion rows live inside .list-item and use
+        // .item-description CSS. Put optional identity fields in that same
+        // list so labels, values, dividers, and spacing remain identical.
+        const list=parent.querySelector('.list-item');
+        if(list) list.appendChild(fragment);
+        else parent.appendChild(fragment);
+      } else {
+        const next=[...parent.children].find(el=>el!==personalLabel&&el.hasAttribute?.('data-v2-section'));
+        if(next) parent.insertBefore(fragment,next); else parent.appendChild(fragment);
+      }
     }
     return;
   }
