@@ -19,7 +19,7 @@ const ICONS = Object.freeze({
   default: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>'
 });
 const ICON_ALIASES = Object.freeze({
-  'fa-phone':'phone','fa-phone-alt':'phone','fa-whatsapp':'whatsapp','fa-envelope':'email',
+  'fa-briefcase':'experience','fa-graduation-cap':'education','fa-phone':'phone','fa-phone-alt':'phone','fa-whatsapp':'whatsapp','fa-envelope':'email',
   'fa-map-marker-alt':'address','fa-location-dot':'address','fa-linkedin-in':'linkedin',
   'fa-linkedin':'linkedin','fa-globe':'website','fa-cake-candles':'birthday','fa-birthday-cake':'birthday',
   'fa-id-card':'id','fa-id-card-alt':'id','fa-venus-mars':'gender','fa-mars':'gender','fa-venus':'gender',
