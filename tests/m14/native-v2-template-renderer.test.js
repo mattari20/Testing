@@ -38,11 +38,12 @@ assert.equal(definition.id, 't01-modern-minimalist-cv-design_modern');
 
 const testDir = dirname(fileURLToPath(import.meta.url));
 const t04Source = readFileSync(resolve(testDir, '../../src/templates/assets/v2/t04-modern-blue-corporate_modern.html'), 'utf8');
-assert.ok(t04Source.includes('data-v2-skills-languages-item="skills"][data-v2-list-style="pills"'));
-assert.ok(t04Source.includes('data-v2-skills-languages-item="skills"][data-v2-list-style="compact"'));
-assert.ok(t04Source.includes('data-v2-skills-languages-item="skills"][data-v2-list-style="inline"'));
-assert.ok(t04Source.includes('data-v2-skills-languages-item="skills"][data-v2-list-style="bullets"'));
-assert.ok(t04Source.includes('data-v2-list-style="inline"]:not(:last-child)::after'));
-assert.ok(t04Source.includes('list-style:disc outside!important'));
+assert.ok(t04Source.includes('[data-v2-skills-languages-item="skills"]{'));
+assert.ok(t04Source.includes('display:block!important;'));
+assert.ok(t04Source.includes('background:transparent!important;'));
+assert.ok(t04Source.includes('overflow-wrap:anywhere!important;'));
+assert.ok(t04Source.includes('[data-v2-skills-languages-item="skills"]::before'));
+assert.ok(t04Source.includes('content:"•"!important;'));
+assert.ok(t04Source.includes('data-v2-skills-languages-item="skills"] .v2-proficiency'));
 
 console.log('Native V2 template renderer tests passed.');
