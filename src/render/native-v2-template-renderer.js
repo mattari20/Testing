@@ -1165,13 +1165,19 @@ function applyIdentityExtras(root,snapshot){
   const identity=isObject(snapshot?.careerData?.identity)?snapshot.careerData.identity:{};
   const hidden=new Set(Array.isArray(snapshot?.configuration?.hiddenIdentityFields)?snapshot.configuration.hiddenIdentityFields.map(String):[]);
   const configured=new Set(Array.isArray(snapshot?.configuration?.identityFields)?snapshot.configuration.identityFields.map(String):[]);
+  const isT01=root.getAttribute('data-v2-template-id')==='t01-modern-minimalist-cv-design_modern';
+  // T01 reserves contact details for contact channels/address; CNIC belongs in
+  // the Personal Information group, so remove its legacy contact row first.
+  if(isT01){
+    root.querySelectorAll('[data-v2-visible-when="identity.cnic"]').forEach(el=>el.remove());
+  }
   const bound=new Set();
   root.querySelectorAll('[data-v2-value^="identity."]').forEach(el=>{
     const binding=String(el.getAttribute('data-v2-value')||'');
     bound.add(binding.slice('identity.'.length));
   });
   const excluded=new Set(['fullName','jobTitle','email','phone']);
-  const keys=[...new Set([...configured,...Object.keys(identity)])].filter(key=>!excluded.has(String(key)));
+  const keys=[...new Set([...configured,...Object.keys(identity)])].filter(key=>!excluded.has(String(key)) && !(isT01 && String(key)==='location'));
   const labelForKey=key=>{
     const labels={location:'Location',dateOfBirth:'Date of Birth',cnic:'CNIC',religion:'Religion',nationality:'Nationality',gender:'Gender',maritalStatus:'Marital Status',website:'Website',linkedin:'LinkedIn',whatsapp:'WhatsApp'};
     return labels[String(key)]||String(key).replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase());
@@ -1203,12 +1209,11 @@ function applyIdentityExtras(root,snapshot){
   const heading=root.ownerDocument.createElement('div'); heading.className='v2-identity-extra-heading'; heading.textContent='Personal Information';
   wrapper.appendChild(heading); missing.forEach(key=>wrapper.appendChild(makeRow(key)));
   const firstSection=[...target.children].find(el=>el.hasAttribute?.('data-v2-section'));
-  // T01's portrait is the visual anchor of its sidebar. Keep it first and place
-  // fallback personal information immediately after the photo, not above it.
-  if(root.getAttribute('data-v2-template-id')==='t01-modern-minimalist-cv-design_modern' && target.matches?.('aside, .cv-sidebar')) {
-    const photo=target.querySelector(':scope > [data-v2-section="photo"], :scope > .profile-photo-container');
-    if(photo) photo.insertAdjacentElement('afterend',wrapper);
-    else if(firstSection) target.insertBefore(wrapper,firstSection);
+  // T01 sidebar order: portrait first, then the native Contact/Skills/Languages
+  // stack, with Personal Information last in that same left column.
+  if(isT01 && target.matches?.('aside, .cv-sidebar')) {
+    const nativeSidebarContent=target.querySelector(':scope > .sidebar-content');
+    if(nativeSidebarContent) nativeSidebarContent.insertAdjacentElement('afterend',wrapper);
     else target.appendChild(wrapper);
   } else if(firstSection) target.insertBefore(wrapper,firstSection);
   else if(target===main){
