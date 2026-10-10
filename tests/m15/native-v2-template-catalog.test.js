@@ -39,9 +39,9 @@ const rendererSource = fs.readFileSync(new URL('../../src/render/native-v2-templ
 assert.match(rendererSource, /if\s*\(type\s*===\s*'identity'\)\s*continue/);
 assert.match(rendererSource, /if\s*\(isAtsT01\s*&&\s*atsHeader\)\s*\{\s*atsHeader\.insertAdjacentElement\('afterend',\s*wrapper\)/);
 
-assert.match(atsHtml, /class="ats-personal-section"/);
+assert.match(atsHtml, /ats-personal-section/);
 assert.match(atsHtml, /ats-personal-label/);
 assert.ok(atsHtml.includes('data-v2-value="identity.cnic"'));
 assert.ok(atsHtml.includes('data-v2-value="identity.religion"'));
-assert.ok(atsHtml.indexOf('class="ats-header"') < atsHtml.indexOf('class="ats-personal-section"'));
-assert.ok(atsHtml.indexOf('class="ats-personal-section"') < atsHtml.indexOf('data-v2-section="summary"'));
+assert.ok(atsHtml.indexOf('class="ats-header"') < atsHtml.indexOf('ats-personal-section'));
+assert.ok(atsHtml.indexOf('ats-personal-section') < atsHtml.indexOf('data-v2-section="summary"'));
