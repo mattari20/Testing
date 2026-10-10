@@ -36,20 +36,7 @@ export function applyReusableCvIcons(root) {
     svg.innerHTML = ICONS[key] || ICONS.default;
     return svg;
   };
-  root.querySelectorAll('.section-title,.section-label,.sidebar-title').forEach(heading => {
-    if (heading.querySelector('.cv-icon, i[class], svg, [data-icon]')) return;
-    const label = (heading.textContent || '').trim().toLowerCase().replace(/[^a-z ]/g, '');
-    const key = /experience|work history/.test(label) ? 'experience'
-      : /education|qualification/.test(label) ? 'education'
-      : /award|achievement|honou?r/.test(label) ? 'award'
-      : /summary|profile|about/.test(label) ? 'summary'
-      : /project/.test(label) ? 'projects' : null;
-    if (!key) return;
-    const icon = createIcon(key);
-    icon.style.marginRight = '0.45em';
-    icon.style.verticalAlign = '-0.12em';
-    heading.prepend(icon);
-  });
+  // Section headings intentionally keep template-native typography; reusable icons are reserved for contact/details.
   root.querySelectorAll('i[class]').forEach(oldIcon => {
     const classes = [...oldIcon.classList];
     const key = classes.map(name => ICON_ALIASES[name]).find(Boolean);
