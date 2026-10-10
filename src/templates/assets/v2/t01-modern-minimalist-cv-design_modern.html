@@ -165,8 +165,8 @@
         color: var(--primary);
         margin-top: 12px;
         margin-bottom: 6px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 5px;
+        border-bottom: 2px solid var(--primary, #30364f);
+        padding-bottom: 6px;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
@@ -338,7 +338,7 @@
     width: 100%;
     
     /* Elegant full column underline border layout */
-    border-bottom: 1px solid #eeeeee !important;
+    border-bottom: 2px solid var(--primary, #30364f) !important;
     padding-bottom: 5px;
     display: flex;
     align-items: center;
@@ -532,7 +532,7 @@
         
 
         
-            <div class="section-label" data-v2-section="experience" data-v2-visible-when="section:experience" data-v2-layout-block data-v2-layout-block-id="v2-experience-4" data-v2-layout-kind="experience-entry"><i class="fas fa-briefcase"></i>Experience</div>
+            <div class="section-label" data-v2-section="experience" data-v2-visible-when="section:experience" data-v2-layout-block data-v2-layout-block-id="v2-experience-4" data-v2-layout-kind="experience-entry">Experience</div>
             <div class="timeline-section">
                 
                 <div class="experience-item" data-v2-repeat="experience:entries" data-v2-item="experience-entry">
@@ -548,7 +548,7 @@
         
 
         
-            <div class="section-label" data-v2-section="education" data-v2-visible-when="section:education" data-v2-layout-block data-v2-layout-block-id="v2-education-5" data-v2-layout-kind="education-entry"><i class="fas fa-graduation-cap"></i>Education</div>
+            <div class="section-label" data-v2-section="education" data-v2-visible-when="section:education" data-v2-layout-block data-v2-layout-block-id="v2-education-5" data-v2-layout-kind="education-entry">Education</div>
             <div class="timeline-section">
                 
                 <div class="education-item" data-v2-repeat="education:entries" data-v2-item="education-entry">
@@ -573,7 +573,8 @@
   padding-bottom: 6px !important;
   margin-bottom: 8px !important;
 }
+.t01-modern-minimalist-cv-design .section-title::after,
+.t01-modern-minimalist-cv-design .section-label::after { content: none !important; }
 .t01-modern-minimalist-cv-design .section-label { margin-top: 20px !important; }
 .t01-modern-minimalist-cv-design .section-title { margin-top: 12px !important; }
-.t01-modern-minimalist-cv-design .section-title .cv-icon,
-.t01-modern-minimalist-cv-design .section-label .cv-icon { color: inherit !important; stroke: currentColor !important; }
+
