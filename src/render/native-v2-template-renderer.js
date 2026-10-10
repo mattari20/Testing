@@ -1066,6 +1066,10 @@ function applySectionOrder(root, snapshot) {
   const seen = new Set();
   for (const heading of headings) {
     const type=String(heading.getAttribute('data-v2-section')||'');
+    // The identity header is a fixed document masthead, not a reorderable CV section.
+    // If it joins the configured section list without a matching canonical section,
+    // it receives the fallback rank and can be pushed below Awards/other sections.
+    if(type === 'identity') continue;
     if(!type || seen.has(type)) continue;
     seen.add(type);
     const section=findCanonicalSection(snapshot,type);
