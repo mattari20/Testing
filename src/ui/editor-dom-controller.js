@@ -410,9 +410,6 @@ export function bindEditorFields(root, surface, options = {}) {
 export function bindEditorActions(root, surface) {
   if (!root || !surface) throw new Error('Editor root and surface are required.');
 
-  // Commands re-render the editor form and replace the clicked button. Browsers
-  // can then reset focus/scroll to the top, especially on mobile. Keep the
-  // clicked action at the same viewport position after the new DOM is mounted.
   const scrollableAncestor = element => {
     const view = root.ownerDocument?.defaultView;
     let node = element?.parentElement;
@@ -424,6 +421,26 @@ export function bindEditorActions(root, surface) {
     }
     return null;
   };
+
+  const findNewContent = (type, target) => {
+    if (type === 'add-section') {
+      return [...root.querySelectorAll('.editor-section-card[data-v2-item-id]')].at(-1) || null;
+    }
+    const sectionId = String(target?.sectionId || '');
+    if (!sectionId) return null;
+    const section = [...root.querySelectorAll('.editor-section-card[data-v2-item-id]')]
+      .find(node => String(node.dataset.v2ItemId || '') === sectionId);
+    if (!section) return null;
+    if (type === 'add-entry') {
+      return [...section.querySelectorAll('[data-v2-editor-entry]')].at(-1) || null;
+    }
+    if (type === 'add-field') {
+      return [...section.querySelectorAll('[data-v2-editor-field-wrapper]')].at(-1) ||
+        [...section.querySelectorAll('[data-v2-editor-field]')].at(-1) || null;
+    }
+    return null;
+  };
+
   const handler = event => {
     const element = event.target?.closest?.('[data-v2-editor-command]');
     if (!element || !root.contains(element)) return;
@@ -436,9 +453,18 @@ export function bindEditorActions(root, surface) {
     const scrollContainer = scrollableAncestor(element);
     const originalContainerTop = scrollContainer?.scrollTop || 0;
     const originalWindowTop = view?.scrollY || 0;
+
     surface.dispatch({type,target,payload});
 
     const restoreActionPosition = () => {
+      // For add actions, prioritize the newly created content—not the button.
+      // The button may stay in place while its new entry is pushed out of view.
+      const addedContent = findNewContent(type, target);
+      if (addedContent && ['add-entry', 'add-field', 'add-section'].includes(type)) {
+        addedContent.scrollIntoView({block:'nearest', inline:'nearest', behavior:'auto'});
+        return;
+      }
+
       const replacement = [...root.querySelectorAll('[data-v2-editor-command]')].find(node =>
         node.dataset.v2EditorCommand === type &&
         (node.dataset.v2Target || '{}') === targetSelector
