@@ -142,3 +142,30 @@ Legend:
 | Free/premium template classification | Not formal | V2 Core |
 | Premium template entitlement | Not present | V2 Core |
 | Template SEO landing pages | Partial public positioning | V2 SEO architecture |
+
+
+## Pre-designed Section Library (new specification)
+
+| Capability | Audited baseline | V2 direction |
+|---|---|---|
+| Categorized/searchable section catalogue | Generic Add Custom Section action observed | V2 Release |
+| Prepared section definitions with typed fields | Not established by focused source audit | V2 Release |
+| Awards & Honors | Not general in current capability register | V2 Release / P1 |
+| Key Achievements | Existing achievements section; needs reconciliation before duplicate preset | V2 Release / P1 |
+| Projects & Portfolio | Existing Projects section; extend/avoid parallel duplicate | V2 Release / P1 |
+| Certifications & Licenses | Partial credential support | V2 Release / P1 |
+| Courses & Training | Not general | V2 Release / P1 |
+| Volunteer & Community Service | Not general | V2 Release / P1 |
+| Leadership & Extracurricular Activities | Not general | V2 Release / P1 |
+| Research Experience | Not general | V2 Release / P1 |
+| Publications | Not general | V2 Release / P1 |
+| Conferences & Presentations | Not general | V2 Release / P1 |
+| Professional Memberships & Affiliations | Not general | V2 Release / P1 |
+| Additional Information fallback | Generic custom section can approximate it; typed preset not established | V2 Release / P1 |
+| Academic/specialized presets | Not established as curated library | V2 Release / P2 |
+| Optional/edge-case presets | Not established as curated library | V2 Release / P3 |
+| Template/variant compatibility per preset | Capability engines exist; per-preset matrix not established | V2 Core contract + V2 Release verification |
+| Add-section viewport stability | User-accepted no-jump behavior is a frozen UX baseline; automated workspace test previously failed | Preserve; targeted regression required |
+| Section library automated tests | Generic section/editor tests exist; library-specific coverage not established | V2 Release |
+
+Specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md`. Existing sections such as Projects and Achievements must be extended or mapped to the library where possible, not duplicated as parallel data systems.
