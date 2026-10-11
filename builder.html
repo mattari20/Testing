@@ -285,6 +285,12 @@
     @media(max-width:760px){.editor-section-banner-tools{align-items:flex-end;gap:5px;flex-wrap:wrap}.editor-sort-control span,.editor-list-style-control span{display:none}.editor-list-style-control select{min-width:82px!important}.editor-palette{grid-template-columns:repeat(4,1fr)}.editor-entry-fields{grid-template-columns:1fr}.editor-entry-field:nth-child(5){grid-column:auto}.editor-identity-grid{grid-template-columns:1fr}.editor-crop-work{grid-template-columns:1fr}.editor-crop-preview canvas{max-height:260px}.editor-photo-layout{align-items:flex-start}.editor-panel-help{text-align:left}}
 
     @media(max-width:760px){
+      /* Keep section names and Skills/Languages controls on separate rows on narrow screens. */
+      .editor-section-banner{flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:10px!important}
+      .editor-section-title-wrap{width:100%;min-width:0!important}
+      .editor-section-banner-tools{width:100%;min-width:0;display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;gap:8px!important}
+      .editor-section-banner-tools>.editor-list-style-control,.editor-section-banner-tools>.editor-rating-style-control{flex:0 1 auto;min-width:0}
+      .editor-section-banner-tools .editor-section-actions{margin-left:auto;flex:0 0 auto}
       .toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex;position:absolute;z-index:50;right:12px;top:calc(100% - 4px);background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:10px;flex-direction:column;align-items:stretch;min-width:190px}.toolbar-menu[open] .toolbar-secondary button{width:100%;text-align:left}.toolbar{position:relative}.workspace-menu>summary{display:block;padding:2px 0 8px}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex;width:100%;margin-top:6px}.workspace-menu[open] .workspace-actions button{flex:1 1 auto}
       .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
       #v2-editor{grid-template-columns:1fr}#v2-editor>section{min-height:0}[data-v2-editor-preview-root]{flex:none;padding:10px;overflow-x:hidden}.v2-preview-stage{max-width:100%;}
