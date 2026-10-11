@@ -409,13 +409,57 @@ export function bindEditorFields(root, surface, options = {}) {
 
 export function bindEditorActions(root, surface) {
   if (!root || !surface) throw new Error('Editor root and surface are required.');
+
+  // Commands re-render the editor form and replace the clicked button. Browsers
+  // can then reset focus/scroll to the top, especially on mobile. Keep the
+  // clicked action at the same viewport position after the new DOM is mounted.
+  const scrollableAncestor = element => {
+    const view = root.ownerDocument?.defaultView;
+    let node = element?.parentElement;
+    while (node && node !== root.ownerDocument?.documentElement) {
+      const style = view?.getComputedStyle?.(node);
+      if (style && /(auto|scroll|overlay)/.test(style.overflowY || '') &&
+          node.scrollHeight > node.clientHeight + 1) return node;
+      node = node.parentElement;
+    }
+    return null;
+  };
   const handler = event => {
     const element = event.target?.closest?.('[data-v2-editor-command]');
     if (!element || !root.contains(element)) return;
     const type = element.dataset.v2EditorCommand;
-    const target = parseJson(element.dataset.v2Target);
+    const targetSelector = element.dataset.v2Target || '{}';
+    const target = parseJson(targetSelector);
     const payload = parseJson(element.dataset.v2Payload);
+    const view = root.ownerDocument?.defaultView;
+    const originalTop = element.getBoundingClientRect().top;
+    const scrollContainer = scrollableAncestor(element);
+    const originalContainerTop = scrollContainer?.scrollTop || 0;
+    const originalWindowTop = view?.scrollY || 0;
     surface.dispatch({type,target,payload});
+
+    const restoreActionPosition = () => {
+      const replacement = [...root.querySelectorAll('[data-v2-editor-command]')].find(node =>
+        node.dataset.v2EditorCommand === type &&
+        (node.dataset.v2Target || '{}') === targetSelector
+      );
+      if (replacement) {
+        const delta = replacement.getBoundingClientRect().top - originalTop;
+        if (Math.abs(delta) > 1) {
+          if (scrollContainer?.isConnected) {
+            scrollContainer.scrollTop = Math.max(0, originalContainerTop + delta);
+          } else if (typeof view?.scrollTo === 'function') {
+            view.scrollTo(view.scrollX || 0, Math.max(0, originalWindowTop + delta));
+          }
+        }
+      } else {
+        if (scrollContainer?.isConnected) scrollContainer.scrollTop = originalContainerTop;
+        else if (typeof view?.scrollTo === 'function') view.scrollTo(view.scrollX || 0, originalWindowTop);
+      }
+    };
+    const raf = view?.requestAnimationFrame?.bind(view);
+    if (raf) raf(() => raf(restoreActionPosition));
+    else Promise.resolve().then(restoreActionPosition);
   };
   root.addEventListener('click', handler);
   return Object.freeze({destroy:()=>root.removeEventListener('click', handler)});
