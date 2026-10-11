@@ -317,6 +317,21 @@
   .v2-preview-stage{display:block!important;width:210mm!important;margin:0!important;padding:0!important;overflow:visible!important}
   .v2-preview-stage>[data-v2-template-root]{transform:none!important;margin:0!important;box-shadow:none!important}
 }
+
+    /* Mobile More menu stays in document flow: an open floating panel must
+       never sit above the editor, preview tabs, or version-history controls. */
+    @media(max-width:760px){
+      .toolbar-menu[open]{display:flex;flex:1 0 100%;width:100%;flex-direction:column;align-items:stretch;position:static}
+      .toolbar-menu[open]>summary{align-self:flex-start}
+      .toolbar-menu[open] .toolbar-secondary{
+        display:flex!important;position:static!important;inset:auto!important;top:auto!important;left:auto!important;right:auto!important;
+        z-index:auto!important;width:100%!important;min-width:0!important;max-width:none!important;max-height:none!important;
+        overflow:visible!important;flex-direction:column;align-items:stretch;gap:8px;
+        background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;
+        box-shadow:0 8px 22px rgba(16,24,40,.12);overscroll-behavior:auto
+      }
+      .toolbar-menu[open] .toolbar-secondary button{width:100%;min-height:42px;text-align:left;white-space:normal}
+    }
   </style>
 </head>
 <body>
