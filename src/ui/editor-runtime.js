@@ -1,8 +1,8 @@
 import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
 import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261011.7';
-import { renderEditorForm } from './editor-form-renderer.js?v=20261011.5';
+import { renderEditorForm } from './editor-form-renderer.js?v=20261011.6';
 import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
-import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261011.2';
+import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261011.3';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
 import { createEditorLifecycleController } from '../application/editor-lifecycle-controller.js';
 import { createEditorCommand } from '../application/editor-command-contract.js';
