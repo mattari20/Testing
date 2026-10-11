@@ -198,7 +198,7 @@ test('adding editor items preserves the current viewport without jumping to the 
       const afterButton = page.locator(button).first();
       assert.ok(Math.abs(after.x-before.x) <= 1 && Math.abs(after.y-before.y) <= 1,
         label + ' must not change page scroll (before=' + JSON.stringify(before) + ', after=' + JSON.stringify(after) + ')');
-      const newButtonTop = await afterButton.evaluate(node => node.getBoundingClientRect().top);
+      const newButtonTop = await button.evaluate(node => node.getBoundingClientRect().top);
       assert.ok(Math.abs(newButtonTop-buttonTop) <= 2,
         label + ' action must stay at the same viewport position');
     };
