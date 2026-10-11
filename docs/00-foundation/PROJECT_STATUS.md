@@ -382,3 +382,19 @@ Canonical milestone record: `docs/03-implementation/MILESTONE_EDITOR_VIEWPORT_ST
 Checkpoint commit: `9faf549ce714bd7e22bc266d5540ee886d9f0395`. Hostinger deployment and Template Gallery Validation succeeded. CV Workspace Validation is still failing; the milestone record documents the failing checks and distinguishes owner-accepted UX from automated CI status. Do not represent workspace CI as green.
 
 **Resume rule:** preserve this behavior during future features. If editor rendering, focus, field insertion, or scroll handling is changed, rerun mobile browser checks for Add Skill, Add Language, Add Field, and Add Custom Section.
+
+
+## Pre-designed Section Library — specification checkpoint (2026-10-11)
+
+The Section Library planning task has been recorded in `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md` and reconciled into:
+- `docs/02-v2-product/V2_MASTER_CAPABILITY_REGISTER.md`
+- `docs/02-v2-product/V2_FEATURE_MATRIX.md`
+- `docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md`
+
+The focused source audit found useful existing primitives: the editor command boundary supports section/field/entry operations; the template engine already models supported sections/fields/variants; and the presentation variant engine supports field-, entry-, section- and document-level variants. However, the editor renderer still has a fixed core-section set and a generic Add Custom Section action. The inspected source does not establish a complete curated catalogue of typed, prepared blocks. Therefore this work records the requirements and gaps; it does not claim the Section Library has been implemented.
+
+The catalogue contains 26 proposed presets across core, academic/specialized and optional categories. P1 priorities include Awards & Honors, Key Achievements, Projects & Portfolio (mapped to the existing Projects section), Certifications & Licenses, Courses & Training, Volunteer Service, Leadership & Activities, Research Experience, Publications, Conferences, Professional Memberships and Additional Information.
+
+**Next controlled step:** conduct the focused implementation audit and map each P1 preset to the actual command reducer, canonical document model, persistence/migration behavior, renderer, preview compiler, template capabilities and export paths. Then implement the registry/schema and catalogue UI with targeted tests. No application code, V1 change or feature deployment was part of this documentation checkpoint.
+
+**Release honesty:** the existing workspace CI failures documented in the viewport-stability milestone remain separate release gates. Documentation updates do not resolve or reclassify those failures.
