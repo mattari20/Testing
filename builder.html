@@ -334,7 +334,7 @@
       <button type="button" class="primary" id="print-btn">Export PDF</button>
       <button type="button" id="share-btn">Share</button>
       <button type="button" class="primary" id="save-btn">Save CV</button>
-      <details class="toolbar-menu" open>
+      <details class="toolbar-menu">
         <summary aria-label="More CV tools">More</summary>
         <div class="toolbar-secondary">
           <button type="button" id="recover-btn">Recover</button>
@@ -665,16 +665,27 @@
     const toolbarMenu = document.querySelector('.toolbar-menu');
     const workspaceMenu = document.querySelector('.workspace-menu');
     const isCompactToolbar = () => window.matchMedia('(max-width: 760px)').matches;
-    // Desktop shows the secondary tools inline with no More toggle, so only
-    // auto-collapse this menu where its summary control is actually available.
+    // Start collapsed on mobile; keep tools inline on desktop where the More
+    // summary is hidden. This prevents the fixed mobile panel blocking the page.
+    if (toolbarMenu) toolbarMenu.open = !isCompactToolbar();
     const closeToolbarMenu = () => { if (isCompactToolbar() && toolbarMenu?.open) toolbarMenu.open = false; };
     const closeWorkspaceMenu = () => { if (workspaceMenu?.open) workspaceMenu.open = false; };
     toolbarMenu?.addEventListener('click', event => {
       if (event.target.closest('button')) closeToolbarMenu();
     });
+    // Capture pointer interaction so the panel dismisses even if another
+    // component stops bubbling click events.
+    document.addEventListener('pointerdown', event => {
+      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
+      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+    }, true);
     document.addEventListener('click', event => {
       if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
       if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+    });
+    window.addEventListener('resize', () => {
+      if (isCompactToolbar()) closeToolbarMenu();
+      else if (toolbarMenu) toolbarMenu.open = true;
     });
     toolbarMenu?.addEventListener('toggle', () => {
       if (toolbarMenu.open) closeWorkspaceMenu();
