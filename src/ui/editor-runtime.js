@@ -1,6 +1,6 @@
 import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
-import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261011.4';
-import { renderEditorForm } from './editor-form-renderer.js?v=20261011.3';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261011.5';
+import { renderEditorForm } from './editor-form-renderer.js?v=20261011.4';
 import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261010.4';
 import { createEditorPersistenceAdapter, createEditorRecoveryController } from '../storage/editor-persistence.js';
@@ -36,6 +36,13 @@ export function mountV2EditorRuntime(root, input = {}) {
     if (typeof view?.confirm !== 'function') return false;
     return view.confirm('You have unsaved CV changes. Recovering will replace them. Continue?');
   });
+  // Replacing the editor form on each structural action can trigger browser scroll anchoring.
+  // Disable anchoring for this editor's lifetime so inserted fields extend downward without
+  // the browser shifting the document to compensate for removed/recreated DOM nodes.
+  const documentElement = root.ownerDocument?.documentElement;
+  const previousOverflowAnchor = documentElement?.style?.overflowAnchor ?? '';
+  if (documentElement?.style) documentElement.style.overflowAnchor = 'none';
+
   const lifecycleController = createEditorLifecycleController(mounted.surface, recoveryController, { confirmRecovery });
   const sessionGuard = createEditorSessionGuard(
     lifecycleController,
@@ -171,6 +178,7 @@ export function mountV2EditorRuntime(root, input = {}) {
       reorderBinding?.destroy();
       lifecycleBinding?.destroy();
       previewRuntime?.destroy();
+      if (documentElement?.style) documentElement.style.overflowAnchor = previousOverflowAnchor;
       unsubscribe();
       mounted.destroy();
     }
