@@ -5,6 +5,10 @@ on:
     branches:
       - feature/pre-designed-section-library
 
+concurrency:
+  group: section-library-feature-validation
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

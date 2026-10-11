@@ -28,7 +28,7 @@ The production branch source was inspected at the baseline commit listed above. 
 
 ### Audit conclusion
 
-The architecture has useful building blocks for this feature, but the inspected source does **not** establish that a curated, typed, versioned Section Library, per-section field schemas, catalogue discovery UI, or all 26 proposed blocks are implemented. The current generic Add Custom Section action is not sufficient for the desired end-user experience.
+The architecture has useful building blocks for this feature, but the inspected source does **not** establish that a curated, typed, versioned Section Library, per-section field schemas, catalogue discovery UI, or all 25 proposed blocks are implemented. The current generic Add Custom Section action is not sufficient for the desired end-user experience.
 
 This audit is bounded to the listed files and documents. It does not certify every existing template's current visual support or every export path; those require targeted tests when implementation starts.
 
