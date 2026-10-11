@@ -16,7 +16,7 @@ const preset = (id, title, singular, category, priority, description, fields) =>
       title,
       visibility: true,
       repeatable: true,
-      fields: [],
+      fields: fields.map(item => ({ id:item.key, type:item.type, label:item.label, value:'', visibility:true, order:fields.indexOf(item), metadata:{ placeholder:item.placeholder, required:item.required, sectionLibraryField:true } })),
       entries: [{ values, visibility: true }],
       metadata: {
         sectionLibrary: {
