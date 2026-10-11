@@ -475,9 +475,10 @@ export function bindEditorActions(root, surface) {
       // The newly inserted field and the controls beneath it flow downward naturally.
       restoreScrollState(scrollState);
     };
-    const raf = view?.requestAnimationFrame?.bind(view);
-    if (raf) raf(() => raf(restoreActionPosition));
-    else Promise.resolve().then(restoreActionPosition);
+    // Dispatch rerenders the form synchronously. Restore scroll before this click
+    // handler returns so the browser cannot paint an intermediate jumped position.
+    // Deferring this to requestAnimationFrame (especially two frames) visibly jolts.
+    restoreActionPosition();
   };
   root.addEventListener('click', handler);
   return Object.freeze({destroy:()=>root.removeEventListener('click', handler)});
