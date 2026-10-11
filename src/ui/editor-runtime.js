@@ -56,7 +56,10 @@ export function mountV2EditorRuntime(root, input = {}) {
     reorderBinding?.destroy();
     const state = mounted.surface.getState();
     const profile = state.session.application.masterProfile;
-    const form = root.querySelector('[data-v2-editor-form]');
+    let form = root.querySelector('[data-v2-editor-form]');
+    // The mobile workspace can replace the editor shell node after mount. Rebind against
+    // the currently connected form instead of retaining a detached form/root reference.
+    if (!form?.isConnected) form = root.ownerDocument?.querySelector?.('[data-v2-editor-form]') || null;
     if (form) {
       const holder = root.ownerDocument.createElement('div');
       holder.innerHTML = renderEditorForm(mounted.surface, profile, { photoShape: input.photoShape || root.getAttribute('data-v2-photo-shape') || 'circle' }).html;
