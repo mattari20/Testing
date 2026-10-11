@@ -13,6 +13,35 @@ async function freePort(){
   return port;
 }
 
+
+test('mobile More menu dismisses on outside click and after opening a tool', async () => {
+  const { chromium } = await import('playwright');
+  const port=await freePort();
+  const server=spawn('python3',['-m','http.server',String(port),'--bind','127.0.0.1'],{stdio:'ignore'});
+  const browser=await chromium.launch({headless:true});
+  try {
+    const page=await browser.newPage({viewport:{width:390,height:844}});
+    await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+    await page.waitForSelector('#cv-document-list .cv-document');
+    const menu=page.locator('.toolbar-menu');
+    const more=menu.locator('summary');
+
+    assert.equal(await menu.evaluate(node=>node.open),true,'More menu should initially be available');
+    await page.locator('.brand').click();
+    assert.equal(await menu.evaluate(node=>node.open),false,'outside click should close More menu');
+
+    await more.click();
+    assert.equal(await menu.evaluate(node=>node.open),true,'More control should reopen the menu');
+    await page.locator('#career-tools-btn').click();
+    assert.equal(await menu.evaluate(node=>node.open),false,'choosing a tool should close More menu');
+    await page.waitForFunction(()=>!document.querySelector('#career-tools-modal').hidden);
+    await page.locator('[data-close-tool-modal="career-tools-modal"]').click();
+  } finally {
+    await browser.close();
+    server.kill();
+  }
+});
+
 test('production CV workspace supports multi-CV lifecycle and reload persistence', async () => {
   const { chromium } = await import('playwright');
   const port=await freePort();
