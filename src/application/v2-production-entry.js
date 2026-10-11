@@ -1,6 +1,6 @@
-import { mountV2EditorRuntime } from '../ui/editor-runtime.js?v=20261011.13';
+import { mountV2EditorRuntime } from '../ui/editor-runtime.js?v=20261011.14';
 
-export const V2_PRODUCTION_ENTRY_VERSION = '1.2.8';
+export const V2_PRODUCTION_ENTRY_VERSION = '1.2.9';
 
 export function createV2ProductionEntry(options = {}) {
   const rootSelector = String(options.rootSelector || '[data-v2-editor-root]');
