@@ -1,0 +1,33 @@
+name: Section Library Feature Validation
+
+on:
+  push:
+    branches:
+      - feature/pre-designed-section-library
+
+permissions:
+  contents: read
+
+jobs:
+  section-library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install project dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install browser test dependency
+        run: npm install --no-save --no-audit --no-fund playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Section library unit and browser validation
+        run: npm run test:section-library
+      - name: Existing editor form regression
+        run: npm run test:m72
+      - name: Existing editor command regression
+        run: npm run test:m64
+      - name: Native template renderer regression
+        run: npm run test:m14
