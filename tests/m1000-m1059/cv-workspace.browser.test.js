@@ -26,9 +26,13 @@ test('mobile More menu dismisses on outside click and after opening a tool', asy
     const menu=page.locator('.toolbar-menu');
     const more=menu.locator('summary');
 
-    assert.equal(await menu.evaluate(node=>node.open),true,'More menu should initially be available');
+    assert.equal(await menu.evaluate(node=>node.open),false,'More menu should start closed on mobile');
+    assert.equal(await page.locator('#career-tools-btn').isVisible(),false,'mobile tools should not cover the page before More is opened');
+
+    await more.click();
+    assert.equal(await menu.evaluate(node=>node.open),true,'More control should open the menu');
     await page.locator('.brand').click();
-    assert.equal(await menu.evaluate(node=>node.open),false,'outside click should close More menu');
+    assert.equal(await menu.evaluate(node=>node.open),false,'outside tap should close More menu');
 
     await more.click();
     assert.equal(await menu.evaluate(node=>node.open),true,'More control should reopen the menu');
