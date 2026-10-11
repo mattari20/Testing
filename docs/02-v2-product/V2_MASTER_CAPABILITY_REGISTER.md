@@ -315,3 +315,26 @@ The V1 Golden Baseline remains the reference for preserved behavior and visual o
 6. New integrations are replaceable.
 7. New capabilities are documented before implementation.
 8. UI/CSS modernization remains a controlled later phase.
+
+## 28. Pre-designed Section Library
+
+The V2 product includes a categorized, searchable Pre-designed Section Library. Users select a prepared block and receive a complete typed section definition, default fields, repeatable-entry behavior, and compatible presentation preferences. The existing Custom Section remains available as a fallback.
+
+Canonical specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md`.
+
+### Initial catalogue
+- P1 core: Awards & Honors; Key Achievements; Projects & Portfolio; Certifications & Licenses; Courses & Training; Volunteer & Community Service; Leadership & Extracurricular Activities; Research Experience; Publications; Conferences & Presentations; Professional Memberships & Affiliations; Additional Information.
+- P2 specialized/academic: Scholarships & Fellowships; Research Grants & Funding; Thesis & Dissertation; Patents & Intellectual Property; Teaching Experience; Professional Service & Mentoring; Open-Source Contributions; Technical & Laboratory Experience; Selected Work / Case Studies.
+- P3 optional: Media & Public Appearances; Guest Lectures & Speaking Engagements; Interests & Hobbies; References.
+- Existing core sections (Personal/Contact Information, Summary, Experience, Education, Skills and Languages) are retained and improved rather than duplicated.
+
+### Mandatory capability rules
+- Stable section IDs, definition versions, typed field definitions, validation and repeatable entries.
+- Section/entry/field ordering and visibility remain separate, explicit states.
+- Data and presentation are separate; templates may adapt presentation but must never silently delete unsupported content.
+- Existing section/field commands, canonical document model, template capability resolver, presentation-variant engine and export contracts are reused where fit.
+- No AI-generated career facts; sensitive contact/reference information remains user-controlled.
+- Preserve the accepted editor viewport-stability milestone during Add Section/Add Entry/Add Field actions.
+- Implementation is gated on focused code audit, schema/registry tests, template compatibility matrix, mobile/browser regression and PDF/DOCX/print checks.
+
+This is a planned capability/specification, not a claim that all catalogue items are already implemented. No application code is authorized by the specification commit itself.
