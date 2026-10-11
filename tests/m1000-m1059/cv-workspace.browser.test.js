@@ -36,6 +36,17 @@ test('mobile More menu dismisses on outside click and after opening a tool', asy
 
     await more.click();
     assert.equal(await menu.evaluate(node=>node.open),true,'More control should reopen the menu');
+    assert.equal(await menu.locator('.toolbar-secondary').evaluate(node=>getComputedStyle(node).position),'static',
+      'open mobile More panel must stay in document flow instead of covering editor controls');
+
+    // A control below the menu must remain clickable and close the menu.
+    await page.locator('#mobile-preview-tab').click();
+    assert.equal(await menu.evaluate(node=>node.open),false,'opening Preview should dismiss More menu');
+    assert.equal(await page.locator('#v2-editor').getAttribute('data-mobile-view'),'preview',
+      'Preview tab should still respond while More menu was open');
+
+    await more.click();
+    assert.equal(await menu.evaluate(node=>node.open),true,'More control should reopen the menu');
     await page.locator('#career-tools-btn').click();
     assert.equal(await menu.evaluate(node=>node.open),false,'choosing a tool should close More menu');
     await page.waitForFunction(()=>!document.querySelector('#career-tools-modal').hidden);
