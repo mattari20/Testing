@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: 20
       - run: npm install --no-audit --no-fund
+      - name: Install browser test dependency
+        run: npm install --no-save --no-audit --no-fund playwright
+      - name: Install Chromium for real mobile browser tests
+        run: npx playwright install --with-deps chromium
       - name: Targeted editor command and surface validation
         run: npm run test:m64 && npm run test:m67
       - name: Editor form and interaction validation
