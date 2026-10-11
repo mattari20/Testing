@@ -23,6 +23,13 @@ test('mobile More menu dismisses on outside click and after opening a tool', asy
     const page=await browser.newPage({viewport:{width:390,height:844}});
     await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
+    await page.waitForFunction(() => window.v2ProductionReady === true);
+    assert.ok(await page.locator('[data-v2-editor-form] input, [data-v2-editor-form] textarea, [data-v2-editor-form] select').count() > 0,
+      'editor form fields should mount instead of remaining blank');
+    assert.ok(await page.locator('[data-v2-editor-preview-root] [data-v2-template-root]').count() > 0,
+      'CV preview template should mount instead of remaining blank');
+    assert.match(await page.locator('#app-status').textContent(), /V2 editor ready/i,
+      'startup status should confirm the editor is ready');
     const menu=page.locator('.toolbar-menu');
     const more=menu.locator('summary');
 
