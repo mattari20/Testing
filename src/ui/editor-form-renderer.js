@@ -1,7 +1,7 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
 import { CV_SECTION_LIBRARY } from '../application/cv-section-library.js';
-export const EDITOR_FORM_RENDERER_VERSION = '1.34.1';
+export const EDITOR_FORM_RENDERER_VERSION = '1.35.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -296,7 +296,10 @@ export function renderEditorForm(surface,documentData,options={}){
       (!isCore?'<label class="editor-placement-control"><span>Show in</span><select data-v2-editor-section-placement="'+esc(sid)+'" aria-label="Section column"><option value="left"'+(placement==='left'?' selected':'')+'>Left column</option><option value="right"'+(placement==='right'?' selected':'')+'>Right column</option></select></label>':'')+
       '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
-      (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+(type==='summary'?summarySuggestionButton(section):'')+fieldManagementHtml+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:Object.fromEntries((sectionLibrary?.fields||[]).map(field=>[field.key,'']))})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
+      const entryValues=type==='skills'?{skill:''}:type==='languages'?{language:''}:Object.fromEntries((sectionLibrary?.fields||[]).map(field=>[field.key,'']));
+    const addEntryControl=canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:entryValues})+'">+ '+esc(addButton)+'</button>':'';
+    const addFieldControl=canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:'New Field',value:''})+'">+ Add Field</button>':'';
+    (!sectionHidden?'<div class="editor-section-content">'+addEntryControl+addFieldControl+fieldHtml+(type==='summary'?summarySuggestionButton(section):'')+fieldManagementHtml+entryHtml+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the section eye button to show it again.</div>')+
       '</section>';
   }).join('');
 
@@ -304,9 +307,9 @@ export function renderEditorForm(surface,documentData,options={}){
     version:EDITOR_FORM_RENDERER_VERSION,
     html:renderPalette(configuration)+renderPhotoCard(documentData,options.photoShape||'circle',configuration)+
       '<section class="editor-section-card editor-identity-card"><div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">PROFILE</span><div><h3>Profile Information</h3><span class="editor-section-status">Keep your identity, contact and personal details organized</span></div></div></div><div class="editor-section-content">'+identityHtml+'</div></section>'+
-      sectionsHtml+
       renderSectionLibrary()+
-      '<button type="button" class="editor-add-section" data-v2-editor-command="add-section" data-v2-editor-target="{}" data-v2-target="'+attr({})+'" data-v2-payload="'+attr({title:'New Section',type:'custom',repeatable:false})+'">+ Add Custom Section</button>',
+      '<button type="button" class="editor-add-section" data-v2-editor-command="add-section" data-v2-editor-target="{}" data-v2-target="'+attr({})+'" data-v2-payload="'+attr({title:'New Section',type:'custom',repeatable:false})+'">+ Add Custom Section</button>'+
+      sectionsHtml,
     sectionCount:sections.length
   });
 }
