@@ -183,6 +183,8 @@ test('adding editor items preserves the current viewport without jumping to the 
   const browser = await chromium.launch({headless:true});
   try {
     const page = await browser.newPage({viewport:{width:390,height:844}});
+    const pageErrors=[];
+    page.on('pageerror',error=>pageErrors.push(String(error?.stack||error)));
     await page.goto('http://127.0.0.1:' + port + '/builder.html?template=t01-modern-minimalist-cv-design_modern', {waitUntil:'networkidle'});
     await page.waitForFunction(() => window.v2ProductionReady === true);
 
@@ -191,8 +193,17 @@ test('adding editor items preserves the current viewport without jumping to the 
       const before = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
       const buttonTop = await button.evaluate(node => node.getBoundingClientRect().top);
       await button.click();
-      await page.waitForFunction(({selector,count}) => document.querySelectorAll(selector).length === count,
-        {selector:countLocator, count:expectedCount});
+      try {
+        await page.waitForFunction(({selector,count}) => document.querySelectorAll(selector).length === count,
+          {selector:countLocator, count:expectedCount});
+      } catch (error) {
+        const diagnostic=await page.evaluate(({selector})=>{
+          const sections=window.eStudentCVBuilderV2?.surface?.getState?.().session?.application?.masterProfile?.careerData?.sections||[];
+          const skill=sections.find(item=>item.type==='skills');
+          return {domCount:document.querySelectorAll(selector).length,skillEntryCount:skill?.entries?.length,skillRepeatable:skill?.repeatable,status:document.querySelector('#app-status')?.textContent,buttonCount:document.querySelectorAll('[data-v2-editor-section="skills"] .editor-add-entry').length};
+        },{selector:countLocator});
+        throw new Error(label+' failed to insert expected content: '+JSON.stringify(diagnostic)+'; pageErrors='+JSON.stringify(pageErrors)+'; original='+String(error));
+      }
       await page.waitForTimeout(100);
       const after = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
       const afterButton = page.locator(button).first();
