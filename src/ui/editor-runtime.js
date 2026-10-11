@@ -1,5 +1,5 @@
 import { mountEditorPage } from './editor-page-controller.js?v=20261006.2';
-import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261011.5';
+import { bindEditorFields, bindEditorActions, bindEditorLifecycle } from './editor-dom-controller.js?v=20261011.6';
 import { renderEditorForm } from './editor-form-renderer.js?v=20261011.4';
 import { bindEditorReorder } from './editor-reorder-controller.js?v=20261006.2';
 import { createEditorLivePreviewRuntime } from './editor-live-preview-runtime.js?v=20261010.4';
