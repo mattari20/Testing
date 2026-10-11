@@ -1,5 +1,6 @@
 import { createCVWorkspace } from '../application/cv-workspace.js';
 import { createEditorSession } from '../application/editor-session.js';
+import { migrateSkillsLanguagesProfile, migrateSkillsLanguagesTargetedCV, SKILLS_LANGUAGES_SCHEMA_VERSION } from '../core/skills-languages.js';
 
 export const CV_WORKSPACE_CONTROLLER_VERSION = '1.0.0';
 
@@ -41,7 +42,27 @@ export function createCVWorkspaceController(options = {}) {
       if (!raw) return;
       const payload = JSON.parse(raw);
       if (payload?.version !== CV_WORKSPACE_CONTROLLER_VERSION || !payload.workspace) return;
-      workspace.replaceState(payload.workspace, { type: 'load-workspace' });
+      const savedWorkspace = payload.workspace;
+      let savedProfile = clone(savedWorkspace.masterProfile);
+      const hasLegacySkillsLanguages = (savedProfile?.careerData?.sections || []).some(section =>
+        ['skills','languages'].includes(String(section?.type)) &&
+        (section?.metadata?.skillsLanguagesSchema !== SKILLS_LANGUAGES_SCHEMA_VERSION ||
+          (Array.isArray(section?.fields) && section.fields.length > 0))
+      );
+      // Workspace persistence predates the CV application's normalizing path.
+      // Re-migrate legacy Skills/Languages on load so old localStorage data is
+      // converted to canonical entries before the editor and preview render it.
+      if (hasLegacySkillsLanguages) savedProfile = migrateSkillsLanguagesProfile(savedProfile);
+      const savedDocuments = (Array.isArray(savedWorkspace.documents) ? savedWorkspace.documents : []).map(document =>
+        hasLegacySkillsLanguages
+          ? migrateSkillsLanguagesTargetedCV(document, savedProfile)
+          : document
+      );
+      workspace.replaceState({
+        ...savedWorkspace,
+        masterProfile: savedProfile,
+        documents: savedDocuments
+      }, { type: 'load-workspace' });
       versions = payload.versions && typeof payload.versions === 'object' ? payload.versions : {};
     } catch {
       storage.removeItem?.(storageKey);
