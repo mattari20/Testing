@@ -176,7 +176,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
 });
 
 
-test('adding editor items keeps the newly added content visible', async () => {
+test('adding editor items preserves the current viewport without jumping to the section top', async () => {
   const { chromium } = await import('playwright');
   const port = await freePort();
   const server = spawn('python3', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {stdio:'ignore'});
@@ -186,46 +186,50 @@ test('adding editor items keeps the newly added content visible', async () => {
     await page.goto('http://127.0.0.1:' + port + '/builder.html?template=t01-modern-minimalist-cv-design_modern', {waitUntil:'networkidle'});
     await page.waitForFunction(() => window.v2ProductionReady === true);
 
-    const checkAddedContentVisible = async (button, countLocator, expectedCount, label) => {
+    const checkViewportPreserved = async (button, countLocator, expectedCount, label) => {
       await button.scrollIntoViewIfNeeded();
+      const before = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
+      const buttonTop = await button.evaluate(node => node.getBoundingClientRect().top);
       await button.click();
       await page.waitForFunction(({selector,count}) => document.querySelectorAll(selector).length === count,
         {selector:countLocator, count:expectedCount});
       await page.waitForTimeout(100);
-      const added = page.locator(countLocator).last();
-      const bounds = await added.evaluate(node => {
-        const rect = node.getBoundingClientRect();
-        return {top:rect.top,bottom:rect.bottom,height:window.innerHeight};
-      });
-      assert.ok(bounds.top < bounds.height && bounds.bottom > 0,
-        label + ' newly added content must remain visible in the viewport (top=' + bounds.top + ', bottom=' + bounds.bottom + ')');
+      const after = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
+      const afterButton = page.locator(button).first();
+      assert.ok(Math.abs(after.x-before.x) <= 1 && Math.abs(after.y-before.y) <= 1,
+        label + ' must not change page scroll (before=' + JSON.stringify(before) + ', after=' + JSON.stringify(after) + ')');
+      const newButtonTop = await afterButton.evaluate(node => node.getBoundingClientRect().top);
+      assert.ok(Math.abs(newButtonTop-buttonTop) <= 2,
+        label + ' action must stay at the same viewport position');
     };
 
     const skillButton = page.locator('[data-v2-editor-section="skills"] .editor-add-entry');
     const skillsBefore = await page.locator('[data-v2-editor-section="skills"] [data-v2-editor-entry]').count();
-    await checkAddedContentVisible(skillButton, '[data-v2-editor-section="skills"] [data-v2-editor-entry]', skillsBefore + 1, 'Add Skill');
+    await checkViewportPreserved(skillButton, '[data-v2-editor-section="skills"] [data-v2-editor-entry]', skillsBefore + 1, 'Add Skill');
 
     const languageButton = page.locator('[data-v2-editor-section="languages"] .editor-add-entry');
     const languagesBefore = await page.locator('[data-v2-editor-section="languages"] [data-v2-editor-entry]').count();
-    await checkAddedContentVisible(languageButton, '[data-v2-editor-section="languages"] [data-v2-editor-entry]', languagesBefore + 1, 'Add Language');
+    await checkViewportPreserved(languageButton, '[data-v2-editor-section="languages"] [data-v2-editor-entry]', languagesBefore + 1, 'Add Language');
 
     const addSection = page.locator('.editor-add-section');
     const sectionsBefore = await page.locator('[data-v2-editor-section]').count();
-    await checkAddedContentVisible(addSection, '[data-v2-editor-section]', sectionsBefore + 1, 'Add Custom Section');
+    await checkViewportPreserved(addSection, '[data-v2-editor-section]', sectionsBefore + 1, 'Add Custom Section');
 
     const customSection = page.locator('.editor-section-card:has(.editor-custom-title)').last();
     const addField = customSection.locator('.editor-add-field');
     await addField.scrollIntoViewIfNeeded();
+    const fieldScrollBefore = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
+    const fieldButtonTop = await addField.evaluate(node => node.getBoundingClientRect().top);
     await addField.click();
     await page.waitForSelector('.editor-section-card:has(.editor-custom-title) .editor-field-card');
     await page.waitForTimeout(100);
-    const newField = page.locator('.editor-section-card:has(.editor-custom-title) .editor-field-card').last();
-    const fieldBounds = await newField.evaluate(node => {
-      const rect = node.getBoundingClientRect();
-      return {top:rect.top,bottom:rect.bottom,height:window.innerHeight};
-    });
-    assert.ok(fieldBounds.top < fieldBounds.height && fieldBounds.bottom > 0,
-      'Add Field must leave the newly created field visible (top=' + fieldBounds.top + ', bottom=' + fieldBounds.bottom + ')');
+    const fieldScrollAfter = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
+    const fieldButtonAfter = customSection.locator('.editor-add-field');
+    const fieldButtonTopAfter = await fieldButtonAfter.evaluate(node => node.getBoundingClientRect().top);
+    assert.ok(Math.abs(fieldScrollAfter.y-fieldScrollBefore.y) <= 1 && Math.abs(fieldScrollAfter.x-fieldScrollBefore.x) <= 1,
+      'Add Field must preserve the page scroll position');
+    assert.ok(Math.abs(fieldButtonTopAfter-fieldButtonTop) <= 2,
+      'Add Field must keep the action at the same viewport position');
   } finally {
     await browser.close();
     server.kill();
