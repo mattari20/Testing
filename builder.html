@@ -48,8 +48,14 @@
     .cv-document.active{border-color:var(--brand);box-shadow:0 0 0 2px rgba(13,110,253,.12)}
     .cv-document.archived{opacity:.6}.cv-document-title{font-weight:750;font-size:13px}.cv-document-meta{font-size:11px;color:var(--muted);margin-top:4px}
     .cv-version-history{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
-    .cv-version-item{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px}
-    .cv-version-item button{font-size:11px;padding:5px 8px}
+    .cv-version-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .cv-version-history-head strong{font-size:13px}
+    .cv-version-history-head button,.cv-version-more{font-size:11px;padding:6px 9px}
+    .cv-version-list[hidden]{display:none}
+    .cv-version-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;font-size:12px;border-bottom:1px solid #eef1f5}
+    .cv-version-item span{min-width:0;overflow-wrap:anywhere}
+    .cv-version-item button{flex:0 0 auto;font-size:11px;padding:5px 8px}
+    .cv-version-more{margin-top:8px}
     .intelligence-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.cv-intelligence-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.cv-intelligence-head strong{font-size:16px}.cv-intelligence-head span{font-size:12px;color:var(--muted)}.cv-intelligence-controls{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:12px}.cv-intelligence-controls label{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--muted)}.cv-intelligence-controls textarea{width:100%;resize:vertical;padding:10px;border:1px solid var(--border);border-radius:9px}.cv-intelligence-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.cv-intelligence-summary{grid-column:1/-1}.cv-intelligence-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}.cv-intelligence-card h4{margin:0 0 7px;font-size:12px;color:var(--muted)}.cv-intelligence-card strong{display:block;font-size:21px}.cv-intelligence-card p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}.final-product-hub{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.final-product-tabs{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--border);padding-bottom:10px}.final-product-tabs button{white-space:nowrap;font-size:12px}.final-product-tabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}.final-product-body{padding-top:12px}.final-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:#fff;margin-bottom:10px}.final-card h3{margin:0 0 8px;font-size:15px}.final-card p{font-size:12px;color:var(--muted);line-height:1.5}.final-card input,.final-card textarea,.final-card select{display:block;width:100%;margin:7px 0;padding:9px;border:1px solid var(--border);border-radius:8px}.final-card button{margin:5px 6px 0 0}.final-results{margin-top:12px}@media(max-width:1000px){.cv-intelligence-results{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-intelligence-summary{grid-column:1/-1}}@media(max-width:650px){.cv-intelligence-controls{grid-template-columns:1fr}.cv-intelligence-results{grid-template-columns:1fr}}
     .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
     [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
@@ -663,6 +669,8 @@
 
     const documentList = document.querySelector('#cv-document-list');
     const versionHistory = document.querySelector('#cv-version-history');
+    let versionHistoryExpanded = false;
+    let showAllVersions = false;
     const renderWorkspace = () => {
       const state = workspace.getState();
       documentList.replaceChildren(...state.documents.map(cvDocument => {
@@ -681,9 +689,31 @@
     };
     const renderVersions = (documentId) => {
       const versions = workspace.getVersions(documentId);
+      versionHistory.replaceChildren();
       versionHistory.hidden = versions.length === 0;
-      versionHistory.innerHTML = '<strong>Version History</strong>';
-      versions.slice(0,10).forEach(version => {
+      if (!versions.length) return;
+
+      const head = document.createElement('div');
+      head.className = 'cv-version-history-head';
+      const title = document.createElement('strong');
+      title.textContent = 'Version History (' + versions.length + ')';
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.textContent = versionHistoryExpanded ? 'Hide history' : 'View history';
+      toggle.setAttribute('aria-expanded', String(versionHistoryExpanded));
+      toggle.addEventListener('click', () => {
+        versionHistoryExpanded = !versionHistoryExpanded;
+        if (!versionHistoryExpanded) showAllVersions = false;
+        renderVersions(documentId);
+      });
+      head.append(title, toggle);
+      versionHistory.appendChild(head);
+      if (!versionHistoryExpanded) return;
+
+      const list = document.createElement('div');
+      list.className = 'cv-version-list';
+      const visibleVersions = showAllVersions ? versions : versions.slice(0, 3);
+      visibleVersions.forEach(version => {
         const row = document.createElement('div');
         row.className = 'cv-version-item';
         const label = document.createElement('span');
@@ -691,11 +721,25 @@
         const button = document.createElement('button');
         button.type = 'button'; button.textContent = 'Restore';
         button.addEventListener('click', () => {
-          try { workspace.restoreVersion(documentId, version.id); renderWorkspace(); renderVersions(documentId); status.textContent = 'Previous CV version restored.'; }
-          catch (error) { status.textContent = 'Version restore failed: ' + (error?.message || error); }
+          if (!window.confirm('Restore this saved CV version? Your current editor state will be kept as a recovery version before restoring.')) return;
+          try {
+            workspace.restoreVersion(documentId, version.id);
+            showAllVersions = false;
+            renderWorkspace(); renderVersions(documentId);
+            status.textContent = 'Previous CV version restored. Your previous editor state was preserved in history.';
+          } catch (error) { status.textContent = 'Version restore failed: ' + (error?.message || error); }
         });
-        row.append(label, button); versionHistory.appendChild(row);
+        row.append(label, button); list.appendChild(row);
       });
+      versionHistory.appendChild(list);
+      if (versions.length > 3 && !showAllVersions) {
+        const more = document.createElement('button');
+        more.type = 'button';
+        more.className = 'cv-version-more';
+        more.textContent = 'View all ' + versions.length + ' versions';
+        more.addEventListener('click', () => { showAllVersions = true; renderVersions(documentId); });
+        versionHistory.appendChild(more);
+      }
     };
     document.querySelector('#new-cv-btn').addEventListener('click', () => {
       const title = window.prompt('CV name', 'New CV');
