@@ -8,13 +8,13 @@ import { createEditorLifecycleController } from '../application/editor-lifecycle
 import { createEditorCommand } from '../application/editor-command-contract.js';
 import { createEditorSessionGuard } from './editor-session-guard.js';
 
-export const EDITOR_RUNTIME_VERSION = '1.18.0';
+export const EDITOR_RUNTIME_VERSION = '1.19.0';
 
 export function mountV2EditorRuntime(root, input = {}) {
   if (!root) throw new Error('Editor root is required.');
   const mounted = mountEditorPage(root, { ...input, bindDom:false });
   let fieldBinding = null;
-  let actionBinding = null;
+  const actionBinding = bindEditorActions(root.ownerDocument || root, mounted.surface);
   let reorderBinding = null;
   let lifecycleBinding = null;
   const previewRoot = input.preview === true ? root.querySelector('[data-v2-editor-preview-root]') : null;
@@ -52,7 +52,6 @@ export function mountV2EditorRuntime(root, input = {}) {
 
   const render = () => {
     fieldBinding?.destroy();
-    actionBinding?.destroy();
     reorderBinding?.destroy();
     const state = mounted.surface.getState();
     const profile = state.session.application.masterProfile;
@@ -65,7 +64,6 @@ export function mountV2EditorRuntime(root, input = {}) {
       holder.innerHTML = renderEditorForm(mounted.surface, profile, { photoShape: input.photoShape || root.getAttribute('data-v2-photo-shape') || 'circle' }).html;
       form.replaceChildren(...holder.childNodes);
       fieldBinding = bindEditorFields(form, mounted.surface);
-      actionBinding = bindEditorActions(form, mounted.surface);
       reorderBinding = bindEditorReorder(form, mounted.surface);
     }
     return state;
