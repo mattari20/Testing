@@ -1,5 +1,5 @@
 import {CV_EDITOR_DESIGN_TOKENS} from './cv-editor-design-tokens.js';
-export const CV_EDITOR_STYLE_SHEET_VERSION='2.2.0';
+export const CV_EDITOR_STYLE_SHEET_VERSION='2.3.0';
 export function createCVEditorStyleSheet(options={}){const document=options.document;if(!document)throw new Error('Style sheet requires document.');const node=document.createElement('style');node.setAttribute('data-cv-editor-style','v2');const t=CV_EDITOR_DESIGN_TOKENS;node.textContent=`
 [data-cv-editor="v2"]{--cv-page:${t.colors.page};--cv-surface:${t.colors.surface};--cv-surface-muted:${t.colors.surfaceMuted};--cv-border:${t.colors.border};--cv-border-strong:${t.colors.borderStrong};--cv-text:${t.colors.text};--cv-text-muted:${t.colors.textMuted};--cv-accent:${t.colors.accent};--cv-accent-strong:${t.colors.accentStrong};--cv-accent-soft:${t.colors.accentSoft};--cv-success:${t.colors.success};--cv-success-soft:${t.colors.successSoft};--cv-warning:${t.colors.warning};--cv-warning-soft:${t.colors.warningSoft};--cv-danger:${t.colors.danger};--cv-danger-soft:${t.colors.dangerSoft};--cv-focus:${t.colors.focus};--cv-preview:${t.colors.preview};--cv-radius-sm:${t.radius.sm};--cv-radius-md:${t.radius.md};--cv-radius-lg:${t.radius.lg};--cv-radius-pill:${t.radius.pill};font-family:${t.font.body};color:var(--cv-text);background:var(--cv-page);line-height:1.45;box-sizing:border-box;color-scheme:light}
 [data-cv-editor="v2"] *{box-sizing:border-box}
@@ -87,5 +87,14 @@ export function createCVEditorStyleSheet(options={}){const document=options.docu
 [data-cv-editor="v2"] .editor-section-library-add{margin-top:auto;min-height:38px;border:1px solid var(--cv-border);border-radius:9px;padding:8px 10px;background:var(--cv-accent-soft);color:var(--cv-accent-strong);font-weight:700;cursor:pointer}
 [data-cv-editor="v2"] .editor-section-library-card[hidden],[data-cv-editor="v2"] .editor-section-library-category[hidden],[data-cv-editor="v2"] .editor-section-library-empty[hidden]{display:none!important}
 @media(max-width:600px){[data-cv-editor="v2"] .editor-section-library-grid{grid-template-columns:minmax(0,1fr)}[data-cv-editor="v2"] .editor-section-library-filters{grid-template-columns:minmax(0,1fr)}[data-cv-editor="v2"] .editor-section-library-content{padding:10px}}
+
+
+    [data-cv-editor="v2"] .editor-section-library-field-management{display:grid;gap:8px;margin:4px 0 12px;padding:12px;border:1px solid var(--cv-border);border-radius:10px;background:var(--cv-surface-muted)}
+    [data-cv-editor="v2"] .editor-section-library-field-management>strong{font-size:12px}
+    [data-cv-editor="v2"] .editor-section-library-field-list{display:grid;gap:6px}
+    [data-cv-editor="v2"] .editor-section-library-field-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;border-radius:8px;background:var(--cv-surface)}
+    [data-cv-editor="v2"] .editor-section-library-field-row>span{font-size:12px;font-weight:600;min-width:0;overflow-wrap:anywhere}
+    [data-cv-editor="v2"] .editor-section-library-field-row>div{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+    [data-cv-editor="v2"] .editor-section-library-field-row button{min-width:30px;min-height:30px;padding:4px 6px}
 
 `;document.head.appendChild(node);return Object.freeze({version:CV_EDITOR_STYLE_SHEET_VERSION,node,destroy(){node.remove?.();}});}
