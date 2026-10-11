@@ -659,6 +659,32 @@
     });
     document.querySelectorAll('[data-close-tool-modal]').forEach(button => button.addEventListener('click',()=>closeModal(button.getAttribute('data-close-tool-modal'))));
     document.querySelectorAll('.tool-modal').forEach(modal => modal.addEventListener('click',event=>{ if(event.target===modal) closeModal(modal.id); }));
+
+    // Keep the mobile More menu transient: dismiss it on outside interaction,
+    // after choosing an action, when another details menu opens, or with Escape.
+    const toolbarMenu = document.querySelector('.toolbar-menu');
+    const workspaceMenu = document.querySelector('.workspace-menu');
+    const closeToolbarMenu = () => { if (toolbarMenu?.open) toolbarMenu.open = false; };
+    const closeWorkspaceMenu = () => { if (workspaceMenu?.open) workspaceMenu.open = false; };
+    toolbarMenu?.addEventListener('click', event => {
+      if (event.target.closest('button')) closeToolbarMenu();
+    });
+    document.addEventListener('click', event => {
+      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
+      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+    });
+    toolbarMenu?.addEventListener('toggle', () => {
+      if (toolbarMenu.open) closeWorkspaceMenu();
+    });
+    workspaceMenu?.addEventListener('toggle', () => {
+      if (workspaceMenu.open) closeToolbarMenu();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeToolbarMenu();
+        closeWorkspaceMenu();
+      }
+    });
     document.addEventListener('keydown',event=>{ if(event.key==='Escape') document.querySelectorAll('.tool-modal:not([hidden])').forEach(modal=>closeModal(modal.id)); });
 
     const workspace = createCVWorkspaceController({
