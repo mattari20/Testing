@@ -2,7 +2,7 @@ import { createEditorCommand } from '../application/editor-command-contract.js';
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { createSectionFromPreset } from '../application/cv-section-library.js';
 
-export const EDITOR_DOM_VERSION = '1.33.0';
+export const EDITOR_DOM_VERSION = '1.34.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
