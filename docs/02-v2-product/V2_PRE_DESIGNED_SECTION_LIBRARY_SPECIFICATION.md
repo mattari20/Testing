@@ -213,16 +213,31 @@ The feature is not complete until all applicable criteria pass:
 7. **P2/P3 expansion:** add specialized presets using the same registry and rendering contract.
 8. **Release gate:** do not deploy application changes until targeted and full relevant validations pass.
 
-## 11. Explicit non-goals for this task
+## 11. Implementation checkpoint (2026-10-11)
 
-- No application code or schema changes.
-- No framework/language/database/hosting/provider selection.
+The implementation is available on `feature/pre-designed-section-library` in pull request [#112](https://github.com/mattari20/Testing/pull/112).
+
+- **Implemented:** 25 versioned presets, searchable/category-filtered catalogue, prepared blank entries, editable field definitions, repeatable entry management, field visibility/order/removal, and generic preview fallback for sections without a template-native anchor.
+- **Targeted validation:** [Section Library Feature Validation passed](https://github.com/mattari20/Testing/actions/runs/38165025450), including unit tests, a real-browser insertion/preview/viewport test, and existing editor-form, command and native-template regression suites.
+- **Not yet release-complete:** the feature is not yet merged or deployed. Full production-branch workspace CI has known separate failures; post-deployment template and export verification remains required.
+
+Implementation sequence status:
+1. Specification and source audit — complete.
+2. P1 schema/registry and catalogue UI — complete.
+3. Generic template-preview fallback and field management — complete.
+4. Targeted unit/browser and editor regressions — passing.
+5. Release merge, Hostinger deployment, all-template checks and export matrix — pending.
+
+## 12. Explicit non-goals and safety boundaries
+
 - No changes to production V1 or its visual baseline.
 - No automatic generation of user career facts.
-- No promise that all presets or visual variants are already implemented.
-- No production deployment of the new feature before its implementation and validation are complete.
+- No framework/language/database/hosting/provider selection as part of the Section Library.
+- Do not claim every preset has a custom-designed native layout in every template; the generic fallback is used where no native anchor exists.
+- Do not deploy or declare overall V2 release acceptance complete until the outstanding release gates pass.
 
-## 12. Research references
+## 13. Research references
+
 
 - Novorésumé: https://novoresume.com/career-blog/cv-sections
 - Teal: https://www.tealhq.com/tools/resume-builder
