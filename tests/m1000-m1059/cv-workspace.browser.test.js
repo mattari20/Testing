@@ -68,7 +68,15 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     await page.locator('#save-btn').click();
     await page.waitForTimeout(200);
     assert.equal(await page.locator('#cv-version-history').getAttribute('hidden'),null);
+    await page.locator('#cv-version-history button').filter({hasText:'View history'}).click();
     assert.ok((await page.locator('.cv-version-item').count()) >= 2);
+    const versionCountBeforeNoOpSave = await page.locator('#cv-version-history .cv-version-item').count();
+    await page.locator('#save-btn').click();
+    await page.waitForTimeout(100);
+    await page.locator('#cv-version-history button').filter({hasText:'Hide history'}).click();
+    await page.locator('#cv-version-history button').filter({hasText:'View history'}).click();
+    assert.equal(await page.locator('#cv-version-history .cv-version-item').count(), versionCountBeforeNoOpSave,
+      'saving unchanged content should not create another version');
 
     const versionBeforeRestore = await page.evaluate(() =>
       window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
