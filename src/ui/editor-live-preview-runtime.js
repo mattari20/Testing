@@ -33,10 +33,12 @@ export function createEditorLivePreviewRuntime(surface, root, options = {}) {
     const naturalHeight = page.offsetHeight || page.getBoundingClientRect().height || 1123;
     const availableWidth = Math.max(1, stage.clientWidth);
     const scale = Math.min(1, availableWidth / naturalWidth);
+    const zoom = Math.min(2, Math.max(0.5, Number(root.getAttribute('data-preview-zoom')) || Number(stage.dataset.previewZoom) || 1));
     page.style.transformOrigin = 'top center';
-    page.style.transform = `scale(${scale})`;
-    stage.style.height = `${Math.ceil(naturalHeight * scale)}px`;
+    page.style.transform = `scale(${scale * zoom})`;
+    stage.style.height = `${Math.ceil(naturalHeight * scale * zoom)}px`;
     stage.dataset.previewScale = scale.toFixed(4);
+    stage.dataset.previewZoom = String(zoom);
   }
 
   function createPreviewStage(page) {
