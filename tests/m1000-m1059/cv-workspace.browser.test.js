@@ -73,8 +73,6 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     const versionCountBeforeNoOpSave = await page.locator('#cv-version-history .cv-version-item').count();
     await page.locator('#save-btn').click();
     await page.waitForTimeout(100);
-    await page.locator('#cv-version-history button').filter({hasText:'Hide history'}).click();
-    await page.locator('#cv-version-history button').filter({hasText:'View history'}).click();
     assert.equal(await page.locator('#cv-version-history .cv-version-item').count(), versionCountBeforeNoOpSave,
       'saving unchanged content should not create another version');
 
@@ -83,7 +81,6 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     );
     assert.equal(versionBeforeRestore, 'Edited Engineer');
 
-    await page.locator('#cv-version-history button').filter({hasText:'View history'}).click();
     const restoreButtons = page.locator('.cv-version-item button');
     assert.ok((await restoreButtons.count()) >= 2);
     page.once('dialog', dialog => dialog.accept());
