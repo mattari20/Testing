@@ -410,16 +410,32 @@ export function bindEditorFields(root, surface, options = {}) {
 export function bindEditorActions(root, surface) {
   if (!root || !surface) throw new Error('Editor root and surface are required.');
 
-  const scrollableAncestor = element => {
+  const captureScrollState = element => {
     const view = root.ownerDocument?.defaultView;
+    const positions = [];
     let node = element?.parentElement;
     while (node && node !== root.ownerDocument?.documentElement) {
       const style = view?.getComputedStyle?.(node);
       if (style && /(auto|scroll|overlay)/.test(style.overflowY || '') &&
-          node.scrollHeight > node.clientHeight + 1) return node;
+          node.scrollHeight > node.clientHeight + 1) {
+        positions.push({node, top:node.scrollTop, left:node.scrollLeft});
+      }
       node = node.parentElement;
     }
-    return null;
+    return {positions, windowTop:view?.scrollY || 0, windowLeft:view?.scrollX || 0, view};
+  };
+  const restoreScrollState = state => {
+    // Adding editor content should grow the form below the current viewport.
+    // Restore every existing scroll surface exactly; never scroll to the new item.
+    state.positions.forEach(({node,top,left}) => {
+      if (node?.isConnected) {
+        node.scrollTop = top;
+        node.scrollLeft = left;
+      }
+    });
+    if (typeof state.view?.scrollTo === 'function') {
+      state.view.scrollTo(state.windowLeft, state.windowTop);
+    }
   };
 
   const findNewContent = (type, target) => {
@@ -449,39 +465,15 @@ export function bindEditorActions(root, surface) {
     const target = parseJson(targetSelector);
     const payload = parseJson(element.dataset.v2Payload);
     const view = root.ownerDocument?.defaultView;
+    const scrollState = captureScrollState(element);
     const originalTop = element.getBoundingClientRect().top;
-    const scrollContainer = scrollableAncestor(element);
-    const originalContainerTop = scrollContainer?.scrollTop || 0;
-    const originalWindowTop = view?.scrollY || 0;
 
     surface.dispatch({type,target,payload});
 
     const restoreActionPosition = () => {
-      // For add actions, prioritize the newly created content—not the button.
-      // The button may stay in place while its new entry is pushed out of view.
-      const addedContent = findNewContent(type, target);
-      if (addedContent && ['add-entry', 'add-field', 'add-section'].includes(type)) {
-        addedContent.scrollIntoView({block:'nearest', inline:'nearest', behavior:'auto'});
-        return;
-      }
-
-      const replacement = [...root.querySelectorAll('[data-v2-editor-command]')].find(node =>
-        node.dataset.v2EditorCommand === type &&
-        (node.dataset.v2Target || '{}') === targetSelector
-      );
-      if (replacement) {
-        const delta = replacement.getBoundingClientRect().top - originalTop;
-        if (Math.abs(delta) > 1) {
-          if (scrollContainer?.isConnected) {
-            scrollContainer.scrollTop = Math.max(0, originalContainerTop + delta);
-          } else if (typeof view?.scrollTo === 'function') {
-            view.scrollTo(view.scrollX || 0, Math.max(0, originalWindowTop + delta));
-          }
-        }
-      } else {
-        if (scrollContainer?.isConnected) scrollContainer.scrollTop = originalContainerTop;
-        else if (typeof view?.scrollTo === 'function') view.scrollTo(view.scrollX || 0, originalWindowTop);
-      }
+      // Keep the user's viewport anchored where the action was clicked.
+      // The newly inserted field and the controls beneath it flow downward naturally.
+      restoreScrollState(scrollState);
     };
     const raf = view?.requestAnimationFrame?.bind(view);
     if (raf) raf(() => raf(restoreActionPosition));
