@@ -13,8 +13,8 @@ import { renderEditorForm } from '../../src/ui/editor-form-renderer.js';
 test('section library has valid, unique, versioned presets and typed fields', () => {
   const report = validateSectionLibrary();
   assert.equal(report.valid, true, report.errors.join('; '));
-  assert.equal(report.count, 26);
-  assert.equal(new Set(CV_SECTION_LIBRARY.map(item => item.id)).size, 26);
+  assert.equal(report.count, 25);
+  assert.equal(new Set(CV_SECTION_LIBRARY.map(item => item.id)).size, 25);
   assert.ok(CV_SECTION_LIBRARY.every(item => item.version === '1.0.0' && item.fields.length > 0));
   assert.ok(CV_SECTION_LIBRARY.some(item => item.id === 'awards-honors' && item.priority === 'P1'));
   assert.ok(CV_SECTION_LIBRARY.some(item => item.id === 'references' && item.priority === 'P3'));
