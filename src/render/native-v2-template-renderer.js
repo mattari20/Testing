@@ -1160,7 +1160,7 @@ function applyCustomSections(root, snapshot) {
       const content=root.ownerDocument.createElement('span'); content.textContent=value;
       row.append(label,content); wrapper.appendChild(row); contentCount+=1;
     }
-    const schema=Array.isArray(section?.metadata?.sectionLibrary?.fields)?section.metadata.sectionLibrary.fields:[];
+    const schema=[...(Array.isArray(section?.metadata?.sectionLibrary?.fields)?section.metadata.sectionLibrary.fields:[]),...(Array.isArray(section?.fields)?section.fields.filter(field=>field?.visibility!==false).map(field=>({key:String(field.id),label:field.label,type:field.type})):[])];
     const visibleEntries=(Array.isArray(section.entries)?section.entries:[]).filter(entry=>{
       const entryId=String(entry?.id||'');
       return entry?.visibility!==false&&!hiddenEntries.has(sid+':'+entryId)&&!hiddenEntries.has(entryId);
