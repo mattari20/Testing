@@ -1170,6 +1170,7 @@ function applyCustomSections(root, snapshot) {
       const keys=schema.length?schema.map(item=>item.key).filter(key=>Object.prototype.hasOwnProperty.call(values,key)):Object.keys(values).filter(key=>key!=='proficiency');
       const rows=[];
       for(const key of keys){
+        if(hiddenFields.has(sid+':'+String(key)))continue;
         const value=values[key];
         if(value===undefined||value===null||String(value).trim()==='')continue;
         const row=root.ownerDocument.createElement('div'); row.className='v2-custom-preview-field';
