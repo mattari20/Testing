@@ -45,6 +45,17 @@ test('mobile More menu dismisses on outside click and after opening a tool', asy
     assert.equal(await page.locator('#v2-editor').getAttribute('data-mobile-view'),'preview',
       'Preview tab should still respond while More menu was open');
 
+    // Save once so the Version History section is available, then verify
+    // it remains reachable after opening More on a small viewport.
+    await page.locator('#save-btn').click();
+    await page.waitForSelector('#cv-version-history .cv-version-history-head');
+    await more.click();
+    assert.equal(await menu.evaluate(node=>node.open),true,'More control should reopen the menu');
+    await page.locator('#cv-version-history .cv-version-history-head button').click();
+    assert.equal(await menu.evaluate(node=>node.open),false,'opening Version History should dismiss More');
+    assert.ok((await page.locator('#cv-version-history .cv-version-item').count()) > 0,
+      'Version History should expand and show saved versions');
+
     await more.click();
     assert.equal(await menu.evaluate(node=>node.open),true,'More control should reopen the menu');
     await page.locator('#career-tools-btn').click();
