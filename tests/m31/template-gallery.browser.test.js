@@ -45,3 +45,9 @@ test('mobile More menu is viewport-bound and internally scrollable', async () =>
   assert.match(html,/overflow-y:auto/);
   assert.match(html,/positionMobileToolbarMenu/);
 });
+
+test('PDF export stays directly visible outside the mobile More menu', async () => {
+  const html=await readFile(new URL('../../builder.html',import.meta.url),'utf8');
+  assert.match(html,/<button type="button" class="primary" id="print-btn">Export PDF<\/button>/);
+  assert.doesNotMatch(html,/<details class="toolbar-menu" open>[\s\S]*?id="print-btn"/);
+});
