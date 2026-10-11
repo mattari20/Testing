@@ -60,11 +60,20 @@ export function createCVWorkspaceController(options = {}) {
     storage.setItem(storageKey, JSON.stringify(payload));
   };
 
-  const recordVersion = () => {
+  const sameVersionContent = (left, document, masterProfile) =>
+    Boolean(left && JSON.stringify(left.targetedCV) === JSON.stringify(document) &&
+      JSON.stringify(left.masterProfile) === JSON.stringify(masterProfile));
+
+  const recordVersion = (documentOverride, profileOverride) => {
     const state = surface.getState().session.application;
-    const document = state.targetedCV;
-    const snapshot = createVersionSnapshot(document, state.masterProfile);
-    versions[document.id] = [...(versions[document.id] || []), snapshot].slice(-20);
+    const document = clone(documentOverride || state.targetedCV);
+    const masterProfile = clone(profileOverride || state.masterProfile);
+    const list = versions[document.id] || [];
+    const latest = list[list.length - 1];
+    // Repeated saves of unchanged content should not create noisy history entries.
+    if (sameVersionContent(latest, document, masterProfile)) return latest;
+    const snapshot = createVersionSnapshot(document, masterProfile);
+    versions[document.id] = [...list, snapshot].slice(-20);
     saveState();
     return snapshot;
   };
@@ -147,6 +156,12 @@ export function createCVWorkspaceController(options = {}) {
     const list = versions[documentId] || [];
     const version = list.find(item => item.id === versionId);
     if (!version) throw new Error('CV version not found: ' + versionId);
+    // Capture the actual current editor state before changing workspace state,
+    // so an unsaved edit remains recoverable even when an older version is restored.
+    const liveApplication = surface.getState().session.application;
+    const currentDocument = liveApplication.targetedCV;
+    const currentProfile = liveApplication.masterProfile;
+    if (currentDocument?.id === documentId) recordVersion(currentDocument, currentProfile);
     workspace.replaceState({
       ...workspace.getState(),
       masterProfile: clone(version.masterProfile),
@@ -155,7 +170,6 @@ export function createCVWorkspaceController(options = {}) {
       ),
       activeDocumentId: documentId
     }, { type: 'restore-version', documentId, versionId });
-    versions[documentId] = [...list, createVersionSnapshot(version.targetedCV, version.masterProfile)].slice(-20);
     restoreDocument(documentId, { sync: false });
     saveState();
     return version;
