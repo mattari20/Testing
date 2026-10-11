@@ -664,7 +664,10 @@
     // after choosing an action, when another details menu opens, or with Escape.
     const toolbarMenu = document.querySelector('.toolbar-menu');
     const workspaceMenu = document.querySelector('.workspace-menu');
-    const closeToolbarMenu = () => { if (toolbarMenu?.open) toolbarMenu.open = false; };
+    const isCompactToolbar = () => window.matchMedia('(max-width: 760px)').matches;
+    // Desktop shows the secondary tools inline with no More toggle, so only
+    // auto-collapse this menu where its summary control is actually available.
+    const closeToolbarMenu = () => { if (isCompactToolbar() && toolbarMenu?.open) toolbarMenu.open = false; };
     const closeWorkspaceMenu = () => { if (workspaceMenu?.open) workspaceMenu.open = false; };
     toolbarMenu?.addEventListener('click', event => {
       if (event.target.closest('button')) closeToolbarMenu();
