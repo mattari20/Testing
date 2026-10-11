@@ -188,6 +188,10 @@ test('adding editor items preserves the current viewport without jumping to the 
     await page.goto('http://127.0.0.1:' + port + '/builder.html?template=t01-modern-minimalist-cv-design_modern', {waitUntil:'networkidle'});
     await page.waitForFunction(() => window.v2ProductionReady === true);
 
+    await page.evaluate(() => {
+      window.__editorRootClickCount=0;
+      document.querySelector('[data-v2-editor-form]')?.addEventListener('click',()=>{window.__editorRootClickCount+=1;},true);
+    });
     const checkViewportPreserved = async (button, countLocator, expectedCount, label) => {
       await button.scrollIntoViewIfNeeded();
       const before = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
@@ -202,7 +206,8 @@ test('adding editor items preserves the current viewport without jumping to the 
           const skill=sections.find(item=>item.type==='skills');
           const button=document.querySelector('[data-v2-editor-section="skills"] .editor-add-entry');
           const session=window.eStudentCVBuilderV2?.surface?.getState?.().session;
-          return {domCount:document.querySelectorAll(selector).length,skillEntryCount:skill?.entries?.length,skillRepeatable:skill?.repeatable,status:document.querySelector('#app-status')?.textContent,buttonCount:document.querySelectorAll('[data-v2-editor-section="skills"] .editor-add-entry').length,buttonHtml:button?.outerHTML,lastCommand:session?.lastCommand,sessionRevision:session?.application?.masterProfile?.revision};
+          const form=document.querySelector('[data-v2-editor-form]');
+          return {formContainsButton:Boolean(form&&button&&form.contains(button)),closestForm:Boolean(button?.closest('[data-v2-editor-form]')),rootClickCount:window.__editorRootClickCount,domCount:document.querySelectorAll(selector).length,skillEntryCount:skill?.entries?.length,skillRepeatable:skill?.repeatable,status:document.querySelector('#app-status')?.textContent,buttonCount:document.querySelectorAll('[data-v2-editor-section="skills"] .editor-add-entry').length,buttonHtml:button?.outerHTML,lastCommand:session?.lastCommand,sessionRevision:session?.application?.masterProfile?.revision};
         },{selector:countLocator});
         throw new Error(label+' failed to insert expected content: '+JSON.stringify(diagnostic)+'; pageErrors='+JSON.stringify(pageErrors)+'; original='+String(error));
       }
