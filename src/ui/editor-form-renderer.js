@@ -270,7 +270,8 @@ export function renderEditorForm(surface,documentData,options={}){
       : '';
     const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id),configuration)).join(''):'';
     const addButton=type==='skills'?'Add Skill':type==='languages'?'Add Language':type==='experience'?'Add Experience':type==='education'?'Add Education':('Add '+(section.title||labelFor(type)));
-    const canAddEntry=section.repeatable;
+    // Skills and Languages are always repeatable lists, even when older saved section metadata omits repeatable=true.
+    const canAddEntry=section.repeatable||type==='skills'||type==='languages';
     const canAddField=!section.repeatable&&type!=='photo'&&type!=='summary'&&type!=='skills'&&type!=='languages';
     return '<section class="editor-section-card'+(sectionHidden?' is-hidden':'')+'" data-v2-editor-section="'+esc(sid)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(sid)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">'+
       '<div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">'+esc(type==='experience'?'WORK':type==='education'?'EDU':type==='skills'?'SKILLS':type==='languages'?'LANG':type==='summary'?'SUMMARY':'SECTION')+'</span><div><h3>'+esc(section.title||labelFor(type))+'</h3><span class="editor-section-status">'+(sectionHidden?'Hidden from CV':'Visible in CV')+'</span></div></div>'+
