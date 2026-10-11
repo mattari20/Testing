@@ -200,7 +200,9 @@ test('adding editor items preserves the current viewport without jumping to the 
         const diagnostic=await page.evaluate(({selector})=>{
           const sections=window.eStudentCVBuilderV2?.surface?.getState?.().session?.application?.masterProfile?.careerData?.sections||[];
           const skill=sections.find(item=>item.type==='skills');
-          return {domCount:document.querySelectorAll(selector).length,skillEntryCount:skill?.entries?.length,skillRepeatable:skill?.repeatable,status:document.querySelector('#app-status')?.textContent,buttonCount:document.querySelectorAll('[data-v2-editor-section="skills"] .editor-add-entry').length};
+          const button=document.querySelector('[data-v2-editor-section="skills"] .editor-add-entry');
+          const session=window.eStudentCVBuilderV2?.surface?.getState?.().session;
+          return {domCount:document.querySelectorAll(selector).length,skillEntryCount:skill?.entries?.length,skillRepeatable:skill?.repeatable,status:document.querySelector('#app-status')?.textContent,buttonCount:document.querySelectorAll('[data-v2-editor-section="skills"] .editor-add-entry').length,buttonHtml:button?.outerHTML,lastCommand:session?.lastCommand,sessionRevision:session?.application?.masterProfile?.revision};
         },{selector:countLocator});
         throw new Error(label+' failed to insert expected content: '+JSON.stringify(diagnostic)+'; pageErrors='+JSON.stringify(pageErrors)+'; original='+String(error));
       }
