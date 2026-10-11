@@ -55,6 +55,15 @@ test('prepared sections can be inserted and entries extended through existing ed
   assert.equal(stored.entries.length, 2);
   assert.notEqual(stored.entries[0].id, stored.entries[1].id);
   assert.equal(stored.entries[1].values.title, 'Student Research Project');
+  surface.dispatch({ type: 'add-field', target: { sectionId: stored.id }, payload: { id: 'field_evidence', label: 'Evidence Note', type: 'textarea', value: '' } });
+  profile = surface.getState().session.application.masterProfile;
+  stored = profile.careerData.sections.find(item => item.type === 'research-experience');
+  assert.equal(stored.entries[0].values.field_evidence, '');
+  assert.equal(stored.entries[1].values.field_evidence, '');
+  stored.entries[1].values.field_evidence = 'Verified field content';
+  const html = renderEditorForm(surface, profile).html;
+  assert.match(html, /Evidence Note/);
+  assert.match(html, /Verified field content/);
 });
 
 test('editor exposes searchable catalogue, categories, and prepared field entry controls', () => {
