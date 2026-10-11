@@ -21,7 +21,7 @@ test('mobile More menu dismisses on outside click and after opening a tool', asy
   const browser=await chromium.launch({headless:true});
   try {
     const page=await browser.newPage({viewport:{width:390,height:844}});
-    await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+    await page.goto('http://127.0.0.1:'+port+'/builder.html',{waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
     await page.waitForFunction(() => window.v2ProductionReady === true);
     assert.ok(await page.locator('[data-v2-editor-form] input, [data-v2-editor-form] textarea, [data-v2-editor-form] select').count() > 0,
@@ -88,7 +88,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),1);
 
     // Establish a real content baseline and a version that can be restored.
-    const fullNameInput = page.locator('[data-v2-editor-identity-wrapper="fullName"] input').first();
+    const fullNameInput = page.locator('[data-v2-editor-identity-field="fullName"]').first();
     await fullNameInput.fill('Baseline Engineer');
     await fullNameInput.blur();
     await page.locator('#save-btn').click();
@@ -169,6 +169,57 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     await page.reload({waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
     assert.ok((await page.locator('#cv-document-list .cv-document').count()) >= 2);
+  } finally {
+    await browser.close();
+    server.kill();
+  }
+});
+
+
+test('adding editor items keeps the clicked action in the same viewport position', async () => {
+  const { chromium } = await import('playwright');
+  const port = await freePort();
+  const server = spawn('python3', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {stdio:'ignore'});
+  const browser = await chromium.launch({headless:true});
+  try {
+    const page = await browser.newPage({viewport:{width:390,height:844}});
+    await page.goto('http://127.0.0.1:' + port + '/builder.html?template=t01-modern-minimalist-cv-design_modern', {waitUntil:'networkidle'});
+    await page.waitForFunction(() => window.v2ProductionReady === true);
+
+    const checkAnchoredAction = async (button, countLocator, expectedCount, label) => {
+      await button.scrollIntoViewIfNeeded();
+      const before = await button.evaluate(node => node.getBoundingClientRect().top);
+      await button.click();
+      await page.waitForFunction(({selector,count}) => document.querySelectorAll(selector).length === count,
+        {selector:countLocator, count:expectedCount});
+      await page.waitForTimeout(80);
+      const after = await button.evaluate(node => node.getBoundingClientRect().top);
+      assert.ok(Math.abs(after - before) <= 8,
+        label + ' should stay near its original screen position (before=' + before + ', after=' + after + ')');
+    };
+
+    const skillButton = page.locator('[data-v2-editor-section="skills"] .editor-add-entry');
+    const skillsBefore = await page.locator('[data-v2-editor-section="skills"] [data-v2-editor-entry]').count();
+    await checkAnchoredAction(skillButton, '[data-v2-editor-section="skills"] [data-v2-editor-entry]', skillsBefore + 1, 'Add Skill');
+
+    const languageButton = page.locator('[data-v2-editor-section="languages"] .editor-add-entry');
+    const languagesBefore = await page.locator('[data-v2-editor-section="languages"] [data-v2-editor-entry]').count();
+    await checkAnchoredAction(languageButton, '[data-v2-editor-section="languages"] [data-v2-editor-entry]', languagesBefore + 1, 'Add Language');
+
+    const addSection = page.locator('.editor-add-section');
+    const sectionsBefore = await page.locator('[data-v2-editor-section]').count();
+    await checkAnchoredAction(addSection, '[data-v2-editor-section]', sectionsBefore + 1, 'Add Custom Section');
+
+    const customSection = page.locator('.editor-section-card:has(.editor-custom-title)').last();
+    const addField = customSection.locator('.editor-add-field');
+    await addField.scrollIntoViewIfNeeded();
+    const beforeField = await addField.evaluate(node => node.getBoundingClientRect().top);
+    await addField.click();
+    await page.waitForSelector('.editor-section-card:has(.editor-custom-title) .editor-field-card');
+    await page.waitForTimeout(80);
+    const afterField = await addField.evaluate(node => node.getBoundingClientRect().top);
+    assert.ok(Math.abs(afterField - beforeField) <= 8,
+      'Add Field should stay near its original screen position (before=' + beforeField + ', after=' + afterField + ')');
   } finally {
     await browser.close();
     server.kill();
