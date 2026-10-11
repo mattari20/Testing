@@ -1,4 +1,4 @@
-import {createCVEditorStyleSheet} from './cv-editor-style-sheet.js?v=20261011.1';
+import {createCVEditorStyleSheet} from './cv-editor-style-sheet.js?v=20261011.2';
 import {createCVEditorAccessibilityDOM} from './cv-editor-accessibility-dom.js';
 export const CV_EDITOR_FINAL_SHELL_VERSION='1.1.0';
 export function createCVEditorFinalShell(options={}){const document=options.document,root=options.root;if(!document||!root)throw new Error('Final shell requires document and root.');const styles=createCVEditorStyleSheet({document});const accessibility=createCVEditorAccessibilityDOM({document,root,label:options.label});return Object.freeze({version:CV_EDITOR_FINAL_SHELL_VERSION,styles,accessibility,destroy(){styles.destroy();}});}
