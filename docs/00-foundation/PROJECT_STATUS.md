@@ -384,17 +384,24 @@ Checkpoint commit: `9faf549ce714bd7e22bc266d5540ee886d9f0395`. Hostinger deploym
 **Resume rule:** preserve this behavior during future features. If editor rendering, focus, field insertion, or scroll handling is changed, rerun mobile browser checks for Add Skill, Add Language, Add Field, and Add Custom Section.
 
 
-## Pre-designed Section Library — specification checkpoint (2026-10-11)
+## Pre-designed Section Library — implementation checkpoint (2026-10-11)
 
-The Section Library planning task has been recorded in `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md` and reconciled into:
-- `docs/02-v2-product/V2_MASTER_CAPABILITY_REGISTER.md`
-- `docs/02-v2-product/V2_FEATURE_MATRIX.md`
-- `docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md`
+**Status:** Implemented on the feature branch; targeted validation passed. Release merge/deployment and full workspace acceptance remain open.  
+**Feature branch:** `feature/pre-designed-section-library`  
+**Pull request:** [#112 — Implement pre-designed CV Section Library](https://github.com/mattari20/Testing/pull/112)
 
-The focused source audit found useful existing primitives: the editor command boundary supports section/field/entry operations; the template engine already models supported sections/fields/variants; and the presentation variant engine supports field-, entry-, section- and document-level variants. However, the editor renderer still has a fixed core-section set and a generic Add Custom Section action. The inspected source does not establish a complete curated catalogue of typed, prepared blocks. Therefore this work records the requirements and gaps; it does not claim the Section Library has been implemented.
+### Implemented
+- Versioned catalogue with **25 prepared presets**: 12 P1, 9 P2 and 4 P3, each with typed field definitions and metadata.
+- Searchable catalogue grouped by category, with category filtering, descriptions, field counts and Add actions.
+- Prepared section insertion through the existing editor command surface, with stable preset IDs, section metadata, repeatable entries and pre-populated blank fields.
+- Field management for prepared sections: add, rename, remove, hide/show and reorder fields; entries receive new fields without losing existing values.
+- Generic template-preview fallback for sections without a native template anchor, respecting section/entry/field visibility and preserving data across template switches.
+- Responsive catalogue styling, cache-busting, and automated unit/browser coverage including preview content and viewport stability.
 
-The catalogue contains 26 proposed presets across core, academic/specialized and optional categories. P1 priorities include Awards & Honors, Key Achievements, Projects & Portfolio (mapped to the existing Projects section), Certifications & Licenses, Courses & Training, Volunteer Service, Leadership & Activities, Research Experience, Publications, Conferences, Professional Memberships and Additional Information.
+### Targeted validation
+[Section Library Feature Validation — successful](https://github.com/mattari20/Testing/actions/runs/38165025450). The workflow passed the new unit/browser suite plus the existing editor-form, editor-command and native-template-renderer regression suites.
 
-**Next controlled step:** conduct the focused implementation audit and map each P1 preset to the actual command reducer, canonical document model, persistence/migration behavior, renderer, preview compiler, template capabilities and export paths. Then implement the registry/schema and catalogue UI with targeted tests. No application code, V1 change or feature deployment was part of this documentation checkpoint.
-
-**Release honesty:** the existing workspace CI failures documented in the viewport-stability milestone remain separate release gates. Documentation updates do not resolve or reclassify those failures.
+### Release gates still open
+- This feature branch has **not** yet been merged or deployed to Hostinger. V1 `/cv-builder/` remains untouched.
+- The existing production-branch CV Workspace Validation failures (More menu state, multi-CV persistence and the automated viewport assertion) remain independent release gates. The feature-specific browser test passes, but this does not make the broader workspace CI green.
+- After merge, verify the deployed V2 builder, all published templates, PDF/print and supported DOCX paths, persisted data, mobile behavior, and the accepted 2026-10-11 viewport-stability milestone.

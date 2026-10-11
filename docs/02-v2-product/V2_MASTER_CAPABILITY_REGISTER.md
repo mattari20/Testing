@@ -337,4 +337,4 @@ Canonical specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPE
 - Preserve the accepted editor viewport-stability milestone during Add Section/Add Entry/Add Field actions.
 - Implementation is gated on focused code audit, schema/registry tests, template compatibility matrix, mobile/browser regression and PDF/DOCX/print checks.
 
-This is a planned capability/specification, not a claim that all catalogue items are already implemented. No application code is authorized by the specification commit itself.
+The catalogue and editor integration are implemented on feature branch `feature/pre-designed-section-library`; targeted unit/browser and editor regression suites passed. Production merge/deployment and full workspace acceptance remain pending. The generic preview fallback preserves sections when a template has no native presentation anchor.

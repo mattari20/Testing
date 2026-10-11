@@ -1,7 +1,8 @@
 import { createEditorCommand } from '../application/editor-command-contract.js';
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
+import { createSectionFromPreset } from '../application/cv-section-library.js';
 
-export const EDITOR_DOM_VERSION = '1.32.0';
+export const EDITOR_DOM_VERSION = '1.34.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -468,7 +469,12 @@ export function bindEditorActions(root, surface) {
     const scrollState = captureScrollState(element);
     const originalTop = element.getBoundingClientRect().top;
 
-    surface.dispatch({type,target,payload});
+    if (type === 'add-section-preset') {
+      const section = createSectionFromPreset(payload?.presetId);
+      surface.dispatch(createEditorCommand({type:'add-section',target:{},payload:section}));
+    } else {
+      surface.dispatch({type,target,payload});
+    }
 
     const restoreActionPosition = () => {
       // Keep the user's viewport anchored where the action was clicked.
@@ -480,8 +486,27 @@ export function bindEditorActions(root, surface) {
     // Deferring this to requestAnimationFrame (especially two frames) visibly jolts.
     restoreActionPosition();
   };
+  const filterLibrary = () => {
+    const search = String(root.querySelector('[data-section-library-search]')?.value || '').trim().toLowerCase();
+    const category = String(root.querySelector('[data-section-library-category]')?.value || '');
+    let visible = 0;
+    root.querySelectorAll('[data-section-library-card]').forEach(card => {
+      const matches = (!search || String(card.dataset.searchText || '').toLowerCase().includes(search)) && (!category || card.dataset.category === category);
+      card.hidden = !matches;
+      if (matches) visible += 1;
+    });
+    root.querySelectorAll('[data-section-library-group]').forEach(group => {
+      group.hidden = ![...group.querySelectorAll('[data-section-library-card]')].some(card => !card.hidden);
+    });
+    const empty = root.querySelector('[data-section-library-empty]');
+    if (empty) empty.hidden = visible > 0;
+  };
+  const searchInput = root.querySelector('[data-section-library-search]');
+  const categoryInput = root.querySelector('[data-section-library-category]');
+  searchInput?.addEventListener('input', filterLibrary);
+  categoryInput?.addEventListener('change', filterLibrary);
   root.addEventListener('click', handler);
-  return Object.freeze({destroy:()=>root.removeEventListener('click', handler)});
+  return Object.freeze({destroy:()=>{root.removeEventListener('click', handler);searchInput?.removeEventListener('input', filterLibrary);categoryInput?.removeEventListener('change', filterLibrary);}});
 }
 
 export function bindEditorLifecycle(root, lifecycle) {
