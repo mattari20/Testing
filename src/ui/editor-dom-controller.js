@@ -2,7 +2,7 @@ import { createEditorCommand } from '../application/editor-command-contract.js';
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { createSectionFromPreset } from '../application/cv-section-library.js';
 
-export const EDITOR_DOM_VERSION = '1.36.0';
+export const EDITOR_DOM_VERSION = '1.37.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -410,6 +410,8 @@ export function bindEditorFields(root, surface, options = {}) {
 
 export function bindEditorActions(root, surface) {
   if (!root || !surface) throw new Error('Editor root and surface are required.');
+  const eventRoot=root.ownerDocument||root;
+  const getCurrentRoot=()=>eventRoot.querySelector?.('[data-v2-editor-form]')||root;
 
   const captureScrollState = element => {
     const view = root.ownerDocument?.defaultView;
@@ -460,7 +462,8 @@ export function bindEditorActions(root, surface) {
 
   const handler = event => {
     const element = event.target?.closest?.('[data-v2-editor-command]');
-    if (!element || !root.contains(element)) return;
+    const activeRoot=getCurrentRoot();
+    if (!element || !activeRoot.contains(element)) return;
     event.stopPropagation();
     const type = element.dataset.v2EditorCommand;
     const targetSelector = element.dataset.v2Target || '{}';
@@ -487,28 +490,30 @@ export function bindEditorActions(root, surface) {
     // Deferring this to requestAnimationFrame (especially two frames) visibly jolts.
     restoreActionPosition();
   };
-  const filterLibrary = () => {
-    const search = String(root.querySelector('[data-section-library-search]')?.value || '').trim().toLowerCase();
-    const category = String(root.querySelector('[data-section-library-category]')?.value || '');
+  const filterLibrary = event => {
+    const target=event?.target;
+    if(target&&!target.matches?.('[data-section-library-search], [data-section-library-category]'))return;
+    const activeRoot=getCurrentRoot();
+    const search = String(activeRoot.querySelector('[data-section-library-search]')?.value || '').trim().toLowerCase();
+    const category = String(activeRoot.querySelector('[data-section-library-category]')?.value || '');
     let visible = 0;
-    root.querySelectorAll('[data-section-library-card]').forEach(card => {
+    activeRoot.querySelectorAll('[data-section-library-card]').forEach(card => {
       const matches = (!search || String(card.dataset.searchText || '').toLowerCase().includes(search)) && (!category || card.dataset.category === category);
       card.hidden = !matches;
       if (matches) visible += 1;
     });
-    root.querySelectorAll('[data-section-library-group]').forEach(group => {
+    activeRoot.querySelectorAll('[data-section-library-group]').forEach(group => {
       group.hidden = ![...group.querySelectorAll('[data-section-library-card]')].some(card => !card.hidden);
     });
-    const empty = root.querySelector('[data-section-library-empty]');
+    const empty = activeRoot.querySelector('[data-section-library-empty]');
     if (empty) empty.hidden = visible > 0;
   };
-  const searchInput = root.querySelector('[data-section-library-search]');
-  const categoryInput = root.querySelector('[data-section-library-category]');
-  searchInput?.addEventListener('input', filterLibrary);
-  categoryInput?.addEventListener('change', filterLibrary);
-  // Handle commands during capture so nested sortable/editor surfaces cannot swallow clicks.
-  root.addEventListener('click', handler, true);
-  return Object.freeze({destroy:()=>{root.removeEventListener('click', handler, true);searchInput?.removeEventListener('input', filterLibrary);categoryInput?.removeEventListener('change', filterLibrary);}});
+  // The mobile shell may replace the editor form node after mount. Document-level
+  // delegation keeps actions attached to the live form rather than a stale node.
+  eventRoot.addEventListener('input', filterLibrary, true);
+  eventRoot.addEventListener('change', filterLibrary, true);
+  eventRoot.addEventListener('click', handler, true);
+  return Object.freeze({destroy:()=>{eventRoot.removeEventListener('click', handler, true);eventRoot.removeEventListener('input', filterLibrary, true);eventRoot.removeEventListener('change', filterLibrary, true);}});
 }
 
 export function bindEditorLifecycle(root, lifecycle) {
