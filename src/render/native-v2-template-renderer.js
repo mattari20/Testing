@@ -1106,6 +1106,8 @@ function applySectionOrder(root, snapshot) {
 function applyCustomSections(root, snapshot) {
   const sections=Array.isArray(snapshot?.careerData?.sections)?snapshot.careerData.sections:[];
   const hidden=new Set(Array.isArray(snapshot?.configuration?.hiddenSections)?snapshot.configuration.hiddenSections.map(String):[]);
+  const hiddenEntries=new Set(Array.isArray(snapshot?.configuration?.hiddenEntries)?snapshot.configuration.hiddenEntries.map(String):[]);
+  const hiddenFields=new Set(Array.isArray(snapshot?.configuration?.hiddenFields)?snapshot.configuration.hiddenFields.map(String):[]);
   const placements=snapshot?.configuration?.presentation?.sectionPlacement||{};
   const configuredOrder=Array.isArray(snapshot?.configuration?.sectionOrder)?snapshot.configuration.sectionOrder.map(String):[];
   const rank=new Map(configuredOrder.map((id,index)=>[id,index]));
@@ -1123,42 +1125,82 @@ function applyCustomSections(root, snapshot) {
     }
     return null;
   };
-  sections.filter(section=>String(section?.type||'')==='custom')
-    .filter(section=>{
-      const sid=String(section.id||'');
-      return sid&&section.visibility!==false&&!hidden.has(sid);
-    })
-    .sort((a,b)=>{
-      const ar=rank.has(String(a.id))?rank.get(String(a.id)):Number.MAX_SAFE_INTEGER;
-      const br=rank.has(String(b.id))?rank.get(String(b.id)):Number.MAX_SAFE_INTEGER;
-      return ar-br;
-    })
-    .forEach(section=>{
-      const sid=String(section.id||'');
-      const target=String(placements[sid]||'left')==='right'?(sidebar||fallback):(main||fallback);
-      if(!target)return;
-      const wrapper=root.ownerDocument.createElement('section'); wrapper.className='v2-custom-preview-section'; wrapper.setAttribute('data-v2-custom-section-id',sid);
-      const heading=root.ownerDocument.createElement('div'); heading.className='v2-custom-preview-heading'; heading.textContent=String(section.title||'New Section'); wrapper.appendChild(heading);
-      for(const field of Array.isArray(section.fields)?section.fields:[]){
-        if(field?.visibility===false)continue;
-        const value=field?.value==null?'':String(field.value);
-        if(!value.trim())continue;
-        const row=root.ownerDocument.createElement('div'); row.className='v2-custom-preview-field';
-        const label=root.ownerDocument.createElement('b'); label.textContent=String(field.label||'Field')+' :';
-        const content=root.ownerDocument.createElement('span'); content.textContent=value;
-        row.append(label,content); wrapper.appendChild(row);
-      }
-      const targetRank=rank.has(sid)?rank.get(sid):Number.MAX_SAFE_INTEGER;
-      const before=staticGroupStart(target,targetRank);
-      if(before)target.insertBefore(wrapper,before); else target.appendChild(wrapper);
+  const labelForField=key=>String(key||'Field').replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase());
+  const hasNativePresentation=section=>{
+    const type=String(section?.type||'');
+    if(!type||type==='custom')return false;
+    return Boolean(root.querySelector('[data-v2-section="'+type+'"], [data-v2-repeat^="'+type+':"]'));
+  };
+  sections.filter(section=>{
+    const sid=String(section?.id||''),type=String(section?.type||'');
+    return sid&&section.visibility!==false&&!hidden.has(sid)&&!hidden.has(type)&&(type==='custom'||!hasNativePresentation(section));
+  }).sort((a,b)=>{
+    const ar=rank.has(String(a.id))?rank.get(String(a.id)):Number.MAX_SAFE_INTEGER;
+    const br=rank.has(String(b.id))?rank.get(String(b.id)):Number.MAX_SAFE_INTEGER;
+    return ar-br;
+  }).forEach(section=>{
+    const sid=String(section.id||'');
+    const target=String(placements[sid]||'left')==='right'?(sidebar||fallback):(main||fallback);
+    if(!target)return;
+    const wrapper=root.ownerDocument.createElement('section');
+    wrapper.className='v2-custom-preview-section';
+    wrapper.setAttribute('data-v2-custom-section-id',sid);
+    wrapper.setAttribute('data-v2-custom-section-type',String(section.type||'custom'));
+    const heading=root.ownerDocument.createElement('div');
+    heading.className='v2-custom-preview-heading';
+    heading.textContent=String(section.title||'New Section');
+    wrapper.appendChild(heading);
+    let contentCount=0;
+    for(const field of Array.isArray(section.fields)?section.fields:[]){
+      if(field?.visibility===false||hiddenFields.has(sid+':'+String(field.id)))continue;
+      const value=field?.value==null?'':String(field.value);
+      if(!value.trim())continue;
+      const row=root.ownerDocument.createElement('div'); row.className='v2-custom-preview-field';
+      const label=root.ownerDocument.createElement('b'); label.textContent=String(field.label||'Field')+' :';
+      const content=root.ownerDocument.createElement('span'); content.textContent=value;
+      row.append(label,content); wrapper.appendChild(row); contentCount+=1;
+    }
+    const schema=Array.isArray(section?.metadata?.sectionLibrary?.fields)?section.metadata.sectionLibrary.fields:[];
+    const visibleEntries=(Array.isArray(section.entries)?section.entries:[]).filter(entry=>{
+      const entryId=String(entry?.id||'');
+      return entry?.visibility!==false&&!hiddenEntries.has(sid+':'+entryId)&&!hiddenEntries.has(entryId);
     });
+    for(const entry of visibleEntries){
+      const values=isObject(entry?.values)?entry.values:(isObject(entry)?entry:{});
+      const keys=schema.length?schema.map(item=>item.key).filter(key=>Object.prototype.hasOwnProperty.call(values,key)):Object.keys(values).filter(key=>key!=='proficiency');
+      const rows=[];
+      for(const key of keys){
+        const value=values[key];
+        if(value===undefined||value===null||String(value).trim()==='')continue;
+        const row=root.ownerDocument.createElement('div'); row.className='v2-custom-preview-field';
+        const label=root.ownerDocument.createElement('b');
+        label.textContent=String(schema.find(item=>item.key===key)?.label||labelForField(key))+':';
+        const content=root.ownerDocument.createElement('span'); content.textContent=String(value);
+        row.append(label,content); rows.push(row);
+      }
+      if(rows.length){
+        const entryRoot=root.ownerDocument.createElement('div');
+        entryRoot.className='v2-custom-preview-entry';
+        entryRoot.setAttribute('data-v2-custom-entry-id',String(entry.id||''));
+        rows.forEach(row=>entryRoot.appendChild(row));
+        wrapper.appendChild(entryRoot);
+        contentCount+=rows.length;
+      }
+    }
+    // Empty prepared sections remain editable in the form, but should not create a blank heading in the CV preview.
+    if(!contentCount)return;
+    const targetRank=rank.has(sid)?rank.get(sid):Number.MAX_SAFE_INTEGER;
+    const before=staticGroupStart(target,targetRank);
+    if(before)target.insertBefore(wrapper,before); else target.appendChild(wrapper);
+  });
   const style=root.ownerDocument.createElement('style');
   style.textContent=`
-    [data-v2-template-root] .v2-custom-preview-section{display:block!important;margin:12px 0 14px!important;color:inherit!important}
+    [data-v2-template-root] .v2-custom-preview-section{display:block!important;margin:12px 0 14px!important;color:inherit!important;break-inside:avoid}
     [data-v2-template-root] .v2-custom-preview-heading{font-size:10.5pt!important;font-weight:750!important;text-transform:uppercase!important;letter-spacing:.7px!important;color:inherit!important;border-bottom:1px solid currentColor!important;padding-bottom:5px!important;margin:0 0 8px!important;opacity:.9}
+    [data-v2-template-root] .v2-custom-preview-entry{display:block!important;margin:0 0 8px!important;break-inside:avoid}
     [data-v2-template-root] .v2-custom-preview-field{display:flex!important;gap:8px!important;align-items:flex-start!important;margin:0 0 6px!important;font-size:9pt!important;line-height:1.4!important;word-break:break-word!important}
     [data-v2-template-root] .v2-custom-preview-field b{font-weight:700!important;flex:0 0 auto!important}
-    [data-v2-template-root] .v2-custom-preview-field span{min-width:0!important}
+    [data-v2-template-root] .v2-custom-preview-field span{min-width:0!important;white-space:pre-wrap!important}
   `;
   root.prepend(style);
 }
