@@ -537,7 +537,15 @@
         option.selected = Number(option.value) === current;
         return option;
       }));
-      previewPageLabel.textContent = 'Page ' + current + (pages.length ? ' of ' + pages.length : '');
+      const pageCount = pages.length || 1;
+      previewPageLabel.textContent = 'Page ' + current + ' of ' + pageCount;
+      const previousButton = document.querySelector('#preview-prev');
+      const nextButton = document.querySelector('#preview-next');
+      previousButton.disabled = current <= 1;
+      nextButton.disabled = current >= pageCount;
+      previewPageSelect.disabled = pageCount <= 1;
+      previousButton.setAttribute('aria-label', 'Previous preview page');
+      nextButton.setAttribute('aria-label', 'Next preview page');
     };
     const showPage = page => {
       previewSelector.select(page);
