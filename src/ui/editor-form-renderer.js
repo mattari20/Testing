@@ -136,7 +136,7 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={
   const isEducation=type==='education';
   const isSkillsLanguage=type==='skills'||type==='languages';
   const autoSorted=isExperience||isEducation;
-  const schemaFields=Array.isArray(sectionLibrary?.fields)?orderItems(sectionLibrary.fields.map(field=>({...field,id:String(field.key)})),configuration?.fieldOrder?.[sectionId]||[]):[];
+  const schemaFields=Array.isArray(sectionLibrary?.fields)?orderItems(sectionLibrary.fields.filter(field=>field.visibility!==false&&!hasConfiguredKey(configuration?.hiddenFields,sectionId+':'+String(field.key))).map(field=>({...field,id:String(field.key)})),configuration?.fieldOrder?.[sectionId]||[]):[];
   const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:isSkillsLanguage?[type==='skills'?'skill':'language']:schemaFields.length?schemaFields.map(field=>field.key).filter(key=>Object.prototype.hasOwnProperty.call(values,key)):Object.keys(values).filter(key=>key!=='proficiency');
   const proficiencyStyle=String(configuration?.presentation?.ratings?.[type]?.style||'off');
   const proficiencyLabels=PROFICIENCY_LABELS[type]||[];
