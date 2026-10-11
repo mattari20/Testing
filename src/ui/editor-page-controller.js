@@ -1,7 +1,7 @@
 import { createEditorSurface } from '../application/editor-surface.js';
-import { bindEditorFields, bindEditorActions } from './editor-dom-controller.js';
+import { bindEditorFields, bindEditorActions } from './editor-dom-controller.js?v=20261011.7';
 
-export const EDITOR_PAGE_VERSION = '1.0.0';
+export const EDITOR_PAGE_VERSION = '1.1.0';
 
 export function mountEditorPage(root, input = {}) {
   if (!root) throw new Error('Editor page root is required.');
