@@ -65,6 +65,31 @@ test('workspace reload restores documents and history',()=>{
   assert.equal(w2.getVersions(w2.getActiveDocument().id).length,1);
 });
 
+
+test('workspace reload migrates legacy Skills and Languages fields into visible entries',()=>{
+  const store=storage();
+  const s=surface();
+  const app=s.getState().session.application;
+  const profile=JSON.parse(JSON.stringify(app.masterProfile));
+  profile.careerData.sections.push(
+    {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',value:'JavaScript, HTML, CSS'}],entries:[],repeatable:false},
+    {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[{id:'languagesText',value:'English, Urdu'}],entries:[],repeatable:false}
+  );
+  store.setItem('estudent_cv_workspace_v2_2027',JSON.stringify({
+    version:'1.0.0',
+    workspace:{version:'1.0.0',masterProfile:profile,documents:[app.targetedCV],activeDocumentId:app.targetedCV.id,history:[]},
+    versions:{}
+  }));
+  const restored=createCVWorkspaceController({surface:surface(),storage:store});
+  const sections=restored.getState().masterProfile.careerData.sections;
+  const skills=sections.find(section=>section.type==='skills');
+  const languages=sections.find(section=>section.type==='languages');
+  assert.deepEqual(skills.entries.map(entry=>entry.values.skill),['JavaScript','HTML','CSS']);
+  assert.deepEqual(languages.entries.map(entry=>entry.values.language),['English','Urdu']);
+  assert.equal(skills.repeatable,true);
+  assert.equal(languages.repeatable,true);
+});
+
 test('restore previous version returns a stored snapshot',()=>{
   const store=storage(); const s=surface(); const w=createCVWorkspaceController({surface:s,storage:store});
   w.save();
