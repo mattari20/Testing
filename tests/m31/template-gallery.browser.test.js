@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import { once } from 'node:events';
 import { createServer } from 'node:net';
 
@@ -34,4 +35,13 @@ test('template gallery renders the native V2 collection and Build Online handoff
     await browser.close();
     server.kill();
   }
+});
+
+test('mobile More menu is viewport-bound and internally scrollable', async () => {
+  const html=await readFile(new URL('../../builder.html',import.meta.url),'utf8');
+  assert.match(html,/\.toolbar-menu\[open\] \.toolbar-secondary\{display:flex;position:fixed;z-index:9999;left:12px;right:12px;/);
+  assert.match(html,/max-width:calc\(100vw - 24px\)/);
+  assert.match(html,/max-height:calc\(100dvh - var\(--toolbar-menu-top,120px\) - 16px\)/);
+  assert.match(html,/overflow-y:auto/);
+  assert.match(html,/positionMobileToolbarMenu/);
 });
