@@ -51,3 +51,14 @@ test('PDF export stays directly visible outside the mobile More menu', async () 
   assert.match(html,/<button type="button" class="primary" id="print-btn">Export PDF<\/button>/);
   assert.doesNotMatch(html,/<details class="toolbar-menu" open>[\s\S]*?id="print-btn"/);
 });
+
+test('toolbar actions are ordered Export PDF, Share, Save CV, then More', async () => {
+  const html=await readFile(new URL('../../builder.html',import.meta.url),'utf8');
+  const pdf=html.indexOf('id="print-btn"');
+  const share=html.indexOf('id="share-btn"');
+  const save=html.indexOf('id="save-btn"');
+  const more=html.indexOf('class="toolbar-menu"');
+  assert.ok(pdf >= 0 && share > pdf && save > share && more > save, 'toolbar actions must appear in requested order');
+  assert.match(html,/navigator\.share/);
+  assert.match(html,/navigator\.clipboard\?\.writeText/);
+});
