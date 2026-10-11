@@ -2,7 +2,7 @@ import { createEditorCommand } from '../application/editor-command-contract.js';
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { createSectionFromPreset } from '../application/cv-section-library.js';
 
-export const EDITOR_DOM_VERSION = '1.34.0';
+export const EDITOR_DOM_VERSION = '1.35.0';
 
 function parseJson(value, fallback={}) {
   try { return value ? JSON.parse(value) : fallback; }
@@ -505,8 +505,14 @@ export function bindEditorActions(root, surface) {
   const categoryInput = root.querySelector('[data-section-library-category]');
   searchInput?.addEventListener('input', filterLibrary);
   categoryInput?.addEventListener('change', filterLibrary);
+  // Bind current command buttons directly so nested sortable/editor surfaces cannot swallow
+  // the action before it reaches the delegated form listener. Keep delegation for controls
+  // that are created dynamically after this binding is mounted.
+  const directCommandElements=[...root.querySelectorAll('[data-v2-editor-command]')];
+  const directHandler=event=>{event.stopPropagation();handler(event);};
+  directCommandElements.forEach(element=>element.addEventListener('click',directHandler));
   root.addEventListener('click', handler);
-  return Object.freeze({destroy:()=>{root.removeEventListener('click', handler);searchInput?.removeEventListener('input', filterLibrary);categoryInput?.removeEventListener('change', filterLibrary);}});
+  return Object.freeze({destroy:()=>{root.removeEventListener('click', handler);directCommandElements.forEach(element=>element.removeEventListener('click',directHandler));searchInput?.removeEventListener('input', filterLibrary);categoryInput?.removeEventListener('change', filterLibrary);}});
 }
 
 export function bindEditorLifecycle(root, lifecycle) {
