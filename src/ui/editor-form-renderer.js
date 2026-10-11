@@ -276,7 +276,7 @@ export function renderEditorForm(surface,documentData,options={}){
     const entries=sortEntriesForEditor(orderItems(section.entries||[],configuration.entryOrder?.[sid]||[]),type,sortDirection);
     const entryIds=entries.map(e=>e.id);
     const sectionUp=moveOrder(sectionIds,sectionIndex,-1),sectionDown=moveOrder(sectionIds,sectionIndex,1);
-    const fieldHtml=!sectionHidden&&!section.repeatable&&type!=='experience'&&type!=='education'&&type!=='skills'&&type!=='languages'
+    const fieldHtml=!sectionHidden&&(!section.repeatable||!section.metadata?.sectionLibrary)&&type!=='experience'&&type!=='education'&&type!=='skills'&&type!=='languages'
       ? fields.map((field,index)=>type==='summary'?renderSummaryField(sid,field,!hasConfiguredKey(hiddenFields,sid+':'+field.id)):renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join('')
       : '';
     const sectionLibrary=section.metadata?.sectionLibrary?(()=>{
