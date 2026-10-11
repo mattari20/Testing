@@ -1,7 +1,7 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
 import { CV_SECTION_LIBRARY } from '../application/cv-section-library.js';
-export const EDITOR_FORM_RENDERER_VERSION = '1.33.0';
+export const EDITOR_FORM_RENDERER_VERSION = '1.34.0';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
