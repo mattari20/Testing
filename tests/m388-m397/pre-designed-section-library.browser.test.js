@@ -114,3 +114,31 @@ test('native template preview respects hidden prepared sections and entries', as
     assert.doesNotMatch(result.html, /Must Not Appear/);
   });
 });
+
+
+test('production editor adds a prepared section without a viewport jump and updates preview', async () => {
+  await withBrowser(async (page, baseUrl) => {
+    await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, route => route.abort());
+    await page.goto(baseUrl + '/builder.html?template=t01-modern-minimalist-cv-design_modern');
+    await page.waitForFunction(() => window.v2ProductionReady === true, { timeout:15000 });
+    const library = page.locator('.editor-section-library');
+    await library.scrollIntoViewIfNeeded();
+    const beforeOpen = await page.evaluate(() => window.scrollY);
+    await library.locator('summary').click();
+    await library.locator('[data-section-library-search]').fill('awards');
+    await page.getByRole('button', { name:'Add Award', exact:true }).click();
+    const afterAdd = await page.evaluate(() => window.scrollY);
+    assert.equal(afterAdd, beforeOpen, 'Adding a prepared section must preserve the viewport position');
+    const section = page.locator('.editor-section-card').filter({ has: page.getByRole('heading', { name:'Awards & Honors' }) });
+    await section.waitFor({ state:'visible' });
+    await section.locator('[data-v2-entry-key="title"]').fill('Dean’s List');
+    await section.locator('[data-v2-entry-key="issuer"]').fill('Example University');
+    await page.waitForFunction(() => {
+      const preview = document.querySelector('[data-v2-editor-preview-root]');
+      return Boolean(preview && preview.textContent.includes('Dean’s List') && preview.textContent.includes('Example University'));
+    }, { timeout:10000 });
+    const previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
+    assert.match(previewText, /Dean’s List/);
+    assert.match(previewText, /Example University/);
+  });
+});
