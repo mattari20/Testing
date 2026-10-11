@@ -75,14 +75,17 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
     );
     assert.equal(versionBeforeRestore, 'Edited Engineer');
 
+    await page.locator('#cv-version-history button').filter({hasText:'View history'}).click();
     const restoreButtons = page.locator('.cv-version-item button');
     assert.ok((await restoreButtons.count()) >= 2);
+    page.once('dialog', dialog => dialog.accept());
     await restoreButtons.nth(1).click();
     await page.waitForTimeout(150);
     const restoredName = await page.evaluate(() =>
       window.eStudentCVBuilderV2.surface.getState().session.application.masterProfile.careerData.identity.fullName
     );
     assert.equal(restoredName, 'Baseline Engineer');
+    assert.ok((await page.locator('#cv-version-history').textContent()).includes('Version History'));
 
     // Create a separate CV, then archive it to verify the active-document handoff.
     page.once('dialog',dialog=>dialog.accept('Second CV'));
