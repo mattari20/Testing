@@ -371,3 +371,14 @@ M408–M417 is repository/browser validated on the current main sequence. V2 Int
 The V2 editor now has a provider-neutral persistence and recovery boundary. A validated, versioned record stores the Master Profile and Targeted CV, a storage adapter provides save/load/clear operations, and a debounced recovery controller provides autosave with an immediate flush path. Persisted state can be restored into the editor surface with stale undo/redo history cleared. The feature remains opt-in and does not couple the editor to a specific browser storage technology.
 
 Repository-side validation is wired into V2 Integration Validation through `test:m418-m427`. Production deployment and final release gates remain open.
+
+
+## 2026-10-11 accepted UX milestone — editor viewport stability
+
+The project owner has accepted the deployed editor behavior when adding fields: the current viewport should remain still, with no visible jump, and newly added content should extend downward. This is a frozen UX baseline for future work.
+
+Canonical milestone record: `docs/03-implementation/MILESTONE_EDITOR_VIEWPORT_STABILITY_2026-10-11.md`.
+
+Checkpoint commit: `9faf549ce714bd7e22bc266d5540ee886d9f0395`. Hostinger deployment and Template Gallery Validation succeeded. CV Workspace Validation is still failing; the milestone record documents the failing checks and distinguishes owner-accepted UX from automated CI status. Do not represent workspace CI as green.
+
+**Resume rule:** preserve this behavior during future features. If editor rendering, focus, field insertion, or scroll handling is changed, rerun mobile browser checks for Add Skill, Add Language, Add Field, and Add Custom Section.
