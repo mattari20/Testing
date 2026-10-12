@@ -391,3 +391,14 @@ Validation status:
 - CI/unit/browser test results have not yet been confirmed in this record.
 - Hostinger deployment has not been performed or verified as part of this batch.
 - Do not mark the feature complete until the new test suites and relevant existing template/browser regression suites pass, then verify the deployed version separately.
+
+
+### M496–M505 follow-up source checks
+
+Static checks performed after the implementation updates:
+- `package.json` parses as valid JSON, and both new test scripts are registered in `npm test`.
+- Modified JavaScript source and the unit test pass syntax parsing.
+- The browser test passes syntax parsing after normalizing its module-only `import.meta.url` context.
+- The section catalog executes in isolation and returns exactly 26 unique types across five groups; all 26 generate starter entries and insertion controls.
+
+These checks are not substitutes for executing `npm test` or real Chromium acceptance. The GitHub Actions run result is not available through the connected status endpoint in this session, so runtime/browser validation remains unconfirmed.
