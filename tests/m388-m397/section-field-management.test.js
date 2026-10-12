@@ -50,13 +50,13 @@ test('section and field commands mutate the master profile and remain undoable',
   const surface = createEditorSurface({ profileData: profileInput() });
   surface.dispatch({ type: 'add-section', payload: { id: 'custom-skills', title: 'Skills', type: 'custom-skills' } });
   surface.dispatch({ type: 'set-section-title', target: { sectionId: 'custom-skills' }, payload: { title: 'Technical Skills' } });
-  surface.dispatch({ type: 'add-field', target: { sectionId: 'skills' }, payload: { id: 'python', label: 'Python', value: 'Advanced' } });
-  surface.dispatch({ type: 'set-field-definition', target: { sectionId: 'skills', fieldId: 'python' }, payload: { label: 'Python Level', type: 'text' } });
+  surface.dispatch({ type: 'add-field', target: { sectionId: 'custom-skills' }, payload: { id: 'python', label: 'Python', value: 'Advanced' } });
+  surface.dispatch({ type: 'set-field-definition', target: { sectionId: 'custom-skills', fieldId: 'python' }, payload: { label: 'Python Level', type: 'text' } });
   const profile = surface.getState().session.application.masterProfile;
   assert.equal(profile.careerData.sections.at(-1).title, 'Technical Skills');
   assert.equal(profile.careerData.sections.at(-1).fields[0].label, 'Python Level');
-  surface.dispatch({ type: 'remove-field', target: { sectionId: 'skills', fieldId: 'python' }, payload: {} });
-  surface.dispatch({ type: 'remove-section', target: { sectionId: 'skills' }, payload: {} });
+  surface.dispatch({ type: 'remove-field', target: { sectionId: 'custom-skills', fieldId: 'python' }, payload: {} });
+  surface.dispatch({ type: 'remove-section', target: { sectionId: 'custom-skills' }, payload: {} });
   assert.equal(profile.careerData.sections.some(s => s.id === 'custom-skills'), false);
   assert.equal(surface.canUndo(), true);
 });
@@ -71,12 +71,10 @@ test('targeted ordering is rendered without mutating master data order', () => {
   const experienceSectionIndex = html.indexOf('data-v2-editor-section="experience"');
   assert.ok(educationSectionIndex >= 0 && experienceSectionIndex >= 0);
   assert.ok(educationSectionIndex < experienceSectionIndex, 'section ordering should be reflected in the rendered editor blocks');
-  const experienceHtml = html.slice(experienceSectionIndex, html.indexOf('</section>', experienceSectionIndex));
-  assert.ok(
-    experienceHtml.indexOf('data-v2-editor-field-label="experience:company"') <
-      experienceHtml.indexOf('data-v2-editor-field-label="experience:role"'),
-    'field ordering should be checked within the Experience section'
-  );
+  const companyFieldIndex = html.indexOf('data-v2-editor-field-label="experience:company"');
+  const roleFieldIndex = html.indexOf('data-v2-editor-field-label="experience:role"');
+  assert.ok(companyFieldIndex >= 0 && roleFieldIndex >= 0, 'both Experience field controls should be rendered');
+  assert.ok(companyFieldIndex < roleFieldIndex, 'field ordering should be reflected in the rendered Experience field controls');
   assert.deepEqual(
     surface.getState().session.application.masterProfile.careerData.sections.map(s => s.id),
     ['experience','education']
