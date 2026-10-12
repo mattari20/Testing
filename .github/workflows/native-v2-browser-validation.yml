@@ -2,7 +2,7 @@ name: Native V2 Browser Validation
 
 on:
   push:
-    branches: [main]
+    branches: [main, qa/pre-designed-section-library-release-port, release/cv-builder-v2-production]
   workflow_dispatch:
 
 jobs:

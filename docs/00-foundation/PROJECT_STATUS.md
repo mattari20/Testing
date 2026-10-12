@@ -405,3 +405,21 @@ Checkpoint commit: `9faf549ce714bd7e22bc266d5540ee886d9f0395`. Hostinger deploym
 - This feature branch has **not** yet been merged or deployed to Hostinger. V1 `/cv-builder/` remains untouched.
 - The existing production-branch CV Workspace Validation failures (More menu state, multi-CV persistence and the automated viewport assertion) remain independent release gates. The feature-specific browser test passes, but this does not make the broader workspace CI green.
 - After merge, verify the deployed V2 builder, all published templates, PDF/print and supported DOCX paths, persisted data, mobile behavior, and the accepted 2026-10-11 viewport-stability milestone.
+
+
+### Section Library release-port validation — 2026-10-12
+
+The production-branch-compatible Section Library release port is staged on `qa/pre-designed-section-library-release-port`. It extends the existing production library rather than replacing the production branch's editor/runtime architecture.
+
+- Catalogue: 26 versioned presets in five groups; the optional Languages profile uses the distinct `language-profiles` type and does not collide with the core `languages` section.
+- Full CV Builder V2 Validation: PASS — [run 38322145537](https://github.com/mattari20/Testing/actions/runs/38322145537).
+- V2 Integration Validation: PASS — [run 38322145606](https://github.com/mattari20/Testing/actions/runs/38322145606).
+- Native V2 Browser Validation: PASS — [run 38322145612](https://github.com/mattari20/Testing/actions/runs/38322145612), including M26/M27/M28, real editor/preview checks and integrated fragmentation browser checks.
+- CV Builder V2 E2E Contract: PASS — [run 38322145632](https://github.com/mattari20/Testing/actions/runs/38322145632).
+- Final QA validation commit: `7c5b1e38769fc877fd4c170b2723acadf775ed6b`; all four listed workflows completed successfully on that exact tree. Subsequent status-register edits are documentation-only and do not alter the runtime/test source.
+- Hostinger deployment has **not** been performed. The production release branch remains unchanged.
+- The deployment workflow now requires full `npm test`, an exact approved SHA, an explicit deploy-enable variable, and a verified FTP target variable before the FTPS upload job can run.
+
+### Deployment boundary
+
+The documented release candidate `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6` predates this Section Library update and must not be used if this feature is included in the release. After the release-port PR is accepted, freeze the exact resulting commit and reconcile evidence to that SHA. Production deployment remains blocked until production credential rotation/revocation and authoritative history verification are complete, and the FTP target is confirmed as `/public_html/cv-builder-v2/`. R6 smoke testing, R7 V1 retirement, and R8 final closeout remain post-deployment tasks.

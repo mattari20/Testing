@@ -322,11 +322,13 @@ The V2 product includes a categorized, searchable Pre-designed Section Library. 
 
 Canonical specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md`.
 
-### Initial catalogue
-- P1 core: Awards & Honors; Key Achievements; Projects & Portfolio; Certifications & Licenses; Courses & Training; Volunteer & Community Service; Leadership & Extracurricular Activities; Research Experience; Publications; Conferences & Presentations; Professional Memberships & Affiliations; Additional Information.
-- P2 specialized/academic: Scholarships & Fellowships; Research Grants & Funding; Thesis & Dissertation; Patents & Intellectual Property; Teaching Experience; Professional Service & Mentoring; Open-Source Contributions; Technical & Laboratory Experience; Selected Work / Case Studies.
-- P3 optional: Media & Public Appearances; Guest Lectures & Speaking Engagements; Interests & Hobbies; References.
-- Existing core sections (Personal/Contact Information, Summary, Experience, Education, Skills and Languages) are retained and improved rather than duplicated.
+### Approved 26-item catalogue — five category groups
+- **Achievements & Qualifications:** Awards & Honors; Key Achievements; Scholarships & Fellowships; Licenses & Professional Certifications; Courses & Professional Training.
+- **Academic & Research:** Research Experience; Publications; Conferences & Presentations; Research Grants & Funding; Thesis & Dissertation.
+- **Technical & Professional Work:** Patents & Intellectual Property; Projects & Portfolio; Open-Source Contributions; Selected Work / Case Studies; Technical & Laboratory Experience.
+- **Experience & Involvement:** Volunteer & Community Service; Leadership & Extracurricular Activities; Professional Memberships & Affiliations; Teaching Experience; Professional Service & Mentoring; Media & Public Appearances; Guest Lectures & Speaking Engagements.
+- **Additional CV Sections:** Languages (optional additional profile block using unique type `language-profiles`); Interests & Hobbies; References; Additional Information.
+- Existing core sections (Personal/Contact Information, Summary, Experience, Education, Skills and Languages) remain available; the optional Languages preset is a distinct type and never replaces or collides with the core `languages` section.
 
 ### Mandatory capability rules
 - Stable section IDs, definition versions, typed field definitions, validation and repeatable entries.
@@ -337,4 +339,4 @@ Canonical specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPE
 - Preserve the accepted editor viewport-stability milestone during Add Section/Add Entry/Add Field actions.
 - Implementation is gated on focused code audit, schema/registry tests, template compatibility matrix, mobile/browser regression and PDF/DOCX/print checks.
 
-The catalogue and editor integration are implemented on feature branch `feature/pre-designed-section-library`; targeted unit/browser and editor regression suites passed. Production merge/deployment and full workspace acceptance remain pending. The generic preview fallback preserves sections when a template has no native presentation anchor.
+The 26-item catalogue and editor integration are implemented on QA branch `qa/pre-designed-section-library-release-port`. On QA commit `7c5b1e38769fc877fd4c170b2723acadf775ed6b`, CV Builder V2 Validation, V2 Integration Validation, Native V2 Browser Validation, and CV Builder V2 E2E Contract all passed. Production release-branch merge, Hostinger deployment, live export matrix, and post-deployment acceptance remain pending. The generic preview fallback preserves sections when a template has no native presentation anchor.

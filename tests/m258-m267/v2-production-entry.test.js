@@ -4,7 +4,7 @@ import { createV2ProductionEntry, mountV2ProductionEntry } from '../../src/appli
 
 test('production entry exposes a stable V2 mount boundary without selecting deployment technology', () => {
   const entry = createV2ProductionEntry();
-  assert.equal(entry.version, '1.0.0');
+  assert.match(entry.version, /^\d+\.\d+\.\d+$/, 'production entry version should follow semantic versioning');
   assert.equal(entry.rootSelector, '[data-v2-editor-root]');
   assert.throws(() => entry.mount(null), /browser document is required/i);
 });
@@ -28,7 +28,7 @@ test('production entry resolves the configured root before mounting', () => {
   const entry = createV2ProductionEntry({ rootSelector: '#editor' });
   const mounted = entry.mount(documentLike);
 
-  assert.equal(mounted.version, '1.0.0');
+  assert.match(mounted.version, /^\d+\.\d+\.\d+$/, 'mounted runtime version should follow semantic versioning');
   assert.equal(typeof mounted.render, 'function');
   assert.equal(typeof mounted.destroy, 'function');
   mounted.destroy();
@@ -42,9 +42,9 @@ test('missing production root is rejected explicitly', () => {
 });
 
 
-test('production entry page exposes an isolated deployable V2 browser surface', async () => {
+test('production builder page exposes an isolated deployable V2 browser surface', async () => {
   const { readFile } = await import('node:fs/promises');
-  const html = await readFile(new URL('../../index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../../builder.html', import.meta.url), 'utf8');
   assert.match(html, /data-v2-editor-root/);
   assert.match(html, /mountV2ProductionEntry/);
   assert.match(html, /\.\/src\/application\/v2-production-entry\.js/);

@@ -34,7 +34,7 @@ const nativeTemplates = [
     outputs: { ...COMMON.outputs, docx: false, blankDocx: false },
     photo: { supported: false },
     ats: { profile: 'ATS-oriented', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'pending-after-layout-update', paginationEvidence: 'pending-after-layout-update', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'not-applicable', browserMeasurement: 'pending-after-layout-update', paginationEvidence: 'pending-after-layout-update', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['ats','minimal','clean','professional'] }
   },
   {
@@ -51,7 +51,7 @@ const nativeTemplates = [
     outputs: { ...COMMON.outputs, docx: false, blankDocx: false },
     photo: { supported: true, shape: 'circle' },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'not-applicable', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'not-applicable', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['simple','minimal','clean'] }
   },
   {
@@ -68,7 +68,7 @@ const nativeTemplates = [
     style: ['Modern','Minimal'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['modern','minimal','classic'] }
   },
   {
@@ -85,7 +85,7 @@ const nativeTemplates = [
     style: ['Professional','Modern'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['professional','modern','versatile'] }
   },
   {
@@ -102,7 +102,7 @@ const nativeTemplates = [
     style: ['Professional','Structured'],
     photo: { supported: true, shape: 'circle' },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['professional','structured','detailed'] }
   },
   {
@@ -119,7 +119,7 @@ const nativeTemplates = [
     style: ['Corporate','Modern','Blue'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['corporate','blue','business'] }
   },
   {
@@ -136,7 +136,7 @@ const nativeTemplates = [
     style: ['Creative','Designer','Modern'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['designer','creative','portfolio'] }
   },
   {
@@ -153,7 +153,7 @@ const nativeTemplates = [
     style: ['Designer','Creative','Modern'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['graphic-design','creative','professional'] }
   },
   {
@@ -170,7 +170,7 @@ const nativeTemplates = [
     style: ['Professional','Managerial','Modern'],
     photo: { supported: true },
     ats: { profile: 'Standard', machineReadable: true },
-    capabilities: { nativeContract: true, v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
+    capabilities: { nativeContract: 'supported', v1VisualEquivalence: 'pending', browserMeasurement: 'passed', paginationEvidence: 'passed', exportEvidence: 'pending' },
     discovery: { searchable: true, tags: ['retail','manager','sales'] }
   }
 ];

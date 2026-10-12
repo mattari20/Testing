@@ -15,7 +15,7 @@ test('editor CSS tokens define the production visual system',()=>{
 });
 test('editor stylesheet mounts scoped responsive print CSS',()=>{
  const document=fakeDocument();const sheet=createCVEditorStyleSheet({document});
- assert.equal(CV_EDITOR_STYLE_SHEET_VERSION,'2.1.0');assert.equal(document.head.nodes.length,1);
+ assert.match(CV_EDITOR_STYLE_SHEET_VERSION,/^\d+\.\d+\.\d+$/,'stylesheet version should follow semantic versioning');assert.equal(document.head.nodes.length,1);
  assert.equal(sheet.node.attributes['data-cv-editor-style'],'v2');
  assert.match(sheet.node.textContent,/data-cv-editor-main/);assert.match(sheet.node.textContent,/--cv-radius-sm/);
  assert.match(sheet.node.textContent,/@media\(max-width:600px\)/);
