@@ -2,7 +2,7 @@ name: V2 Integration Validation
 
 on:
   push:
-    branches: [main]
+    branches: [main, qa/pre-designed-section-library-release-port]
   pull_request:
     branches: [main]
   workflow_dispatch:
