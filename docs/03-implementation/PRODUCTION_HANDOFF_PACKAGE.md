@@ -257,6 +257,18 @@ The repository-side implementation and automated release evidence are complete t
 
 The two historical T01 ATS/Simple V1 sources remain unrecovered by design, but their new V2-native replacements are implemented and covered by the fresh nine-template browser evidence. They are not a remaining production deployment blocker.
 
+## Section Library release-port addendum — 2026-10-12
+
+The documented candidate `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6` predates the current 26-item Section Library release-port work. Do not deploy that older SHA if this updated catalogue is part of the intended release. After the QA branch is fully green, freeze a new exact candidate from the validated tree and reconcile all release evidence to that SHA.
+
+The Hostinger workflow is now gated in the QA branch. Before upload it runs the full `npm test` suite. The upload job is eligible only when all of these repository variables are explicitly set:
+
+- `CV_BUILDER_V2_APPROVED_DEPLOY_SHA`: must exactly equal the commit SHA being deployed, and should only be set after R1–R8 prerequisites are satisfied.
+- `CV_BUILDER_V2_FTP_SERVER_DIR`: the confirmed remote target directory for the V2 app.
+- `CV_BUILDER_V2_FTP_TARGET_VERIFIED`: must be the literal string `true` after verifying the FTP account maps to `/public_html/cv-builder-v2/`.
+
+FTPS certificate verification is configured as strict. A push to the release branch alone is no longer sufficient authorization to upload. These variables have not been configured or verified by this change; no deployment is claimed.
+
 ## Important rule
 
 Do not mark a release gate PASS because a test, contract, or document exists. PASS requires the evidence defined by that gate.
