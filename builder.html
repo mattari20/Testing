@@ -719,12 +719,7 @@
     toolbarMenu?.addEventListener('click', event => {
       if (event.target.closest('button')) closeToolbarMenu();
     });
-    // Capture pointer interaction so the panel dismisses even if another
-    // component stops bubbling click events.
-    document.addEventListener('pointerdown', event => {
-      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
-      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
-    }, true);
+    // Close menus after the target click handler runs so layout changes cannot steal the click.
     document.addEventListener('click', event => {
       if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
       if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
