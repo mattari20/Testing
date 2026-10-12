@@ -12,7 +12,7 @@ function createMemoryStorage() {
 }
 
 function createRoot() {
-  const form = { replaceChildren() {}, querySelectorAll() { return []; } };
+  const form = { replaceChildren() {}, querySelector() { return null; }, querySelectorAll() { return []; }, addEventListener() {}, removeEventListener() {} };
   return {
     getAttribute() { return null; },
     querySelector(selector) {
