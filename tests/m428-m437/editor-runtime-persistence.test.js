@@ -14,6 +14,7 @@ function createMemoryStorage() {
 function createRoot() {
   const form = { replaceChildren() {}, querySelectorAll() { return []; } };
   return {
+    getAttribute() { return null; },
     querySelector(selector) {
       if (selector === '[data-v2-editor-form]') return form;
       return null;
