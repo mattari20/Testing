@@ -260,6 +260,88 @@ function applySectionVisibility(root, snapshot) {
   }
 }
 
+
+function collectTemplateBoundSectionTypes(root) {
+  const types = new Set();
+  for (const element of root.querySelectorAll('[data-v2-repeat]')) {
+    const type = String(element.getAttribute('data-v2-repeat') || '').split(':')[0];
+    if (type) types.add(type);
+  }
+  for (const element of root.querySelectorAll('[data-v2-value^="section:"]')) {
+    const parts = String(element.getAttribute('data-v2-value') || '').split(':');
+    if (parts[1]) types.add(parts[1]);
+  }
+  for (const element of root.querySelectorAll('[data-v2-visible-when^="section:"]')) {
+    const type = String(element.getAttribute('data-v2-visible-when') || '').split(':')[1];
+    if (type) types.add(type);
+  }
+  return types;
+}
+
+function appendGenericSectionBlocks(root, snapshot, definition, boundTypes) {
+  const sections = Array.isArray(snapshot?.careerData?.sections) ? snapshot.careerData.sections : [];
+  const unbound = sections.filter(section =>
+    section && !boundTypes.has(String(section.type)) && isCanonicalSectionVisible(snapshot, section)
+  );
+  if (!unbound.length) return;
+
+  const documentRef = root.ownerDocument;
+  const host = root.querySelector('main') || root;
+  const isT02 = /t02/i.test(String(definition?.id || ''));
+  for (const section of unbound) {
+    const block = documentRef.createElement('section');
+    block.className = 'v2-dynamic-section';
+    block.setAttribute('data-v2-dynamic-section', String(section.type));
+    block.style.cssText = 'display:block;width:100%;margin:18px 0 0;padding:0;break-inside:avoid;page-break-inside:avoid;';
+    const heading = documentRef.createElement('h2');
+    heading.className = isT02 ? 'section-label' : 'section-title';
+    heading.textContent = String(section.title || section.type || 'Additional Section');
+    heading.style.cssText = 'margin-top:14px;margin-bottom:8px;';
+    block.appendChild(heading);
+
+    const fieldDefinitions = Array.isArray(section.metadata?.fieldDefinitions) ? section.metadata.fieldDefinitions : [];
+    const fields = Array.isArray(section.fields) ? section.fields : [];
+    for (const field of fields) {
+      if (!field || field.visibility === false || !meaningful(field.value)) continue;
+      const line = documentRef.createElement('div');
+      line.className = 'v2-dynamic-section-field';
+      line.style.cssText = 'margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere;';
+      const label = documentRef.createElement('strong');
+      label.textContent = String(field.label || field.id || '');
+      const value = documentRef.createElement('span');
+      value.textContent = String(field.value ?? '');
+      line.append(label, documentRef.createTextNode(': '), value);
+      block.appendChild(line);
+    }
+
+    const entries = getVisibleEntries(snapshot, section);
+    for (const entry of entries) {
+      const entryBlock = documentRef.createElement('div');
+      entryBlock.className = 'v2-dynamic-section-entry';
+      entryBlock.setAttribute('data-v2-preview-entry-id', String(entry.id || ''));
+      entryBlock.setAttribute('data-v2-preview-section-type', String(section.type));
+      entryBlock.style.cssText = 'margin:8px 0 12px;break-inside:avoid;page-break-inside:avoid;';
+      const values = isObject(entry.values) ? entry.values : {};
+      const definitions = new Map(fieldDefinitions.map(field => [String(field.key || field.id), field]));
+      for (const [key, rawValue] of Object.entries(values)) {
+        if (rawValue == null || String(rawValue).trim() === '') continue;
+        const line = documentRef.createElement('div');
+        line.className = 'v2-dynamic-section-value';
+        line.style.cssText = 'margin:3px 0;white-space:pre-wrap;overflow-wrap:anywhere;';
+        const label = documentRef.createElement('strong');
+        label.textContent = String(definitions.get(key)?.label || key.replace(/[-_]/g, ' ').replace(/\b\w/g, character => character.toUpperCase()));
+        const value = documentRef.createElement('span');
+        value.setAttribute('data-v2-entry-value', key);
+        value.textContent = String(rawValue);
+        line.append(label, documentRef.createTextNode(': '), value);
+        entryBlock.appendChild(line);
+      }
+      block.appendChild(entryBlock);
+    }
+    host.appendChild(block);
+  }
+}
+
 export function createNativeRenderDefinition(input = {}) {
   if (!input.id) throw new Error('Native template id is required.');
   if (!input.sourceHtml) throw new Error('Native template sourceHtml is required.');
@@ -282,10 +364,12 @@ export function renderNativeTemplateSource(definition, snapshot, documentRef) {
   host.innerHTML = definition.sourceHtml;
   const root = host.querySelector('[data-v2-template-root]') || host.querySelector('[data-v2-template-id]') || host.firstElementChild || host;
 
+  const boundSectionTypes = collectTemplateBoundSectionTypes(root);
   applySectionVisibility(root, snapshot);
   applyRepeats(root, snapshot);
   applyVisibility(root, snapshot);
   applyValues(root, snapshot);
+  appendGenericSectionBlocks(root, snapshot, definition, boundSectionTypes);
   applyPreviewEditTargets(root, snapshot);
   removeUndefinedTextNodes(root);
 
