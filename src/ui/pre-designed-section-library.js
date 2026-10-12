@@ -8,7 +8,7 @@ const entry = (title, type, category, fields) => Object.freeze({
 export const PRE_DESIGNED_SECTION_GROUPS = Object.freeze([
   Object.freeze({ title: 'Achievements & Qualifications', sections: Object.freeze([
     entry('Awards & Honors','awards','Achievements & Qualifications',[['award','Award or honor'],['issuer','Issuing organization'],['date','Date'],['details','Details']]),
-    entry('Key Achievements','achievements','Achievements & Qualifications',[['achievement','Achievement'],['context','Context'],['result','Result or impact']]),
+    entry('Key Achievements','key-achievements','Achievements & Qualifications',[['achievement','Achievement'],['context','Context'],['result','Result or impact']]),
     entry('Scholarships & Fellowships','scholarships','Achievements & Qualifications',[['name','Scholarship or fellowship'],['provider','Provider'],['date','Date'],['details','Details']]),
     entry('Licenses & Professional Certifications','certifications','Achievements & Qualifications',[['name','License or certification'],['issuer','Issuing organization'],['date','Issue date'],['expiry','Expiry date or status']]),
     entry('Courses & Professional Training','training','Achievements & Qualifications',[['course','Course or training'],['provider','Provider'],['date','Completion date'],['details','Skills or topics covered']])
