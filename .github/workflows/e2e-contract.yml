@@ -1,7 +1,7 @@
 name: CV Builder V2 E2E Contract
 on:
   push:
-    branches: [main]
+    branches: [main, qa/pre-designed-section-library-release-port]
   pull_request:
     branches: [main]
 jobs:
