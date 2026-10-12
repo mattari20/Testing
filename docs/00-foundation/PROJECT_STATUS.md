@@ -371,3 +371,23 @@ M408–M417 is repository/browser validated on the current main sequence. V2 Int
 The V2 editor now has a provider-neutral persistence and recovery boundary. A validated, versioned record stores the Master Profile and Targeted CV, a storage adapter provides save/load/clear operations, and a debounced recovery controller provides autosave with an immediate flush path. Persisted state can be restored into the editor surface with stale undo/redo history cleared. The feature remains opt-in and does not couple the editor to a specific browser storage technology.
 
 Repository-side validation is wired into V2 Integration Validation through `test:m418-m427`. Production deployment and final release gates remain open.
+
+
+## M496–M505 — Pre-designed Section Library
+
+The first implementation batch for the Edit-tab Pre-designed Section Library has been committed to the `Testing` repository.
+
+Implemented in source:
+- A catalog of 26 unique section types grouped into five collapsible categories.
+- Direct insertion through the existing `add-section` editor command, with generated section IDs and starter repeatable entries.
+- Human-readable labels for library-generated entry fields.
+- Existing repeatable-entry insertion now reuses the starter entry's keys, so added entries remain editable instead of creating empty rows.
+- A generic native-preview fallback for visible sections not bound by a template's fixed declarative regions; it uses the active template's main content region when available and supports existing inline preview editing.
+- Responsive library styling and acceptance tests for catalog structure, insertion, live preview and visibility.
+- Product specification at `docs/02-v2-product/PRE_DESIGNED_SECTION_LIBRARY.md`.
+
+Validation status:
+- Source changes and test registrations are committed.
+- CI/unit/browser test results have not yet been confirmed in this record.
+- Hostinger deployment has not been performed or verified as part of this batch.
+- Do not mark the feature complete until the new test suites and relevant existing template/browser regression suites pass, then verify the deployed version separately.
