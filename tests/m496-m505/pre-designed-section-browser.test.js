@@ -56,6 +56,25 @@ try {
   assert.match(previewText, /A Research Article/);
   assert.match(previewText, /Ali Akbar/);
 
+  const titleValue = page.locator('#preview [data-v2-dynamic-entry-value="title"]');
+  await titleValue.evaluate(element => {
+    element.textContent = 'Edited Research Article';
+    element.dispatchEvent(new Event('blur', { bubbles: true }));
+  });
+  await page.waitForFunction(() => {
+    const section = window.editorRuntime.surface.getState().session.application.masterProfile.careerData.sections.find(item => item.type === 'publications');
+    return section?.entries?.[0]?.values?.title === 'Edited Research Article';
+  });
+
+  const sectionId = await page.evaluate(() => window.editorRuntime.surface.getState().session.application.masterProfile.careerData.sections.find(item => item.type === 'publications').id);
+  await page.locator('[data-v2-editor-section="' + sectionId + '"] [data-v2-editor-command="add-entry"]').click();
+  const entryState = await page.evaluate(() => {
+    const section = window.editorRuntime.surface.getState().session.application.masterProfile.careerData.sections.find(item => item.type === 'publications');
+    return { count: section.entries.length, keys: Object.keys(section.entries[1].values) };
+  });
+  assert.equal(entryState.count, 2);
+  assert.deepEqual(entryState.keys, ['title', 'authors', 'venue', 'date', 'link']);
+
   await page.evaluate(() => {
     const state = window.editorRuntime.surface.getState();
     const section = state.session.application.masterProfile.careerData.sections.find(item => item.type === 'publications');
