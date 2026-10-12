@@ -402,3 +402,10 @@ Static checks performed after the implementation updates:
 - The section catalog executes in isolation and returns exactly 26 unique types across five groups; all 26 generate starter entries and insertion controls.
 
 These checks are not substitutes for executing `npm test` or real Chromium acceptance. The GitHub Actions run result is not available through the connected status endpoint in this session, so runtime/browser validation remains unconfirmed.
+
+
+### M496–M505 final source review note
+
+A further compatibility review confirmed that the library section types must not collide with template-bound standard types. The library now uses distinct types for Key Achievements, Projects & Portfolio, and Languages. Static source checks confirm 26 unique catalog types with no collisions against the common template-bound section types checked in the review.
+
+The connected GitHub status endpoint returned no commit statuses or PR-associated workflow runs for the current main-branch commit. Therefore, no CI pass is claimed. Run the repository's `npm test` workflow and inspect the resulting GitHub Actions run before considering release readiness.
