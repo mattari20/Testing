@@ -19,6 +19,11 @@ test('section library has valid, unique, versioned presets and typed fields', ()
   assert.equal(new Set(CV_SECTION_LIBRARY.map(item => item.id)).size, 26);
   assert.equal(new Set(CV_SECTION_LIBRARY.map(item => item.category)).size, 5);
   assert.ok(CV_SECTION_LIBRARY.some(item => item.id === 'language-profiles' && item.title === 'Languages'));
+  const coreTypes = new Set(['summary','experience','education','skills','languages','projects','achievements','contact','photo']);
+  assert.ok(CV_SECTION_LIBRARY.every(item => !coreTypes.has(item.id)), 'preset IDs must not collide with native core section types');
+  const languages = createSectionFromPreset('language-profiles');
+  assert.equal(languages.type, 'language-profiles');
+  assert.deepEqual(Object.keys(languages.entries[0].values), ['language','proficiency','context','url']);
   assert.ok(CV_SECTION_LIBRARY.every(item => item.version === '1.0.0' && item.fields.length > 0));
   assert.ok(CV_SECTION_LIBRARY.some(item => item.id === 'awards-honors' && item.priority === 'P1'));
   assert.ok(CV_SECTION_LIBRARY.some(item => item.id === 'references' && item.priority === 'P3'));
