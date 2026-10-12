@@ -722,7 +722,7 @@
     // Close menus after the target click handler runs so layout changes cannot steal the click.
     document.addEventListener('click', event => {
       if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
-      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+      if (workspaceMenu && !workspaceMenu.contains(event.target) && window.matchMedia('(max-width: 760px)').matches) closeWorkspaceMenu();
     });
     window.addEventListener('resize', () => {
       if (isCompactToolbar()) closeToolbarMenu();
