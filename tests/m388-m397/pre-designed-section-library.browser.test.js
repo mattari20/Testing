@@ -4,6 +4,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { chromium } from 'playwright';
+import { listNativeV2Templates } from '../../src/templates/v2-native-template-catalog.js';
 
 const projectRoot = resolve(process.cwd());
 const mime = { '.js':'text/javascript; charset=utf-8', '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.json':'application/json; charset=utf-8' };
@@ -38,7 +39,7 @@ async function withBrowser(run) {
   try {
     const page = await browser.newPage();
     await page.goto('http://127.0.0.1:' + address.port + '/');
-    await run(page, 'http://127.0.0.1:' + address.port);
+    await run(page, 'http://127.0.0.1:' + address.port, browser);
   } finally {
     await browser.close();
     await new Promise(resolveClose => server.close(resolveClose));
