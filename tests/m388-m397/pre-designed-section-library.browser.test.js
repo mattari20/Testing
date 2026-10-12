@@ -189,11 +189,12 @@ test('a prepared section renders and exports to PDF across every native template
         await section.locator('[data-v2-entry-key="title"]').fill('Release validation paper — '+template.id);
         await section.locator('[data-v2-entry-key="authors"]').fill('CV Builder Validation Team');
         await section.locator('[data-v2-entry-key="venue"]').fill('Release Readiness Journal');
-        const previewSection=page.locator('.v2-custom-preview-section[data-v2-custom-section-type="publications"]');
-        await previewSection.waitFor({state:'visible',timeout:10000});
-        await page.waitForFunction(id=>document.querySelector('.v2-custom-preview-section[data-v2-custom-section-type="publications"]')?.textContent.includes('Release validation paper — '+id),template.id,{timeout:10000});
+        const publicationTitle='Release validation paper — '+template.id;
+        await page.waitForFunction(id=>document.querySelector('[data-v2-editor-preview-root]')?.textContent.includes('Release validation paper — '+id),template.id,{timeout:10000});
+        const previewTitle=page.getByText(publicationTitle,{exact:true});
+        await previewTitle.waitFor({state:'visible',timeout:10000});
         await page.emulateMedia({media:'print'});
-        assert.equal(await previewSection.isVisible(),true,template.id+' should keep the prepared section visible in print media');
+        assert.equal(await previewTitle.isVisible(),true,template.id+' should keep the prepared publication visible in print media');
         const pdf=await page.pdf({format:'A4',printBackground:true});
         assert.ok(pdf.length>1000,template.id+' should produce a non-empty A4 PDF');
       }finally{
