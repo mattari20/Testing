@@ -12,6 +12,11 @@ test('the pre-designed section library contains all 26 approved section types', 
   assert.equal(PRE_DESIGNED_SECTION_CATALOG.length, 26);
   assert.equal(PRE_DESIGNED_SECTION_GROUPS.length, 5);
   assert.equal(new Set(PRE_DESIGNED_SECTION_CATALOG.map(section => section.type)).size, 26);
+  const templateBoundTypes = new Set(['summary', 'experience', 'education', 'skills', 'languages', 'photo', 'contact', 'achievements', 'projects']);
+  assert.deepEqual(
+    PRE_DESIGNED_SECTION_CATALOG.filter(section => templateBoundTypes.has(section.type)).map(section => section.type),
+    []
+  );
 });
 
 test('each catalog item creates an editable repeatable section with a starter entry', () => {
