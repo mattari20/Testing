@@ -67,8 +67,18 @@ test('targeted ordering is rendered without mutating master data order', () => {
   surface.dispatch({ type: 'reorder', target: { kind: 'field', sectionId: 'experience' }, payload: { order: ['company','role'] } });
   surface.dispatch({ type: 'reorder', target: { kind: 'entry', sectionId: 'experience' }, payload: { order: ['job1'] } });
   const html = renderEditorForm(surface, surface.getState().session.application.masterProfile).html;
-  assert.ok(html.indexOf('Education') < html.indexOf('Experience'));
-  assert.ok(html.indexOf('Company') < html.indexOf('Role'));
+  const educationSectionIndex = html.indexOf('<section data-v2-editor-section="education"');
+  const experienceSectionIndex = html.indexOf('<section data-v2-editor-section="experience"');
+  assert.ok(educationSectionIndex >= 0, 'education section should be rendered');
+  assert.ok(experienceSectionIndex >= 0, 'experience section should be rendered');
+  assert.ok(educationSectionIndex < experienceSectionIndex, 'targeted section order should be reflected in rendered section blocks');
+
+  const experienceSectionHtml = html.slice(experienceSectionIndex, html.indexOf('</section>', experienceSectionIndex));
+  assert.ok(
+    experienceSectionHtml.indexOf('data-v2-editor-field-label="experience:company"') <
+      experienceSectionHtml.indexOf('data-v2-editor-field-label="experience:role"'),
+    'targeted field order should be reflected within the experience section'
+  );
   assert.deepEqual(
     surface.getState().session.application.masterProfile.careerData.sections.map(s => s.id),
     ['experience','education']
