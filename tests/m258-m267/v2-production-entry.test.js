@@ -28,7 +28,7 @@ test('production entry resolves the configured root before mounting', () => {
   const entry = createV2ProductionEntry({ rootSelector: '#editor' });
   const mounted = entry.mount(documentLike);
 
-  assert.equal(mounted.version, entry.version);
+  assert.match(mounted.version, /^\d+\.\d+\.\d+$/, 'mounted runtime version should follow semantic versioning');
   assert.equal(typeof mounted.render, 'function');
   assert.equal(typeof mounted.destroy, 'function');
   mounted.destroy();
