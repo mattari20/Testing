@@ -23,7 +23,7 @@ export const PRE_DESIGNED_SECTION_GROUPS = Object.freeze([
   Object.freeze({ title: 'Technical & Professional Work', sections: Object.freeze([
     entry('Patents & Intellectual Property','patents','Technical & Professional Work',[['title','Patent or IP title'],['inventors','Inventors'],['status','Patent number or status'],['date','Date'],['details','Details']]),
     entry('Teaching Experience','teaching','Technical & Professional Work',[['role','Teaching role'],['institution','Institution'],['dates','Dates'],['subjects','Subjects or courses'],['description','Responsibilities']]),
-    entry('Projects & Portfolio','projects','Technical & Professional Work',[['name','Project name'],['role','Your role'],['dates','Dates'],['description','Project summary'],['link','Portfolio or project URL']]),
+    entry('Projects & Portfolio','project-portfolio','Technical & Professional Work',[['name','Project name'],['role','Your role'],['dates','Dates'],['description','Project summary'],['link','Portfolio or project URL']]),
     entry('Open-Source Contributions','open-source','Technical & Professional Work',[['project','Project or repository'],['role','Contribution'],['date','Date or period'],['link','Repository URL'],['details','Impact or details']]),
     entry('Selected Work / Case Studies','case-studies','Technical & Professional Work',[['title','Work or case study'],['role','Your role'],['date','Date'],['challenge','Challenge'],['outcome','Outcome']])
   ])}),
@@ -35,7 +35,7 @@ export const PRE_DESIGNED_SECTION_GROUPS = Object.freeze([
     entry('Professional Service & Mentoring','service-mentoring','Experience & Involvement',[['role','Role'],['organization','Organization'],['dates','Dates'],['description','Service or mentoring details']])
   ])}),
   Object.freeze({ title: 'Additional CV Sections', sections: Object.freeze([
-    entry('Languages','languages','Additional CV Sections',[['language','Language'],['proficiency','Proficiency level'],['evidence','Certificate or details']]),
+    entry('Languages','language-profiles','Additional CV Sections',[['language','Language'],['proficiency','Proficiency level'],['evidence','Certificate or details']]),
     entry('Media & Public Appearances','media','Additional CV Sections',[['title','Appearance or feature'],['outlet','Media outlet'],['date','Date'],['link','Link or details']]),
     entry('Guest Lectures & Speaking Engagements','speaking','Additional CV Sections',[['title','Talk or lecture'],['event','Event or host'],['date','Date'],['details','Topic or audience']]),
     entry('Interests & Hobbies','interests','Additional CV Sections',[['interest','Interest or hobby'],['details','Relevant detail']]),
