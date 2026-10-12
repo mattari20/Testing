@@ -149,7 +149,7 @@ Legend:
 | Capability | Audited baseline | V2 direction |
 |---|---|---|
 | Categorized/searchable section catalogue | Implemented on feature branch; targeted tests passed | Release merge/deployment pending |
-| Prepared section definitions with typed fields | 25 presets implemented with versioned definitions | Release merge/deployment pending |
+| Prepared section definitions with typed fields | 26 versioned presets in five categories, including distinct Languages profile preset; release-port implementation and regression fixes in QA branch | Full final-branch CI and release merge/deployment pending |
 | Awards & Honors | Implemented preset | P1; release verification pending |
 | Key Achievements | Existing achievements mapped into prepared preset | P1; verify no parallel data model |
 | Projects & Portfolio | Existing Projects extended through prepared preset | P1; release verification pending |
