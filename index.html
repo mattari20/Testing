@@ -40,6 +40,15 @@
     .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
     [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
     @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
+    [data-v2-pre-designed-section-library]{background:#f8fbff!important;border-color:#cddcf2!important}
+    [data-v2-pre-designed-section-library]>p{font-size:13px;line-height:1.5;color:var(--muted)}
+    [data-v2-section-library-group]{border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0;background:#fff}
+    [data-v2-section-library-group]>summary{cursor:pointer;font-weight:750;color:var(--brand-dark);padding:3px}
+    [data-v2-section-library-grid]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    [data-v2-section-library-grid] button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:58px;margin:0;padding:10px;border-color:#d5e2f4;background:#fff;white-space:normal}
+    [data-v2-section-library-grid] button span{font-size:12px;line-height:1.35}
+    [data-v2-section-library-grid] button small{font-size:11px;color:var(--brand);font-weight:750}
+    @media(max-width:520px){[data-v2-section-library-grid]{grid-template-columns:1fr}}
     @media print{.site-header,.toolbar,[data-v2-editor-form],.preview-title{display:none!important}body{background:#fff}.app-shell{margin:0;padding:0}[data-v2-editor-preview-root]{border:0;box-shadow:none;padding:0}}
   </style>
 </head>
