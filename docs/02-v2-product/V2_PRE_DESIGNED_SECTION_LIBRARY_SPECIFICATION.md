@@ -221,13 +221,13 @@ The implementation is available on `feature/pre-designed-section-library` in pul
 
 - **Implemented:** 26 versioned presets in five category groups, including a distinct optional Languages profile preset, searchable/category-filtered catalogue, prepared blank entries, editable field definitions, repeatable entry management, field visibility/order/removal, and generic preview fallback for sections without a template-native anchor.
 - **Targeted validation:** [Section Library Feature Validation passed](https://github.com/mattari20/Testing/actions/runs/38165025450), including unit tests, a real-browser insertion/preview/viewport test, and existing editor-form, command and native-template regression suites.
-- **Current QA state:** the 26-item catalogue and targeted browser interactions are implemented. The full test suite, integration workflow, native browser workflow (including the 9-template browser pass), and E2E contract passed on QA commit `4256003420474bd000b9bc34ba4dcc2af9b6385c`. The production release branch has not yet been updated or deployed. Custom-section visual parity across every template, live export verification, and post-deployment smoke tests remain required.
+- **Current QA state:** the 26-item catalogue and targeted browser interactions are implemented. The full test suite, integration workflow, native browser workflow (including the 9-template browser pass), and E2E contract passed on QA commit `7c5b1e38769fc877fd4c170b2723acadf775ed6b`. The production release branch has not yet been updated or deployed. Custom-section visual parity across every template, live export verification, and post-deployment smoke tests remain required.
 
 Implementation sequence status:
 1. Specification and source audit — complete.
 2. P1 schema/registry and catalogue UI — complete.
 3. Generic template-preview fallback and field management — complete.
-4. Targeted unit/browser and editor regressions — passing; full QA branch CI passed on commit `4256003420474bd000b9bc34ba4dcc2af9b6385c`.
+4. Targeted unit/browser and editor regressions — passing; full QA branch CI passed on commit `7c5b1e38769fc877fd4c170b2723acadf775ed6b`.
 5. Release merge, Hostinger deployment, custom-section visual parity across all templates, live export matrix and post-deployment smoke — pending.
 
 ## 12. Explicit non-goals and safety boundaries
