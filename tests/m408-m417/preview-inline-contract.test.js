@@ -17,6 +17,6 @@ test('all registered Native V2 templates participate in the preview compatibilit
     assert.equal(String(template.version).split('.').length, 3, 'every registered template should expose a semantic version');
     assert.match(template.sourcePath, /^src\/templates\/assets\/v2\//);
     assert.ok(template.supportedSections.length > 0);
-    assert.equal(template.capabilities.nativeContract, true);
+    assert.equal(template.capabilities.nativeContract, 'supported');
   }
 });
