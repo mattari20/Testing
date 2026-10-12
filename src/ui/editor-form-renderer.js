@@ -106,7 +106,7 @@ export function renderEditorForm(surface, documentData, options = {}) {
       '<div data-v2-editor-fields>'+fieldHtml+'</div>' +
       '<button type="button" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:section.id})+'" data-v2-payload="'+attr({type:'text',label:'New Field',value:''})+'">Add Field</button>' +
       '<div data-v2-editor-entries>'+entryHtml+'</div>' +
-      (section.repeatable ? '<button type="button" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:section.id})+'" data-v2-payload="'+attr({values:{}})+'">Add '+esc(section.title || section.type || 'entry')+'</button>' : '') +
+      (section.repeatable ? '<button type="button" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:section.id})+'" data-v2-payload="'+attr({values:Object.fromEntries(Object.keys(entries[0]?.values || {}).map(key => [key,'']))})+'">Add '+esc(section.title || section.type || 'entry')+'</button>' : '') +
       '</section>';
   }).join('');
   return Object.freeze({
