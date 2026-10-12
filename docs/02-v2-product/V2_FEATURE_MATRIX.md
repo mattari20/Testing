@@ -25,6 +25,7 @@ Legend:
 | Achievements | Existing | Generalize |
 | Certifications | Publicly advertised / partially represented | Formal section |
 | Custom sections | Not general-purpose | V2 Core |
+| Pre-designed section library (26 section types) | Not present | V2 Release — implementation committed; automated/live validation pending |
 | Custom fields | Not general-purpose | V2 Core |
 | Add section from form | Fixed sections | V2 Release |
 | Add field from form | Fixed fields | V2 Release |
