@@ -90,4 +90,4 @@ This fallback is intentionally conservative. It is not a replacement for future 
 - Unit acceptance tests: `tests/m496-m505/pre-designed-section-library.test.js`
 - Browser acceptance tests: `tests/m496-m505/pre-designed-section-browser.test.js`
 
-Current state: implementation committed to the Testing repository; CI and browser results must be observed before marking the task validated. Hostinger deployment remains a separate gate.
+Current state (2026-10-12): implementation is committed to `mattari20/Testing/main`. The dedicated section-library validation, full `npm test` workflow, V2 Integration Validation, CV Builder V2 E2E Contract, and Native V2 Browser Validation all passed on the merged source/test sequence. The section-specific Chromium test covers insertion, live preview values, preview-to-model editing, adding a second entry, and hide behavior. Hostinger deployment and production smoke verification remain separate release gates.
