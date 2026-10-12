@@ -244,6 +244,12 @@ The repository-side implementation and current automated evidence are complete t
 
 The two historical T01 ATS/Simple V1 sources remain unrecovered by design, but their new V2-native replacements are implemented and covered by the fresh nine-template browser evidence. They are not a remaining production deployment blocker.
 
+## Section Library release-boundary and deployment safety note — 2026-10-12
+
+The Pre-designed Section Library was added after the currently documented deployment candidate `36e5e174bec8e2445ac54daebe31d7956075eb31`. That older commit does not contain `src/ui/pre-designed-section-library.js`; deploying it would omit this feature. If the section library is part of the requested release, a new deployment candidate must be frozen from the validated source sequence and the release evidence reconciled to that exact candidate before deployment. Do not push this feature to the production release branch until the pre-deployment gates are explicitly closed.
+
+The GitHub deployment workflow currently sets the FTP action's `server-dir` to `./`. Before triggering it, verify that the configured FTP account's remote home directory maps exactly to `/public_html/cv-builder-v2/`; otherwise the relative target is ambiguous and could publish into the wrong directory. Do not infer the target from the workflow alone. Keep the existing `/cv-builder/` V1 route untouched.
+
 ## Important rule
 
 Do not mark a release gate PASS because a test, contract, or document exists. PASS requires the evidence defined by that gate.
