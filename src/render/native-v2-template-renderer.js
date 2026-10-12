@@ -331,7 +331,15 @@ function appendGenericSectionBlocks(root, snapshot, definition, boundTypes) {
         const label = documentRef.createElement('strong');
         label.textContent = String(definitions.get(key)?.label || key.replace(/[-_]/g, ' ').replace(/\b\w/g, character => character.toUpperCase()));
         const value = documentRef.createElement('span');
-        value.setAttribute('data-v2-entry-value', key);
+        value.setAttribute('data-v2-dynamic-entry-value', key);
+        value.setAttribute('data-v2-preview-edit', 'entry');
+        value.setAttribute('data-v2-preview-target', JSON.stringify({
+          sectionId: section.id,
+          entryId: entry.id,
+          key
+        }));
+        value.setAttribute('contenteditable', 'true');
+        value.setAttribute('spellcheck', 'false');
         value.textContent = String(rawValue);
         line.append(label, documentRef.createTextNode(': '), value);
         entryBlock.appendChild(line);
