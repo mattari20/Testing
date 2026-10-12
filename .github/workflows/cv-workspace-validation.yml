@@ -3,6 +3,7 @@ name: CV Workspace Validation
 on:
   push:
     branches:
+      - qa/cv-workspace-release-gates
       - release/cv-builder-v2-production
   workflow_dispatch:
 
