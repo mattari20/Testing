@@ -416,3 +416,17 @@ The connected GitHub status endpoint returned no commit statuses or PR-associate
 The additional type-collision regression assertion was merged through [PR #113](https://github.com/mattari20/Testing/pull/113) (merge commit `a40143e1ba4182c33f551796ac2404cc04546668`). It checks that all 26 library types remain distinct from common template-bound section types.
 
 No automated CI result was exposed by the connected GitHub status/workflow-run endpoints after the change. Full `npm test` and Chromium execution must still be observed before this feature is called runtime-validated.
+
+
+### M496–M505 final validation update — 2026-10-12
+
+The earlier M496–M505 notes above saying CI/browser validation was unavailable are historical and superseded by observed GitHub Actions results on the merged section-library sequence.
+
+- PR #114 fixed a false-positive section-order assertion by scoping checks to actual editor section/field blocks; merged as `913eaa3979c242ca9beeb1cb796fe2d8a4dd27cd`.
+- CV Builder V2 Validation (full `npm test` suite): PASS — [run 38320593797](https://github.com/mattari20/Testing/actions/runs/38320593797).
+- V2 Integration Validation: PASS — [run 38320593755](https://github.com/mattari20/Testing/actions/runs/38320593755).
+- CV Builder V2 E2E Contract: PASS — [run 38320593742](https://github.com/mattari20/Testing/actions/runs/38320593742).
+- Native V2 Browser Validation: PASS — [run 38320593728](https://github.com/mattari20/Testing/actions/runs/38320593728).
+- Dedicated section-library validation and Chromium interaction tests are included in the passing validation workflow.
+
+This closes the repository-side automated validation for the section-library change. It does **not** establish production deployment, live Hostinger behavior, production security closure, or overall V2 release readiness. Do not deploy until the accepted deployment candidate includes this feature and all required release gates are explicitly PASS.
