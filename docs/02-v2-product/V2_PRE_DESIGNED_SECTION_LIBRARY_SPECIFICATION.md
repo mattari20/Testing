@@ -1,10 +1,13 @@
 # CV Builder V2 — Pre-designed Section Library Specification
 
-**Status:** Product/implementation specification ready for review; application implementation not started by this document-only task  
+**Status:** Implementation candidate ported on `qa/cv-workspace-release-gates`; automated validation passed on candidate commit `c2b7fdf6ad4c0ff939d754664b54b31e3ca713b9`; merge and production deployment remain pending  
 **Repository:** `mattari20/Testing`  
 **Branch baseline:** `release/cv-builder-v2-production` at `3a4b7706e3102930dad4ebc17f85bc76a71776bb`  
 **Scope:** Section catalogue, structured field definitions, add-section experience, compatibility, preservation and acceptance criteria  
 **Research basis:** Existing V2 competitive research plus public product/help materials for Novorésumé, Teal, Zety, Tabhar, Canva, and academic/professional CV guidance. Competitor capabilities can change and must be rechecked before public product claims.
+
+
+> **Current implementation note (2026-10-12):** The candidate branch now includes the production-branch-compatible Section Library implementation and automated browser coverage. Full repository validation, V2 integration validation, native V2 browser validation, CV Workspace validation, and the E2E contract all passed on the candidate commit listed above. This is CI evidence only; it does not represent a production deployment or live-site smoke test.
 
 ## 1. Decision
 
