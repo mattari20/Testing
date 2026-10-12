@@ -19,7 +19,7 @@ const browser=await chromium.launch({headless:true});
 try {
   const result=await runBrowserValidation({templates,snapshot,artifactDir:'artifacts/m26',pageFactory:createPlaywrightPageFactory(browser)});
   assert.equal(result.templateCount,templates.length);
-  assert.ok(result.results.every(item=>item.render.status==='ready'));
+  assert.ok(result.results.every(item=>item.render.status==='ready'), JSON.stringify(result.results.filter(item=>item.render.status!=='ready').map(item=>({templateId:item.templateId,render:item.render})),null,2));
   assert.ok(result.results.every(item=>item.geometry.status==='collected'));
   assert.ok(result.results.every(item=>item.pagination.status==='collected'));
   assert.ok(result.results.every(item=>item.screenshot.status==='collected'));
