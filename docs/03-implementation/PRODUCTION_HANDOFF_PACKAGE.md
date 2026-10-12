@@ -266,6 +266,7 @@ The Hostinger workflow is now gated in the QA branch. Before upload it runs the 
 - `CV_BUILDER_V2_APPROVED_DEPLOY_SHA`: must exactly equal the commit SHA being deployed, and should only be set after R1–R8 prerequisites are satisfied.
 - `CV_BUILDER_V2_FTP_SERVER_DIR`: the confirmed remote target directory for the V2 app.
 - `CV_BUILDER_V2_FTP_TARGET_VERIFIED`: must be the literal string `true` after verifying the FTP account maps to `/public_html/cv-builder-v2/`.
+- `CV_BUILDER_V2_DEPLOY_ENABLED`: must be the literal string `true` as the explicit final upload switch after all required release gates are PASS.
 
 FTPS certificate verification is configured as strict. A push to the release branch alone is no longer sufficient authorization to upload. These variables have not been configured or verified by this change; no deployment is claimed.
 
