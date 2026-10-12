@@ -42,6 +42,7 @@ No capability may be silently removed.
 | Conferences | Not general | NEW |
 | Research | Not general | NEW |
 | Custom sections | Fixed-section model | NEW |
+| Pre-designed section library (26 insertable section types) | Not present | NEW |
 | Custom fields | Fixed-field model | NEW |
 | Repeatable custom items | Limited by fixed arrays | UPGRADE |
 | Section reorder | Limited/fixed | NEW |
