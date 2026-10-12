@@ -729,10 +729,10 @@
       else if (toolbarMenu) toolbarMenu.open = true;
     });
     toolbarMenu?.addEventListener('toggle', () => {
-      if (toolbarMenu.open) closeWorkspaceMenu();
+      if (toolbarMenu.open && window.matchMedia('(max-width: 760px)').matches) closeWorkspaceMenu();
     });
     workspaceMenu?.addEventListener('toggle', () => {
-      if (workspaceMenu.open) closeToolbarMenu();
+      if (workspaceMenu.open && window.matchMedia('(max-width: 760px)').matches) closeToolbarMenu();
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
