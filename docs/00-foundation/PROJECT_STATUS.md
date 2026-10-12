@@ -416,7 +416,7 @@ The production-branch-compatible Section Library release port is staged on `qa/p
 - V2 Integration Validation: PASS — [run 38322145606](https://github.com/mattari20/Testing/actions/runs/38322145606).
 - Native V2 Browser Validation: PASS — [run 38322145612](https://github.com/mattari20/Testing/actions/runs/38322145612), including M26/M27/M28, real editor/preview checks and integrated fragmentation browser checks.
 - CV Builder V2 E2E Contract: PASS — [run 38322145632](https://github.com/mattari20/Testing/actions/runs/38322145632).
-- Tested source/test commit: `4256003420474bd000b9bc34ba4dcc2af9b6385c`. Subsequent changes in this QA branch are documentation-only; a final run is being triggered after those records are committed.
+- Final QA validation commit: `7c5b1e38769fc877fd4c170b2723acadf775ed6b`; all four listed workflows completed successfully on that exact tree. Subsequent status-register edits are documentation-only and do not alter the runtime/test source.
 - Hostinger deployment has **not** been performed. The production release branch remains unchanged.
 - The deployment workflow now requires full `npm test`, an exact approved SHA, an explicit deploy-enable variable, and a verified FTP target variable before the FTPS upload job can run.
 
