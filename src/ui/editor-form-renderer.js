@@ -1,4 +1,6 @@
-export const EDITOR_FORM_RENDERER_VERSION = '1.4.1';
+import { renderPreDesignedSectionLibrary } from './pre-designed-section-library.js';
+
+export const EDITOR_FORM_RENDERER_VERSION = '1.5.0';
 
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -49,14 +51,15 @@ function renderField(sectionId, field, index, fieldIds, visible = true) {
     '<button type="button" data-v2-editor-command="reorder" data-v2-target="'+attr({kind:'field',sectionId})+'" data-v2-payload="'+attr({order:down})+'">Move Down</button>' +
     '</div>';
 }
-function renderEntry(sectionId, entry, index, entryIds, visible = true) {
+function renderEntry(sectionId, entry, index, entryIds, visible = true, fieldDefinitions = []) {
   const values = entry.values && typeof entry.values === 'object' ? entry.values : {};
   const entryVisible = visible && entry.visibility !== false;
   const up = moveOrder(entryIds,index,-1);
   const down = moveOrder(entryIds,index,1);
+  const definitionByKey = new Map((Array.isArray(fieldDefinitions) ? fieldDefinitions : []).map(field => [String(field.key || field.id), field]));
   const fields = entryVisible ? Object.keys(values).map(key =>
     '<label data-v2-editor-entry-field-wrapper="'+esc(sectionId)+':'+esc(entry.id)+':'+esc(key)+'">' +
-    '<span>'+esc(key)+'</span>' +
+    '<span>'+esc(definitionByKey.get(String(key))?.label || key)+'</span>' +
     '<input data-v2-editor-entry-field data-v2-entry-key="'+esc(key)+'" data-v2-entry-target="'+attr({sectionId,entryId:entry.id})+'" value="'+esc(values[key])+'">' +
     '</label>'
   ).join('') : '<span data-v2-editor-entry-hidden-state="true">Hidden in this CV</span>';
@@ -90,7 +93,7 @@ export function renderEditorForm(surface, documentData, options = {}) {
     const entries = orderItems(section.entries || [], configuration.entryOrder?.[section.id] || []);
     const entryIds = entries.map(e=>e.id);
     const fieldHtml = sectionHidden ? '' : fields.map((field,index) => renderField(section.id,field,index,fieldIds,!hasConfiguredKey(hiddenFields, String(section.id)+':'+String(field.id)))).join('');
-    const entryHtml = sectionHidden ? '' : entries.map((entry,index) => renderEntry(section.id,entry,index,entryIds,!hasConfiguredKey(hiddenEntries, String(section.id)+':'+String(entry.id)))).join('');
+    const entryHtml = sectionHidden ? '' : entries.map((entry,index) => renderEntry(section.id,entry,index,entryIds,!hasConfiguredKey(hiddenEntries, String(section.id)+':'+String(entry.id)),section.metadata?.fieldDefinitions)).join('');
     const sectionUp = moveOrder(sectionIds,sectionIndex,-1);
     const sectionDown = moveOrder(sectionIds,sectionIndex,1);
     return '<section data-v2-editor-section="'+esc(section.id)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(section.id)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">' +
@@ -108,7 +111,7 @@ export function renderEditorForm(surface, documentData, options = {}) {
   }).join('');
   return Object.freeze({
     version: EDITOR_FORM_RENDERER_VERSION,
-    html: '<section data-v2-editor-identity><h3>Personal Information</h3>'+identityHtml+'</section>'+sectionsHtml+
+    html: '<section data-v2-editor-identity><h3>Personal Information</h3>'+identityHtml+'</section>'+renderPreDesignedSectionLibrary(attr)+sectionsHtml+
       '<button type="button" data-v2-editor-command="add-section" data-v2-target="'+attr({})+'" data-v2-payload="'+attr({title:'New Section',type:'custom',repeatable:false})+'">Add Section</button>',
     sectionCount:sections.length
   });
