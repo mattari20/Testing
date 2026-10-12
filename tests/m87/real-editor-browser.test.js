@@ -30,7 +30,7 @@ try{
  const state=await page.evaluate(()=>window.editorRuntime.surface.getState());
  assert.equal(state.session.application.masterProfile.careerData.sections[0].fields[0].value,'Updated Browser User');
  assert.ok(state.session.dirty);
- assert.ok(await page.locator('[data-v2-editor-field]').count()===1);
+ assert.equal(await page.locator('[data-v2-editor-field="personal:name"]').count(),1,'the target editor field should be uniquely addressable');
  const artifactDir=path.join(root,'artifacts/m87');
  await mkdir(artifactDir,{recursive:true});
  await page.screenshot({path:path.join(artifactDir,'editor-runtime.png'),fullPage:true});
