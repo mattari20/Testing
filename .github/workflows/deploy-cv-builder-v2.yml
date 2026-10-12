@@ -41,8 +41,9 @@ jobs:
           APPROVED_DEPLOY_SHA: ${{ vars.CV_BUILDER_V2_APPROVED_DEPLOY_SHA }}
           FTP_SERVER_DIR: ${{ vars.CV_BUILDER_V2_FTP_SERVER_DIR }}
           FTP_TARGET_VERIFIED: ${{ vars.CV_BUILDER_V2_FTP_TARGET_VERIFIED }}
+          DEPLOY_ENABLED: ${{ vars.CV_BUILDER_V2_DEPLOY_ENABLED }}
         run: |
-          if [ "$APPROVED_DEPLOY_SHA" = "$GITHUB_SHA" ] && [ -n "$FTP_SERVER_DIR" ] && [ "$FTP_TARGET_VERIFIED" = "true" ]; then
+          if [ "$APPROVED_DEPLOY_SHA" = "$GITHUB_SHA" ] && [ -n "$FTP_SERVER_DIR" ] && [ "$FTP_TARGET_VERIFIED" = "true" ] && [ "$DEPLOY_ENABLED" = "true" ]; then
             echo "::notice::Exact commit and verified FTP target are approved; deployment may proceed."
           else
             echo "::notice::Tests passed, but upload is blocked until the exact commit SHA and verified FTP target variables are set."
@@ -51,7 +52,7 @@ jobs:
   deploy:
     name: Upload approved V2 release
     needs: validate
-    if: ${{ vars.CV_BUILDER_V2_APPROVED_DEPLOY_SHA == github.sha && vars.CV_BUILDER_V2_FTP_SERVER_DIR != '' && vars.CV_BUILDER_V2_FTP_TARGET_VERIFIED == 'true' }}
+    if: ${{ vars.CV_BUILDER_V2_APPROVED_DEPLOY_SHA == github.sha && vars.CV_BUILDER_V2_FTP_SERVER_DIR != '' && vars.CV_BUILDER_V2_FTP_TARGET_VERIFIED == 'true' && vars.CV_BUILDER_V2_DEPLOY_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
