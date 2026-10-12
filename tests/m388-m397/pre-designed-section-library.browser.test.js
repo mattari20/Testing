@@ -142,3 +142,29 @@ test('production editor adds a prepared section without a viewport jump and upda
     assert.match(previewText, /Example University/);
   });
 });
+
+test('production editor inserts the distinct Languages profile preset without colliding with core Languages', async () => {
+  await withBrowser(async (page, baseUrl) => {
+    await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, route => route.abort());
+    await page.goto(baseUrl + '/builder.html?template=t01-modern-minimalist-cv-design_modern');
+    await page.waitForFunction(() => window.v2ProductionReady === true, { timeout:15000 });
+    const library = page.locator('.editor-section-library');
+    await library.scrollIntoViewIfNeeded();
+    await library.locator('summary').click();
+    await library.locator('[data-section-library-search]').fill('Languages');
+    await page.getByRole('button', { name:'Add Language Profile', exact:true }).click();
+    const section = page.locator('.editor-section-card').filter({ has: page.getByRole('heading', { name:'Languages', exact:true }) }).last();
+    await section.waitFor({ state:'visible' });
+    await section.locator('[data-v2-entry-key="language"]').fill('Urdu');
+    await section.locator('[data-v2-entry-key="proficiency"]').fill('Native');
+    await section.locator('[data-v2-entry-key="context"]').fill('Professional communication');
+    await page.waitForFunction(() => {
+      const preview = document.querySelector('[data-v2-editor-preview-root]');
+      return Boolean(preview && preview.textContent.includes('Professional communication') && preview.textContent.includes('Urdu'));
+    }, { timeout:10000 });
+    const previewText = await page.locator('[data-v2-editor-preview-root]').innerText();
+    assert.match(previewText, /Urdu/);
+    assert.match(previewText, /Native/);
+    assert.match(previewText, /Professional communication/);
+  });
+});
