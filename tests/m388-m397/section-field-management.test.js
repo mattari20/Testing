@@ -71,8 +71,8 @@ test('targeted ordering is rendered without mutating master data order', () => {
   const experienceSectionIndex = html.indexOf('data-v2-editor-section="experience"');
   assert.ok(educationSectionIndex >= 0 && experienceSectionIndex >= 0);
   assert.ok(educationSectionIndex < experienceSectionIndex, 'section ordering should be reflected in the rendered editor blocks');
-  const companyFieldIndex = html.indexOf('data-v2-editor-field-label="experience:company"');
-  const roleFieldIndex = html.indexOf('data-v2-editor-field-label="experience:role"');
+  const companyFieldIndex = html.search(/data-v2-editor-field-label="[^"]*:company"/);
+  const roleFieldIndex = html.search(/data-v2-editor-field-label="[^"]*:role"/);
   assert.ok(companyFieldIndex >= 0 && roleFieldIndex >= 0, 'both Experience field controls should be rendered');
   assert.ok(companyFieldIndex < roleFieldIndex, 'field ordering should be reflected in the rendered Experience field controls');
   assert.deepEqual(
