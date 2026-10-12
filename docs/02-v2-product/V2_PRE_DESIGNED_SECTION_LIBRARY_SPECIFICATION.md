@@ -28,7 +28,7 @@ The production branch source was inspected at the baseline commit listed above. 
 
 ### Audit conclusion
 
-The architecture has useful building blocks for this feature, but the inspected source does **not** establish that a curated, typed, versioned Section Library, per-section field schemas, catalogue discovery UI, or all 25 proposed blocks are implemented. The current generic Add Custom Section action is not sufficient for the desired end-user experience.
+The architecture has useful building blocks for this feature, but the inspected source does **not** establish that a curated, typed, versioned Section Library, per-section field schemas, catalogue discovery UI, or all 26 planned catalogue items are implemented. The current generic Add Custom Section action is not sufficient for the desired end-user experience.
 
 This audit is bounded to the listed files and documents. It does not certify every existing template's current visual support or every export path; those require targeted tests when implementation starts.
 
@@ -54,8 +54,8 @@ Priority meanings: **P1** = Core Library release candidate; **P2** = specialized
 | `awards-honors` | Awards & Honors | P1 | Yes | Award name, issuer, date, level/type, reason/description, URL |
 | `key-achievements` | Key Achievements | P1 | Yes | Achievement title, context, action, result, date, optional evidence/link |
 | `projects-portfolio` | Projects & Portfolio | P1 | Yes | Project name, role, dates, description, tools/technologies, outcome, demo/repository/portfolio URL |
-| `certifications-licenses` | Certifications & Licenses | P1 | Yes | Credential name, issuer, issue date, expiry date, credential ID, verification URL, status |
-| `courses-training` | Courses & Training | P1 | Yes | Course name, provider, completion date, duration, learning/outcome, certificate URL |
+| `certifications-licenses` | Licenses & Professional Certifications | P1 | Yes | Credential name, issuer, issue date, expiry date, credential ID, verification URL, status |
+| `courses-training` | Courses & Professional Training | P1 | Yes | Course name, provider, completion date, duration, learning/outcome, certificate URL |
 | `volunteer-service` | Volunteer & Community Service | P1 | Yes | Organization, role, dates, responsibilities, community/project, outcomes |
 | `leadership-activities` | Leadership & Extracurricular Activities | P1 | Yes | Organization/club, position, dates, responsibilities, events/team, achievements |
 | `research-experience` | Research Experience | P1 | Yes | Research title, institution/lab, role, supervisor, dates, research area, methods/tools, description, outcomes, related URL |
@@ -76,11 +76,12 @@ Priority meanings: **P1** = Core Library release candidate; **P2** = specialized
 | `speaking-engagements` | Guest Lectures & Speaking Engagements | P3 | Yes | Talk title, event/organization, role, date, topic/audience, URL |
 | `interests-hobbies` | Interests & Hobbies | P3 | Yes | Interest, optional short description |
 | `references` | References | P3 | Yes | Name, designation, organization, relationship, optional professional contact, consent/verification note |
+| `language-profiles` | Languages (additional profiles) | P1 | Yes | Language, self-reported proficiency, context/certification, optional evidence URL; distinct type from the core Languages section |
 | `custom-section` | Custom Section | Always available as fallback | User-selected | User-defined title, user-defined supported fields/entries |
 
 ### Existing sections to retain and improve, not duplicate
 
-Personal/Contact Information, Professional Summary, Work Experience, Education, Skills, and Languages remain core editor sections. Internships may use the existing Experience section with a role/type or be promoted to a dedicated preset only if the audit shows a meaningful distinct workflow. Do not create parallel duplicate systems for Skills, Languages, Experience or Education merely to populate the library.
+Personal/Contact Information, Professional Summary, Work Experience, Education, Skills, and Languages remain core editor sections. The optional `language-profiles` preset is a separate user-inserted block for additional language details and evidence; it must not replace, mutate, or collide with the core `languages` type. Internships may use the existing Experience section with a role/type or be promoted to a dedicated preset only if the audit shows a meaningful distinct workflow. Do not create parallel duplicate systems for Skills, Experience or Education merely to populate the library.
 
 ### Section-specific modelling rules
 
@@ -96,7 +97,8 @@ Personal/Contact Information, Professional Summary, Work Experience, Education, 
 The catalogue should open from the editor's Add Section action and present:
 
 - search by section name and synonym;
-- category filters: Recommended, Achievements, Academic & Research, Projects & Portfolio, Credentials & Training, Leadership & Community, Professional, Other;
+- five category groups: Achievements & Qualifications, Academic & Research, Technical & Professional Work, Experience & Involvement, Additional CV Sections;
+- a separate priority filter for Recommended/P1, P2, and P3 presets;
 - a short explanation and preview of the fields provided;
 - an Add action;
 - relevant guidance (for example, Academic CV sections are more useful for academic applications);
@@ -217,7 +219,7 @@ The feature is not complete until all applicable criteria pass:
 
 The implementation is available on `feature/pre-designed-section-library` in pull request [#112](https://github.com/mattari20/Testing/pull/112).
 
-- **Implemented:** 25 versioned presets, searchable/category-filtered catalogue, prepared blank entries, editable field definitions, repeatable entry management, field visibility/order/removal, and generic preview fallback for sections without a template-native anchor.
+- **Implemented:** 26 versioned presets in five category groups, including a distinct optional Languages profile preset, searchable/category-filtered catalogue, prepared blank entries, editable field definitions, repeatable entry management, field visibility/order/removal, and generic preview fallback for sections without a template-native anchor.
 - **Targeted validation:** [Section Library Feature Validation passed](https://github.com/mattari20/Testing/actions/runs/38165025450), including unit tests, a real-browser insertion/preview/viewport test, and existing editor-form, command and native-template regression suites.
 - **Not yet release-complete:** the feature is not yet merged or deployed. Full production-branch workspace CI has known separate failures; post-deployment template and export verification remains required.
 
