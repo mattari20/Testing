@@ -12,8 +12,9 @@ function storage(){
 }
 
 function root(){
-  const form = { replaceChildren() {}, querySelectorAll() { return []; } };
+  const form = { replaceChildren() {}, querySelector() { return null; }, querySelectorAll() { return []; }, addEventListener() {}, removeEventListener() {} };
   return {
+    getAttribute() { return null; },
     querySelector:selector => selector === '[data-v2-editor-form]' ? form : null,
     querySelectorAll:() => [],
     ownerDocument:{
