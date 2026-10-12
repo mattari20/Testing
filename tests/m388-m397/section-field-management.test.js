@@ -63,21 +63,25 @@ test('section and field commands mutate the master profile and remain undoable',
 
 test('targeted ordering is rendered without mutating master data order', () => {
   const surface = createEditorSurface({ profileData: profileInput() });
-  surface.dispatch({ type: 'reorder', target: { kind: 'section' }, payload: { order: ['education','experience'] } });
-  surface.dispatch({ type: 'reorder', target: { kind: 'field', sectionId: 'experience' }, payload: { order: ['company','role'] } });
+  surface.dispatch({ type: 'add-section', payload: { id: 'work-details', title: 'Work Details', type: 'work-details', fields: [
+    { id: 'company', label: 'Company', value: 'Example Ltd' },
+    { id: 'role', label: 'Role', value: 'Engineer' }
+  ], entries: [] } });
+  surface.dispatch({ type: 'reorder', target: { kind: 'section' }, payload: { order: ['education','experience','work-details'] } });
+  surface.dispatch({ type: 'reorder', target: { kind: 'field', sectionId: 'work-details' }, payload: { order: ['company','role'] } });
   surface.dispatch({ type: 'reorder', target: { kind: 'entry', sectionId: 'experience' }, payload: { order: ['job1'] } });
   const html = renderEditorForm(surface, surface.getState().session.application.masterProfile).html;
   const educationSectionIndex = html.indexOf('data-v2-editor-section="education"');
   const experienceSectionIndex = html.indexOf('data-v2-editor-section="experience"');
   assert.ok(educationSectionIndex >= 0 && experienceSectionIndex >= 0);
   assert.ok(educationSectionIndex < experienceSectionIndex, 'section ordering should be reflected in the rendered editor blocks');
-  const companyFieldIndex = html.search(/data-v2-editor-field-label="[^"]*:company"/);
-  const roleFieldIndex = html.search(/data-v2-editor-field-label="[^"]*:role"/);
-  assert.ok(companyFieldIndex >= 0 && roleFieldIndex >= 0, 'both Experience field controls should be rendered');
-  assert.ok(companyFieldIndex < roleFieldIndex, 'field ordering should be reflected in the rendered Experience field controls');
+  const companyFieldIndex = html.search(/data-v2-editor-field-label="work-details:company"/);
+  const roleFieldIndex = html.search(/data-v2-editor-field-label="work-details:role"/);
+  assert.ok(companyFieldIndex >= 0 && roleFieldIndex >= 0, 'both custom Work Details field controls should be rendered');
+  assert.ok(companyFieldIndex < roleFieldIndex, 'field ordering should be reflected in the rendered custom field controls');
   assert.deepEqual(
     surface.getState().session.application.masterProfile.careerData.sections.map(s => s.id),
-    ['experience','education']
+    ['experience','education','work-details']
   );
 });
 
