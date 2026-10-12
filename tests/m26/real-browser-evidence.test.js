@@ -36,7 +36,8 @@ try {
   const result=await runBrowserValidation({
     templates,snapshot,artifactDir:'artifacts/m26',
     sourceLoader:async sourcePath=>{
-      const response=await fetch(new URL(sourcePath.replace(/^\\/+/,''),baseUrl+'/'));
+      const requestPath=sourcePath.startsWith('/')?sourcePath.slice(1):sourcePath;
+      const response=await fetch(new URL(requestPath,baseUrl+'/'));
       if(!response.ok)throw new Error('Template source request failed: '+response.status+' '+sourcePath);
       return response.text();
     },
