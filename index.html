@@ -1,175 +1,83 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="eStudent CV Builder V2 — create, edit, preview and save a professional CV locally.">
-  <meta name="theme-color" content="#0d6efd">
-  <title>eStudent CV Builder V2</title>
-  <style>
-    :root{
-      --brand:#0d6efd;--brand-dark:#084298;--ink:#172033;--muted:#667085;
-      --surface:#fff;--soft:#f5f8fc;--border:#dfe5ee;--success:#198754;
-      --radius:14px;--shadow:0 10px 30px rgba(16,24,40,.08)
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
-    .site-header{background:linear-gradient(135deg,#0d6efd,#084298);color:#fff;padding:18px 24px}
-    .header-inner{max-width:1500px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between}
-    .brand{font-weight:800;font-size:20px}.subbrand{opacity:.86;font-size:13px;margin-top:2px}
-    .app-shell{max-width:1500px;margin:20px auto;padding:0 16px}
-    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);padding:14px;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}
-    .toolbar label{font-size:13px;font-weight:700;color:var(--muted)}
-    select,button,input,textarea{font:inherit}
-    button,select{border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px}
-    button{cursor:pointer;font-weight:650}.primary{background:var(--brand);border-color:var(--brand);color:#fff}
-    button:hover{filter:brightness(.97)}button:disabled{opacity:.55;cursor:not-allowed}
-    .status{margin-left:auto;font-size:13px;color:var(--muted)}
-    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:start}
-    [data-v2-editor-form],[data-v2-editor-preview-root]{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-    [data-v2-editor-form]{padding:18px;max-height:calc(100vh - 170px);overflow:auto}
-    [data-v2-editor-preview-root]{padding:22px;min-height:650px;overflow:auto}
-    [data-v2-editor-form] section{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}
-    [data-v2-editor-form] h3{margin:0 0 12px;font-size:16px}
-    [data-v2-editor-form] header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-    [data-v2-editor-form] label{display:block;margin:8px 0;font-size:13px;font-weight:650;color:var(--muted)}
-    [data-v2-editor-form] input,[data-v2-editor-form] select,[data-v2-editor-form] textarea{width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;background:#fff}
-    [data-v2-editor-form] button{margin:4px 4px 0 0;font-size:12px}
-    [data-v2-editor-form] article{border-top:1px dashed var(--border);padding-top:12px;margin-top:12px}
-    [data-v2-editor-form] [data-v2-editor-field-wrapper]{padding:10px;background:var(--soft);border-radius:9px;margin:8px 0}
-    .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
-    [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
-    @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}}
-    [data-v2-pre-designed-section-library]{background:#f8fbff!important;border-color:#cddcf2!important}
-    [data-v2-pre-designed-section-library]>p{font-size:13px;line-height:1.5;color:var(--muted)}
-    [data-v2-section-library-group]{border:1px solid var(--border);border-radius:10px;padding:10px;margin:8px 0;background:#fff}
-    [data-v2-section-library-group]>summary{cursor:pointer;font-weight:750;color:var(--brand-dark);padding:3px}
-    [data-v2-section-library-grid]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
-    [data-v2-section-library-grid] button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:58px;margin:0;padding:10px;border-color:#d5e2f4;background:#fff;white-space:normal}
-    [data-v2-section-library-grid] button span{font-size:12px;line-height:1.35}
-    [data-v2-section-library-grid] button small{font-size:11px;color:var(--brand);font-weight:750}
-    @media(max-width:520px){[data-v2-section-library-grid]{grid-template-columns:1fr}}
-    @media print{.site-header,.toolbar,[data-v2-editor-form],.preview-title{display:none!important}body{background:#fff}.app-shell{margin:0;padding:0}[data-v2-editor-preview-root]{border:0;box-shadow:none;padding:0}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Free CV Builder online by eStudent.pk. Create a professional CV with modern templates, live preview, PDF/Print and no registration required.">
+<meta name="theme-color" content="#0d6efd">
+<link rel="canonical" href="https://estudent.pk/cv-builder-v2/">
+<title>Free CV Builder Online — Create Professional CV | eStudent.pk</title>
+<style>
+:root{--brand:#0d6efd;--brand-dark:#084298;--ink:#172033;--muted:#667085;--surface:#fff;--soft:#f5f8fc;--border:#dfe5ee;--success:#198754;--radius:16px;--shadow:0 12px 34px rgba(16,24,40,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}.site-header{background:linear-gradient(135deg,#0d6efd,#084298);color:#fff;padding:18px 24px}.header-inner{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-weight:850;font-size:21px}.subbrand{font-size:13px;opacity:.88;margin-top:3px}.header-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:9px 13px;border-radius:10px;font-weight:750;font-size:13px}
+main{max-width:1200px;margin:auto;padding:28px 18px 60px}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;align-items:stretch}.hero-copy,.hero-card,.feature,.step,.template-card,.faq,.final-cta{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}.hero-copy{padding:42px}.eyebrow{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#eaf2ff;color:#245a9c;font-size:12px;font-weight:800;margin-bottom:14px}.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.04;margin:0 0 16px;letter-spacing:-1.5px}.hero h1 span{color:var(--brand)}.hero p{font-size:17px;line-height:1.65;color:var(--muted);max-width:690px;margin:0 0 24px}.cta-row{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid var(--border);border-radius:10px;padding:12px 17px;font-weight:800;font-size:14px}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.secondary{background:#fff;color:var(--ink)}.hero-card{padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:320px}.mock-title{font-weight:800;font-size:14px;margin-bottom:12px}.mock-page{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 8px 25px rgba(16,24,40,.1);flex:1}.mock-head{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--border);padding-bottom:13px}.mock-avatar{width:48px;height:58px;border-radius:8px;background:#e9eef7}.mock-name{font-size:17px;font-weight:850}.mock-role{font-size:11px;color:var(--muted);margin-top:4px}.mock-line{height:7px;border-radius:8px;background:#e9eef7;margin-top:13px}.mock-line.short{width:55%}.trust-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.trust{font-size:11px;font-weight:750;color:var(--muted);padding:6px 8px;background:var(--soft);border-radius:8px}
+.section{margin-top:28px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:14px}.section h2{font-size:26px;margin:0}.section-head p{margin:0;color:var(--muted);font-size:13px}.features{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.feature{padding:19px}.feature-icon{font-size:22px;margin-bottom:10px}.feature strong{display:block;margin-bottom:6px}.feature p,.step p,.faq p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.step{padding:19px}.step-no{width:30px;height:30px;border-radius:50%;background:#eaf2ff;color:var(--brand-dark);display:flex;align-items:center;justify-content:center;font-weight:850;margin-bottom:12px}
+.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.template-card{padding:18px}.template-name{font-weight:850;font-size:16px;margin-bottom:7px}.template-meta{font-size:12px;color:var(--muted);line-height:1.55;min-height:38px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.chip{font-size:10px;padding:4px 7px;border-radius:999px;background:#edf4ff;color:#245a9c}.template-actions{display:flex;gap:7px;flex-wrap:wrap}.template-actions a{font-size:12px;padding:8px 10px}
+.faqs{display:grid;grid-template-columns:1fr 1fr;gap:13px}.faq{padding:18px}.faq strong{display:block;margin-bottom:7px}.final-cta{padding:30px;text-align:center}.final-cta h2{margin:0 0 8px;font-size:28px}.final-cta p{margin:0 auto 17px;color:var(--muted);max-width:700px;line-height:1.55}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.features,.steps{grid-template-columns:repeat(2,1fr)}.template-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.site-header{padding:15px 16px}.header-link{display:none}main{padding:20px 12px 45px}.hero-copy{padding:27px}.hero h1{font-size:36px}.features,.steps,.template-grid,.faqs{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <div><div class="brand">eStudent.pk — CV Builder V2</div><div class="subbrand">Local-first professional CV editor</div></div>
-      <div>V2 Production Candidate</div>
-    </div>
-  </header>
+<header class="site-header"><div class="header-inner"><div><div class="brand">eStudent.pk — CV Builder</div><div class="subbrand">Create a professional CV online, with a live preview.</div></div><a class="header-link" href="./templates.html">Browse Templates</a></div></header>
+<main>
+<section class="hero">
+<div class="hero-copy">
+<div class="eyebrow">FREE ONLINE CV BUILDER</div>
+<h1>Create a <span>professional CV</span> in minutes.</h1>
+<p>Build your CV with a clean editor, professional templates and a live A4 preview. Start without registration and keep your work in your browser.</p>
+<div class="cta-row"><a class="btn primary" id="create-btn" href="./builder.html">Create My CV</a><a class="btn secondary" href="./templates.html">Browse All Templates</a></div>
+<div class="trust-row"><span class="trust">✓ Free to use</span><span class="trust">✓ No registration</span><span class="trust">✓ Live preview</span><span class="trust">✓ PDF / Print</span></div>
+</div>
+<div class="hero-card"><div class="mock-title">Your CV workspace</div><div class="mock-page"><div class="mock-head"><div class="mock-avatar"></div><div><div class="mock-name">Your Name</div><div class="mock-role">Professional Title · Lahore, Pakistan</div></div></div><div class="mock-line"></div><div class="mock-line short"></div><div class="mock-line"></div><div class="mock-line short"></div></div><div class="trust-row"><span class="trust">Edit</span><span class="trust">Preview</span><span class="trust">Save</span><span class="trust">Print / PDF</span></div></div>
+</section>
 
-  <main class="app-shell">
-    <div class="toolbar">
-      <label for="template-select">Template</label>
-      <select id="template-select" aria-label="CV template"></select>
-      <button type="button" class="primary" id="save-btn">Save CV</button>
-      <button type="button" id="recover-btn">Recover</button>
-      <button type="button" id="clear-recovery-btn">Clear Recovery</button>
-      <button type="button" id="print-btn">Print / PDF</button>
-      <span class="status" id="app-status" aria-live="polite">Starting V2…</span>
-    </div>
+<section class="section"><div class="section-head"><div><h2>Everything you need to build your CV</h2><p>Designed for students, fresh graduates and professionals.</p></div></div>
+<div class="features">
+<div class="feature"><div class="feature-icon">✦</div><strong>Professional templates</strong><p>Choose from the current Native V2 template collection and switch templates while building.</p></div>
+<div class="feature"><div class="feature-icon">⌁</div><strong>Live A4 preview</strong><p>See your CV as you edit it, including multi-page content and responsive preview controls.</p></div>
+<div class="feature"><div class="feature-icon">▣</div><strong>Local-first editing</strong><p>Your working profile can be saved and recovered in the browser without creating an account.</p></div>
+<div class="feature"><div class="feature-icon">↗</div><strong>Ready to export</strong><p>Use the builder's Print / PDF workflow when your CV is ready to use.</p></div>
+</div></section>
 
-    <div id="v2-editor" data-v2-editor-root>
-      <section>
-        <div class="preview-title">CV Editor</div>
-        <div data-v2-editor-form></div>
-        <div data-v2-editor-save-status hidden></div>
-        <div data-v2-editor-autosave-status hidden></div>
-        <div data-v2-editor-recovery-status hidden></div>
-      </section>
-      <section>
-        <div class="preview-title">Live A4 Preview</div>
-        <div data-v2-editor-preview-root></div>
-      </section>
-    </div>
-  </main>
+<section class="section"><div class="section-head"><div><h2>How it works</h2><p>Four simple steps from blank profile to finished CV.</p></div></div>
+<div class="steps">
+<div class="step"><div class="step-no">1</div><strong>Choose a template</strong><p>Browse the library and select a design that matches your career direction.</p></div>
+<div class="step"><div class="step-no">2</div><strong>Enter your details</strong><p>Add your profile, education, experience, skills and other relevant sections.</p></div>
+<div class="step"><div class="step-no">3</div><strong>Review the preview</strong><p>Use the live A4 preview to check layout and move between pages.</p></div>
+<div class="step"><div class="step-no">4</div><strong>Print or save</strong><p>When your CV is ready, use the available output tools from the builder.</p></div>
+</div></section>
 
-  <script type="module">
-    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js';
-    import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
+<section class="section"><div class="section-head"><div><h2>Featured CV templates</h2><p>A quick starting point. The full library contains all current templates.</p></div><a class="btn secondary" href="./templates.html">View All</a></div>
+<div id="featured-templates" class="template-grid"></div></section>
 
-    const templates = listNativeV2Templates();
-    const initialProfile = {
-      careerData: {
-        identity: { fullName:'Your Name', jobTitle:'Professional Title', email:'you@example.com', phone:'', location:'Pakistan' },
-        sections: [
-          {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Write a concise professional summary.',visibility:true}],entries:[],repeatable:false},
-          {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[{id:'experience-1',values:{role:'Your Role',company:'Company Name',dates:'2024 — Present',description:'Describe your responsibilities and achievements.'},visibility:true,order:0}],repeatable:true},
-          {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'Degree / Qualification',institution:'Institution',dates:'2020 — 2024'},visibility:true,order:0}],repeatable:true},
-          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[{id:'skillsText',type:'text',label:'Skills',value:'Communication, Problem Solving, Microsoft Office',visibility:true}],entries:[],repeatable:false},
-          {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[{id:'languagesText',type:'text',label:'Languages',value:'English, Urdu',visibility:true}],entries:[],repeatable:false}
-        ]
-      }
-    },
-    cvData: {
-      title:'My CV',
-      configuration:{template:{id:'t01-modern-minimalist-cv-design_modern',version:'2.0.0'}}
-    }
-    };
+<section class="section"><div class="section-head"><div><h2>Frequently asked questions</h2></div></div>
+<div class="faqs">
+<div class="faq"><strong>Do I need to register?</strong><p>No registration is required to start building. The current builder is designed around local-first editing.</p></div>
+<div class="faq"><strong>Can I change templates later?</strong><p>Yes. The V2 workspace includes template selection and the gallery can also open the builder with a selected template.</p></div>
+<div class="faq"><strong>Can I make a CV for a student or fresh graduate?</strong><p>Yes. The template library is organized by career level, industry and style to support different CV needs.</p></div>
+<div class="faq"><strong>Where are my working details stored?</strong><p>The current V2 editor uses browser-based local storage and recovery features rather than requiring an account.</p></div>
+</div></section>
 
-    const root = document.querySelector('#v2-editor');
-    const status = document.querySelector('#app-status');
-    const templateSelect = document.querySelector('#template-select');
-    const previewFetcher = async (requestPath) => {
-      const localPath = String(requestPath).replace(/^\/+/, '');
-      return fetch(new URL('./' + localPath, document.baseURI));
-    };
-
-    const runtime = mountV2ProductionEntry(document, {
-      rootSelector:'#v2-editor',
-      input:{
-        profileData:initialProfile.careerData,
-        targetedCV:initialProfile.targetedCV,
-        preview:true,
-        previewOptions:{fetcher:previewFetcher},
-        persistence:{storage:window.localStorage,key:'estudent_cv_builder_v2_production',autoRecover:true}
-      }
-    });
-
-    window.eStudentCVBuilderV2 = runtime;
-
-    templates.forEach(template => {
-      const option = document.createElement('option');
-      option.value = template.id;
-      option.textContent = template.name;
-      templateSelect.appendChild(option);
-    });
-
-    const currentTemplate = runtime.surface.getState().session.application.targetedCV.configuration.template?.id;
-    templateSelect.value = currentTemplate || templates[0]?.id || '';
-
-    templateSelect.addEventListener('change', () => {
-      const template = templates.find(item => item.id === templateSelect.value);
-      if (!template) return;
-      runtime.surface.dispatch({
-        type:'set-template',
-        target:{},
-        payload:{templateId:template.id,version:template.version}
-      });
-      status.textContent = 'Template updated — preview refreshing…';
-    });
-
-    document.querySelector('#save-btn').addEventListener('click', () => {
-      try { runtime.save(); status.textContent = 'CV saved locally.'; }
-      catch (error) { status.textContent = 'Save failed: ' + (error?.message || error); }
-    });
-
-    document.querySelector('#recover-btn').addEventListener('click', () => {
-      try { runtime.recover(); status.textContent = 'Recovery check completed.'; }
-      catch (error) { status.textContent = 'Recovery failed: ' + (error?.message || error); }
-    });
-
-    document.querySelector('#clear-recovery-btn').addEventListener('click', () => {
-      try { runtime.clearRecovery(); status.textContent = 'Saved recovery snapshot cleared.'; }
-      catch (error) { status.textContent = 'Clear failed: ' + (error?.message || error); }
-    });
-
-    document.querySelector('#print-btn').addEventListener('click', () => window.print());
-
-    status.textContent = 'V2 editor ready.';
-    window.v2ProductionReady = true;
-  </script>
+<section class="section"><div class="final-cta"><h2>Ready to create your CV?</h2><p>Start with a professional template, enter your information and refine the result with the live preview.</p><div class="cta-row" style="justify-content:center"><a class="btn primary" id="final-create-btn" href="./builder.html">Create My CV</a><a class="btn secondary" href="./templates.html">Explore Templates</a></div></div></section>
+</main>
+<script type="module">
+import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js';
+const params=new URLSearchParams(location.search);
+const requested=params.get('template');
+if(requested){location.replace('./builder.html?template='+encodeURIComponent(requested));}
+const templates=listNativeV2Templates();
+const featured=document.querySelector('#featured-templates');
+const first=templates[0]?.id||'';
+document.querySelector('#create-btn').href='./builder.html?template='+encodeURIComponent(first);
+document.querySelector('#final-create-btn').href='./builder.html?template='+encodeURIComponent(first);
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+templates.slice(0,6).forEach(t=>{
+ const el=document.createElement('article');el.className='template-card';
+ const chips=[...(t.careerLevel||[]).slice(0,1),...(t.style||[]).slice(0,1)].map(v=>'<span class="chip">'+esc(v)+'</span>').join('');
+ el.innerHTML='<div class="template-name">'+esc(t.name)+'</div><div class="template-meta">'+esc((t.industry||[]).slice(0,2).join(' · ')||'Professional CV')+'</div><div class="chips">'+chips+'</div><div class="template-actions"><a class="btn primary" href="./builder.html?template='+encodeURIComponent(t.id)+'">Build Online</a><a class="btn secondary" href="./templates.html">Preview</a></div>';
+ featured.appendChild(el);
+});
+</script>
 </body>
 </html>
