@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
@@ -15,11 +16,35 @@ const snapshot={careerData:{identity:{fullName:'Alex Morgan',jobTitle:'Senior So
 {id:'contact-1',type:'contact',title:'Contact',visibility:true,fields:[],entries:[]}]},configuration:{hiddenSections:[],hiddenFields:[],hiddenEntries:[]}};
 
 const templates=listNativeV2Templates();
+const projectRoot=process.cwd();
+const server=createServer((request,response)=>{
+  const pathname=decodeURIComponent(new URL(request.url||'/', 'http://127.0.0.1').pathname);
+  const file=path.resolve(projectRoot, '.'+pathname);
+  if(file!==projectRoot&&!file.startsWith(projectRoot+path.sep)){response.writeHead(403);response.end('Forbidden');return;}
+  try{
+    if(pathname==='/'){response.writeHead(200,{'content-type':'text/html; charset=utf-8'});response.end('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>');return;}
+    const body=fs.readFileSync(file);
+    const ext=path.extname(file);
+    const contentType=ext==='.js'?'text/javascript; charset=utf-8':ext==='.html'?'text/html; charset=utf-8':ext==='.css'?'text/css; charset=utf-8':'application/octet-stream';
+    response.writeHead(200,{'content-type':contentType});response.end(body);
+  }catch{response.writeHead(404);response.end('Not found');}
+});
+await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
+const baseUrl='http://127.0.0.1:'+server.address().port;
 const browser=await chromium.launch({headless:true});
 try {
-  const result=await runBrowserValidation({templates,snapshot,artifactDir:'artifacts/m26',pageFactory:createPlaywrightPageFactory(browser)});
+  const result=await runBrowserValidation({
+    templates,snapshot,artifactDir:'artifacts/m26',
+    sourceLoader:async sourcePath=>{
+      const requestPath=sourcePath.startsWith('/')?sourcePath.slice(1):sourcePath;
+      const response=await fetch(new URL(requestPath,baseUrl+'/'));
+      if(!response.ok)throw new Error('Template source request failed: '+response.status+' '+sourcePath);
+      return response.text();
+    },
+    pageFactory:createPlaywrightPageFactory(browser,{baseUrl})
+  });
   assert.equal(result.templateCount,templates.length);
-  assert.ok(result.results.every(item=>item.render.status==='ready'));
+  assert.ok(result.results.every(item=>item.render.status==='ready'), JSON.stringify(result.results.filter(item=>item.render.status!=='ready').map(item=>({templateId:item.templateId,render:item.render})),null,2));
   assert.ok(result.results.every(item=>item.geometry.status==='collected'));
   assert.ok(result.results.every(item=>item.pagination.status==='collected'));
   assert.ok(result.results.every(item=>item.screenshot.status==='collected'));
@@ -27,5 +52,5 @@ try {
   for(const item of result.results) assert.ok(fs.existsSync(item.screenshot.artifact),item.templateId);
   writeBrowserEvidenceArtifact(result,'artifacts/m26/native-v2-browser-evidence.json');
   console.log(JSON.stringify({templateCount:result.templateCount,results:result.results.map(x=>({templateId:x.templateId,blocks:x.geometry.blocks.length,pageCount:x.pagination.pageCount,screenshot:x.screenshot.status}))},null,2));
-} finally { await browser.close(); }
+} finally { await browser.close(); await new Promise(resolve=>server.close(resolve)); }
 console.log('M26 real browser evidence validation completed.');
