@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="eStudent CV Builder V2 — create, edit, preview and save a professional CV locally.">
+  <meta name="theme-color" content="#0d6efd">
+  <title>eStudent CV Builder V2 — Create Your CV</title>
+  <style>
+    :root{
+      --brand:#0d6efd;--brand-dark:#084298;--ink:#172033;--muted:#667085;
+      --surface:#fff;--soft:#f5f8fc;--border:#dfe5ee;--success:#198754;
+      --radius:14px;--shadow:0 10px 30px rgba(16,24,40,.08)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--soft);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .site-header{background:linear-gradient(135deg,#0d6efd,#084298);color:#fff;padding:18px 24px}
+    .header-inner{max-width:1500px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between}
+    .brand{font-weight:800;font-size:20px}.subbrand{opacity:.86;font-size:13px;margin-top:2px}
+    .app-shell{max-width:1500px;margin:20px auto;padding:0 16px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);padding:14px;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}.toolbar-secondary{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.toolbar-menu{display:flex;align-items:center;gap:10px}.toolbar-menu>summary{display:none;list-style:none;cursor:pointer;font-weight:700;border:1px solid var(--border);background:#fff;border-radius:9px;padding:9px 12px}.toolbar-menu summary::-webkit-details-marker{display:none}
+    .toolbar label{font-size:13px;font-weight:700;color:var(--muted)}
+    select,button,input,textarea{font:inherit}
+    button,select{border:1px solid var(--border);background:#fff;color:var(--ink);border-radius:9px;padding:9px 12px}
+    button{cursor:pointer;font-weight:650}.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+    button:hover{filter:brightness(.97)}button:disabled{opacity:.55;cursor:not-allowed}
+    .status{margin-left:auto;font-size:13px;color:var(--muted)}
+    #v2-editor{display:grid;grid-template-columns:minmax(320px,1fr) minmax(380px,1.05fr);gap:16px;align-items:stretch}#v2-editor>section{display:flex;flex-direction:column;min-height:0}#v2-editor>section:nth-child(2){position:sticky;top:16px;align-self:start}
+    [data-v2-editor-form],[data-v2-editor-preview-root]{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    [data-v2-editor-form]{padding:18px;flex:1;min-height:0;max-height:calc(100vh - 150px);overflow:auto}
+    [data-v2-editor-preview-root]{padding:22px 22px 0;min-height:0;max-height:none;overflow:visible;flex:1}
+    .v2-preview-stage{width:100%;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;position:relative}
+    .v2-preview-stage>[data-v2-template-root]{flex:0 0 auto;transform-origin:top center}
+    [data-v2-editor-form] section{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}
+    [data-v2-editor-form] h3{margin:0 0 12px;font-size:16px}
+    [data-v2-editor-form] header{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    [data-v2-editor-form] label{display:block;margin:8px 0;font-size:13px;font-weight:650;color:var(--muted)}
+    [data-v2-editor-form] input,[data-v2-editor-form] select,[data-v2-editor-form] textarea{width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;background:#fff}
+    [data-v2-editor-form] button{margin:4px 4px 0 0;font-size:12px}
+    [data-v2-editor-form] article{border-top:1px dashed var(--border);padding-top:12px;margin-top:12px}
+    [data-v2-editor-form] [data-v2-editor-field-wrapper]{padding:10px;background:var(--soft);border-radius:9px;margin:8px 0}
+    .workspace-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:16px}
+    .workspace-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .workspace-head strong{font-size:15px}.workspace-head span{font-size:12px;color:var(--muted);margin-left:10px}
+    .workspace-actions{display:flex;gap:7px;flex-wrap:wrap}.workspace-actions button{font-size:12px}.workspace-menu{display:block}.workspace-menu>summary{display:none;list-style:none;cursor:pointer;font-weight:700;font-size:13px}.workspace-menu>summary::-webkit-details-marker{display:none}
+    .cv-document-list{display:flex;gap:8px;overflow:auto;padding-top:12px}
+    .cv-document{min-width:180px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer}
+    .cv-document.active{border-color:var(--brand);box-shadow:0 0 0 2px rgba(13,110,253,.12)}
+    .cv-document.archived{opacity:.6}.cv-document-title{font-weight:750;font-size:13px}.cv-document-meta{font-size:11px;color:var(--muted);margin-top:4px}
+    .cv-version-history{margin-top:12px;border-top:1px dashed var(--border);padding-top:10px}
+    .cv-version-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .cv-version-history-head strong{font-size:13px}
+    .cv-version-history-head button,.cv-version-more{font-size:11px;padding:6px 9px}
+    .cv-version-list[hidden]{display:none}
+    .cv-version-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;font-size:12px;border-bottom:1px solid #eef1f5}
+    .cv-version-item span{min-width:0;overflow-wrap:anywhere}
+    .cv-version-item button{flex:0 0 auto;font-size:11px;padding:5px 8px}
+    .cv-version-more{margin-top:8px}
+    .cv-version-empty{margin:10px 0 2px;color:var(--muted);font-size:12px;line-height:1.5}
+    .intelligence-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.cv-intelligence-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.cv-intelligence-head strong{font-size:16px}.cv-intelligence-head span{font-size:12px;color:var(--muted)}.cv-intelligence-controls{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:12px}.cv-intelligence-controls label{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--muted)}.cv-intelligence-controls textarea{width:100%;resize:vertical;padding:10px;border:1px solid var(--border);border-radius:9px}.cv-intelligence-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.cv-intelligence-summary{grid-column:1/-1}.cv-intelligence-card{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}.cv-intelligence-card h4{margin:0 0 7px;font-size:12px;color:var(--muted)}.cv-intelligence-card strong{display:block;font-size:21px}.cv-intelligence-card p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.45}.final-product-hub{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}.final-product-tabs{display:flex;gap:7px;overflow:auto;border-bottom:1px solid var(--border);padding-bottom:10px}.final-product-tabs button{white-space:nowrap;font-size:12px}.final-product-tabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}.final-product-body{padding-top:12px}.final-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:#fff;margin-bottom:10px}.final-card h3{margin:0 0 8px;font-size:15px}.final-card p{font-size:12px;color:var(--muted);line-height:1.5}.final-card input,.final-card textarea,.final-card select{display:block;width:100%;margin:7px 0;padding:9px;border:1px solid var(--border);border-radius:8px}.final-card button{margin:5px 6px 0 0}.final-results{margin-top:12px}@media(max-width:1000px){.cv-intelligence-results{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-intelligence-summary{grid-column:1/-1}}@media(max-width:650px){.cv-intelligence-controls{grid-template-columns:1fr}.cv-intelligence-results{grid-template-columns:1fr}}
+    .preview-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 0 12px}
+    [data-v2-editor-preview-root] .v2-preview-page{margin:0 auto;box-shadow:0 8px 28px rgba(16,24,40,.12);background:#fff}
+    .preview-tools{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:-2px 0 12px}
+    .preview-tools button,.preview-tools select{font-size:12px;padding:7px 9px}
+    .preview-tools button:disabled,.preview-tools select:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.15)}
+    .preview-tools .preview-page-label{font-size:12px;font-weight:700;color:var(--muted);margin-left:auto}
+    .preview-tools [data-preview-zoom]{display:inline-block}
+    [data-v2-editor-preview-root][data-preview-zoom="0.5"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.5)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.6"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.6)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.7"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.7)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.8)}
+    [data-v2-editor-preview-root][data-preview-zoom="0.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(.9)}
+    [data-v2-editor-preview-root][data-preview-zoom="1"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.1"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.1)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.2)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.3"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.3)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.4"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.4)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.5"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.5)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.6"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.6)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.7"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.7)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.8"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.8)}
+    [data-v2-editor-preview-root][data-preview-zoom="1.9"] .v2-preview-stage>[data-v2-template-root]{transform:scale(1.9)}
+    [data-v2-editor-preview-root][data-preview-zoom="2"] .v2-preview-stage>[data-v2-template-root]{transform:scale(2)}
+    @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}#v2-editor>section:nth-child(2){position:static;top:auto}[data-v2-editor-preview-root]{max-height:none}}@media(max-width:760px){
+      .toolbar-menu{display:block;position:relative}
+      .toolbar-menu>summary{display:block}
+.mobile-view-switch{display:flex}#v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}#v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}#v2-editor[data-mobile-view="preview"]>section:nth-child(2){display:flex}.workspace-menu>summary{display:block}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex}.toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex}}
+
+    .header-product-label{font-size:13px;font-weight:700;opacity:.95}
+    .mobile-view-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .mobile-view-switch button{flex:1;border:0;background:transparent;font-size:13px;padding:9px}.mobile-view-switch button.active{background:var(--brand);color:#fff}
+    .tool-modal{position:fixed;inset:0;z-index:1000;background:rgba(23,32,51,.48);display:flex;align-items:center;justify-content:center;padding:18px}
+    .tool-modal[hidden]{display:none}.tool-modal-loading{display:flex;align-items:center;justify-content:center;min-height:180px;color:var(--muted);font-size:14px;gap:10px}.tool-modal-loading::before{content:"";width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:tool-spin .8s linear infinite}@keyframes tool-spin{to{transform:rotate(360deg)}}.tool-modal-error{padding:16px;border:1px solid #f0caca;border-radius:10px;background:#fff7f7;color:#8a1c1c}.tool-modal-card{width:min(760px,100%);max-height:min(88vh,900px);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 24px 70px rgba(16,24,40,.24);padding:16px}.tool-modal-wide{width:min(1100px,100%)}
+    .tool-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;position:sticky;top:0;background:var(--surface);z-index:2;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    .tool-modal-head strong{font-size:17px}.tool-modal-head button{font-size:22px;line-height:1;padding:4px 10px;border:0;background:transparent}
+    .editor-section-head,.editor-entry-head,.editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.editor-section-title{display:flex;align-items:center;gap:8px;min-width:0;flex:1}.editor-section-title input{flex:1;min-width:120px}.editor-section-title span{font-size:11px;color:var(--muted);white-space:nowrap}.editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}
+    .editor-inline-action{display:inline-flex!important;align-items:center;justify-content:center;width:30px;height:30px;padding:0!important;border:1px solid #dfe5ee!important;border-radius:9px!important;background:linear-gradient(180deg,#fff,#f8fafc)!important;color:#475467!important;box-shadow:0 1px 2px rgba(16,24,40,.05);transition:all .16s ease}
+    .editor-inline-action svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .editor-inline-action:hover{transform:translateY(-1px);background:#f8fbff!important;border-color:#b8c7df!important;box-shadow:0 4px 10px rgba(16,24,40,.10)}
+    .editor-inline-action.action-hide,.editor-inline-action.action-show{color:#1769aa;border-color:#cfe0f6!important;background:#f4f9ff!important}
+    .editor-inline-action.action-remove{color:#e11d48;border-color:#fecdd3!important;background:linear-gradient(180deg,#fff7f8,#fff)!important}
+    .editor-inline-action.action-remove svg{stroke-width:2}
+    .editor-inline-action.action-hide,.editor-inline-action.action-show{color:#2563eb;border-color:#bfdbfe!important;background:linear-gradient(180deg,#eff6ff,#fff)!important;box-shadow:0 2px 7px rgba(37,99,235,.12)}
+    .editor-inline-action.action-show{color:#7c3aed;border-color:#ddd6fe!important;background:linear-gradient(180deg,#f5f3ff,#fff)!important}
+    .editor-photo-head-tools{display:flex;align-items:center;gap:5px}
+    .editor-photo-head-tools .editor-inline-action{margin:0!important}
+    .editor-photo-head-tools .action-remove{color:#e11d48!important}
+    .editor-inline-action.action-move-up,.editor-inline-action.action-move-down{color:#344054}
+    .editor-identity-block{border:1px solid #e5e9f0;border-radius:12px;background:#fbfcfe;padding:12px;margin:0 0 10px}
+    .editor-identity-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+    .editor-identity-head h4{margin:2px 0 0!important;font-size:12px!important;color:#172033}
+    .editor-identity-add{width:auto!important;min-width:112px!important;padding:7px 9px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:8px!important;background:#fff!important}
+    .editor-identity-input-wrap{display:flex;gap:5px;align-items:center}
+    .editor-identity-input-wrap input{flex:1;min-width:0}
+    .editor-identity-remove{width:28px;height:28px;flex:0 0 28px;border:1px solid #f0d1ce;border-radius:8px;background:#fff8f7;color:#b42318;display:inline-flex;align-items:center;justify-content:center}.editor-identity-date-wrap{position:relative;display:flex;align-items:center;flex:1 1 auto;min-width:0;width:100%;height:36px;box-sizing:border-box}.editor-identity-date-display{position:static!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;background:#fff!important;padding-right:8px!important;pointer-events:auto!important}.editor-identity-date-button{width:32px!important;height:32px!important;flex:0 0 32px!important;margin-left:-38px!important;position:relative!important;z-index:2!important;border:0!important;background:transparent!important;color:#667085!important;padding:0!important;cursor:pointer!important;font-size:14px!important}.editor-identity-date-picker{position:absolute!important;right:4px!important;top:4px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}.editor-identity-date-wrap:focus-within .editor-identity-date-button{color:#0d6efd!important}
+    .editor-identity-remove svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    [data-v2-editor-form] textarea{resize:vertical;min-height:76px;line-height:1.45}
+    [data-v2-editor-form] .editor-field-card textarea{min-height:92px}
+    [data-v2-editor-form] .editor-entry-field textarea{min-height:88px}.editor-month-input-wrap{position:relative!important;display:block!important;width:100%!important;height:36px!important;min-width:0!important}.editor-month-input-wrap>[data-v2-editor-entry-field]{display:block!important;width:100%!important;max-width:100%!important;height:36px!important;box-sizing:border-box!important;padding-right:46px!important;margin:0!important}.editor-month-picker-button{position:absolute!important;right:4px!important;top:1px!important;width:34px!important;height:34px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid #cfd6e2!important;border-radius:7px!important;background:#fff!important;color:#475467!important;cursor:pointer!important;padding:0!important;font-size:14px!important;line-height:1!important;z-index:1!important;margin:0!important} .editor-month-picker-button{pointer-events:auto!important;z-index:3!important;}.editor-month-picker-button:hover{background:#f2f4f7!important;color:#0d6efd!important;border-color:#98bdf3!important}.editor-month-picker-button:focus-visible{outline:2px solid #98bdf3!important;outline-offset:1px}.editor-month-picker-native{position:absolute!important;right:4px!important;top:1px!important;width:34px!important;height:34px!important;opacity:0!important;pointer-events:none!important;z-index:2!important;cursor:pointer!important;margin:0!important;padding:0!important;border:0!important}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+    .editor-summary-tools{margin:10px 0 0!important}
+    .editor-summary-tools{display:flex;justify-content:flex-end;align-items:center;margin:10px 0 0!important;padding:0!important;border:0!important;background:transparent!important}.editor-summary-suggest{border:1px solid #c8daf8;border-radius:8px;padding:8px 12px;background:#fff;color:#0d5bd7;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.editor-summary-suggest:hover{background:#eef5ff}
+    .editor-summary-suggest:hover{background:#eef5ff}
+.editor-inline-action{margin:0!important;padding:4px 7px!important;font-size:11px!important;line-height:1.1}.editor-inline-action[title="Remove"]{color:#9b1c1c}.editor-field-definition{display:flex;gap:6px;flex:1;min-width:0}.editor-field-definition input{flex:1;min-width:0}.editor-field-definition select{width:auto}.editor-entry-head h4{margin:0;font-size:13px}.editor-photo-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin:0 0 14px;background:#fff}.editor-photo-head{display:flex;justify-content:space-between;gap:10px}.editor-photo-head strong{display:block;font-size:14px}.editor-photo-head span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.editor-photo-body{display:flex;align-items:center;gap:14px;margin-top:12px}.editor-photo-preview,.editor-photo-placeholder{width:78px;height:92px;border-radius:10px;object-fit:cover;border:1px solid var(--border);background:var(--soft)}.editor-photo-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:11px;padding:8px}.editor-photo-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-photo-upload,.editor-photo-remove{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:650;cursor:pointer;background:#fff}.editor-photo-upload{background:var(--brand);border-color:var(--brand);color:#fff}.editor-photo-remove{color:#9b1c1c}
+
+    /* V2 professional editor refresh */
+    #v2-editor{grid-template-columns:minmax(440px,.86fr) minmax(560px,1.14fr);gap:18px;align-items:stretch}
+    #v2-editor>section:first-child,#v2-editor>section:nth-child(2){min-width:0;min-height:0}
+    #v2-editor>section:nth-child(2){position:static;top:auto}
+    [data-v2-editor-form]{padding:14px;max-height:none;overflow:visible;background:#f7f9fc;flex:1}
+    [data-v2-editor-form] section{border:0;border-radius:14px;padding:0;margin:0 0 12px;background:transparent}
+    .editor-design-card,.editor-photo-card,.editor-section-card{background:#fff!important;border:1px solid #dfe5ee!important;border-radius:14px!important;box-shadow:0 4px 14px rgba(16,24,40,.05);overflow:hidden}
+    .editor-design-card,.editor-photo-card{padding:15px!important}
+    .editor-section-card{padding:0!important}
+    .editor-section-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:linear-gradient(90deg,#eef4ff,#fff);border-bottom:1px solid #e1e7f0}
+    .editor-section-banner-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}.editor-placement-control{display:flex!important;align-items:center;gap:6px!important;margin:0!important;font-size:10px!important;color:#667085!important;font-weight:700!important}.editor-placement-control span{white-space:nowrap}.editor-placement-control select{width:auto!important;min-width:100px!important;padding:6px 8px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#344054!important}.editor-inline-action.action-hide{color:#1473e6!important;border-color:#93c5fd!important;background:linear-gradient(180deg,#eaf3ff,#fff)!important}.editor-inline-action.action-hide svg{stroke:#1473e6!important}.editor-inline-action.action-show{color:#3b82f6!important;border-color:#bfdbfe!important;background:linear-gradient(180deg,#f5f9ff,#fff)!important}.editor-inline-action.action-show svg{stroke:#3b82f6!important}
+    .editor-rating-style-control{display:flex!important;align-items:center;gap:5px!important;margin:0!important;font-size:10px!important;color:#667085!important;font-weight:700!important}.editor-rating-style-control select{min-width:76px!important;padding:6px 7px!important;font-size:10px!important}.editor-rating-items{margin-top:9px;padding:9px 10px;border:1px solid #dfe6f0;border-radius:10px;background:#f8fbff}.editor-rating-title{font-size:9px;font-weight:800;color:#344054;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}.editor-rating-scale-help{font-size:9px;line-height:1.35;color:#667085;margin-bottom:7px}.editor-rating-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:5px 0}.editor-rating-row span{font-size:10px;font-weight:700;color:#344054;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.editor-rating-row select{width:auto!important;min-width:178px!important;padding:5px 6px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#344054!important}.editor-sort-control{display:flex!important;align-items:center;gap:6px!important;margin:0!important;font-size:10px!important;color:#667085!important;font-weight:700!important}.editor-sort-control span{white-space:nowrap}.editor-sort-control select{width:auto!important;min-width:108px!important;padding:6px 8px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#344054!important}.editor-list-style-control{display:flex!important;align-items:center;gap:6px!important;margin:0!important;font-size:10px!important;color:#667085!important;font-weight:700!important}.editor-list-style-control span{white-space:nowrap}.editor-list-style-control select{width:auto!important;min-width:92px!important;padding:6px 8px!important;font-size:10px!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#344054!important}.editor-section-banner-tools .editor-section-actions{display:flex;align-items:center;gap:4px}
+    .editor-section-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
+    .editor-section-title-wrap h3{margin:0!important;font-size:14px!important;color:#172033}
+    .editor-section-status{display:block;color:#667085;font-size:11px;margin-top:2px}
+    .editor-section-icon{display:inline-flex;align-items:center;justify-content:center;min-width:58px;height:28px;padding:0 8px;border-radius:8px;background:#0d6efd;color:#fff;font-size:9px;font-weight:800;letter-spacing:.7px}
+    .editor-section-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+    .editor-section-actions .editor-inline-action{border:1px solid #dfe5ee!important;background:#fff!important;color:#475467!important}
+    .editor-section-content{padding:12px 14px 14px}
+    .editor-panel-title{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .editor-panel-title h3{margin:2px 0 0!important;font-size:14px!important}
+    .editor-eyebrow{font-size:9px;font-weight:800;letter-spacing:1.1px;color:#0d6efd}
+    .editor-panel-help{font-size:11px;color:#667085;text-align:right}
+    .editor-palette{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin-top:12px}
+    .editor-color-swatch{width:44px;height:44px;border:1px solid #e1e7f0!important;background:#fff!important;border-radius:10px!important;padding:5px!important;display:flex;align-items:center;justify-content:center;font-size:0!important;color:transparent!important}
+    .editor-color-swatch span{width:28px;height:28px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d0d5dd}
+    .editor-color-swatch.active{box-shadow:0 0 0 2px #0d6efd;border-color:#0d6efd!important}
+    .editor-photo-layout{display:flex;gap:14px;align-items:center;margin-top:12px}
+    .editor-photo-frame{width:96px;height:96px;flex:0 0 96px;overflow:hidden;border:2px solid #dfe5ee;background:#f2f4f7;display:flex;align-items:center;justify-content:center}
+    .editor-photo-frame.circle{border-radius:50%}.editor-photo-frame.square{border-radius:8px}.editor-photo-frame.portrait{width:82px;flex-basis:82px;height:108px}.editor-photo-frame.landscape{width:120px;flex-basis:120px;height:88px}
+    .editor-photo-preview{width:100%;height:100%;object-fit:cover;display:block}
+    .editor-photo-placeholder{font-size:10px;color:#667085;text-align:center}
+    .editor-photo-copy strong{font-size:13px}.editor-photo-copy p{margin:4px 0 9px;color:#667085;font-size:11px;line-height:1.45}
+    .editor-photo-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .editor-photo-upload,.editor-photo-remove,.editor-photo-crop,.editor-add-entry,.editor-add-field,.editor-add-section{display:inline-flex!important;align-items:center;justify-content:center;gap:5px;border-radius:9px!important;padding:8px 11px!important;font-size:11px!important;font-weight:700!important;cursor:pointer}
+    .editor-photo-upload{background:#0d6efd!important;border-color:#0d6efd!important;color:#fff!important}
+    .editor-photo-crop{background:#eef4ff!important;border-color:#c9dafc!important;color:#084298!important}
+    .editor-photo-remove{background:#fff!important;color:#9b1c1c!important}
+    .editor-entry-card{border:1px solid #e5e9f0!important;border-radius:11px!important;background:#fbfcfe!important;padding:11px!important;margin:0 0 9px!important}
+    .editor-entry-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+    .editor-entry-kicker{display:block;font-size:8px;font-weight:800;letter-spacing:1px;color:#0d6efd}
+    .editor-entry-head strong{font-size:12px;color:#344054}
+    .editor-entry-fields{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
+    .editor-entry-field{margin:0!important;font-size:11px!important;color:#667085!important}
+    .editor-entry-field>span{display:block;margin-bottom:4px;font-weight:700}
+    .editor-entry-field input{padding:8px!important;font-size:12px!important}
+    .editor-entry-field:nth-child(5){grid-column:1/-1}
+    .editor-field-card{border:1px solid #e5e9f0;background:#fbfcfe;border-radius:10px;padding:9px;margin:0 0 8px}
+    .editor-list-field-card{border:1px solid #e5e9f0;background:#fbfcfe;border-radius:10px;padding:10px;margin:0 0 8px}
+    .editor-list-field-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+    .editor-list-field-head strong{font-size:11px;color:#344054}
+    .editor-list-field-label{margin:0!important}.editor-list-field-label>span{display:block;margin-bottom:4px;font-size:11px;font-weight:700;color:#667085}
+    .editor-list-field-label input{font-size:12px!important;padding:8px!important}
+
+    /* Skills / Languages — compact professional entry rows */
+    .editor-skills-language-entry{
+      display:grid!important;
+      grid-template-columns:minmax(70px,auto) minmax(0,1fr) minmax(118px,150px) auto!important;
+      align-items:end!important;
+      gap:8px!important;
+      padding:8px 9px!important;
+      margin:0 0 6px!important;
+    }
+    .editor-skills-language-entry .editor-entry-head{display:contents!important}
+    .editor-skills-language-entry .editor-entry-head>div:first-child{
+      min-width:70px!important;
+      display:flex!important;
+      flex-direction:column!important;
+      justify-content:center!important;
+      gap:1px!important;
+      margin:0!important;
+      grid-column:1!important;
+      grid-row:1!important;
+      order:1!important;
+    }
+    .editor-skills-language-entry .editor-entry-head>div:first-child + .editor-inline-actions{
+      grid-column:4!important;
+      grid-row:1!important;
+      order:4!important;
+      justify-self:end!important;
+    }
+    .editor-skills-language-entry .editor-entry-kicker{margin:0!important}
+    .editor-skills-language-entry .editor-entry-head strong{font-size:11px!important;line-height:1.15!important}
+    .editor-skills-language-entry .editor-entry-fields{display:contents!important}
+    .editor-skills-language-entry .editor-entry-field{
+      min-width:0!important;
+      margin:0!important;
+      display:flex!important;
+      flex-direction:column!important;
+      gap:3px!important;
+      order:2!important;
+    }
+    .editor-skills-language-entry .editor-entry-field:not(.editor-entry-proficiency){
+      grid-column:2!important;
+      grid-row:1!important;
+    }
+    .editor-skills-language-entry .editor-entry-field.editor-entry-proficiency{
+      grid-column:3!important;
+      grid-row:1!important;
+      order:3!important;
+    }
+    .editor-skills-language-entry .editor-entry-field>span{
+      margin:0!important;
+      font-size:9px!important;
+      line-height:1!important;
+      color:#667085!important;
+      font-weight:750!important;
+    }
+    .editor-skills-language-entry .editor-entry-field input,
+    .editor-skills-language-entry .editor-entry-field select{
+      width:100%!important;
+      min-width:0!important;
+      height:32px!important;
+      padding:6px 8px!important;
+      font-size:11px!important;
+      margin:0!important;
+    }
+    .editor-skills-language-entry .editor-field-help{display:none!important}
+    .editor-skills-language-entry .editor-inline-actions{
+      align-self:end!important;
+      height:32px!important;
+      gap:3px!important;
+      justify-self:end!important;
+    }
+    .editor-skills-language-entry .editor-inline-action{
+      width:28px!important;
+      height:28px!important;
+      border-radius:8px!important;
+    }
+    .editor-skills-language-entry[data-v2-editor-entry-hidden="true"]{opacity:.68}
+    @media(max-width:760px){
+      .editor-skills-language-entry{
+        grid-template-columns:minmax(70px,auto) minmax(0,1fr) auto!important;
+      }
+      .editor-skills-language-entry .editor-entry-head>div:first-child{grid-column:1!important;grid-row:1!important}
+      .editor-skills-language-entry .editor-entry-head>div:first-child + .editor-inline-actions{grid-column:3!important;grid-row:1!important}
+      .editor-skills-language-entry .editor-entry-field.editor-entry-proficiency{grid-column:2/-1!important;grid-row:2!important}
+      .editor-skills-language-entry .editor-entry-field:not(.editor-entry-proficiency){grid-column:2!important;grid-row:1!important}
+    }
+
+    .editor-field-head{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:7px}
+    .editor-field-definition{display:grid;grid-template-columns:1fr 92px;gap:6px;min-width:0;flex:1}
+    .editor-field-definition input,.editor-field-definition select{font-size:11px!important;padding:7px!important}
+    .editor-identity-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 11px}
+    .editor-identity-field{margin:0!important;font-size:11px!important}.editor-identity-field.is-hidden{opacity:.62}.editor-identity-field.is-hidden input{background:#f5f6f8;color:#98a2b3}.editor-identity-field .editor-inline-action{flex:0 0 27px}.editor-identity-field .editor-inline-action.action-show{opacity:.68;filter:saturate(.7)}
+    .editor-identity-field > span{display:block;margin-bottom:4px;font-weight:700;color:#667085}
+    .editor-identity-field input{font-size:12px!important;padding:8px!important}.editor-identity-field-control{display:flex;align-items:center;gap:5px}.editor-identity-field-control>input{flex:1;min-width:0}.editor-identity-actions{display:flex;gap:4px;align-items:center;flex:0 0 auto}.editor-identity-actions .editor-inline-action{flex:0 0 27px}.editor-identity-field.is-hidden .editor-identity-actions .action-show{opacity:1;filter:none}
+    .editor-custom-title{padding:10px 14px 0}.editor-custom-title label{margin:0!important}.editor-custom-title input{margin-top:5px}
+    .editor-hidden-section-note,.editor-hidden-note{padding:9px 10px;background:#f8f9fb;border-radius:8px;color:#667085;font-size:11px}
+    .editor-field-help{display:block;margin-top:4px;color:#98a2b3;font-size:9px}
+    .editor-add-entry{width:100%;background:#eef4ff!important;border:1px dashed #9bbcf5!important;color:#084298!important;margin-top:4px}
+    .editor-add-field{background:#fff!important;border:1px dashed #cfd6e2!important;color:#475467!important}
+    .editor-add-section{width:100%;background:#0d6efd!important;color:#fff!important;border-color:#0d6efd!important;margin:2px 0 12px}
+    .editor-inline-actions{display:flex;gap:3px;align-items:center;flex-wrap:nowrap}
+    .editor-inline-action{width:27px;height:27px;padding:0!important;margin:0!important;border:1px solid #dfe5ee!important;border-radius:7px!important;background:#fff!important;color:#475467!important;font-size:12px!important}
+    .editor-inline-action:hover{background:#f2f4f7!important}
+    .editor-section-card.is-hidden{opacity:.82}
+    .editor-crop-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:2147483000!important;background:rgba(15,23,42,.68);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow:hidden}
+    .editor-crop-dialog{position:relative;width:min(760px,calc(100vw - 32px));height:auto;max-height:calc(100vh - 32px);overflow:hidden;background:#fff;border-radius:18px;box-shadow:0 28px 90px rgba(0,0,0,.32);padding:18px;box-sizing:border-box;display:grid;grid-template-rows:auto minmax(180px,42vh) auto auto;gap:12px}
+    .editor-crop-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.editor-crop-head h3{margin:2px 0 3px;font-size:18px}.editor-crop-head p{margin:0;color:#667085;font-size:11px}.editor-crop-close{width:36px;height:36px;flex:0 0 36px;border:1px solid #d0d5dd!important;border-radius:10px!important;background:#fff!important;color:#344054!important;font-size:22px!important;line-height:1!important;padding:0!important;margin:0!important}
+    .editor-crop-preview{background:#101828;border-radius:14px;padding:10px;display:flex;justify-content:center;align-items:center;min-height:0;overflow:hidden}.editor-crop-preview canvas{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain}
+    .editor-crop-controls{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:9px;align-items:end}.editor-crop-control-group,.editor-crop-controls label{display:flex;flex-direction:column;gap:5px;margin:0;font-size:10px;font-weight:750;color:#344054}.editor-crop-controls input{width:100%;accent-color:#0d6efd}.editor-crop-rotate-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.editor-crop-rotate-actions button{border:1px solid #bfdbfe!important;background:#eff6ff!important;color:#2563eb!important;border-radius:8px!important;padding:7px 4px!important;font-size:10px!important;font-weight:700!important;margin:0!important;white-space:nowrap}
+    .editor-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin:0}.editor-crop-secondary,.editor-crop-primary{min-width:110px!important;padding:9px 14px!important;margin:0!important}.editor-crop-primary{background:#0d6efd!important;border-color:#0d6efd!important;color:#fff!important}
+    .editor-summary-field{padding:0}.editor-summary-field textarea{min-height:130px;resize:vertical}
+    .editor-identity-add{min-width:145px!important;width:auto!important;background:#fff!important;font-weight:700!important;color:#344054!important}
+    @media print{body{background:#fff!important}.site-header,.toolbar,.workspace-panel,.mobile-view-switch,#v2-editor>section:first-child,.preview-title,.preview-tools{display:none!important}#v2-editor{display:block!important;margin:0!important;padding:0!important}#v2-editor>section:nth-child(2){display:block!important;width:210mm!important;margin:0 auto!important;padding:0!important}#v2-editor>section:nth-child(2) [data-v2-editor-preview-root]{display:block!important;width:210mm!important;max-width:210mm!important;min-height:297mm!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;overflow:visible!important;background:#fff!important}.v2-preview-stage{display:block!important;width:210mm!important;overflow:visible!important}.v2-preview-stage>[data-v2-template-root]{transform:none!important;margin:0!important;box-shadow:none!important}}
+    @media(max-width:760px){.editor-crop-dialog{width:calc(100vw - 24px);max-height:calc(100vh - 24px);padding:14px;grid-template-rows:auto minmax(170px,34vh) auto auto;gap:10px}.editor-crop-controls{grid-template-columns:1fr 1fr}.editor-crop-control-group{grid-column:1 / -1}.editor-crop-preview canvas{max-height:100%}.editor-crop-actions button{min-width:96px!important}}
+    @media(max-width:1050px) and (min-width:761px){#v2-editor{grid-template-columns:minmax(390px,.95fr) minmax(440px,1.05fr)}.editor-palette{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:760px){.editor-section-banner-tools{align-items:flex-end;gap:5px;flex-wrap:wrap}.editor-sort-control span,.editor-list-style-control span{display:none}.editor-list-style-control select{min-width:82px!important}.editor-palette{grid-template-columns:repeat(4,1fr)}.editor-entry-fields{grid-template-columns:1fr}.editor-entry-field:nth-child(5){grid-column:auto}.editor-identity-grid{grid-template-columns:1fr}.editor-crop-work{grid-template-columns:1fr}.editor-crop-preview canvas{max-height:260px}.editor-photo-layout{align-items:flex-start}.editor-panel-help{text-align:left}}
+
+    @media(max-width:760px){
+      /* Keep section names and Skills/Languages controls on separate rows on narrow screens. */
+      .editor-section-banner{flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:10px!important}
+      .editor-section-title-wrap{width:100%;min-width:0!important}
+      .editor-section-banner-tools{width:100%;min-width:0;display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;gap:8px!important}
+      .editor-section-banner-tools>.editor-list-style-control,.editor-section-banner-tools>.editor-rating-style-control{flex:0 1 auto;min-width:0}
+      .editor-section-banner-tools .editor-section-actions{margin-left:auto;flex:0 0 auto}
+      .toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex;position:fixed;z-index:9999;left:12px;right:12px;top:var(--toolbar-menu-top,120px);width:auto;min-width:0;max-width:calc(100vw - 24px);max-height:calc(100dvh - var(--toolbar-menu-top,120px) - 16px);overflow-x:hidden;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 16px 40px rgba(16,24,40,.28);padding:10px;flex-direction:column;align-items:stretch;gap:8px;overscroll-behavior:contain}.toolbar-menu[open] .toolbar-secondary button{width:100%;min-height:42px;text-align:left;white-space:normal}.toolbar{position:relative}.workspace-menu>summary{display:block;padding:2px 0 8px}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex;width:100%;margin-top:6px}.workspace-menu[open] .workspace-actions button{flex:1 1 auto}
+      .mobile-view-switch{display:flex;position:sticky;top:8px;z-index:20}
+      #v2-editor{grid-template-columns:1fr}#v2-editor>section{min-height:0}[data-v2-editor-preview-root]{flex:none;padding:10px;overflow-x:hidden}.v2-preview-stage{max-width:100%;}
+      #v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}
+      #v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}
+      [data-v2-editor-form]{max-height:none;padding:12px}
+      .toolbar{padding:10px;gap:7px}.toolbar label{display:none}.toolbar select{flex:1;min-width:180px}.status{width:100%;margin-left:0}
+      .workspace-panel{padding:10px}.workspace-actions{width:100%;overflow:auto}.workspace-actions button{flex:0 0 auto}.header-product-label{display:none}.editor-photo-body{align-items:flex-start}
+      .editor-section-head,.editor-entry-head,.editor-field-head{align-items:flex-start}.editor-section-title{flex-direction:column;align-items:stretch}.editor-section-title span{white-space:normal}.editor-inline-actions{flex-shrink:0}
+      .editor-inline-action{padding:5px 6px!important}
+    }
+    @media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff!important;margin:0!important;padding:0!important}
+  .site-header,.toolbar,.workspace-panel,.mobile-view-switch,#v2-editor>section:first-child,.preview-title,.preview-tools{display:none!important}
+  .app-shell,#v2-editor,#v2-editor>section:nth-child(2),[data-v2-editor-preview-root]{display:block!important;width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:#fff!important;overflow:visible!important}
+  .v2-preview-stage{display:block!important;width:210mm!important;margin:0!important;padding:0!important;overflow:visible!important}
+  .v2-preview-stage>[data-v2-template-root]{transform:none!important;margin:0!important;box-shadow:none!important}
+}
+
+    /* Mobile More menu stays in document flow: an open floating panel must
+       never sit above the editor, preview tabs, or version-history controls. */
+    @media(max-width:760px){
+      .toolbar-menu[open]{display:flex;flex:1 0 100%;width:100%;flex-direction:column;align-items:stretch;position:static}
+      .toolbar-menu[open]>summary{align-self:flex-start}
+      .toolbar-menu[open] .toolbar-secondary{
+        display:flex!important;position:static!important;inset:auto!important;top:auto!important;left:auto!important;right:auto!important;
+        z-index:auto!important;width:100%!important;min-width:0!important;max-width:none!important;max-height:none!important;
+        overflow:visible!important;flex-direction:column;align-items:stretch;gap:8px;
+        background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;
+        box-shadow:0 8px 22px rgba(16,24,40,.12);overscroll-behavior:auto
+      }
+      .toolbar-menu[open] .toolbar-secondary button{width:100%;min-height:42px;text-align:left;white-space:normal}
+    }
+  
+    [data-cv-editor="v2"] .editor-section-library{margin:16px 0;border:1px solid var(--border);border-radius:14px;background:var(--surface);overflow:hidden}
+    [data-cv-editor="v2"] .editor-section-library>summary{cursor:pointer;list-style:none;padding:14px 16px;font-weight:700;color:var(--brand-dark);background:var(--soft)}
+    [data-cv-editor="v2"] .editor-section-library>summary::-webkit-details-marker{display:none}
+    [data-cv-editor="v2"] .editor-section-library-content{padding:14px;display:grid;gap:14px}
+    [data-cv-editor="v2"] .editor-section-library-content>p{margin:0;color:var(--muted);font-size:13px}
+    [data-cv-editor="v2"] .editor-section-library-filters{display:grid;grid-template-columns:minmax(0,2fr) minmax(160px,1fr);gap:10px}
+    [data-cv-editor="v2"] .editor-section-library-filters label{display:grid;gap:5px;font-size:12px;font-weight:600}
+    [data-cv-editor="v2"] .editor-section-library-filters input,[data-cv-editor="v2"] .editor-section-library-filters select{width:100%;min-height:40px;border:1px solid var(--border);border-radius:9px;padding:8px 10px;background:var(--surface);color:var(--ink)}
+    [data-cv-editor="v2"] .editor-section-library-results{display:grid;gap:16px}
+    [data-cv-editor="v2"] .editor-section-library-category{display:grid;gap:9px}
+    [data-cv-editor="v2"] .editor-section-library-category h4{margin:0;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    [data-cv-editor="v2"] .editor-section-library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    [data-cv-editor="v2"] .editor-section-library-card{display:flex;flex-direction:column;align-items:stretch;gap:8px;border:1px solid var(--border);border-radius:12px;padding:12px;min-width:0;background:var(--surface)}
+    [data-cv-editor="v2"] .editor-section-library-card-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    [data-cv-editor="v2"] .editor-section-library-card-heading strong{font-size:13px;line-height:1.4}
+    [data-cv-editor="v2"] .editor-section-library-priority{font-size:10px;border-radius:5px;padding:3px 5px;background:var(--surface-muted);color:var(--muted);white-space:nowrap}
+    [data-cv-editor="v2"] .editor-section-library-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
+    [data-cv-editor="v2"] .editor-section-library-card small{color:var(--muted);font-size:11px}
+    [data-cv-editor="v2"] .editor-section-library-add{margin-top:auto;min-height:38px;border:1px solid var(--border);border-radius:9px;padding:8px 10px;background:var(--soft);color:var(--brand-dark);font-weight:700;cursor:pointer}
+    [data-cv-editor="v2"] .editor-section-library-card[hidden],[data-cv-editor="v2"] .editor-section-library-category[hidden],[data-cv-editor="v2"] .editor-section-library-empty[hidden]{display:none!important}
+    @media(max-width:600px){[data-cv-editor="v2"] .editor-section-library-grid{grid-template-columns:minmax(0,1fr)}[data-cv-editor="v2"] .editor-section-library-filters{grid-template-columns:minmax(0,1fr)}[data-cv-editor="v2"] .editor-section-library-content{padding:10px}}
+
+  
+    [data-cv-editor="v2"] .editor-section-library-field-management{display:grid;gap:8px;margin:4px 0 12px;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--soft)}
+    [data-cv-editor="v2"] .editor-section-library-field-management>strong{font-size:12px}
+    [data-cv-editor="v2"] .editor-section-library-field-list{display:grid;gap:6px}
+    [data-cv-editor="v2"] .editor-section-library-field-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;border-radius:8px;background:var(--surface)}
+    [data-cv-editor="v2"] .editor-section-library-field-row>span{font-size:12px;font-weight:600;min-width:0;overflow-wrap:anywhere}
+    [data-cv-editor="v2"] .editor-section-library-field-row>div{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+    [data-cv-editor="v2"] .editor-section-library-field-row button{min-width:30px;min-height:30px;padding:4px 6px}
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div><div class="brand">eStudent.pk — CV Builder V2</div><div class="subbrand">Create, edit and preview your professional CV online</div></div>
+      <div class="header-product-label">Professional CV Builder</div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <div class="toolbar">
+      <a href="./templates.html" style="font-weight:700;color:#0d6efd;text-decoration:none">Template Gallery</a><label for="template-select">Template</label>
+      <select id="template-select" aria-label="CV template"></select>
+      <button type="button" class="primary" id="print-btn">Export PDF</button>
+      <button type="button" id="share-btn">Share</button>
+      <button type="button" class="primary" id="save-btn">Save CV</button>
+      <details class="toolbar-menu">
+        <summary aria-label="More CV tools">More</summary>
+        <div class="toolbar-secondary">
+          <button type="button" id="recover-btn">Recover</button>
+          <button type="button" id="clear-recovery-btn" class="secondary-action">Clear Recovery</button>
+          <button type="button" id="resume-intelligence-btn">Resume Intelligence</button>
+          <button type="button" id="career-tools-btn">Career Tools</button>
+        </div>
+      </details>
+      <span class="status" id="app-status" aria-live="polite">Starting V2…</span>
+    </div>
+
+    <section class="workspace-panel" aria-label="CV Workspace">
+      <div class="workspace-head">
+        <div><strong>My CV Workspace</strong><span id="workspace-profile-status">One Master Profile</span></div>
+        <details class="workspace-menu" open>
+          <summary>Workspace actions</summary>
+          <div class="workspace-actions">
+            <button type="button" id="new-cv-btn" class="primary">New CV</button>
+            <button type="button" id="duplicate-cv-btn">Duplicate</button>
+            <button type="button" id="rename-cv-btn">Rename</button>
+            <button type="button" id="archive-cv-btn">Archive</button>
+          </div>
+        </details>
+      </div>
+      <div id="cv-document-list" class="cv-document-list"></div>
+      <div id="cv-version-history" class="cv-version-history" hidden></div>
+    </section>
+
+    <div class="mobile-view-switch" role="tablist" aria-label="CV workspace view">
+      <button type="button" class="active" id="mobile-edit-tab" role="tab" aria-selected="true">Edit CV</button>
+      <button type="button" id="mobile-preview-tab" role="tab" aria-selected="false">Preview CV</button>
+    </div>
+
+    <div id="v2-editor" data-v2-editor-root>
+      <section>
+        <div class="preview-title">CV Editor</div>
+        <div data-v2-editor-form></div>
+        <div data-v2-editor-save-status hidden></div>
+        <div data-v2-editor-autosave-status hidden></div>
+        <div data-v2-editor-recovery-status hidden></div>
+      </section>
+      <section>
+        <div class="preview-title">Live A4 Preview</div>
+        <div class="preview-tools" aria-label="Preview controls">
+          <button type="button" id="preview-prev">Previous</button>
+          <button type="button" id="preview-next">Next</button>
+          <select id="preview-page-select" aria-label="Preview page"></select>
+          <span class="preview-page-label" id="preview-page-label">Page 1</span>
+          <button type="button" id="zoom-out">−</button>
+          <button type="button" id="zoom-reset">100%</button>
+          <button type="button" id="zoom-in">+</button>
+          <select id="variant-select" aria-label="Presentation variant">
+            <option value="">Default presentation</option>
+            <option value="compact">Compact</option>
+            <option value="classic">Classic</option>
+            <option value="academic">Academic</option>
+            <option value="creative">Creative</option>
+          </select>
+        </div>
+        <div data-v2-editor-preview-root></div>
+      </section>
+    </div>
+
+    <div class="tool-modal" id="resume-intelligence-modal" hidden role="dialog" aria-modal="true" aria-labelledby="resume-intelligence-title">
+      <div class="tool-modal-card">
+        <div class="tool-modal-head"><strong id="resume-intelligence-title">Resume Intelligence</strong><button type="button" data-close-tool-modal="resume-intelligence-modal" aria-label="Close">×</button></div>
+        <div id="cv-intelligence-root"></div>
+      </div>
+    </div>
+    <div class="tool-modal" id="career-tools-modal" hidden role="dialog" aria-modal="true" aria-labelledby="career-tools-title">
+      <div class="tool-modal-card tool-modal-wide">
+        <div class="tool-modal-head"><strong id="career-tools-title">Career Tools</strong><button type="button" data-close-tool-modal="career-tools-modal" aria-label="Close">×</button></div>
+        <div id="cv-final-product-root"></div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { mountV2ProductionEntry } from './src/application/v2-production-entry.js?v=20261011.11';
+    import { listNativeV2Templates } from './src/templates/v2-native-template-catalog.js?v=20261010.4';
+    import { createCVWorkspaceController } from './src/ui/cv-workspace-controller.js';
+    import { createCVEditorPreviewNavigation } from './src/application/cv-editor-preview-navigation.js';
+    import { createCVEditorPreviewPageSelector } from './src/application/cv-editor-preview-page-selector.js';
+    import { createCVEditorZoomController } from './src/application/cv-editor-zoom-controller.js';
+    import { createCVEditorAccessibilityAnnouncer } from './src/application/cv-editor-accessibility-announcer.js';
+
+    const templates = listNativeV2Templates();
+    const initialProfile = {
+      careerData: {
+        assets: [],
+        identity: { fullName:'Ali Khan', jobTitle:'Software Engineer', email:'ali.khan@example.com', phone:'+92 300 1234567', location:'Lahore, Pakistan' },
+        sections: [
+          {id:'summary',type:'summary',title:'Professional Summary',visibility:true,fields:[{id:'summaryText',type:'textarea',label:'Summary',value:'Software Engineer with 4+ years of experience building reliable web applications, improving user experiences, and delivering measurable product improvements. Strong in JavaScript, API integration, debugging, and cross-functional collaboration.',visibility:true}],entries:[],repeatable:false},
+          {id:'experience',type:'experience',title:'Experience',visibility:true,fields:[],entries:[
+            {id:'experience-1',values:{role:'Software Engineer',company:'Tech Solutions Ltd.',startDate:'2023-01',endDate:'',description:'Built and maintained customer-facing web features, improved page performance, and collaborated with design and product teams to ship reliable releases.'},visibility:true,order:0},
+            {id:'experience-2',values:{role:'Junior Software Engineer',company:'Digital Works',startDate:'2021-01',endDate:'2023-01',description:'Developed responsive interfaces, integrated REST APIs, and resolved production issues while contributing to automated testing and code reviews.'},visibility:true,order:1}
+          ],repeatable:true},
+          {id:'education',type:'education',title:'Education',visibility:true,fields:[],entries:[{id:'education-1',values:{degree:'BS Computer Science',institution:'University of Lahore',dates:'2017 — 2021'},visibility:true,order:0}],repeatable:true},
+          {id:'skills',type:'skills',title:'Skills',visibility:true,fields:[],entries:[{id:'skill-1',values:{skill:'JavaScript',proficiency:5},visibility:true,order:0},{id:'skill-2',values:{skill:'HTML',proficiency:4},visibility:true,order:1},{id:'skill-3',values:{skill:'CSS',proficiency:4},visibility:true,order:2},{id:'skill-4',values:{skill:'REST APIs',proficiency:4},visibility:true,order:3},{id:'skill-5',values:{skill:'Git',proficiency:4},visibility:true,order:4},{id:'skill-6',values:{skill:'Testing',proficiency:3},visibility:true,order:5},{id:'skill-7',values:{skill:'Problem Solving',proficiency:5},visibility:true,order:6},{id:'skill-8',values:{skill:'Team Collaboration',proficiency:4},visibility:true,order:7}],repeatable:true},
+          {id:'languages',type:'languages',title:'Languages',visibility:true,fields:[],entries:[{id:'language-1',values:{language:'English',proficiency:5},visibility:true,order:0},{id:'language-2',values:{language:'Urdu',proficiency:5},visibility:true,order:1}],repeatable:true}
+        ]
+      },
+    cvData: {
+      title:'My CV',
+      configuration:{template:{id:'t01-modern-minimalist-cv-design_modern',version:'2.0.0'}}
+    }
+    };
+
+    const toolbarMenu = document.querySelector('.toolbar-menu');
+    const syncToolbarMenu = () => {
+      if (!toolbarMenu) return;
+      if (window.matchMedia('(max-width: 760px)').matches) toolbarMenu.removeAttribute('open');
+      else toolbarMenu.setAttribute('open', '');
+    };
+    syncToolbarMenu();
+    window.addEventListener('resize', syncToolbarMenu);
+    const positionMobileToolbarMenu = () => {
+      if (!toolbarMenu || !toolbarMenu.open || !window.matchMedia('(max-width: 760px)').matches) return;
+      const summary = toolbarMenu.querySelector('summary');
+      if (!summary) return;
+      const rect = summary.getBoundingClientRect();
+      const top = Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - 120));
+      toolbarMenu.style.setProperty('--toolbar-menu-top', top + 'px');
+    };
+    toolbarMenu?.addEventListener('toggle', positionMobileToolbarMenu);
+    window.addEventListener('resize', positionMobileToolbarMenu, {passive:true});
+    window.addEventListener('scroll', positionMobileToolbarMenu, {passive:true, capture:true});
+
+    const root = document.querySelector('#v2-editor');
+    const status = document.querySelector('#app-status');
+    const reportBootError = error => {
+      const message = String(error?.message || error || 'Unknown startup error');
+      status.textContent = 'V2 startup error: ' + message;
+      console.error('[CV Builder V2] startup error:', error);
+    };
+    window.addEventListener('error', event => {
+      if (event?.error) reportBootError(event.error);
+    });
+    window.addEventListener('unhandledrejection', event => {
+      if (event?.reason) reportBootError(event.reason);
+    });
+    const sanitizeStoredJson = (key) => {
+      try { const raw=window.localStorage.getItem(key); if(raw) JSON.parse(raw); }
+      catch(error){ window.localStorage.removeItem(key); console.warn('[CV Builder V2] Removed invalid saved data:', key); }
+    };
+    sanitizeStoredJson('estudent_cv_builder_v2_2027');
+    sanitizeStoredJson('estudent_cv_workspace_v2_2027');
+
+    const previewRoot = document.querySelector('[data-v2-editor-preview-root]');
+    const editorGrid = document.querySelector('#v2-editor');
+    const editorPanel = editorGrid?.children?.[0];
+    const previewPanel = editorGrid?.children?.[1];
+    const syncEditorPanelHeight = () => {
+      if (!editorPanel || !previewPanel) return;
+      if (window.matchMedia('(max-width: 760px)').matches) {
+        editorPanel.style.maxHeight = '';
+        editorPanel.style.overflow = '';
+        return;
+      }
+      const height = Math.round(previewPanel.getBoundingClientRect().height);
+      if (height > 0) {
+        editorPanel.style.maxHeight = height + 'px';
+        editorPanel.style.overflowY = 'auto';
+        editorPanel.style.overflowX = 'hidden';
+      }
+    };
+    window.addEventListener('resize', syncEditorPanelHeight);
+    const editorHeightObserver = typeof ResizeObserver === 'function' && previewPanel
+      ? new ResizeObserver(syncEditorPanelHeight)
+      : null;
+    editorHeightObserver?.observe(previewPanel);
+
+    const previewPageSelect = document.querySelector('#preview-page-select');
+    const previewPageLabel = document.querySelector('#preview-page-label');
+    const templateSelect = document.querySelector('#template-select');
+    const previewFetcher = async (requestPath) => {
+      const localPath = String(requestPath).replace(/^\/+/, '');
+      return fetch(new URL('./' + localPath, document.baseURI));
+    };
+
+    const runtime = mountV2ProductionEntry(document, {
+      rootSelector:'#v2-editor',
+      input:{
+        profileData:{careerData:initialProfile.careerData},
+        cvData:initialProfile.cvData,
+        targetedCV:initialProfile.targetedCV,
+        preview:true,
+        previewOptions:{fetcher:previewFetcher},
+        persistence:{storage:window.localStorage,key:'estudent_cv_builder_v2_2027',autoRecover:true}
+      }
+    });
+
+
+    const previewNavigation = createCVEditorPreviewNavigation({
+      document,
+      previewContainer: previewRoot
+    });
+    const previewSelector = createCVEditorPreviewPageSelector({container: previewRoot});
+    const zoomController = createCVEditorZoomController({container: previewRoot});
+    const accessibilityAnnouncer = createCVEditorAccessibilityAnnouncer({document});
+    document.body.appendChild(accessibilityAnnouncer.node);
+    const previewTools = document.querySelector('.preview-tools');
+    previewTools.insertBefore(previewNavigation.controls, previewPageSelect);
+    previewNavigation.controls.querySelectorAll('button').forEach(button => button.style.display = 'none');
+
+    syncEditorPanelHeight();
+
+    const refreshPreviewControls = () => {
+      const templateRoot = previewRoot.querySelector('[data-v2-template-root]');
+      if (templateRoot && !previewRoot.querySelector('[data-page-number]')) {
+        templateRoot.setAttribute('data-page-number', '1');
+      }
+      const pages = [...previewRoot.querySelectorAll('[data-page-number]')];
+      const current = previewSelector.get();
+      previewPageSelect.replaceChildren(...pages.map(page => {
+        const option = document.createElement('option');
+        option.value = page.getAttribute('data-page-number');
+        option.textContent = 'Page ' + option.value;
+        option.selected = Number(option.value) === current;
+        return option;
+      }));
+      const pageCount = pages.length || 1;
+      previewPageLabel.textContent = 'Page ' + current + ' of ' + pageCount;
+      const previousButton = document.querySelector('#preview-prev');
+      const nextButton = document.querySelector('#preview-next');
+      previousButton.disabled = current <= 1;
+      nextButton.disabled = current >= pageCount;
+      previewPageSelect.disabled = pageCount <= 1;
+      previousButton.setAttribute('aria-label', 'Previous preview page');
+      nextButton.setAttribute('aria-label', 'Next preview page');
+    };
+    const showPage = page => {
+      previewSelector.select(page);
+      previewNavigation.show(page);
+      refreshPreviewControls();
+      accessibilityAnnouncer.announce('Preview page ' + previewSelector.get() + ' selected.');
+    };
+    document.querySelector('#preview-prev').addEventListener('click', () => showPage(previewSelector.get()-1));
+    document.querySelector('#preview-next').addEventListener('click', () => showPage(previewSelector.get()+1));
+    previewPageSelect.addEventListener('change', () => showPage(Number(previewPageSelect.value)));
+    document.querySelector('#zoom-out').addEventListener('click', () => {
+      zoomController.zoomOut();
+      document.querySelector('#zoom-reset').textContent = Math.round(zoomController.get()*100) + '%';
+      accessibilityAnnouncer.announce('Preview zoom ' + Math.round(zoomController.get()*100) + ' percent.');
+    });
+    document.querySelector('#zoom-in').addEventListener('click', () => {
+      zoomController.zoomIn();
+      document.querySelector('#zoom-reset').textContent = Math.round(zoomController.get()*100) + '%';
+      accessibilityAnnouncer.announce('Preview zoom ' + Math.round(zoomController.get()*100) + ' percent.');
+    });
+    document.querySelector('#zoom-reset').addEventListener('click', () => {
+      zoomController.reset();
+      document.querySelector('#zoom-reset').textContent = '100%';
+      accessibilityAnnouncer.announce('Preview zoom reset to 100 percent.');
+    });
+    document.querySelector('#variant-select').addEventListener('change', event => {
+      const variant = event.target.value || null;
+      runtime.surface.dispatch({
+        type:'set-variant',
+        target:{},
+        payload:{variant}
+      });
+      status.textContent = variant ? 'Presentation variant updated.' : 'Default presentation restored.';
+      accessibilityAnnouncer.announce(status.textContent);
+    });
+    const previewObserver = new MutationObserver(() => refreshPreviewControls());
+    previewObserver.observe(previewRoot,{childList:true,subtree:true});
+    const mobileEditTab=document.querySelector('#mobile-edit-tab');
+    const mobilePreviewTab=document.querySelector('#mobile-preview-tab');
+    const fitMobilePreview=()=>{
+      if(window.innerWidth>760) return;
+      const templateRoot=previewRoot.querySelector('[data-v2-template-root]');
+      if(!templateRoot) return;
+      const available=Math.max(240,previewRoot.clientWidth-20);
+      const nativeWidth=Math.max(1,templateRoot.getBoundingClientRect().width / Math.max(zoomController.get(),0.01));
+      zoomController.set(Math.max(.5,Math.min(1,available/nativeWidth)));
+      document.querySelector('#zoom-reset').textContent=Math.round(zoomController.get()*100)+'%';
+    };
+    const setMobileView=view=>{
+      document.querySelector('#v2-editor').setAttribute('data-mobile-view',view);
+      mobileEditTab.classList.toggle('active',view==='edit'); mobilePreviewTab.classList.toggle('active',view==='preview');
+      mobileEditTab.setAttribute('aria-selected',String(view==='edit')); mobilePreviewTab.setAttribute('aria-selected',String(view==='preview'));
+      if(view==='preview'){ refreshPreviewControls(); requestAnimationFrame(fitMobilePreview); }
+    };
+    mobileEditTab.addEventListener('click',()=>setMobileView('edit'));
+    mobilePreviewTab.addEventListener('click',()=>setMobileView('preview'));
+    setMobileView('edit');
+    window.addEventListener('resize',()=>{ if(document.querySelector('#v2-editor').getAttribute('data-mobile-view')==='preview') fitMobilePreview(); });
+
+
+    window.eStudentCVBuilderV2 = runtime;
+
+    // Secondary tools are lazy-loaded only when opened, keeping the main editor compact and reducing boot work.
+    let intelligenceLoaded=false, careerToolsLoaded=false;
+    const openModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=false; document.body.style.overflow='hidden'; } };
+    const closeModal = id => { const modal=document.querySelector('#'+id); if(modal){ modal.hidden=true; if(!document.querySelector('.tool-modal:not([hidden])')) document.body.style.overflow=''; } };
+    document.querySelector('#resume-intelligence-btn').addEventListener('click', async () => {
+      const button=document.querySelector('#resume-intelligence-btn');
+      openModal('resume-intelligence-modal');
+      if(intelligenceLoaded) return;
+      button.disabled=true; button.textContent='Opening…';
+      document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Resume Intelligence…</div>';
+      try {
+        const { createCVEditorIntelligenceProduct } = await import('./src/ui/cv-editor-intelligence-product.js');
+        runtime.tools.intelligenceProduct = createCVEditorIntelligenceProduct({document,runtime,container:document.querySelector('#cv-intelligence-root')});
+        intelligenceLoaded=true; button.textContent='Resume Intelligence';
+      } catch(error){ document.querySelector('#cv-intelligence-root').innerHTML='<div class="tool-modal-error">Resume Intelligence could not be loaded. Please try again.</div>'; console.error('[CV Builder V2] Resume Intelligence failed to load:',error); }
+      finally { button.disabled=false; if(!intelligenceLoaded) button.textContent='Resume Intelligence'; }
+    });
+    document.querySelector('#career-tools-btn').addEventListener('click', async () => {
+      const button=document.querySelector('#career-tools-btn');
+      openModal('career-tools-modal');
+      if(careerToolsLoaded) return;
+      button.disabled=true; button.textContent='Opening…';
+      document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-loading" role="status">Preparing Career Tools…</div>';
+      try {
+        const { createCVFinalProductHub } = await import('./src/ui/cv-final-product-hub.js');
+        runtime.tools.finalProductHub = createCVFinalProductHub({document,runtime,container:document.querySelector('#cv-final-product-root')});
+        careerToolsLoaded=true; button.textContent='Career Tools';
+      } catch(error){ const message=String(error?.message||error||'Unknown error'); document.querySelector('#cv-final-product-root').innerHTML='<div class="tool-modal-error">Career Tools could not be loaded: '+message.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</div>'; console.error('[CV Builder V2] Career Tools failed to load:',error); }
+      finally { button.disabled=false; if(!careerToolsLoaded) button.textContent='Career Tools'; }
+    });
+    document.querySelectorAll('[data-close-tool-modal]').forEach(button => button.addEventListener('click',()=>closeModal(button.getAttribute('data-close-tool-modal'))));
+    document.querySelectorAll('.tool-modal').forEach(modal => modal.addEventListener('click',event=>{ if(event.target===modal) closeModal(modal.id); }));
+
+    // Keep the mobile More menu transient: dismiss it on outside interaction,
+    // after choosing an action, when another details menu opens, or with Escape.
+    const workspaceMenu = document.querySelector('.workspace-menu');
+    const isCompactToolbar = () => window.matchMedia('(max-width: 760px)').matches;
+    // Start collapsed on mobile; keep tools inline on desktop where the More
+    // summary is hidden. This prevents the fixed mobile panel blocking the page.
+    if (toolbarMenu) toolbarMenu.open = !isCompactToolbar();
+    const closeToolbarMenu = () => { if (isCompactToolbar() && toolbarMenu?.open) toolbarMenu.open = false; };
+    const closeWorkspaceMenu = () => { if (workspaceMenu?.open) workspaceMenu.open = false; };
+    toolbarMenu?.addEventListener('click', event => {
+      if (event.target.closest('button')) closeToolbarMenu();
+    });
+    // Close menus after the target click handler runs so layout changes cannot steal the click.
+    document.addEventListener('click', event => {
+      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
+      if (workspaceMenu && !workspaceMenu.contains(event.target) && window.matchMedia('(max-width: 760px)').matches) closeWorkspaceMenu();
+    });
+    window.addEventListener('resize', () => {
+      if (isCompactToolbar()) closeToolbarMenu();
+      else if (toolbarMenu) toolbarMenu.open = true;
+    });
+    toolbarMenu?.addEventListener('toggle', () => {
+      if (toolbarMenu.open && window.matchMedia('(max-width: 760px)').matches) closeWorkspaceMenu();
+    });
+    workspaceMenu?.addEventListener('toggle', () => {
+      if (workspaceMenu.open && window.matchMedia('(max-width: 760px)').matches) closeToolbarMenu();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeToolbarMenu();
+        closeWorkspaceMenu();
+      }
+    });
+    document.addEventListener('keydown',event=>{ if(event.key==='Escape') document.querySelectorAll('.tool-modal:not([hidden])').forEach(modal=>closeModal(modal.id)); });
+
+    const workspace = createCVWorkspaceController({
+      surface: runtime.surface,
+      storage: window.localStorage,
+      storageKey: 'estudent_cv_workspace_v2_2027'
+    });
+
+    const documentList = document.querySelector('#cv-document-list');
+    const versionHistory = document.querySelector('#cv-version-history');
+    let versionHistoryExpanded = false;
+    let showAllVersions = false;
+    const renderWorkspace = () => {
+      const state = workspace.getState();
+      documentList.replaceChildren(...state.documents.map(cvDocument => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cv-document' + (cvDocument.id === state.activeDocumentId ? ' active' : '') + (cvDocument.status === 'archived' ? ' archived' : '');
+        button.innerHTML = '<div class="cv-document-title"></div><div class="cv-document-meta"></div>';
+        button.querySelector('.cv-document-title').textContent = cvDocument.title || 'Untitled CV';
+        button.querySelector('.cv-document-meta').textContent = cvDocument.status === 'archived' ? 'Archived' : 'Active CV';
+        button.addEventListener('click', () => {
+          try { workspace.switchDocument(cvDocument.id); renderWorkspace(); renderVersions(cvDocument.id); status.textContent = 'CV switched.'; }
+          catch (error) { status.textContent = 'Switch failed: ' + (error?.message || error); }
+        });
+        return button;
+      }));
+    };
+    const renderVersions = (documentId) => {
+      const versions = workspace.getVersions(documentId);
+      versionHistory.replaceChildren();
+      // Keep Version History discoverable even for a new CV with no snapshots.
+      versionHistory.hidden = false;
+
+      const head = document.createElement('div');
+      head.className = 'cv-version-history-head';
+      const title = document.createElement('strong');
+      title.textContent = 'Version History (' + versions.length + ')';
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.textContent = versionHistoryExpanded ? 'Hide history' : 'View history';
+      toggle.setAttribute('aria-expanded', String(versionHistoryExpanded));
+      toggle.addEventListener('click', () => {
+        versionHistoryExpanded = !versionHistoryExpanded;
+        if (!versionHistoryExpanded) showAllVersions = false;
+        renderVersions(documentId);
+      });
+      head.append(title, toggle);
+      versionHistory.appendChild(head);
+      if (!versionHistoryExpanded) return;
+      if (!versions.length) {
+        const empty = document.createElement('p');
+        empty.className = 'cv-version-empty';
+        empty.textContent = 'No saved versions yet. Select Save CV to create your first version.';
+        versionHistory.appendChild(empty);
+        return;
+      }
+
+      const list = document.createElement('div');
+      list.className = 'cv-version-list';
+      const visibleVersions = showAllVersions ? versions : versions.slice(0, 3);
+      visibleVersions.forEach(version => {
+        const row = document.createElement('div');
+        row.className = 'cv-version-item';
+        const label = document.createElement('span');
+        label.textContent = (version.title || 'CV') + ' — ' + new Date(version.createdAt).toLocaleString();
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = 'Restore';
+        button.addEventListener('click', () => {
+          if (!window.confirm('Restore this saved CV version? Your current editor state will be kept as a recovery version before restoring.')) return;
+          try {
+            workspace.restoreVersion(documentId, version.id);
+            showAllVersions = false;
+            renderWorkspace(); renderVersions(documentId);
+            status.textContent = 'Previous CV version restored. Your previous editor state was preserved in history.';
+          } catch (error) { status.textContent = 'Version restore failed: ' + (error?.message || error); }
+        });
+        row.append(label, button); list.appendChild(row);
+      });
+      versionHistory.appendChild(list);
+      if (versions.length > 3 && !showAllVersions) {
+        const more = document.createElement('button');
+        more.type = 'button';
+        more.className = 'cv-version-more';
+        more.textContent = 'View all ' + versions.length + ' versions';
+        more.addEventListener('click', () => { showAllVersions = true; renderVersions(documentId); });
+        versionHistory.appendChild(more);
+      }
+    };
+    document.querySelector('#new-cv-btn').addEventListener('click', () => {
+      const title = window.prompt('CV name', 'New CV');
+      if (title === null) return;
+      try { workspace.createDocument(title.trim() || 'New CV'); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'New CV created.'; }
+      catch (error) { status.textContent = 'Create failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#duplicate-cv-btn').addEventListener('click', () => {
+      try { workspace.duplicateDocument(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV duplicated.'; }
+      catch (error) { status.textContent = 'Duplicate failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#rename-cv-btn').addEventListener('click', () => {
+      const current = workspace.getActiveDocument()?.title || 'CV';
+      const title = window.prompt('CV name', current);
+      if (title === null) return;
+      try { workspace.renameActive(title.trim() || current); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV renamed.'; }
+      catch (error) { status.textContent = 'Rename failed: ' + (error?.message || error); }
+    });
+    document.querySelector('#archive-cv-btn').addEventListener('click', () => {
+      if (!window.confirm('Archive the active CV?')) return;
+      try { workspace.archiveActive(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV archived.'; }
+      catch (error) { status.textContent = 'Archive failed: ' + (error?.message || error); }
+    });
+
+
+    templates.forEach(template => {
+      const option = document.createElement('option');
+      option.value = template.id;
+      option.textContent = template.name;
+      templateSelect.appendChild(option);
+    });
+
+    const requestedTemplateId = new URLSearchParams(window.location.search).get('template');
+    if (requestedTemplateId && templates.some(item => item.id === requestedTemplateId)) {
+      runtime.surface.dispatch({
+        type:'set-template',
+        target:{},
+        payload:{templateId:requestedTemplateId,version:templates.find(item => item.id === requestedTemplateId).version}
+      });
+    }
+    const currentTemplate = runtime.surface.getState().session.application.targetedCV.configuration.template?.id;
+    templateSelect.value = currentTemplate || templates[0]?.id || '';
+
+    templateSelect.addEventListener('change', () => {
+      const template = templates.find(item => item.id === templateSelect.value);
+      if (!template) return;
+      runtime.surface.dispatch({
+        type:'set-template',
+        target:{},
+        payload:{templateId:template.id,version:template.version}
+      });
+      status.textContent = 'Template updated — preview refreshing…';
+    });
+
+    document.querySelector('#share-btn').addEventListener('click', async () => {
+      const shareUrl = window.location.href;
+      const shareData = {
+        title: 'eStudent.pk CV Builder V2',
+        text: 'Create and edit a professional CV with eStudent.pk CV Builder V2.',
+        url: shareUrl
+      };
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+          status.textContent = 'Share sheet opened.';
+        } else if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(shareUrl);
+          status.textContent = 'CV Builder link copied. You can share it with others.';
+        } else {
+          window.prompt('Copy this CV Builder link to share:', shareUrl);
+          status.textContent = 'Copy the link to share CV Builder.';
+        }
+      } catch (error) {
+        if (error?.name !== 'AbortError') {
+          status.textContent = 'Sharing was unavailable. You can copy the page link from the address bar.';
+        }
+      }
+    });
+
+    document.querySelector('#save-btn').addEventListener('click', () => {
+      try { runtime.save(); workspace.save(); renderWorkspace(); renderVersions(workspace.getState().activeDocumentId); status.textContent = 'CV saved locally.'; }
+      catch (error) { status.textContent = 'Save failed: ' + (error?.message || error); }
+    });
+
+    document.querySelector('#recover-btn').addEventListener('click', () => {
+      try { runtime.recover(); status.textContent = 'Recovery check completed.'; }
+      catch (error) { status.textContent = 'Recovery failed: ' + (error?.message || error); }
+    });
+
+    document.querySelector('#clear-recovery-btn').addEventListener('click', () => {
+      try { runtime.clearRecovery(); status.textContent = 'Saved recovery snapshot cleared.'; }
+      catch (error) { status.textContent = 'Clear failed: ' + (error?.message || error); }
+    });
+
+    document.querySelector('#print-btn').addEventListener('click', () => {
+      const preview=document.querySelector('[data-v2-editor-preview-root]');
+      const templateRoot=preview?.querySelector('[data-v2-template-root]');
+      if(!templateRoot){window.print();return;}
+      const printWindow=window.open('', '_blank', 'width=1000,height=900');
+      if(!printWindow){window.print();return;}
+      const clone=templateRoot.cloneNode(true);
+      clone.querySelectorAll('[contenteditable]').forEach(node=>node.removeAttribute('contenteditable'));
+      clone.querySelectorAll('[data-v2-preview-edit],[data-v2-preview-target]').forEach(node=>{
+        node.removeAttribute('data-v2-preview-edit');node.removeAttribute('data-v2-preview-target');
+      });
+      const templateStyles=[...templateRoot.querySelectorAll('style')].map(style=>style.outerHTML).join('');
+      printWindow.document.open();
+      printWindow.document.write('<!doctype html><html><head><meta charset="utf-8"><title>CV — Print</title><style>@page{size:A4;margin:0}html,body{margin:0;padding:0;background:#fff}body{width:210mm;min-height:297mm}.print-cv{width:210mm;margin:0 auto}.print-cv [data-v2-template-root]{box-shadow:none!important;transform:none!important;margin:0!important}</style>'+templateStyles+'</head><body><main class="print-cv">'+clone.outerHTML+'</main></body></html>');
+      printWindow.document.close();
+      const doPrint=()=>{printWindow.focus();printWindow.print();};
+      if(printWindow.document.fonts?.ready) printWindow.document.fonts.ready.then(()=>setTimeout(doPrint,80)); else setTimeout(doPrint,250);
+    });
+
+    const initialActive = workspace.getState().activeDocumentId;
+    if (workspace.hasStoredWorkspace()) {
+      try {
+        if (!runtime.persistence?.hasRecovery?.()) workspace.switchDocument(initialActive);
+        else workspace.save();
+      } catch { /* preserve the current editor/recovery state */ }
+    }
+    renderWorkspace();
+    renderVersions(workspace.getState().activeDocumentId);
+    refreshPreviewControls();
+    status.textContent = 'V2 editor ready.';
+    window.v2ProductionReady = true;
+  </script>
+</body>
+</html>
