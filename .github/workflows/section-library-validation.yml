@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/pre-designed-section-library
+      - recovery/cv-builder-v2-milestone-section-library-20261013
 
 concurrency:
   group: section-library-feature-validation
