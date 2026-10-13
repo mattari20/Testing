@@ -1,6 +1,7 @@
 import { getSkillsLanguagesPresentationContract, getAllowedProficiencyForListStyle } from '../templates/skills-languages-presentation-contract.js';
 import { PROFICIENCY_LABELS, getSkillOrLanguageProficiency } from '../core/skills-languages.js';
-export const EDITOR_FORM_RENDERER_VERSION = '1.33.0';
+import { CV_SECTION_LIBRARY } from '../application/cv-section-library.js';
+export const EDITOR_FORM_RENDERER_VERSION = '1.34.1';
 
 const LABELS = Object.freeze({
   fullName:'Full Name', jobTitle:'Professional Title', email:'Email Address', phone:'Phone Number', location:'Location',
@@ -126,7 +127,7 @@ function formatMonthValue(value){
   if(!year||month<1||month>12)return raw;
   return new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(year,month-1,1)));
 }
-function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={}){
+function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={},sectionLibrary=null){
   const values=entry.values&&typeof entry.values==='object'?entry.values:{};
   const entryVisible=visible&&entry.visibility!==false;
   const up=moveOrder(entryIds,index,-1),down=moveOrder(entryIds,index,1);
@@ -135,15 +136,19 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={
   const isEducation=type==='education';
   const isSkillsLanguage=type==='skills'||type==='languages';
   const autoSorted=isExperience||isEducation;
-  const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:isSkillsLanguage?[type==='skills'?'skill':'language']:Object.keys(values).filter(key=>key!=='proficiency');
+  const schemaFields=Array.isArray(sectionLibrary?.fields)?orderItems(sectionLibrary.fields.filter(field=>field.visibility!==false&&!hasConfiguredKey(configuration?.hiddenFields,sectionId+':'+String(field.key))).map(field=>({...field,id:String(field.key)})),configuration?.fieldOrder?.[sectionId]||[]):[];
+  const entryKeys=isExperience?['role','company','startDate','endDate','description']:isEducation?['degree','institution','dates']:isSkillsLanguage?[type==='skills'?'skill':'language']:schemaFields.length?schemaFields.map(field=>field.key).filter(key=>Object.prototype.hasOwnProperty.call(values,key)):Object.keys(values).filter(key=>key!=='proficiency');
   const proficiencyStyle=String(configuration?.presentation?.ratings?.[type]?.style||'off');
   const proficiencyLabels=PROFICIENCY_LABELS[type]||[];
   const proficiency=getSkillOrLanguageProficiency(entry);
   const valueKey=isSkillsLanguage?(type==='skills'?'skill':'language'):'';
   const fields=entryVisible?entryKeys.map(key=>{
     const value=values[key]==null?'':values[key];
+    const schemaField=schemaFields.find(field=>field.key===key);
+    const fieldLabel=schemaField?.label||labelFor(key);
     const isMonthField=isExperience&&(key==='startDate'||key==='endDate');
-    const inputType=isMonthField?'text':key==='description'?'textarea':'text';
+    const fieldType=String(schemaField?.type||'');
+    const inputType=isMonthField?'text':(['text','textarea','email','url','date'].includes(fieldType)?fieldType:(key==='description'?'textarea':'text'));
     const inputValue=isMonthField?formatMonthValue(value):value;
     const extra=isMonthField?' inputmode="text" placeholder="February 2026" autocomplete="off"':'';
     const legacyHint=isExperience&&key==='startDate'&&!value&&values.dates?'<small class="editor-field-help">Legacy duration: '+esc(values.dates)+'. Enter Start/End month and year to replace it.</small>':'';
@@ -168,6 +173,12 @@ function renderEntry(sectionId,entry,index,entryIds,visible=true,configuration={
   return '<article class="editor-entry-card'+(isSkillsLanguage?' editor-skills-language-entry':'')+'" data-v2-editor-entry="'+esc(entry.id)+'" data-v2-editor-sortable="entry" data-v2-section-id="'+esc(sectionId)+'" data-v2-item-id="'+esc(entry.id)+'" data-v2-editor-entry-hidden="'+String(!entryVisible)+'">'+
     '<div class="editor-entry-head"><div><span class="editor-entry-kicker">'+esc(type==='skills'?'SKILL':type==='languages'?'LANGUAGE':'ENTRY')+' '+(index+1)+'</span><strong>'+esc(isExperience?'Work Experience':isEducation?'Education':type==='skills'?'Skill':type==='languages'?'Language':'Entry')+'</strong></div><div class="editor-inline-actions">'+visibilityButton('entry',{sectionId,entryId:entry.id},entryVisible)+(isSkillsLanguage?'':actionButton('Duplicate','duplicate-entry',{sectionId,entryId:entry.id}))+actionButton('Remove','remove-entry',{sectionId,entryId:entry.id})+(autoSorted?'':actionButton('Move Up','reorder',{kind:'entry',sectionId},{order:up})+actionButton('Move Down','reorder',{kind:'entry',sectionId},{order:down}))+'</div></div>'+
     '<div class="editor-entry-fields">'+fields+proficiencyHtml+'</div></article>';
+}
+
+function renderSectionLibrary(){
+  const categories=[...new Set(CV_SECTION_LIBRARY.map(item=>item.category))];
+  const cards=categories.map(category=>'<section class="editor-section-library-category" data-section-library-group="'+esc(category)+'"><h4>'+esc(category)+'</h4><div class="editor-section-library-grid">'+CV_SECTION_LIBRARY.filter(item=>item.category===category).map(item=>'<article class="editor-section-library-card" data-section-library-card data-category="'+esc(item.category)+'" data-search-text="'+esc([item.title,item.singular,item.description,...item.fields.map(field=>field.label)].join(' '))+'"><div class="editor-section-library-card-heading"><strong>'+esc(item.title)+'</strong><span class="editor-section-library-priority">'+esc(item.priority)+'</span></div><p>'+esc(item.description)+'</p><small>'+item.fields.length+' prepared fields · '+(item.repeatable?'multiple entries':'single entry')+'</small><button type="button" class="editor-section-library-add" data-v2-editor-command="add-section-preset" data-v2-target="{}" data-v2-payload="'+attr({presetId:item.id})+'">Add '+esc(item.singular)+'</button></article>').join('')+'</div></section>').join('');
+  return '<details class="editor-section-library"><summary>+ Add a Pre-designed Section</summary><div class="editor-section-library-content"><p>Choose a prepared section with relevant fields. You can edit the information after adding it.</p><div class="editor-section-library-filters"><label><span>Search sections</span><input type="search" data-section-library-search placeholder="Search awards, research, projects…" aria-label="Search pre-designed sections"></label><label><span>Category</span><select data-section-library-category aria-label="Filter sections by category"><option value="">All categories</option>'+categories.map(category=>'<option value="'+esc(category)+'">'+esc(category)+'</option>').join('')+'</select></label></div><div class="editor-section-library-results">'+cards+'</div><p class="editor-section-library-empty" data-section-library-empty hidden>No sections match this search.</p></div></details>';
 }
 
 function renderPalette(configuration){
@@ -265,21 +276,32 @@ export function renderEditorForm(surface,documentData,options={}){
     const entries=sortEntriesForEditor(orderItems(section.entries||[],configuration.entryOrder?.[sid]||[]),type,sortDirection);
     const entryIds=entries.map(e=>e.id);
     const sectionUp=moveOrder(sectionIds,sectionIndex,-1),sectionDown=moveOrder(sectionIds,sectionIndex,1);
-    const fieldHtml=!sectionHidden&&type!=='experience'&&type!=='education'&&type!=='skills'&&type!=='languages'
+    const fieldHtml=!sectionHidden&&(!section.repeatable||!section.metadata?.sectionLibrary)&&type!=='experience'&&type!=='education'&&type!=='skills'&&type!=='languages'
       ? fields.map((field,index)=>type==='summary'?renderSummaryField(sid,field,!hasConfiguredKey(hiddenFields,sid+':'+field.id)):renderField(sid,field,index,fieldIds,!hasConfiguredKey(hiddenFields,sid+':'+field.id))).join('')
       : '';
-    const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id),configuration)).join(''):'';
+    const sectionLibrary=section.metadata?.sectionLibrary?(()=>{
+      const fieldMap=new Map((section.metadata.sectionLibrary.fields||[]).map(field=>[String(field.key),{...field,id:String(field.key)}]));
+      (section.fields||[]).forEach(field=>fieldMap.set(String(field.id),{key:String(field.id),id:String(field.id),label:field.label,type:field.type,placeholder:field.metadata?.placeholder||field.label,required:field.metadata?.required===true}));
+      return {...section.metadata.sectionLibrary,fields:orderItems([...fieldMap.values()],configuration.fieldOrder?.[sid]||[])};
+    })():null;
+    const fieldManagementHtml=sectionLibrary?'<div class="editor-section-library-field-management"><strong>Fields in this section</strong><div class="editor-section-library-field-list">'+fields.map((field,index)=>'<div class="editor-section-library-field-row"><span>'+esc(field.label||labelFor(field.id))+'</span><div>'+visibilityButton('field',{sectionId:sid,fieldId:field.id},!hasConfiguredKey(hiddenFields,sid+':'+field.id))+(index>0?actionButton('Move Up','reorder',{kind:'field',sectionId:sid},{order:moveOrder(fieldIds,index,-1)}):'')+(index<fields.length-1?actionButton('Move Down','reorder',{kind:'field',sectionId:sid},{order:moveOrder(fieldIds,index,1)}):'')+actionButton('Remove','remove-field',{sectionId:sid,fieldId:field.id})+'</div></div>').join('')+'</div></div>':'';
+    const entryHtml=!sectionHidden?entries.map((entry,index)=>renderEntry(sid,entry,index,entryIds,!hasConfiguredKey(hiddenEntries,sid+':'+entry.id),configuration,sectionLibrary)).join(''):'';
     const addButton=type==='skills'?'Add Skill':type==='languages'?'Add Language':type==='experience'?'Add Experience':type==='education'?'Add Education':('Add '+(section.title||labelFor(type)));
     // Skills and Languages are always repeatable lists, even when older saved section metadata omits repeatable=true.
     const canAddEntry=section.repeatable||type==='skills'||type==='languages';
-    const canAddField=!section.repeatable&&type!=='photo'&&type!=='summary'&&type!=='skills'&&type!=='languages';
+    const canAddField=(!section.repeatable||Boolean(section.metadata?.sectionLibrary))&&type!=='photo'&&type!=='summary'&&type!=='skills'&&type!=='languages';
+    const firstEntryKeys=Object.keys(entries[0]?.values||{});
+    const addEntryKeys=sectionLibrary?.fields?.length
+      ? sectionLibrary.fields.map(field=>String(field.key))
+      : firstEntryKeys.length?firstEntryKeys:fields.map(field=>String(field.id));
+    const addEntryValues=Object.fromEntries(addEntryKeys.map(key=>[key,'']));
     return '<section class="editor-section-card'+(sectionHidden?' is-hidden':'')+'" data-v2-editor-section="'+esc(sid)+'" data-v2-editor-sortable="section" data-v2-item-id="'+esc(sid)+'" data-v2-editor-section-hidden="'+String(sectionHidden)+'">'+
       '<div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">'+esc(type==='experience'?'WORK':type==='education'?'EDU':type==='skills'?'SKILLS':type==='languages'?'LANG':type==='summary'?'SUMMARY':'SECTION')+'</span><div><h3>'+esc(section.title||labelFor(type))+'</h3><span class="editor-section-status">'+(sectionHidden?'Hidden from CV':'Visible in CV')+'</span></div></div>'+
       '<div class="editor-section-banner-tools">'+((type==='skills'||type==='languages')&&!sectionHidden?listStyleControl(type,configuration,String(configuration?.template?.id||''))+ratingStyleControl(type,configuration,String(configuration?.template?.id||'')):'')+((type==='experience'||type==='education')&&!sectionHidden?entrySortControl(type,configuration):'')+
       (!isCore?'<label class="editor-placement-control"><span>Show in</span><select data-v2-editor-section-placement="'+esc(sid)+'" aria-label="Section column"><option value="left"'+(placement==='left'?' selected':'')+'>Left column</option><option value="right"'+(placement==='right'?' selected':'')+'>Right column</option></select></label>':'')+
       '<div class="editor-section-actions">'+visibilityButton('section',{sectionId:sid},!sectionHidden)+(isCore?'':actionButton('Remove','remove-section',{sectionId:sid}))+actionButton('Move Up','reorder',{kind:'section'},{order:sectionUp})+actionButton('Move Down','reorder',{kind:'section'},{order:sectionDown})+'</div></div></div>'+
       (isCore?'':'<div class="editor-custom-title"><label>Section name<input data-v2-editor-section-title="'+esc(sid)+'" value="'+esc(section.title||'New Section')+'"></label></div>')+
-      (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+(type==='summary'?summarySuggestionButton(section):'')+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:{}})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
+      (!sectionHidden?'<div class="editor-section-content">'+fieldHtml+(type==='summary'?summarySuggestionButton(section):'')+fieldManagementHtml+entryHtml+(canAddEntry?'<button type="button" class="editor-add-entry" data-v2-editor-command="add-entry" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({values:addEntryValues})+'">+ '+esc(addButton)+'</button>':'')+(canAddField?'<button type="button" class="editor-add-field" data-v2-editor-command="add-field" data-v2-target="'+attr({sectionId:sid})+'" data-v2-payload="'+attr({type:'text',label:type==='skills'?'Skill':type==='languages'?'Language':'New Field',value:''})+'">+ '+esc(type==='skills'?'Add Skill':type==='languages'?'Add Language':'Add Field')+'</button>':'')+'</div>':'<div class="editor-hidden-section-note">This section is hidden. Use the eye button to show it again.</div>')+
       '</section>';
   }).join('');
 
@@ -288,6 +310,7 @@ export function renderEditorForm(surface,documentData,options={}){
     html:renderPalette(configuration)+renderPhotoCard(documentData,options.photoShape||'circle',configuration)+
       '<section class="editor-section-card editor-identity-card"><div class="editor-section-banner"><div class="editor-section-title-wrap"><span class="editor-section-icon">PROFILE</span><div><h3>Profile Information</h3><span class="editor-section-status">Keep your identity, contact and personal details organized</span></div></div></div><div class="editor-section-content">'+identityHtml+'</div></section>'+
       sectionsHtml+
+      renderSectionLibrary()+
       '<button type="button" class="editor-add-section" data-v2-editor-command="add-section" data-v2-editor-target="{}" data-v2-target="'+attr({})+'" data-v2-payload="'+attr({title:'New Section',type:'custom',repeatable:false})+'">+ Add Custom Section</button>',
     sectionCount:sections.length
   });
