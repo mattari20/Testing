@@ -1,7 +1,7 @@
 name: CV Builder V2 Validation
 on:
   push:
-    branches: [main]
+    branches: [main, qa/pre-designed-section-library-release-port, qa/cv-workspace-release-gates, release/cv-builder-v2-production]
   pull_request:
     branches: [main]
 jobs:
