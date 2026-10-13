@@ -67,7 +67,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
-          security: strict
+          security: loose
           local-dir: ./
           server-dir: ${{ vars.CV_BUILDER_V2_FTP_SERVER_DIR }}
           log-level: standard
