@@ -5,6 +5,7 @@ on:
     branches:
       - feature/pre-designed-section-library
       - restore/cv-builder-v2-accepted-milestone-20261013
+  workflow_dispatch:
 
 concurrency:
   group: section-library-feature-validation
