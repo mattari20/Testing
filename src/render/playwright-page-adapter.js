@@ -7,8 +7,17 @@ export function createPlaywrightPageAdapter(page, options = {}) {
   const rendererSource = options.rendererSource || fs.readFileSync(path.resolve('src/render/native-v2-template-renderer.js'), 'utf8');
   return {
     async renderAndMeasure({ template, sourceHtml, snapshot, screenshotPath }) {
-      await page.setContent('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>', { waitUntil:'domcontentloaded' });
-      await page.addScriptTag({ content: rendererSource.replaceAll('export ', '') + '\nwindow.__nativeRender = renderNativeTemplateSource;' });
+      if (options.baseUrl) {
+        await page.goto(options.baseUrl, { waitUntil:'domcontentloaded' });
+        const moduleUrl = new URL('/src/render/native-v2-template-renderer.js', options.baseUrl).href + '?browser-validation=1';
+        await page.evaluate(async url => {
+          const renderer = await import(url);
+          window.__nativeRender = renderer.renderNativeTemplateSource;
+        }, moduleUrl);
+      } else {
+        await page.setContent('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>', { waitUntil:'domcontentloaded' });
+        await page.addScriptTag({ content: rendererSource.replaceAll('export ', '') + '\nwindow.__nativeRender = renderNativeTemplateSource;' });
+      }
       const result = await page.evaluate(async ({ sourceHtml, template, snapshot }) => {
         const definition={id:template.id,templateVersion:template.version || '2.0.0',sourceHtml};
         const rendered=window.__nativeRender(definition,snapshot,document);
