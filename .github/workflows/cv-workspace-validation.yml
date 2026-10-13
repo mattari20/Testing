@@ -5,6 +5,7 @@ on:
     branches:
       - qa/cv-workspace-release-gates
       - release/cv-builder-v2-production
+      - restore/cv-builder-v2-accepted-milestone-20261013
   workflow_dispatch:
 
 permissions:
