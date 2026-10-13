@@ -315,3 +315,28 @@ The V1 Golden Baseline remains the reference for preserved behavior and visual o
 6. New integrations are replaceable.
 7. New capabilities are documented before implementation.
 8. UI/CSS modernization remains a controlled later phase.
+
+## 28. Pre-designed Section Library
+
+The V2 product includes a categorized, searchable Pre-designed Section Library. Users select a prepared block and receive a complete typed section definition, default fields, repeatable-entry behavior, and compatible presentation preferences. The existing Custom Section remains available as a fallback.
+
+Canonical specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md`.
+
+### Approved 26-item catalogue — five category groups
+- **Achievements & Qualifications:** Awards & Honors; Key Achievements; Scholarships & Fellowships; Licenses & Professional Certifications; Courses & Professional Training.
+- **Academic & Research:** Research Experience; Publications; Conferences & Presentations; Research Grants & Funding; Thesis & Dissertation.
+- **Technical & Professional Work:** Patents & Intellectual Property; Projects & Portfolio; Open-Source Contributions; Selected Work / Case Studies; Technical & Laboratory Experience.
+- **Experience & Involvement:** Volunteer & Community Service; Leadership & Extracurricular Activities; Professional Memberships & Affiliations; Teaching Experience; Professional Service & Mentoring; Media & Public Appearances; Guest Lectures & Speaking Engagements.
+- **Additional CV Sections:** Languages (optional additional profile block using unique type `language-profiles`); Interests & Hobbies; References; Additional Information.
+- Existing core sections (Personal/Contact Information, Summary, Experience, Education, Skills and Languages) remain available; the optional Languages preset is a distinct type and never replaces or collides with the core `languages` section.
+
+### Mandatory capability rules
+- Stable section IDs, definition versions, typed field definitions, validation and repeatable entries.
+- Section/entry/field ordering and visibility remain separate, explicit states.
+- Data and presentation are separate; templates may adapt presentation but must never silently delete unsupported content.
+- Existing section/field commands, canonical document model, template capability resolver, presentation-variant engine and export contracts are reused where fit.
+- No AI-generated career facts; sensitive contact/reference information remains user-controlled.
+- Preserve the accepted editor viewport-stability milestone during Add Section/Add Entry/Add Field actions.
+- Implementation is gated on focused code audit, schema/registry tests, template compatibility matrix, mobile/browser regression and PDF/DOCX/print checks.
+
+The 26-item catalogue and editor integration are implemented on QA branch `qa/pre-designed-section-library-release-port`. On QA commit `7c5b1e38769fc877fd4c170b2723acadf775ed6b`, CV Builder V2 Validation, V2 Integration Validation, Native V2 Browser Validation, and CV Builder V2 E2E Contract all passed. Production release-branch merge, Hostinger deployment, live export matrix, and post-deployment acceptance remain pending. The generic preview fallback preserves sections when a template has no native presentation anchor.
