@@ -371,3 +371,55 @@ M408–M417 is repository/browser validated on the current main sequence. V2 Int
 The V2 editor now has a provider-neutral persistence and recovery boundary. A validated, versioned record stores the Master Profile and Targeted CV, a storage adapter provides save/load/clear operations, and a debounced recovery controller provides autosave with an immediate flush path. Persisted state can be restored into the editor surface with stale undo/redo history cleared. The feature remains opt-in and does not couple the editor to a specific browser storage technology.
 
 Repository-side validation is wired into V2 Integration Validation through `test:m418-m427`. Production deployment and final release gates remain open.
+
+
+## 2026-10-11 accepted UX milestone — editor viewport stability
+
+The project owner has accepted the deployed editor behavior when adding fields: the current viewport should remain still, with no visible jump, and newly added content should extend downward. This is a frozen UX baseline for future work.
+
+Canonical milestone record: `docs/03-implementation/MILESTONE_EDITOR_VIEWPORT_STABILITY_2026-10-11.md`.
+
+Checkpoint commit: `9faf549ce714bd7e22bc266d5540ee886d9f0395`. Hostinger deployment and Template Gallery Validation succeeded. CV Workspace Validation is still failing; the milestone record documents the failing checks and distinguishes owner-accepted UX from automated CI status. Do not represent workspace CI as green.
+
+**Resume rule:** preserve this behavior during future features. If editor rendering, focus, field insertion, or scroll handling is changed, rerun mobile browser checks for Add Skill, Add Language, Add Field, and Add Custom Section.
+
+
+## Pre-designed Section Library — implementation checkpoint (2026-10-11)
+
+**Status:** Implemented on the feature branch; targeted validation passed. Release merge/deployment and full workspace acceptance remain open.  
+**Feature branch:** `feature/pre-designed-section-library`  
+**Pull request:** [#112 — Implement pre-designed CV Section Library](https://github.com/mattari20/Testing/pull/112)
+
+### Implemented
+- Versioned catalogue with **25 prepared presets**: 12 P1, 9 P2 and 4 P3, each with typed field definitions and metadata.
+- Searchable catalogue grouped by category, with category filtering, descriptions, field counts and Add actions.
+- Prepared section insertion through the existing editor command surface, with stable preset IDs, section metadata, repeatable entries and pre-populated blank fields.
+- Field management for prepared sections: add, rename, remove, hide/show and reorder fields; entries receive new fields without losing existing values.
+- Generic template-preview fallback for sections without a native template anchor, respecting section/entry/field visibility and preserving data across template switches.
+- Responsive catalogue styling, cache-busting, and automated unit/browser coverage including preview content and viewport stability.
+
+### Targeted validation
+[Section Library Feature Validation — successful](https://github.com/mattari20/Testing/actions/runs/38165025450). The workflow passed the new unit/browser suite plus the existing editor-form, editor-command and native-template-renderer regression suites.
+
+### Release gates still open
+- This feature branch has **not** yet been merged or deployed to Hostinger. V1 `/cv-builder/` remains untouched.
+- The existing production-branch CV Workspace Validation failures (More menu state, multi-CV persistence and the automated viewport assertion) remain independent release gates. The feature-specific browser test passes, but this does not make the broader workspace CI green.
+- After merge, verify the deployed V2 builder, all published templates, PDF/print and supported DOCX paths, persisted data, mobile behavior, and the accepted 2026-10-11 viewport-stability milestone.
+
+
+### Section Library release-port validation — 2026-10-12
+
+The production-branch-compatible Section Library release port is staged on `qa/pre-designed-section-library-release-port`. It extends the existing production library rather than replacing the production branch's editor/runtime architecture.
+
+- Catalogue: 26 versioned presets in five groups; the optional Languages profile uses the distinct `language-profiles` type and does not collide with the core `languages` section.
+- Full CV Builder V2 Validation: PASS — [run 38322145537](https://github.com/mattari20/Testing/actions/runs/38322145537).
+- V2 Integration Validation: PASS — [run 38322145606](https://github.com/mattari20/Testing/actions/runs/38322145606).
+- Native V2 Browser Validation: PASS — [run 38322145612](https://github.com/mattari20/Testing/actions/runs/38322145612), including M26/M27/M28, real editor/preview checks and integrated fragmentation browser checks.
+- CV Builder V2 E2E Contract: PASS — [run 38322145632](https://github.com/mattari20/Testing/actions/runs/38322145632).
+- Final QA validation commit: `7c5b1e38769fc877fd4c170b2723acadf775ed6b`; all four listed workflows completed successfully on that exact tree. Subsequent status-register edits are documentation-only and do not alter the runtime/test source.
+- Hostinger deployment has **not** been performed. The production release branch remains unchanged.
+- The deployment workflow now requires full `npm test`, an exact approved SHA, an explicit deploy-enable variable, and a verified FTP target variable before the FTPS upload job can run.
+
+### Deployment boundary
+
+The documented release candidate `ffdd8e5f666f89683e08c6a0a6d0819ee10d92e6` predates this Section Library update and must not be used if this feature is included in the release. After the release-port PR is accepted, freeze the exact resulting commit and reconcile evidence to that SHA. Production deployment remains blocked until production credential rotation/revocation and authoritative history verification are complete, and the FTP target is confirmed as `/public_html/cv-builder-v2/`. R6 smoke testing, R7 V1 retirement, and R8 final closeout remain post-deployment tasks.
