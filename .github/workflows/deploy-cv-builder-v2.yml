@@ -11,19 +11,55 @@ permissions:
 
 concurrency:
   group: cv-builder-v2-production-deploy
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
-    name: Deploy production V2
+  validate:
+    name: Validate release candidate before upload
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
+    timeout-minutes: 30
     steps:
-      - name: Checkout production branch
+      - name: Checkout exact candidate
         uses: actions/checkout@v4
 
-      - name: Deploy to Hostinger via FTPS
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install browser test dependency
+        run: npm install --no-save playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run full repository validation
+        run: npm test
+
+      - name: Report deployment approval state
+        env:
+          APPROVED_DEPLOY_SHA: ${{ vars.CV_BUILDER_V2_APPROVED_DEPLOY_SHA }}
+          FTP_SERVER_DIR: ${{ vars.CV_BUILDER_V2_FTP_SERVER_DIR }}
+          FTP_TARGET_VERIFIED: ${{ vars.CV_BUILDER_V2_FTP_TARGET_VERIFIED }}
+          DEPLOY_ENABLED: ${{ vars.CV_BUILDER_V2_DEPLOY_ENABLED }}
+        run: |
+          if [ "$APPROVED_DEPLOY_SHA" = "$GITHUB_SHA" ] && [ -n "$FTP_SERVER_DIR" ] && [ "$FTP_TARGET_VERIFIED" = "true" ] && [ "$DEPLOY_ENABLED" = "true" ]; then
+            echo "::notice::Exact commit and verified FTP target are approved; deployment may proceed."
+          else
+            echo "::notice::Tests passed, but upload is blocked until the exact commit SHA and verified FTP target variables are set."
+          fi
+
+  deploy:
+    name: Upload approved V2 release
+    needs: validate
+    if: ${{ vars.CV_BUILDER_V2_APPROVED_DEPLOY_SHA == github.sha && vars.CV_BUILDER_V2_FTP_SERVER_DIR != '' && vars.CV_BUILDER_V2_FTP_TARGET_VERIFIED == 'true' && vars.CV_BUILDER_V2_DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout approved production commit
+        uses: actions/checkout@v4
+
+      - name: Deploy to verified Hostinger V2 directory via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -33,7 +69,7 @@ jobs:
           port: 21
           security: loose
           local-dir: ./
-          server-dir: ./
+          server-dir: ${{ vars.CV_BUILDER_V2_FTP_SERVER_DIR }}
           log-level: standard
           timeout: 120000
           exclude: |
@@ -43,9 +79,9 @@ jobs:
             **/node_modules/**
             **/docs/**
             **/tests/**
+            **/artifacts/**
             package.json
             package-lock.json
 
-# Deployment verification: this workflow intentionally uses the standard GitHub-hosted runner.
-
-# Final release verification trigger: exact production branch deployment.
+# Production upload requires a green validation job, exact-SHA approval, and explicit confirmation that the FTP target maps to /public_html/cv-builder-v2/.
+# A release-branch push alone is not sufficient authorization to publish.
