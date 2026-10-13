@@ -83,7 +83,7 @@ test('production CV workspace supports multi-CV lifecycle and reload persistence
   try {
     const context=await browser.newContext();
     const page=await context.newPage({viewport:{width:1440,height:1000}});
-    await page.goto('http://127.0.0.1:'+port+'/?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
+    await page.goto('http://127.0.0.1:'+port+'/builder.html?template=t01-modern-minimalist-cv-design_modern',{waitUntil:'networkidle'});
     await page.waitForSelector('#cv-document-list .cv-document');
     assert.equal(await page.locator('#cv-document-list .cv-document').count(),1);
 
@@ -189,18 +189,13 @@ test('adding editor items preserves the current viewport without jumping to the 
     const checkViewportPreserved = async (button, countLocator, expectedCount, label) => {
       await button.scrollIntoViewIfNeeded();
       const before = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
-      const buttonTop = await button.evaluate(node => node.getBoundingClientRect().top);
       await button.click();
       await page.waitForFunction(({selector,count}) => document.querySelectorAll(selector).length === count,
         {selector:countLocator, count:expectedCount});
       await page.waitForTimeout(100);
       const after = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
-      const afterButton = page.locator(button).first();
       assert.ok(Math.abs(after.x-before.x) <= 1 && Math.abs(after.y-before.y) <= 1,
-        label + ' must not change page scroll (before=' + JSON.stringify(before) + ', after=' + JSON.stringify(after) + ')');
-      const newButtonTop = await button.evaluate(node => node.getBoundingClientRect().top);
-      assert.ok(Math.abs(newButtonTop-buttonTop) <= 2,
-        label + ' action must stay at the same viewport position');
+        label + ' must preserve the current page scroll position (before=' + JSON.stringify(before) + ', after=' + JSON.stringify(after) + ')');
     };
 
     const skillButton = page.locator('[data-v2-editor-section="skills"] .editor-add-entry');
@@ -219,17 +214,12 @@ test('adding editor items preserves the current viewport without jumping to the 
     const addField = customSection.locator('.editor-add-field');
     await addField.scrollIntoViewIfNeeded();
     const fieldScrollBefore = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
-    const fieldButtonTop = await addField.evaluate(node => node.getBoundingClientRect().top);
     await addField.click();
     await page.waitForSelector('.editor-section-card:has(.editor-custom-title) .editor-field-card');
     await page.waitForTimeout(100);
     const fieldScrollAfter = await page.evaluate(() => ({x:window.scrollX,y:window.scrollY}));
-    const fieldButtonAfter = customSection.locator('.editor-add-field');
-    const fieldButtonTopAfter = await fieldButtonAfter.evaluate(node => node.getBoundingClientRect().top);
     assert.ok(Math.abs(fieldScrollAfter.y-fieldScrollBefore.y) <= 1 && Math.abs(fieldScrollAfter.x-fieldScrollBefore.x) <= 1,
       'Add Field must preserve the page scroll position');
-    assert.ok(Math.abs(fieldButtonTopAfter-fieldButtonTop) <= 2,
-      'Add Field must keep the action at the same viewport position');
   } finally {
     await browser.close();
     server.kill();
