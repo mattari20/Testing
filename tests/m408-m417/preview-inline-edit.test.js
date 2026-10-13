@@ -47,11 +47,10 @@ try {
   assert.equal(await name.textContent(),'Updated Preview User');
 
   const company=page.locator('#preview [data-v2-preview-edit="entry"]').first();
-  await company.evaluate(element => {
-    element.focus();
-    element.textContent = 'Updated Company';
-    element.dispatchEvent(new Event('blur', { bubbles: true }));
-  });
+  await company.click();
+  await company.press('ControlOrMeta+A');
+  await company.type('Updated Company');
+  await company.press('Tab');
   await page.waitForFunction(()=>window.editorRuntime.surface.getState().session.application.masterProfile.careerData.sections.find(s=>s.type==='experience').entries[0].values.company==='Updated Company');
 
   console.log(JSON.stringify({templates:'passed',identityEdit:'passed',entryEdit:'passed'}));
