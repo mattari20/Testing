@@ -4,6 +4,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { chromium } from 'playwright';
+import { listNativeV2Templates } from '../../src/templates/v2-native-template-catalog.js';
 
 const projectRoot = resolve(process.cwd());
 const mime = { '.js':'text/javascript; charset=utf-8', '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.json':'application/json; charset=utf-8' };
@@ -38,7 +39,7 @@ async function withBrowser(run) {
   try {
     const page = await browser.newPage();
     await page.goto('http://127.0.0.1:' + address.port + '/');
-    await run(page, 'http://127.0.0.1:' + address.port);
+    await run(page, 'http://127.0.0.1:' + address.port, browser);
   } finally {
     await browser.close();
     await new Promise(resolveClose => server.close(resolveClose));
@@ -166,5 +167,40 @@ test('production editor inserts the distinct Languages profile preset without co
     assert.match(previewText, /Urdu/);
     assert.match(previewText, /Native/);
     assert.match(previewText, /Professional communication/);
+  });
+});
+
+test('a prepared section renders and exports to PDF across every native template', async () => {
+  const templates=listNativeV2Templates();
+  assert.ok(templates.length>=9,'the native template catalogue should be covered');
+  await withBrowser(async (_page,baseUrl,browser) => {
+    for(const template of templates){
+      const page=await browser.newPage({viewport:{width:1440,height:1000}});
+      try{
+        await page.route(/^https?:\/\/(?!127\.0\.0\.1)/,route=>route.abort());
+        await page.goto(baseUrl+'/builder.html?template='+encodeURIComponent(template.id),{waitUntil:'networkidle'});
+        await page.waitForFunction(()=>window.v2ProductionReady===true,{timeout:15000});
+        const library=page.locator('.editor-section-library');
+        await library.scrollIntoViewIfNeeded();
+        await library.locator('summary').click();
+        await library.locator('[data-section-library-search]').fill('Publications');
+        await page.getByRole('button',{name:'Add Publication',exact:true}).click();
+        const section=page.locator('.editor-section-card').filter({has:page.getByRole('heading',{name:'Publications',exact:true})}).last();
+        await section.waitFor({state:'visible'});
+        await section.locator('[data-v2-entry-key="title"]').fill('Release validation paper — '+template.id);
+        await section.locator('[data-v2-entry-key="authors"]').fill('CV Builder Validation Team');
+        await section.locator('[data-v2-entry-key="venue"]').fill('Release Readiness Journal');
+        const publicationTitle='Release validation paper — '+template.id;
+        await page.waitForFunction(id=>document.querySelector('[data-v2-editor-preview-root]')?.textContent.includes('Release validation paper — '+id),template.id,{timeout:10000});
+        const previewTitle=page.getByText(publicationTitle,{exact:true});
+        await previewTitle.waitFor({state:'visible',timeout:10000});
+        await page.emulateMedia({media:'print'});
+        assert.equal(await previewTitle.isVisible(),true,template.id+' should keep the prepared publication visible in print media');
+        const pdf=await page.pdf({format:'A4',printBackground:true});
+        assert.ok(pdf.length>1000,template.id+' should produce a non-empty A4 PDF');
+      }finally{
+        await page.close();
+      }
+    }
   });
 });

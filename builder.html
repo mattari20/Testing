@@ -719,25 +719,20 @@
     toolbarMenu?.addEventListener('click', event => {
       if (event.target.closest('button')) closeToolbarMenu();
     });
-    // Capture pointer interaction so the panel dismisses even if another
-    // component stops bubbling click events.
-    document.addEventListener('pointerdown', event => {
-      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
-      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
-    }, true);
+    // Close menus after the target click handler runs so layout changes cannot steal the click.
     document.addEventListener('click', event => {
       if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
-      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+      if (workspaceMenu && !workspaceMenu.contains(event.target) && window.matchMedia('(max-width: 760px)').matches) closeWorkspaceMenu();
     });
     window.addEventListener('resize', () => {
       if (isCompactToolbar()) closeToolbarMenu();
       else if (toolbarMenu) toolbarMenu.open = true;
     });
     toolbarMenu?.addEventListener('toggle', () => {
-      if (toolbarMenu.open) closeWorkspaceMenu();
+      if (toolbarMenu.open && window.matchMedia('(max-width: 760px)').matches) closeWorkspaceMenu();
     });
     workspaceMenu?.addEventListener('toggle', () => {
-      if (workspaceMenu.open) closeToolbarMenu();
+      if (workspaceMenu.open && window.matchMedia('(max-width: 760px)').matches) closeToolbarMenu();
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
