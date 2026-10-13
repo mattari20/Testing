@@ -142,3 +142,30 @@ Legend:
 | Free/premium template classification | Not formal | V2 Core |
 | Premium template entitlement | Not present | V2 Core |
 | Template SEO landing pages | Partial public positioning | V2 SEO architecture |
+
+
+## Pre-designed Section Library (new specification)
+
+| Capability | Audited baseline | V2 direction |
+|---|---|---|
+| Categorized/searchable section catalogue | Implemented on feature branch; targeted tests passed | Release merge/deployment pending |
+| Prepared section definitions with typed fields | 26 versioned presets in five categories, including distinct Languages profile preset; release-port implementation and regression fixes in QA branch | Full test suite, integration, native browser and E2E workflows passed on QA commit `7c5b1e38769fc877fd4c170b2723acadf775ed6b`; release merge/deployment pending |
+| Awards & Honors | Implemented preset | P1; release verification pending |
+| Key Achievements | Existing achievements mapped into prepared preset | P1; verify no parallel data model |
+| Projects & Portfolio | Existing Projects extended through prepared preset | P1; release verification pending |
+| Certifications & Licenses | Implemented preset | P1; release verification pending |
+| Courses & Training | Implemented preset | P1; release verification pending |
+| Volunteer & Community Service | Implemented preset | P1; release verification pending |
+| Leadership & Extracurricular Activities | Implemented preset | P1; release verification pending |
+| Research Experience | Implemented preset | P1; release verification pending |
+| Publications | Implemented preset | P1; release verification pending |
+| Conferences & Presentations | Implemented preset | P1; release verification pending |
+| Professional Memberships & Affiliations | Implemented preset | P1; release verification pending |
+| Additional Information fallback | Implemented typed preset plus generic Custom Section | P1; release verification pending |
+| Academic/specialized presets | P2 presets implemented | Release verification pending |
+| Optional/edge-case presets | P3 presets implemented | Release verification pending |
+| Template/variant compatibility per preset | Generic preview fallback implemented; per-template native capability matrix still requires verification | Release verification pending |
+| Add-section viewport stability | Feature browser test passes exact window-scroll assertion; broader workspace CI has a pre-existing failure | Preserve; full release regression required |
+| Section library automated tests | Unit and real-browser tests pass, plus editor-form/command/native-renderer regressions | Release deployment verification pending |
+
+Specification: `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md`. Existing sections such as Projects and Achievements must be extended or mapped to the library where possible, not duplicated as parallel data systems.
