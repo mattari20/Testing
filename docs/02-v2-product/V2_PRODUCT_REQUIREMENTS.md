@@ -375,3 +375,54 @@ The product must document advertising data flow, purchase and entitlement data, 
 ## 19. Updated architecture principle
 
 The V2 platform should remain separable into Document Core, Career Data, Intelligence, Presentation, Monetization and Platform/Integrations. The document renderer must not depend directly on ads, payments, AI or a specific cloud provider.
+
+
+## 20. Pre-designed Section Library requirements
+
+V2 must provide a categorized, searchable Section Library in addition to the generic Custom Section fallback. Selecting a preset inserts a complete section definition with stable identity, default title, typed field definitions, repeatable-entry policy, optional help/examples, and a default presentation preference. It must not insert fabricated user facts.
+
+### 20.1 Required user experience
+- Search and category filters for recommended, achievements, academic/research, projects/portfolio, credentials/training, leadership/community, professional and other.
+- Section description and a preview of the fields included before insertion.
+- Add, edit title, add/remove entries, add/reorder supported fields, hide/show, reorder and remove actions.
+- Duplicate behavior defined per preset; repeated insertion must not happen accidentally from double activation.
+- A generic Custom Section remains available for needs not covered by a prepared preset.
+- Existing core sections must be extended/mapped rather than duplicated into parallel data systems.
+
+### 20.2 Initial catalogue priorities
+P1: Awards & Honors; Key Achievements; Projects & Portfolio (extend existing Projects); Certifications & Licenses; Courses & Training; Volunteer & Community Service; Leadership & Extracurricular Activities; Research Experience; Publications; Conferences & Presentations; Professional Memberships & Affiliations; Additional Information.
+
+P2: Scholarships & Fellowships; Research Grants & Funding; Thesis & Dissertation; Patents & Intellectual Property; Teaching Experience; Professional Service & Mentoring; Open-Source Contributions; Technical & Laboratory Experience; Selected Work / Case Studies.
+
+P3: Media & Public Appearances; Guest Lectures & Speaking Engagements; Interests & Hobbies; References.
+
+Personal/Contact Information, Summary, Experience, Education, Skills and Languages remain existing core sections. Internships should reuse Experience unless audit evidence supports a genuinely distinct workflow.
+
+### 20.3 Structured data rules
+- Each preset has a stable ID and definition version.
+- Each field specifies key, label, semantic meaning, field type, optional/required status, validation, accessible label, formatting and compatibility expectations.
+- Repeatable sections use stable entry IDs and explicit entry ordering/visibility.
+- Date, URL, currency/amount, status and identifier fields use consistent semantics.
+- Required fields are minimal; metrics, amounts, dates, IDs, links and descriptions remain optional where appropriate.
+- Publication status must distinguish published work from accepted, under-review, submitted or in-progress work.
+- Reference contact information is optional and privacy-sensitive.
+- Preset definition updates must never overwrite user-entered values or custom field definitions.
+
+### 20.4 Template, export and preservation rules
+- Reuse the existing canonical document model, editor command boundary, template capability model and presentation-variant engine where appropriate.
+- Data and presentation remain separate.
+- Resolve each preset against template capabilities; unknown compatibility is not supported by default.
+- Unsupported content must be preserved and the user informed; no silent deletion on template switching.
+- Verify live preview, print, PDF and supported DOCX outputs.
+- Keep no-login/local-first operation and existing CV backward compatibility.
+- Preserve V1's frozen behavior/visual baseline; no V1 changes are part of this work.
+
+### 20.5 Viewport and validation gate
+Adding a section, entry or field must not cause a visible viewport jump or unexpectedly steal the user's editing context. New content extends below existing content. Run mobile and desktop browser tests, focused unit/integration tests, template-switching tests, data persistence/migration checks and supported export checks. The accepted 2026-10-11 viewport-stability milestone is a regression requirement, not permission to ignore its previously reported automated test failure.
+
+The full catalogue, field sets, source audit and acceptance criteria are maintained in `docs/02-v2-product/V2_PRE_DESIGNED_SECTION_LIBRARY_SPECIFICATION.md`.
+
+
+## 21. Implementation status (2026-10-11)
+
+The Section Library is implemented on feature branch `feature/pre-designed-section-library` in [PR #112](https://github.com/mattari20/Testing/pull/112). Targeted validation passed: [Section Library Feature Validation](https://github.com/mattari20/Testing/actions/runs/38165025450) covers catalogue definitions, section insertion, custom fields, browser preview output, viewport stability, and editor-form/command/native-template regressions. The feature is not yet merged or deployed. The existing full CV Workspace CI failures and post-deployment template/export acceptance remain release gates.
