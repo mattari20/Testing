@@ -4,7 +4,7 @@ import { createEditorSurface } from '../../src/application/editor-surface.js';
 import { renderEditorForm } from '../../src/ui/editor-form-renderer.js';
 
 test('builder renders identity and repeatable entries', () => {
-  const surface = createEditorSurface({ profileData: { careerData: { identity: { fullName: 'Ali', email: 'ali@example.com' }, sections: [{ id: 'experience', type: 'experience', title: 'Experience', repeatable: true, entries: [{ id: 'job1', values: { employer: 'Example Ltd', role: 'Engineer' } }] }] } } });
+  const surface = createEditorSurface({ profileData: { careerData: { identity: { fullName: 'Ali', email: 'ali@example.com' }, sections: [{ id: 'experience', type: 'experience', title: 'Experience', repeatable: true, entries: [{ id: 'job1', values: { company: 'Example Ltd', role: 'Engineer' } }] }] } } });
   const html = renderEditorForm(surface, surface.getState().session.application.masterProfile).html;
   assert.match(html, /data-v2-editor-identity-field="fullName"/);
   assert.match(html, /data-v2-editor-entry-field/);
