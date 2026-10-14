@@ -691,7 +691,9 @@
     // Capture pointer interaction so the panel dismisses even if another
     // component stops bubbling click events.
     document.addEventListener('pointerdown', event => {
-      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
+      // Close the workspace disclosure immediately, but let the target click
+      // run before collapsing More. Collapsing on pointerdown reflows the page
+      // between pointerdown and pointerup and can cancel mobile tab clicks.
       if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
     }, true);
     document.addEventListener('click', event => {
