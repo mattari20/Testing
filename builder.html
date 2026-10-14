@@ -494,7 +494,7 @@
     });
     const sanitizeStoredJson = (key) => {
       try { const raw=window.localStorage.getItem(key); if(raw) JSON.parse(raw); }
-      catch(error){ window.localStorage.removeItem(key); console.warn('[CV Builder V2] Removed invalid saved data:', key); }
+      catch(error){ console.warn('[CV Builder V2] Saved data could not be parsed; original data was preserved:', key, error); }
     };
     sanitizeStoredJson('estudent_cv_builder_v2_2027');
     sanitizeStoredJson('estudent_cv_workspace_v2_2027');
@@ -703,10 +703,11 @@
       else if (toolbarMenu) toolbarMenu.open = true;
     });
     toolbarMenu?.addEventListener('toggle', () => {
-      if (toolbarMenu.open) closeWorkspaceMenu();
+      // On desktop the toolbar tools are inline, not a competing popover.
+      if (isCompactToolbar() && toolbarMenu.open) closeWorkspaceMenu();
     });
     workspaceMenu?.addEventListener('toggle', () => {
-      if (workspaceMenu.open) closeToolbarMenu();
+      if (isCompactToolbar() && workspaceMenu.open) closeToolbarMenu();
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
