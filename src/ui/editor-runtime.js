@@ -51,6 +51,12 @@ export function mountV2EditorRuntime(root, input = {}) {
   );
 
   const render = () => {
+    // Structural edits replace form DOM. Preserve the document viewport across
+    // that replacement so adding a skill/field does not jump the user upward.
+    const view = root.ownerDocument?.defaultView;
+    const preserveViewport = view && root.contains(root.ownerDocument.activeElement);
+    const scrollX = preserveViewport ? view.scrollX : null;
+    const scrollY = preserveViewport ? view.scrollY : null;
     fieldBinding?.destroy();
     actionBinding?.destroy();
     reorderBinding?.destroy();
@@ -64,6 +70,11 @@ export function mountV2EditorRuntime(root, input = {}) {
       fieldBinding = bindEditorFields(form, mounted.surface);
       actionBinding = bindEditorActions(form, mounted.surface);
       reorderBinding = bindEditorReorder(form, mounted.surface);
+    }
+    if (preserveViewport) {
+      view.requestAnimationFrame(() => {
+        if (!destroyed && Number.isFinite(scrollX) && Number.isFinite(scrollY)) view.scrollTo(scrollX, scrollY);
+      });
     }
     return state;
   };
