@@ -28,7 +28,7 @@ A feature is not Complete merely because its document or source file exists. Eve
 | Accepted milestone | `9faf549ce714bd7e22bc266d5540ee886d9f0395` | Accepted rollback/reference point; preserve |
 | Production branch | `release/cv-builder-v2-production` | Current reference branch for this audit |
 | Repair PR #119 | Open, unmerged; head `918a01d103ce446afa9119645369870943631964` | Proposed workspace fixes have no recorded passing checks on this head |
-| Documentation PR #120 | Draft, open, unmerged; head `d44053ab85ad99fd2f5988d159a2ffafede096f9` | This Phase 1 audit continues on this documentation-only branch |
+| Documentation PR #120 | Draft, open, unmerged; head `7ef065a1e4d6eea0ee5cf4208bdd9a23d0298ec4` | This Phase 1 audit continues on this documentation-only branch |
 | Prior milestone workflows | Deploy and Gallery Validation succeeded; Workspace Validation failed | Runs `38490677809`, `38490677818`, `38490677821`; results belong to milestone SHA, not PR #119 |
 | Deployment target | Not independently verified | Confirm Hostinger FTP root maps to `/public_html/cv-builder-v2/` before any deploy |
 | V1 / other projects | Out of scope | Do not change `/public_html/cv-builder/` or Institutes project |
@@ -183,3 +183,10 @@ This is the initial path mapping, not yet a line-by-line mapping of every indivi
 - Older records refer to `mattari20/CV-Builder-V2`; this audit's active repository is `mattari20/Testing`. Preserve the old repository label as historical provenance, not proof that the current active repository contains the same commit history.
 - The Section Library's specification on `main` says its unit/browser/CI checks passed on the merged source/test sequence, while the earlier continuation notes said execution was unconfirmed at a previous evidence boundary. Treat the newer spec as a claim requiring exact workflow-run/SHA verification before release acceptance; do not carry either status across to the accepted milestone.
 - The current baseline deploy workflow's `server-dir: ./` conflicts with a safe target-verification requirement. Deployment destination remains UNKNOWN until independently confirmed.
+
+
+## 12. Latest Phase 1 checkpoint
+
+As of the latest documentation update, PR #120 is still **open, draft, and unmerged**, with head `7ef065a1e4d6eea0ee5cf4208bdd9a23d0298ec4` and base `9faf549ce714bd7e22bc266d5540ee886d9f0395`. The new gap register and representative source/test map are included in the PR.
+
+**Phase 1 is not yet closed.** The audit has improved the inventory and mapped representative code/test paths, but full exact-SHA automated/browser evidence, per-template visual acceptance, deployment-target verification, and remaining feature-by-feature mappings are still outstanding. This is intentionally not marked 100% complete. No application code or production deployment was changed.
