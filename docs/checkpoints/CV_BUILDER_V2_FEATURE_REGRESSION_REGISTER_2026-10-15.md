@@ -1,6 +1,6 @@
 # CV Builder V2 — Feature and Regression Register (2026-10-15)
 
-**Purpose:** Working register for completing the post-milestone audit. Statuses below are based on recorded user reports and repository history, not fresh live browser tests.
+**Purpose:** Focused regression register for the post-milestone audit. The broader capability and release-boundary register is `docs/checkpoints/CV_BUILDER_V2_MASTER_COMPLETION_REGISTER_2026-10-15.md`. Statuses below are based on recorded user reports and repository history, not fresh live browser tests.
 
 ## Status vocabulary
 
@@ -65,16 +65,20 @@ Recorded requirements:
 | Production version | Accepted milestone is baseline | Live code/asset version corresponds to an explicitly recorded commit |
 | SEO/sitemap/robots and analytics | Previously discussed in project history | Audit existing implementation/docs; do not assume scope or status without evidence |
 
-## E. Required audit actions before final design
+## E. Section Library branch-boundary correction
 
-1. Read the current documentation index, architecture notes, milestone checkpoint, and all CV Builder V2 implementation records.
+The 26-type Pre-designed Section Library is specified and implemented on `main` in the repository, with files including `docs/02-v2-product/PRE_DESIGNED_SECTION_LIBRARY.md`, `src/ui/pre-designed-section-library.js`, and `tests/m496-m505/`. These files are absent at accepted milestone `9faf549...`. GitHub compares `main` and the accepted release history as diverged (38 commits on `main` not in the accepted milestone history, 462 commits on the accepted milestone side not in `main`). Therefore, the Section Library must not be described as present in the accepted release. Its code, dependencies, design and tests require a separate exact-diff review and isolated candidate validation before any integration.
+
+## F. Required audit actions before final design
+
+1. Use the master completion register to reconcile current product requirements, release gates, architecture notes, milestone checkpoint and relevant M-numbered implementation records.
 2. Compare the accepted milestone tree to PR #119's diff and list exact affected functions/selectors and tests.
 3. Recover earlier requirements from commit messages, PR descriptions/comments, and available conversation records.
 4. Mark each requirement as implemented, partial, failed, unverified, or superseded, with a file/test reference where possible.
 5. Create a prioritized design specification only after the inventory is reconciled.
 6. Keep production changes blocked until validation and deployment target are confirmed.
 
-## F. Known evidence gaps
+## G. Known evidence gaps
 
 - No current test run is recorded for PR #119 head `918a01d103ce446afa9119645369870943631964`.
 - The available GitHub connector returned no workflow runs or commit statuses for that head at the last check.
