@@ -149,6 +149,26 @@ In `migrateSkillsLanguagesSection`, legacy `fields` are migrated only when `norm
 - Informal template names reported by the user are not a safe source of truth; exact IDs must come from the repository's actual template catalog.
 - Pre-designed Section Library code/spec/tests were absent at the accepted milestone and found on `main`. Do not assume it is already in the release baseline.
 
+
+
+### Concrete finding E-1: authoritative catalog exposes nine native template IDs and export evidence remains pending
+
+The accepted-baseline `src/templates/v2-native-template-catalog.js` defines these nine IDs:
+
+1. `t01-modern-minimalist-cv-design_ats`
+2. `t01-modern-minimalist-cv-design_simple`
+3. `t01-modern-minimalist-cv-design_modern`
+4. `t02-professional-cv-design_modern`
+5. `t03-professional-cv-design_modern`
+6. `t04-modern-blue-corporate_modern`
+7. `t05-simple-cv-graphic-web-designer_modern`
+8. `t06-professional-cv-graphic-designer_modern`
+9. `t07-professional-cv-store-manager-incharge_modern`
+
+The catalog marks browser measurement/pagination evidence as passed for several templates, but every listed template still has `exportEvidence: 'pending'`. The common metadata also sets `samplePdf: false`; T01 ATS and T01 Simple explicitly set `docx: false` and `blankDocx: false`. This is direct catalog metadata, not a live download test.
+
+**Required action:** Use these nine IDs as the audit matrix. Verify actual PDF/print/DOCX output capability per template and do not advertise sample PDF or DOCX output where catalog metadata or live artifact evidence does not support it. Any status update must be evidence-backed and consistent between catalog, gallery and export UI.
+
 ### Acceptance still required
 - Build an authoritative list of actual template IDs and compare it to skills/languages contracts, gallery cards and renderer support.
 - For each release template, capture a baseline screenshot and test identity/contact, summary, education, experience, skills/languages, custom sections, visibility, reorder, theme colors, image and multi-page output.
