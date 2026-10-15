@@ -78,6 +78,13 @@ The baseline `saveState` serializes the complete workspace and version history a
 
 **Required correction:** Validate the PR #119 approach on its exact head: safely trim older snapshots while retaining a recent snapshot per CV; do not drop the current document or destroy all data; return a clear error if storage remains full. Cover quota exceptions on first save and repeated saves, corrupt payloads, and recovery after the error.
 
+
+### Concrete finding B-3: duplicate npm script key masks the skills/languages test alias
+
+The accepted-baseline `package.json` contains two `"test:m110"` keys: one points to `tests/m110/skills-languages-architecture.test.js`, while a later one points to `tests/m110/editor-preview-page-dom.test.js`. JSON parsers generally keep the last duplicate key, so `npm run test:m110` is likely to execute the page-DOM test instead of the skills/languages architecture test.
+
+**Required correction:** Rename the two scripts to unique aliases, for example `test:skills-languages-architecture` and `test:editor-preview-page-dom`; update CI/workflow references; validate `package.json` has no duplicate script keys; run both test files directly and through their named npm aliases. This is a test-discovery/coverage risk, not proof that either test fails.
+
 ### Gate
 PR #119 remains unmerged and its latest head has no passing CI evidence recorded in the current audit. Do not treat the repair as accepted until automated and browser checks pass.
 
@@ -252,3 +259,8 @@ Phase 2 can be considered audited only when:
 - no unknown is mislabeled PASS.
 
 No application changes have been made during this initial audit. Fixes should be isolated, tested, documented and reviewed in small batches after the relevant acceptance criteria are clear.
+
+
+## 14. Additional audit finding — test command reliability
+
+The `package.json` script list contains duplicate `test:m110` keys (see B-3). Before treating historical CI as comprehensive, inspect the complete script map for duplicate keys and verify each workflow command resolves to the intended test file. In particular, skills/languages migration coverage must run explicitly as `node --test tests/m110/skills-languages-architecture.test.js` until the aliases are corrected and verified.
