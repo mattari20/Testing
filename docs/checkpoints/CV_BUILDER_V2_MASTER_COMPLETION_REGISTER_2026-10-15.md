@@ -35,7 +35,7 @@ A feature is not Complete merely because its document or source file exists. Eve
 
 ## 3. Existing authoritative documentation discovered
 
-The accepted milestone tree already contains a large documentation system. The initial post-milestone register did not enumerate these files; this register corrects that omission.
+The accepted milestone tree already contains a large documentation system. The initial post-milestone register did not enumerate these files; this register corrects that omission. A further comparison of `release/cv-builder-v2-production` at the accepted milestone against `main` found **diverged histories**: GitHub reports 38 commits on `main` not in the accepted milestone history and 462 commits on the accepted milestone side not in `main` (compare status `diverged`). Treat this as a branch/release reconciliation issue; do not merge branches wholesale or assume that a feature on `main` is part of the accepted release.
 
 ### Foundation / release governance
 - `docs/00-foundation/PROJECT_STATUS.md`
@@ -88,7 +88,7 @@ The matrix below summarizes the main product areas. It is not a claim that every
 | DOC-08 | Skills, languages and proficiency variants | Master capability register and presentation-variant contracts | Prior implementation/design work recorded; cross-template regressions reported | No complete current template-by-template evidence matrix found in this pass | Reconcile variant contract, per-template defaults and regression evidence |
 | DOC-09 | Template metadata, compatibility and switching | Native template and compatibility contracts | Native V2 renderer/catalog and switching foundation recorded | Gallery validation passed on milestone SHA; workspace validation failed | Distinguish template engine from gallery/product journey |
 | DOC-10 | Template Gallery / library / demo profile | Product requirements and feature closure audit | Foundation exists; public gallery UX and handoff described as incomplete | Gallery workflow passed on milestone SHA; full product flow not proven | Identify in-scope release surfaces vs future work |
-| DOC-11 | Pre-designed Section Library | Prior section-library documentation commits exist in history | Current tree/file-level implementation mapping not yet reconciled | Tests and visual browser evidence not yet tied to exact current state | Recover exact spec, implementation batch, regression guard and current source paths |
+| DOC-11 | Pre-designed Section Library (26 types / five groups) | Specification exists on `main` at `docs/02-v2-product/PRE_DESIGNED_SECTION_LIBRARY.md`; absent at accepted milestone SHA | Implementation files exist on `main` (`src/ui/pre-designed-section-library.js`, editor integration and native renderer fallback); these files are absent at accepted milestone SHA | Unit/browser test files exist on `main` under `tests/m496-m505/`; historical notes explicitly say test execution was unconfirmed at that boundary | Do not treat as included in accepted release. Audit the feature on `main`, recover its exact intended release boundary, compare it against the accepted milestone, and decide a safe isolated integration plan after Phase 1. Do not cherry-pick or merge automatically |
 | DOC-12 | Theme, colors, headings, icons and template visual identity | Style contract, native template contract and user decisions | Central styling and template-specific behavior recorded | User reported a later update disturbed template layouts | Create template-by-template visual baseline and acceptance map in Phase 2 |
 | DOC-13 | Preview editing and page navigation | Product requirements and M-numbered preview/editor records | Foundation recorded; full UX integration varies | Historical browser/CI evidence is SHA-bound | Map each control to current DOM/controller/tests |
 | DOC-14 | Pagination, A4 and multi-page rendering | Layout/pagination contracts and M100–M217 records | Significant fragmentation/pagination implementation recorded | Historical browser evidence passed on earlier application-code boundaries | Retest current accepted baseline and release candidate; don't reuse stale PASS |
@@ -101,7 +101,15 @@ The matrix below summarizes the main product areas. It is not a claim that every
 | DOC-21 | CI, browser evidence and release gates | Release tracker, testing contract and M-numbered evidence docs | Test infrastructure exists | Gallery PASS and workspace FAIL on milestone SHA; PR #119 head has no recorded checks | Build exact-SHA evidence ledger; never transfer PASS between SHAs |
 | DOC-22 | Deployment, security and production verification | Final readiness and release tracker | Release process documented | R2 conditional; R6 open; R7 open; R8 blocked in recorded tracker; destination mapping unresolved | Keep production blocked until external evidence and deployment path are verified |
 
-## 5. Product scope must not be collapsed into one “done” label
+## 5. Branch divergence and Section Library release-boundary finding
+
+A GitHub comparison of accepted SHA `9faf549ce714bd7e22bc266d5540ee886d9f0395` against `main` reports status `diverged`, `ahead_by=38`, `behind_by=462`. The comparison lists a coherent sequence of Section Library work on `main`, including catalog/integration, starter-entry preservation, generic preview fallback, unit/browser tests, the written spec, compatibility fixes and a regression guard. The same Section Library spec, implementation and tests return 404 when fetched at the accepted milestone SHA. Therefore, the Section Library was **developed and documented on `main` but is not present in the accepted milestone tree**. This is the strongest explanation so far for why the user-visible goal may not match the accepted production baseline.
+
+Relevant `main` commits include `969e2bb` (catalog), `e658931` (editor panel), `bd6d64e` (generic preview fallback), `44bea4a` (specification), `f323a39` / `5c126db` (compatibility and inline editing fixes), and `a40143e` (type-collision regression test). The repository notes associated with the Section Library state that CI/browser results were not confirmed in that workstream; file presence and static checks are not a passing runtime test. This requires exact-SHA workflow evidence before release inclusion.
+
+Because the branch histories diverged, do not merge `main` wholesale into `release/cv-builder-v2-production`. First compare the exact feature diff and dependencies, run the required tests against an isolated candidate based on the accepted milestone, then seek explicit release approval.
+
+## 6. Product scope must not be collapsed into one “done” label
 
 Existing documents distinguish:
 - **A — Integrated**;
@@ -112,7 +120,7 @@ Existing documents distinguish:
 
 Use that model alongside implementation/test evidence. A future capability such as Google Drive, public online CV publishing, or career ecosystem integration must not be marked as an incomplete current-release blocker if governing documents explicitly reserve it for later. Conversely, a foundation-only feature must not be called complete merely because its contract exists.
 
-## 6. Known regressions / current release blockers
+## 7. Known regressions / current release blockers
 
 1. Workspace validation failure on accepted milestone: mobile More-menu Preview click did not switch view; duplicate-CV control was not visible; adding a skill moved scroll position by 66px.
 2. LocalStorage quota error for `estudent_cv_workspace_v2_2027`.
@@ -121,18 +129,18 @@ Use that model alongside implementation/test evidence. A future capability such 
 5. Live production R6 evidence, security R2 external actions, V1 retirement R7, and final release R8 remain open/conditional in the existing release tracker.
 6. User-reported template/skills/language visual regressions need a controlled template-by-template recheck before new design work.
 
-## 7. Remaining Phase 1 work
+## 8. Remaining Phase 1 work
 
 This register is a **first reconciliation pass**, not Phase 1 closure. Continue by:
 1. Reading the full final feature closure matrix and identifying every capability marked B/C/D/E.
-2. Retrieving the exact section-library specification and implementation/regression-guard documents from history; map to current source and tests.
+2. Compare the Section Library `main` implementation/spec/tests with the accepted milestone and establish a safe candidate integration boundary; do not merge the divergent branches wholesale.
 3. Mapping the user-reported CV Builder V2 issues to current source paths and test files.
 4. Mapping every relevant M-numbered workstream to current implementation and test evidence without assuming that document numbers imply delivery.
 5. Reconciling old release tracker statuses with the accepted milestone SHA and October 14–15 regressions.
 6. Adding a per-feature evidence row for current code reference, test name/run/SHA, browser evidence and next action.
 7. Updating the continuation record and regression register to link this master register.
 
-## 8. Phase 1 exit criteria
+## 9. Phase 1 exit criteria
 
 Phase 1 may be called complete only when:
 - every in-scope current-release capability has a unique register row;
