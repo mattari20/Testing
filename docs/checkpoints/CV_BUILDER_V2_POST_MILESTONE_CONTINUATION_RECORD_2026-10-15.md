@@ -98,7 +98,7 @@ A previous Hostinger workflow used `server-dir: ./` and reported uploading/repla
 
 Repository inspection confirmed that the accepted milestone already contains a substantial documentation system: foundation/release governance, architecture and product requirements, a master capability register, a feature matrix, a final product feature closure audit, current implementation/style contracts, and hundreds of M-numbered implementation/evidence records. The first-pass regression register was therefore incomplete as a project-wide inventory, not because the repository lacked documentation.
 
-The new central index is `docs/checkpoints/CV_BUILDER_V2_MASTER_COMPLETION_REGISTER_2026-10-15.md` on the documentation audit branch. It links the existing authorities, separates integrated/foundation/planned/future/external-gate scope, and records the known October regressions and exact-SHA evidence rules. It is explicitly a first reconciliation pass; Phase 1 is not yet complete.
+The new central index is `docs/checkpoints/CV_BUILDER_V2_MASTER_COMPLETION_REGISTER_2026-10-15.md` on the documentation audit branch. The focused regression register now links to this master register and records the Section Library branch-boundary correction. It links the existing authorities, separates integrated/foundation/planned/future/external-gate scope, and records the known October regressions and exact-SHA evidence rules. It is explicitly a first reconciliation pass; Phase 1 is not yet complete.
 
 Key existing authorities reviewed in this pass include:
 - `docs/00-foundation/PROJECT_STATUS.md`
@@ -112,6 +112,8 @@ Key existing authorities reviewed in this pass include:
 - `docs/03-implementation/CURRENT_IMPLEMENTATION_BEHAVIOR_AND_STYLE_CONTRACT.md`
 
 Important reconciliation finding: older documents contain repository-name references to `mattari20/CV-Builder-V2`, while the active task repository is `mattari20/Testing`. Treat the former as historical references unless a source mapping proves otherwise; do not treat those documents as absent solely because the repository label differs.
+
+A GitHub compare of the accepted milestone against `main` reports diverged histories: 38 commits on `main` are not in the accepted milestone history, while 462 commits exist on the accepted milestone side but not on `main`. Crucially, the Pre-designed Section Library specification, implementation and tests exist on `main` but are absent at accepted SHA `9faf549...`. The main-side work includes the 26-type catalog, editor panel, generic native-template preview fallback and tests; historical notes explicitly say runtime CI/browser results were not confirmed for that workstream. This likely explains a key gap between the planned feature and the accepted milestone. Do not merge `main` wholesale or claim the Section Library is in the accepted release; inspect the exact diff, dependencies and tests, then validate an isolated candidate.
 
 The existing release tracker records R1/R3/R4/R5 as PASS, R2 as CONDITIONAL, R6 as OPEN, R7 as OPEN, and R8 as BLOCKED at its recorded evidence boundary. These statuses do not override the newer milestone workspace failure or create evidence for PR #119. Current branch-specific and exact-SHA evidence must be reconciled before any release status is upgraded.
 
