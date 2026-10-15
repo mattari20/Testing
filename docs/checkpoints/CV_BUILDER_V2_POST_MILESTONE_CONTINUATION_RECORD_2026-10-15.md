@@ -142,3 +142,16 @@ The existing release tracker records R1/R3/R4/R5 as PASS, R2 as CONDITIONAL, R6 
 ## 9. Documentation completeness statement
 
 This record consolidates the known milestone, PR #119, known regressions, validation evidence, deployment uncertainty, and continuation order from the available project history as of 2026-10-15. It does **not** claim to contain every historical decision or every previous implementation detail. The documentation audit is complete only after the repository's existing docs and the available prior work history have been reconciled against this record.
+
+
+## 9. Explicit inventory of unimplemented and further-work items
+
+The comprehensive register is now available at `docs/checkpoints/CV_BUILDER_V2_UNIMPLEMENTED_AND_FURTHER_WORK_REGISTER_2026-10-15.md`. It lists current regressions, editor functions to recheck, template/skills/languages work, foundation-only product surfaces, future/deferred scope, security/deployment/release gates, and the evidence required to change each status. It must remain the single linked checklist for anything not coded, not surfaced, partially implemented, or requiring further work.
+
+## 10. Phase 1 audit continuation state
+
+- Master register now links the gap register and records an initial source-path mapping.
+- The mapping is intentionally marked initial: per-feature test names, exact-SHA workflow links and browser artifact references still need to be completed for all current-release features.
+- Do not call Phase 1 complete until the master register's exit criteria are met. Do not merge PR #120 or deploy as part of this documentation pass.
+- PR #119 remains unmerged and unverified at its recorded head; do not treat its code as accepted production behavior.
+- Preserve accepted baseline `9faf549ce714bd7e22bc266d5540ee886d9f0395`; no application code or production deployment was changed by this documentation update.
