@@ -254,6 +254,15 @@ The catalog marks browser measurement/pagination evidence as passed for several 
 - Trace SEO metadata/sitemap/robots and analytics/privacy behavior to actual code and live responses.
 - Close R6, then R7, then R8 in the governing order; never infer release readiness from unit tests alone.
 
+
+
+### Additional source-level verification — dates and photo crop
+
+- Month/year picker handlers are present in `src/ui/editor-dom-controller.js`; they open the hidden month picker, parse the selected value and dispatch an `update-entry` command. Date-of-birth picker handlers are also present.
+- The same controller defines `createPhotoCropper`, builds a modal with canvas preview, zoom/horizontal/vertical controls, rotate-left/right/reset, and Apply Crop behavior.
+- The presence of these handlers means crop/rotation and date-picker behavior should not be classified as simply “not coded.” The remaining issue is end-to-end reliability: the user previously reported the crop popup failing to appear and date-picker click/cursor problems. No dedicated crop/browser test file was found by the current filename audit.
+- **Required acceptance:** test opening/closing crop, image load failure, rotate/reset, zoom/position, Apply Crop, correct preview aspect ratio and persistence; test month/year picker on desktop and mobile, keyboard focus, date formatting and start/end date semantics. Add focused browser tests if no existing test exercises these controls.
+
 ## 12. Phase 2 execution sequence
 
 1. **P2-A — Stop data-loss risks first:** mixed skills/languages migration test and non-destructive workspace corruption/quota repair.
@@ -284,3 +293,8 @@ No application changes have been made during this initial audit. Fixes should be
 ## 14. Additional audit finding — test command reliability
 
 The `package.json` script list contains duplicate `test:m110` keys (see B-3). Before treating historical CI as comprehensive, inspect the complete script map for duplicate keys and verify each workflow command resolves to the intended test file. In particular, skills/languages migration coverage must run explicitly as `node --test tests/m110/skills-languages-architecture.test.js` until the aliases are corrected and verified.
+
+
+## 15. Audit distinction: code exists versus user journey works
+
+The cropper and date-picker handlers are present in `src/ui/editor-dom-controller.js`; they remain behaviorally unverified. The same rule applies to controller methods for section visibility, reorder, save and export: source existence is recorded, while full acceptance depends on browser-visible behavior and persisted/preview/export results.
