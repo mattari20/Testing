@@ -317,3 +317,28 @@ The cropper and date-picker handlers are present in `src/ui/editor-dom-controlle
 ## 16. User-facing entry-point reconciliation
 
 The builder toolbar's PDF action is print-based and surfaced; the separately defined DOCX export UI modules were not found wired into `v2-production-entry.js` or the inspected builder toolbar. Similarly, import/extraction engines exist but the inspected builder and gallery entry pages have no upload input. Phase 2 must distinguish these foundation modules from actual end-user controls and either wire/test them in an approved implementation batch or explicitly keep them out of the current release.
+
+
+## 17. Review of proposed repair PR #119 (code review only; not validated)
+
+The PR patch was inspected without merging or executing it.
+
+### Promising changes
+- Stops automatically removing unreadable workspace data in `src/ui/cv-workspace-controller.js` and in the builder's startup sanitizer.
+- Adds quota handling that tries to trim older version snapshots while retaining the latest snapshot per CV, then returns a recoverable error if still full.
+- Attempts to preserve viewport scroll position during editor form rerenders.
+- Changes the mobile More-menu pointer handling so layout reflow should not cancel the Preview tab click.
+- Adds a focused quota/corrupt-storage unit test file.
+
+### Gaps in the proposed validation
+- No GitHub Actions workflow run was returned for PR #119 head `918a01d103ce446afa9119645369870943631964`; its code is not validated.
+- The added quota test simulates one quota exception that succeeds after a history snapshot is trimmed. It does not cover a quota error that persists after all removable history is trimmed, non-quota write exceptions, or storage read exceptions.
+- The unreadable-data test checks that `removeItem` was not called, but does not prove the UI gives the user a recovery/download/reset path.
+- No new dedicated scroll restoration test is added in the patch; the existing browser workflow needs to demonstrate the reported 66px jump is gone.
+- No new dedicated test was added for the mobile More-menu pointerdown race; the existing workspace browser workflow must pass on the exact PR head.
+- Quota recovery should be checked for correct rollback of in-memory history when a non-quota error occurs during retry.
+- Because the current controller catches errors during the entire load/migration path, preserving the bytes is safer than deleting them, but the user also needs a visible warning instead of silently continuing with an empty default workspace.
+
+### PR #119 review disposition
+
+**Keep open and unmerged.** Run the focused unit suites and the real browser workspace workflow on the exact PR head; add the missing negative/error-path tests; inspect test artifacts; then review the diff again. Do not deploy until the verified Hostinger V2 target is confirmed.
