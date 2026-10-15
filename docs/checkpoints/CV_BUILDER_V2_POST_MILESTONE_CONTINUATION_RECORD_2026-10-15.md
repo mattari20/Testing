@@ -94,9 +94,30 @@ A previous Hostinger workflow used `server-dir: ./` and reported uploading/repla
 | Live deployment of PR #119 | Not deployed/confirmed | PR is open and unmerged |
 | Full historical documentation | In progress | Reconcile earlier conversations, commits, screenshots and existing docs |
 
-## 6. Continuation plan (required order)
+## 6. Phase 1 documentation reconciliation update — 2026-10-15
 
-1. **Complete documentation audit.** Compare this record with the existing checkpoint, all relevant commit history, PR discussions, project docs, and prior work records. Add missing historical feature decisions and file-level references. Keep unknowns explicitly marked.
+Repository inspection confirmed that the accepted milestone already contains a substantial documentation system: foundation/release governance, architecture and product requirements, a master capability register, a feature matrix, a final product feature closure audit, current implementation/style contracts, and hundreds of M-numbered implementation/evidence records. The first-pass regression register was therefore incomplete as a project-wide inventory, not because the repository lacked documentation.
+
+The new central index is `docs/checkpoints/CV_BUILDER_V2_MASTER_COMPLETION_REGISTER_2026-10-15.md` on the documentation audit branch. It links the existing authorities, separates integrated/foundation/planned/future/external-gate scope, and records the known October regressions and exact-SHA evidence rules. It is explicitly a first reconciliation pass; Phase 1 is not yet complete.
+
+Key existing authorities reviewed in this pass include:
+- `docs/00-foundation/PROJECT_STATUS.md`
+- `docs/00-foundation/RELEASE_GATE_TRACKER.md`
+- `docs/00-foundation/FINAL_RELEASE_READINESS.md`
+- `docs/00-foundation/REPOSITORY_INTEGRITY_AND_WORK_LEDGER.md`
+- `docs/02-v2-product/V2_FEATURE_MATRIX.md`
+- `docs/02-v2-product/V2_MASTER_CAPABILITY_REGISTER.md`
+- `docs/02-v2-product/V2_PRODUCT_REQUIREMENTS.md`
+- `docs/03-implementation/FINAL_PRODUCT_FEATURE_CLOSURE_AUDIT.md`
+- `docs/03-implementation/CURRENT_IMPLEMENTATION_BEHAVIOR_AND_STYLE_CONTRACT.md`
+
+Important reconciliation finding: older documents contain repository-name references to `mattari20/CV-Builder-V2`, while the active task repository is `mattari20/Testing`. Treat the former as historical references unless a source mapping proves otherwise; do not treat those documents as absent solely because the repository label differs.
+
+The existing release tracker records R1/R3/R4/R5 as PASS, R2 as CONDITIONAL, R6 as OPEN, R7 as OPEN, and R8 as BLOCKED at its recorded evidence boundary. These statuses do not override the newer milestone workspace failure or create evidence for PR #119. Current branch-specific and exact-SHA evidence must be reconciled before any release status is upgraded.
+
+## 7. Continuation plan (required order)
+
+1. **Complete documentation audit.** Continue from `CV_BUILDER_V2_MASTER_COMPLETION_REGISTER_2026-10-15.md`; reconcile the full feature closure matrix, section-library specification/implementation/regression guard, M-numbered workstreams, user-reported issues, exact source/test paths and current evidence. Keep unknowns explicitly marked.
 2. **Review PR #119.** Inspect all changed files and confirm no unrelated redesign, CV Builder V1 change, Institutes change, or pre-designed section library change.
 3. **Run targeted automated tests** for quota handling, corrupt storage preservation, workspace lifecycle, mobile menu, and editor scroll preservation.
 4. **Run browser acceptance tests** on desktop and mobile widths. Capture test results and screenshots/logs.
@@ -106,7 +127,7 @@ A previous Hostinger workflow used `server-dir: ./` and reported uploading/repla
 8. **Deploy and verify live site** using version/commit evidence and smoke tests. Record exact run, commit SHA, target directory, and test outcomes.
 9. **Only then finalize the remaining-feature design** and implement in small, documented batches.
 
-## 7. Rules for all future work
+## 8. Rules for all future work
 
 - Keep the accepted milestone and backup branches intact.
 - Do not claim a fix is complete, tested, merged, or deployed without evidence for that exact state.
@@ -116,6 +137,6 @@ A previous Hostinger workflow used `server-dir: ./` and reported uploading/repla
 - Do not combine unrelated projects or change CV Builder V1.
 - Update this record whenever status, test evidence, or deployment state changes.
 
-## 8. Documentation completeness statement
+## 9. Documentation completeness statement
 
 This record consolidates the known milestone, PR #119, known regressions, validation evidence, deployment uncertainty, and continuation order from the available project history as of 2026-10-15. It does **not** claim to contain every historical decision or every previous implementation detail. The documentation audit is complete only after the repository's existing docs and the available prior work history have been reconciled against this record.
