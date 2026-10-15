@@ -152,3 +152,34 @@ Phase 1 may be called complete only when:
 - the register and source docs agree, or discrepancies are explicitly logged.
 
 Until then, the audit status remains **IN PROGRESS**.
+
+
+## 10. Required gap register and code/evidence mapping
+
+The exhaustive list of capabilities that are not coded, are foundation-only, lack a complete user-facing surface, need regression work, or require external evidence is maintained in:
+
+- `docs/checkpoints/CV_BUILDER_V2_UNIMPLEMENTED_AND_FURTHER_WORK_REGISTER_2026-10-15.md`
+
+That register is mandatory for continuation and contains explicit IDs GAP-001 onward, acceptance criteria, current evidence boundaries, and a distinction between current-release blockers and deliberately deferred/future features. It must be updated whenever an item is implemented, tested, deferred by decision, or blocked by an external dependency.
+
+### Initial feature-to-code mapping (verified source paths at accepted baseline)
+
+| Area | Source paths present at accepted baseline | Relevant tests/evidence paths | Current evidence status / next action |
+|---|---|---|---|
+| Workspace persistence and CV management | `src/ui/cv-workspace-controller.js`, `builder.html`, `src/ui/editor-runtime.js` | `tests/m1000-m1059/cv-workspace-quota.test.js`; `.github/workflows/cv-workspace-validation.yml` | PR #119 has proposed fixes but no passing evidence recorded for its head; run targeted and browser tests on candidate SHA |
+| Template Gallery | `index.html` and gallery/runtime files confirmed by the accepted tree | `.github/workflows/template-gallery-validation.yml` | Workflow run 38490677818 passed on milestone; this does not prove workspace lifecycle or all gallery-to-builder journeys |
+| Native template rendering | `src/render/native-v2-template-renderer.js` and template/render modules in accepted tree | `.github/workflows/native-v2-browser-validation.yml`; `.github/workflows/v2-integration-validation.yml` | Historical results are SHA-bound; build candidate-specific browser and screenshot evidence |
+| Editor form/section controls | `src/ui/editor-form-renderer.js`, `src/ui/editor-runtime.js` and command/controller modules | M-numbered editor records and registered tests under `tests/` | Map individual actions (hide, reorder, custom fields, preview synchronization) to exact test names; current broad browser evidence is incomplete |
+| Export/pagination | Export/render/layout modules documented by `V2_LAYOUT_AND_PAGINATION_CONTRACT.md` and `V2_EXPORT_AND_DISTRIBUTION_CONTRACT.md` | Native V2 browser and integrated fragmentation suites | Re-run on candidate SHA and inspect actual print/PDF artifact; older PASSes do not establish current production output |
+| Security/release | `.github/workflows/deploy-cv-builder-v2.yml`; `docs/00-foundation/R2_SECURITY_CLOSURE.md`; `docs/00-foundation/RELEASE_GATE_TRACKER.md` | Deploy run 38490677809; release-gate records | Deployment succeeded but FTP destination mapping is unverified; R2 conditional, R6 open, R7 open, R8 blocked |
+| Pre-designed Section Library | Not present at accepted SHA; present on `main` at `src/ui/pre-designed-section-library.js`, `src/ui/editor-form-renderer.js`, `src/render/native-v2-template-renderer.js`, `index.html` | `tests/m496-m505/pre-designed-section-library.test.js`, `tests/m496-m505/pre-designed-section-browser.test.js` on `main` | Do not count as part of accepted baseline; isolate and validate feature/dependency diff before proposed integration |
+
+This is the initial path mapping, not yet a line-by-line mapping of every individual capability. Phase 1 remains IN PROGRESS until every current-release item in the feature closure audit has a mapped implementation/test/evidence record or an explicit gap disposition.
+
+## 11. Documentation consistency corrections
+
+- The older `FINAL_PRODUCT_FEATURE_CLOSURE_AUDIT.md` uses status groups A–E; this register adds evidence-specific states. Keep both dimensions: product scope disposition and actual code/test/deployment evidence.
+- The older release readiness document's “repository documentation/specification completion: 100%” refers to documentation/specification coverage at its historical audit boundary; it must not be interpreted as all product functions coded or production release complete.
+- Older records refer to `mattari20/CV-Builder-V2`; this audit's active repository is `mattari20/Testing`. Preserve the old repository label as historical provenance, not proof that the current active repository contains the same commit history.
+- The Section Library's specification on `main` says its unit/browser/CI checks passed on the merged source/test sequence, while the earlier continuation notes said execution was unconfirmed at a previous evidence boundary. Treat the newer spec as a claim requiring exact workflow-run/SHA verification before release acceptance; do not carry either status across to the accepted milestone.
+- The current baseline deploy workflow's `server-dir: ./` conflicts with a safe target-verification requirement. Deployment destination remains UNKNOWN until independently confirmed.
