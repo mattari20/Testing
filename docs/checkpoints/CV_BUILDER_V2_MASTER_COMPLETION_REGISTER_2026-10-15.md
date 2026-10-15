@@ -190,3 +190,14 @@ This is the initial path mapping, not yet a line-by-line mapping of every indivi
 As of the latest documentation update, PR #120 is still **open, draft, and unmerged**, with head `7ef065a1e4d6eea0ee5cf4208bdd9a23d0298ec4` and base `9faf549ce714bd7e22bc266d5540ee886d9f0395`. The new gap register and representative source/test map are included in the PR.
 
 **Phase 1 is not yet closed.** The audit has improved the inventory and mapped representative code/test paths, but full exact-SHA automated/browser evidence, per-template visual acceptance, deployment-target verification, and remaining feature-by-feature mappings are still outstanding. This is intentionally not marked 100% complete. No application code or production deployment was changed.
+
+
+## 13. Phase 2 cross-reference and newly discovered gaps
+
+The Phase 2 functional source audit is tracked separately in PR #121:
+- `docs/checkpoints/CV_BUILDER_V2_PHASE_2_FUNCTIONAL_AUDIT_2026-10-15.md`
+- Pull request: https://github.com/mattari20/Testing/pull/121
+
+New source-level findings from that audit have been added to the Unimplemented and Further-Work Register as GAP-111 through GAP-117. These include mixed legacy/new Skills & Languages migration risk, a duplicate `test:m110` npm script key, production export/import UI integration gaps, pending per-template export evidence, incomplete PR #119 validation coverage, and crop/date controls that exist but still require browser verification.
+
+These findings strengthen the gap inventory; they do not close Phase 1. All test and live-production statuses remain evidence-bound to exact commits and actual observed runs.
