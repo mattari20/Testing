@@ -217,6 +217,20 @@ The catalog marks browser measurement/pagination evidence as passed for several 
 - PDF downloads must open and preserve content; DOCX must be a valid editable file when included in release scope.
 - Capture artifact filenames, sizes and evidence links from the tested SHA.
 
+
+
+### Concrete finding G-1: production builder exposes print-based PDF, not an obvious DOCX export control
+
+In accepted-baseline `builder.html`, the visible toolbar exposes `#print-btn` labelled “Export PDF”; its handler clones the current template preview into a print window and calls `printWindow.print()` (falling back to `window.print()`). The same HTML contains no DOCX button or DOCX reference. Separate DOCX/export DOM modules exist in `src/application/`, but `src/application/v2-production-entry.js` mounts `mountV2EditorRuntime` and does not import those export DOM modules.
+
+**Interpretation:** A print-based PDF route is surfaced; the existence of DOCX modules does not prove DOCX export is reachable in the production builder. Confirm the actual integration boundary before deciding whether DOCX export is an intended current-release capability or a foundation-only gap. Test PDF from the actual toolbar and inspect the resulting artifact.
+
+### Concrete finding H-1: PDF/DOCX import is not surfaced in the inspected builder/gallery HTML
+
+The accepted-baseline `builder.html` and `index.html` have no file-input/upload controls or PDF/DOCX import entry point in the inspected source. The import layer defines an extraction-adapter contract and migration/review functions, but no upload UI was identified in these entry pages.
+
+**Interpretation:** Treat PDF/DOCX import as foundation-only/not surfaced unless another active production entry is found. Do not claim that students can upload and review a CV based solely on the import engine and contract.
+
 ## 10. H — Import/migration and data recovery
 
 ### Source/test anchors found
@@ -298,3 +312,8 @@ The `package.json` script list contains duplicate `test:m110` keys (see B-3). Be
 ## 15. Audit distinction: code exists versus user journey works
 
 The cropper and date-picker handlers are present in `src/ui/editor-dom-controller.js`; they remain behaviorally unverified. The same rule applies to controller methods for section visibility, reorder, save and export: source existence is recorded, while full acceptance depends on browser-visible behavior and persisted/preview/export results.
+
+
+## 16. User-facing entry-point reconciliation
+
+The builder toolbar's PDF action is print-based and surfaced; the separately defined DOCX export UI modules were not found wired into `v2-production-entry.js` or the inspected builder toolbar. Similarly, import/extraction engines exist but the inspected builder and gallery entry pages have no upload input. Phase 2 must distinguish these foundation modules from actual end-user controls and either wire/test them in an approved implementation batch or explicitly keep them out of the current release.
