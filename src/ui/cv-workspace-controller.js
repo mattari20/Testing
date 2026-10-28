@@ -64,21 +64,63 @@ export function createCVWorkspaceController(options = {}) {
         documents: savedDocuments
       }, { type: 'load-workspace' });
       versions = payload.versions && typeof payload.versions === 'object' ? payload.versions : {};
-    } catch {
-      storage.removeItem?.(storageKey);
+    } catch (error) {
+      // Never delete a user's workspace automatically: keep the stored bytes
+      // available for recovery if a future version can read them.
+      console.warn('[CV Builder V2] Workspace load failed; saved data was preserved.', error);
     }
   };
 
   loadState();
 
   const saveState = () => {
-    if (!storage?.setItem) return;
-    const payload = {
+    if (!storage?.setItem) return true;
+    const originalVersions = clone(versions);
+    const snapshot = () => JSON.stringify({
       version: CV_WORKSPACE_CONTROLLER_VERSION,
       workspace: workspace.getState(),
       versions
-    };
-    storage.setItem(storageKey, JSON.stringify(payload));
+    });
+    try {
+      storage.setItem(storageKey, snapshot());
+      return true;
+    } catch (firstError) {
+      // Quota recovery may trim old history, but always retains the newest
+      // snapshot for each CV and never removes the workspace/current CV.
+      const isQuotaError = firstError?.name === 'QuotaExceededError'
+        || firstError?.code === 22 || firstError?.code === 1014;
+      if (!isQuotaError) throw firstError;
+      try {
+        while (true) {
+          let candidateId = null;
+          let candidateIndex = -1;
+          let oldestTime = Infinity;
+          for (const [documentId, list] of Object.entries(versions)) {
+            if (!Array.isArray(list) || list.length <= 1) continue;
+            const createdAt = Date.parse(list[0]?.createdAt || '') || 0;
+            if (createdAt < oldestTime) {
+              oldestTime = createdAt;
+              candidateId = documentId;
+              candidateIndex = 0;
+            }
+          }
+          if (candidateId === null) break;
+          versions[candidateId].splice(candidateIndex, 1);
+          try {
+            storage.setItem(storageKey, snapshot());
+            console.warn('[CV Builder V2] Storage quota reached; older history snapshots were trimmed.');
+            return true;
+          } catch (error) {
+            if (!(error?.name === 'QuotaExceededError' || error?.code === 22 || error?.code === 1014)) throw error;
+          }
+        }
+      } catch (error) {
+        versions = originalVersions;
+        throw error;
+      }
+      versions = originalVersions;
+      throw new Error('Browser storage is full. Your current CV remains in this session, but workspace changes could not be saved. Export your CV or free browser storage space, then try again.');
+    }
   };
 
   const sameVersionContent = (left, document, masterProfile) =>
@@ -91,11 +133,20 @@ export function createCVWorkspaceController(options = {}) {
     const masterProfile = clone(profileOverride || state.masterProfile);
     const list = versions[document.id] || [];
     const latest = list[list.length - 1];
-    // Repeated saves of unchanged content should not create noisy history entries.
     if (sameVersionContent(latest, document, masterProfile)) return latest;
+
+    // Copy the full history before attempting persistence so quota trimming on
+    // the candidate cannot mutate the rollback snapshot through shared arrays.
     const snapshot = createVersionSnapshot(document, masterProfile);
+    const previousVersions = clone(versions);
+    versions = clone(versions);
     versions[document.id] = [...list, snapshot].slice(-20);
-    saveState();
+    try {
+      saveState();
+    } catch (error) {
+      versions = previousVersions;
+      throw error;
+    }
     return snapshot;
   };
 
@@ -212,7 +263,20 @@ export function createCVWorkspaceController(options = {}) {
     switchDocument: restoreDocument,
     recordVersion,
     restoreVersion,
-    save: () => { syncActive(); recordVersion(); saveState(); return workspace.getState(); },
+    save: () => {
+      const previousWorkspaceState = workspace.getState();
+      const previousVersions = clone(versions);
+      try {
+        syncActive();
+        recordVersion();
+        saveState();
+        return workspace.getState();
+      } catch (error) {
+        versions = previousVersions;
+        workspace.replaceState(previousWorkspaceState, { type: 'save-rollback' });
+        throw error;
+      }
+    },
     destroy: () => { destroyed = true; workspace.destroy(); }
   });
 }

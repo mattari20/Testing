@@ -51,6 +51,17 @@ export function mountV2EditorRuntime(root, input = {}) {
   );
 
   const render = () => {
+    // Capture the active control's viewport anchor before replacing its parent form.
+    // Keeping the clicked action at a fixed viewport coordinate is more robust than
+    // restoring document scroll alone when the browser adjusts scroll for new content.
+    const view = root.ownerDocument?.defaultView;
+    const active = root.ownerDocument.activeElement;
+    const activeAnchor = active && root.contains(active)
+      ? { node:active, top:active.getBoundingClientRect().top, left:active.getBoundingClientRect().left }
+      : null;
+    const preserveViewport = Boolean(view && activeAnchor);
+    const scrollX = preserveViewport ? view.scrollX : null;
+    const scrollY = preserveViewport ? view.scrollY : null;
     fieldBinding?.destroy();
     actionBinding?.destroy();
     reorderBinding?.destroy();
@@ -64,6 +75,24 @@ export function mountV2EditorRuntime(root, input = {}) {
       fieldBinding = bindEditorFields(form, mounted.surface);
       actionBinding = bindEditorActions(form, mounted.surface);
       reorderBinding = bindEditorReorder(form, mounted.surface);
+    }
+    if (preserveViewport) {
+      const restoreViewport = () => {
+        if (destroyed) return;
+        const replacementAnchor = form?.querySelector(
+          '[data-v2-editor-command="add-entry"][data-v2-target*="skills"]'
+        );
+        if (Number.isFinite(scrollX) && Number.isFinite(scrollY)) view.scrollTo({ left:scrollX, top:scrollY, behavior:'instant' });
+        // Reposition relative to the action control after the newly rendered form
+        // exists; this compensates for browser anchoring that changes the window
+        // scroll even after the original coordinates were restored.
+        if (replacementAnchor && activeAnchor && replacementAnchor.isConnected) {
+          const deltaY = replacementAnchor.getBoundingClientRect().top - activeAnchor.top;
+          if (Math.abs(deltaY) > 1) view.scrollBy({top:deltaY,left:0,behavior:'instant'});
+        }
+      };
+      restoreViewport();
+      view.requestAnimationFrame(() => view.requestAnimationFrame(restoreViewport));
     }
     return state;
   };

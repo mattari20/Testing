@@ -84,7 +84,7 @@
     @media(max-width:1000px){#v2-editor{grid-template-columns:1fr}.status{width:100%;margin-left:0}[data-v2-editor-form]{max-height:none}#v2-editor>section:nth-child(2){position:static;top:auto}[data-v2-editor-preview-root]{max-height:none}}@media(max-width:760px){
       .toolbar-menu{display:block;position:relative}
       .toolbar-menu>summary{display:block}
-.mobile-view-switch{display:flex}#v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}#v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}#v2-editor[data-mobile-view="preview"]>section:nth-child(2){display:flex}.workspace-menu>summary{display:block}.workspace-menu:not([open]) .workspace-actions{display:none}.workspace-menu[open] .workspace-actions{display:flex}.toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex}}
+.mobile-view-switch{display:flex}#v2-editor[data-mobile-view="edit"]>section:nth-child(2){display:none}#v2-editor[data-mobile-view="preview"]>section:nth-child(1){display:none}#v2-editor[data-mobile-view="preview"]>section:nth-child(2){display:flex}.workspace-menu>summary{display:block}.workspace-menu:not([open]) .workspace-actions{display:flex}.toolbar-secondary{display:none}.toolbar-menu{display:block}.toolbar-menu[open] .toolbar-secondary{display:flex}}
 
     .header-product-label{font-size:13px;font-weight:700;opacity:.95}
     .mobile-view-switch{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;box-shadow:var(--shadow)}
@@ -494,7 +494,7 @@
     });
     const sanitizeStoredJson = (key) => {
       try { const raw=window.localStorage.getItem(key); if(raw) JSON.parse(raw); }
-      catch(error){ window.localStorage.removeItem(key); console.warn('[CV Builder V2] Removed invalid saved data:', key); }
+      catch(error){ console.warn('[CV Builder V2] Saved data could not be parsed; original data was preserved:', key, error); }
     };
     sanitizeStoredJson('estudent_cv_builder_v2_2027');
     sanitizeStoredJson('estudent_cv_workspace_v2_2027');
@@ -691,22 +691,31 @@
     // Capture pointer interaction so the panel dismisses even if another
     // component stops bubbling click events.
     document.addEventListener('pointerdown', event => {
-      if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
-      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+      // The workspace action controls stay inline on desktop. On compact screens
+      // keep the disclosure transient and collapse it only after an outside tap.
+      if (isCompactToolbar() && workspaceMenu && !workspaceMenu.contains(event.target)) {
+        closeWorkspaceMenu();
+      }
     }, true);
     document.addEventListener('click', event => {
       if (toolbarMenu && !toolbarMenu.contains(event.target)) closeToolbarMenu();
-      if (workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
+      if (isCompactToolbar() && workspaceMenu && !workspaceMenu.contains(event.target)) closeWorkspaceMenu();
     });
     window.addEventListener('resize', () => {
       if (isCompactToolbar()) closeToolbarMenu();
       else if (toolbarMenu) toolbarMenu.open = true;
     });
     toolbarMenu?.addEventListener('toggle', () => {
-      if (toolbarMenu.open) closeWorkspaceMenu();
+      // On desktop the toolbar tools are inline, not a competing popover.
+      if (isCompactToolbar() && toolbarMenu.open) closeWorkspaceMenu();
     });
     workspaceMenu?.addEventListener('toggle', () => {
-      if (workspaceMenu.open) closeToolbarMenu();
+      if (isCompactToolbar() && workspaceMenu.open) closeToolbarMenu();
+      // When moving from compact to desktop, keep the controls visible even if
+      // the details disclosure had been collapsed on the previous viewport.
+      if (!isCompactToolbar() && workspaceMenu && !workspaceMenu.open) {
+        workspaceMenu.open = true;
+      }
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {

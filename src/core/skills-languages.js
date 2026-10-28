@@ -38,23 +38,29 @@ export function migrateSkillsLanguagesSection(section, legacyRatings={}) {
   const key = type === 'skills' ? 'skill' : 'language';
   const sourceEntries = Array.isArray(section.entries) ? section.entries : [];
   const normalizedEntries = sourceEntries.map(entry => normalizeEntry(type, entry, legacyRatings)).filter(Boolean);
-  if (!normalizedEntries.length) {
-    const fields = Array.isArray(section.fields) ? section.fields : [];
-    for (const field of fields) {
-      if (field?.visibility === false) continue;
-      for (const value of splitLegacyValue(field?.value)) {
-        const rating = Math.max(0, Math.min(5, Number(legacyRatings[value] || 0)));
-        normalizedEntries.push({
-          id: makeId(type === 'skills' ? 'skill' : 'language'),
-          values: { [key]: value, proficiency: rating },
-          visibility: field?.visibility !== false,
-          order: normalizedEntries.length,
-          metadata: { migratedFromFieldId: String(field?.id || '') }
-        });
-      }
+  const fields = Array.isArray(section.fields) ? section.fields : [];
+  const normalizedValues = new Set(normalizedEntries
+    .map(entry => String(entry.values?.[key] || '').trim().toLocaleLowerCase())
+    .filter(Boolean));
+  let nextOrder = normalizedEntries.reduce((maximum, entry) =>
+    Math.max(maximum, Number.isFinite(entry.order) ? entry.order : -1), -1) + 1;
+  for (const field of fields) {
+    // Merge legacy fields even when canonical entries already exist. Hidden old
+    // values remain hidden entries instead of being silently discarded.
+    for (const value of splitLegacyValue(field?.value)) {
+      const duplicateKey = value.toLocaleLowerCase();
+      if (normalizedValues.has(duplicateKey)) continue;
+      const rating = Math.max(0, Math.min(5, Number(legacyRatings[value] || 0)));
+      normalizedEntries.push({
+        id: makeId(type === 'skills' ? 'skill' : 'language'),
+        values: { [key]: value, proficiency: rating },
+        visibility: field?.visibility !== false,
+        order: nextOrder++,
+        metadata: { migratedFromFieldId: String(field?.id || '') }
+      });
+      normalizedValues.add(duplicateKey);
     }
   }
-  normalizedEntries.forEach((entry,index) => { entry.order = index; });
   return {
     ...clone(section),
     fields: [],

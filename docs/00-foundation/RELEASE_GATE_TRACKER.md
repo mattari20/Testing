@@ -43,3 +43,15 @@ These historical results remain tied to their recorded release boundary and do n
 - CV Builder V2 E2E Contract: SUCCESS — run `36898954947`
 - Native V2 browser artifact contains 9 current templates, including T01 ATS `2.1.0` and T01 Simple `2.1.0`, with ready render status and collected pagination evidence.
 - Full repository test suite now passes in CI with Playwright/Chromium provisioned by the validation workflow.
+
+
+## Workspace repair follow-up — 2026-10-28
+
+- Starting production commit for this execution: `581c8fe4f79767db597009fbd134f4ad4d29d7fd`. Current candidate `4cfe65a51d46955e4972f6aa19972462fbd93b2a) is on `fix/cv-workspace-repair-hardening-20261028`, PR [#124](https://github.com/mattari20/Testing/pull/124). Production branch remains at the starting SHA.
+- PR #119 was refreshed at head `918a01d103ce446afa9119645369870943631964); there were no check runs, status contexts, workflow runs, or review submissions for that exact older head.
+- Candidate changes add workspace save/version-history rollback and negative-path tests for persistent quota errors, non-quota write failures, and storage-read failures. Skills/Languages migration now merges non-duplicate legacy values when current-schema entries already exist, preserving existing IDs/metadata/order and retaining hidden legacy values as hidden entries. Mixed-schema/idempotence regression coverage was added. Duplicate raw JSON `test:m110` keys were removed while keeping the effective editor-DOM mapping and a separate `test:r7-skills-languages` test alias.
+- Desktop duplicate-CV control visibility was fixed; mobile More/Edit/Preview interaction coverage passes. The workspace validation workflow now runs on PRs targeting the production branch, uses separate workspace-controller, browser, and migration steps, and runs Skills/Languages tests with `if: always()`.
+- Latest full candidate workflow run [#40666444195](https://github.com/mattari20/Testing/actions/runs/40666444195), exact SHA `4cfe65a51d46955e4972f6aa19972462fbd93b2a): setup, editor command/surface checks, editor form/interaction checks, production runtime checks, native renderer checks, workspace persistence controller tests, and Skills/Languages migration tests all passed. The separate browser regression step failed.
+- Remaining acceptance blocker: browser test `adding editor items preserves the current viewport without jumping to the section top` fails at “Add Skill”, consistently measuring `window.scrollY` 3545 before and 3479 after (66px shift), despite several restoration strategies. Keep PR #124 unmerged until this browser failure is fixed and the full exact-head workflow passes.
+- No PR approvals/reviews are recorded. Branch-protection/ruleset details could not be read by the GitHub integration, so protections are not fully verified.
+- Hostinger V2 destination `/public_html/cv-builder-v2/` remains unverified; no deployment was made. CV Builder V1 and Institutes Directory paths were not changed.

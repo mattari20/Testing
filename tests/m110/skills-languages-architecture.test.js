@@ -1,3 +1,4 @@
+import { migrateSkillsLanguagesSection } from '../../src/core/skills-languages.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createMasterProfile, createTargetedCV } from '../../src/core/career-document-core.js';
@@ -160,4 +161,31 @@ test('changing a non-rating style clamps existing Skills and Languages ratings t
     type:'set-list-style',target:{sectionType:'languages'},payload:{sectionType:'languages',style:'pills'}
   }));
   assert.equal(app.targetedCV.configuration.presentation.ratings.languages.style,'off');
+});
+
+
+test('mixed current entries and legacy fields migrate without data loss or duplicates', () => {
+  for (const [type,key,legacy] of [
+    ['skills','skill','JavaScript, HTML, CSS'],
+    ['languages','language','English, Urdu']
+  ]) {
+    const values = legacy.split(',').map(value => value.trim());
+    const section = {
+      id:type, type, title:type,
+      fields:[{id:'legacy-field',value:legacy,visibility:true}],
+      entries:[{id:'entry-existing',values:{[key]:values[0],proficiency:4},visibility:false,order:7,metadata:{kept:true}}],
+      visibility:true, repeatable:true, metadata:{custom:'preserved'}
+    };
+    const migrated = migrateSkillsLanguagesSection(section);
+    assert.deepEqual(migrated.entries.map(entry => entry.values[key]), values);
+    assert.equal(migrated.entries[0].id,'entry-existing');
+    assert.equal(migrated.entries[0].values.proficiency,4);
+    assert.equal(migrated.entries[0].visibility,false);
+    assert.equal(migrated.entries[0].order,7);
+    assert.deepEqual(migrated.entries[0].metadata,{kept:true});
+    assert.equal(migrated.entries[1].metadata.migratedFromFieldId,'legacy-field');
+    assert.deepEqual(migrated.fields,[]);
+    const migratedAgain = migrateSkillsLanguagesSection(migrated);
+    assert.deepEqual(migratedAgain.entries.map(entry => entry.values[key]), values);
+  }
 });
