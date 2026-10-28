@@ -34,5 +34,10 @@ jobs:
         run: npm run test:m76-m79 && npm run test:m80 && npm run test:m81
       - name: Native V2 renderer validation
         run: npm run test:m14 && npm run test:m15
-      - name: Workspace persistence and mobile browser regression validation
-        run: npm run test:cv-workspace-controller && npm run test:cv-workspace-browser && npm run test:r7-skills-languages
+      - name: Workspace persistence controller tests
+        run: npm run test:cv-workspace-controller
+      - name: Mobile browser workspace regressions
+        run: npm run test:cv-workspace-browser
+      - name: Skills and Languages migration regressions
+        if: always()
+        run: npm run test:r7-skills-languages
