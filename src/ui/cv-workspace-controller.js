@@ -133,11 +133,20 @@ export function createCVWorkspaceController(options = {}) {
     const masterProfile = clone(profileOverride || state.masterProfile);
     const list = versions[document.id] || [];
     const latest = list[list.length - 1];
-    // Repeated saves of unchanged content should not create noisy history entries.
     if (sameVersionContent(latest, document, masterProfile)) return latest;
+
+    // Copy the full history before attempting persistence so quota trimming on
+    // the candidate cannot mutate the rollback snapshot through shared arrays.
     const snapshot = createVersionSnapshot(document, masterProfile);
+    const previousVersions = clone(versions);
+    versions = clone(versions);
     versions[document.id] = [...list, snapshot].slice(-20);
-    saveState();
+    try {
+      saveState();
+    } catch (error) {
+      versions = previousVersions;
+      throw error;
+    }
     return snapshot;
   };
 
@@ -254,7 +263,20 @@ export function createCVWorkspaceController(options = {}) {
     switchDocument: restoreDocument,
     recordVersion,
     restoreVersion,
-    save: () => { syncActive(); recordVersion(); saveState(); return workspace.getState(); },
+    save: () => {
+      const previousWorkspaceState = workspace.getState();
+      const previousVersions = clone(versions);
+      try {
+        syncActive();
+        recordVersion();
+        saveState();
+        return workspace.getState();
+      } catch (error) {
+        versions = previousVersions;
+        workspace.replaceState(previousWorkspaceState, { type: 'save-rollback' });
+        throw error;
+      }
+    },
     destroy: () => { destroyed = true; workspace.destroy(); }
   });
 }
