@@ -72,9 +72,15 @@ export function mountV2EditorRuntime(root, input = {}) {
       reorderBinding = bindEditorReorder(form, mounted.surface);
     }
     if (preserveViewport) {
-      view.requestAnimationFrame(() => {
-        if (!destroyed && Number.isFinite(scrollX) && Number.isFinite(scrollY)) view.scrollTo(scrollX, scrollY);
-      });
+      // Restore at the end of the current layout cycle and once more after
+      // browser scroll anchoring has run; the current form may be taller/shorter.
+      const restoreViewport = () => {
+        if (!destroyed && Number.isFinite(scrollX) && Number.isFinite(scrollY)) {
+          view.scrollTo({ left:scrollX, top:scrollY, behavior:'instant' });
+        }
+      };
+      restoreViewport();
+      view.requestAnimationFrame(() => view.requestAnimationFrame(restoreViewport));
     }
     return state;
   };
