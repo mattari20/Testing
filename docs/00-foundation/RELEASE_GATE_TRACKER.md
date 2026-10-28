@@ -43,3 +43,12 @@ These historical results remain tied to their recorded release boundary and do n
 - CV Builder V2 E2E Contract: SUCCESS — run `36898954947`
 - Native V2 browser artifact contains 9 current templates, including T01 ATS `2.1.0` and T01 Simple `2.1.0`, with ready render status and collected pagination evidence.
 - Full repository test suite now passes in CI with Playwright/Chromium provisioned by the validation workflow.
+
+
+## Workspace repair follow-up — 2026-10-28
+
+- Refreshed PR #119 head `918a01d103ce446afa9119645369870943631964`. GitHub currently returns zero check runs, zero status contexts, zero workflow runs, and no submitted PR reviews for that exact candidate; earlier acceptance-milestone tests are historical only.
+- Follow-up candidate `fix/cv-workspace-repair-hardening-20261028` hardens failed-save rollback for in-memory workspace/version history and adds negative-path tests for persistent quota failures, non-quota write errors, and storage-read errors.
+- Skills/Languages migration now merges non-duplicate legacy field values when canonical entries already exist, retaining existing entry metadata and order; hidden legacy values are kept as hidden entries. Added mixed-schema/idempotence regression coverage.
+- `package.json` had duplicate `test:m110` keys in the raw JSON. The effective script remains the editor preview DOM suite, while the migration suite is explicitly reachable through `test:r7-skills-languages`.
+- No candidate tests have been executed in this environment. Exact-head CI/browser evidence is required before merge. Hostinger V2 destination mapping remains unverified; no deployment is authorized.
