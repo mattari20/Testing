@@ -425,16 +425,23 @@ export function bindEditorActions(root, surface) {
     return {positions, windowTop:view?.scrollY || 0, windowLeft:view?.scrollX || 0, view};
   };
   const restoreScrollState = state => {
-    // Adding editor content should grow the form below the current viewport.
-    // Restore every existing scroll surface exactly; never scroll to the new item.
-    state.positions.forEach(({node,top,left}) => {
-      if (node?.isConnected) {
-        node.scrollTop = top;
-        node.scrollLeft = left;
+    // Restore after the synchronous DOM replacement and browser's layout/scroll
+    // anchoring pass. Keep existing scrollable ancestors and the window fixed.
+    const apply = () => {
+      state.positions.forEach(({node,top,left}) => {
+        if (node?.isConnected) {
+          node.scrollTop = top;
+          node.scrollLeft = left;
+        }
+      });
+      if (typeof state.view?.scrollTo === 'function') {
+        state.view.scrollTo(state.windowLeft, state.windowTop);
       }
-    });
-    if (typeof state.view?.scrollTo === 'function') {
-      state.view.scrollTo(state.windowLeft, state.windowTop);
+    };
+    apply();
+    const view = state.view;
+    if (typeof view?.requestAnimationFrame === 'function') {
+      view.requestAnimationFrame(() => view.requestAnimationFrame(apply));
     }
   };
 
@@ -464,21 +471,14 @@ export function bindEditorActions(root, surface) {
     const targetSelector = element.dataset.v2Target || '{}';
     const target = parseJson(targetSelector);
     const payload = parseJson(element.dataset.v2Payload);
-    const view = root.ownerDocument?.defaultView;
     const scrollState = captureScrollState(element);
-    const originalTop = element.getBoundingClientRect().top;
 
     surface.dispatch({type,target,payload});
 
-    const restoreActionPosition = () => {
-      // Keep the user's viewport anchored where the action was clicked.
-      // The newly inserted field and the controls beneath it flow downward naturally.
-      restoreScrollState(scrollState);
-    };
-    // Dispatch rerenders the form synchronously. Restore scroll before this click
-    // handler returns so the browser cannot paint an intermediate jumped position.
-    // Deferring this to requestAnimationFrame (especially two frames) visibly jolts.
-    restoreActionPosition();
+    // Structural commands replace the editor form synchronously. Schedule a
+    // post-layout correction as well as an immediate correction to override
+    // browser scroll anchoring after the new fields have been painted.
+    restoreScrollState(scrollState);
   };
   root.addEventListener('click', handler);
   return Object.freeze({destroy:()=>root.removeEventListener('click', handler)});
