@@ -168,3 +168,23 @@ When a new execution prompt is provided, first follow this Master Prompt, inspec
 Do not restart the entire project, repeat completed audits, or begin unrelated phases prematurely.
 
 If a phase cannot be completed entirely, finish all safe work possible and provide a precise evidence-based handover identifying what remains.
+
+
+## 10. Mandatory completion and merge protocol
+
+Execute the assigned phase end-to-end in one continuous execution cycle.
+
+1. Inspect the current repository, existing PRs, and verified starting commit.
+2. Implement the requested work, write or update tests, and fix failures.
+3. Commit the completed changes and run all available required checks.
+4. Review the exact final diff and verify there are no unrelated or unsafe changes.
+5. Merge the PR during the same execution cycle when the changes are validated, mergeable, and all required protections are satisfied.
+6. Verify GitHub confirms the merge, record the merge commit SHA, and verify the change is present on the intended target branch.
+7. Run relevant post-merge checks and verify deployment only when deployment is part of the phase and is authorized.
+8. Update the existing project tracker and report completed work, merge status, test evidence, remaining blockers, and the next phase.
+
+Do not stop merely because a branch, commit, or PR has been created.
+
+Do not force a merge when required checks fail, conflicts remain, approval is required, or release safety is uncertain. In that case, continue fixing the blocker within the same cycle wherever possible. If it cannot be resolved with available tools or permissions, report the exact blocker and the work already completed.
+
+Never report a task as fully complete while its required merge or verification remains outstanding.
