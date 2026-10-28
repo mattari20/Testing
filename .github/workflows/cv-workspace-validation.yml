@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - release/cv-builder-v2-production
+  pull_request:
+    branches:
+      - release/cv-builder-v2-production
   workflow_dispatch:
 
 permissions:
@@ -31,5 +34,5 @@ jobs:
         run: npm run test:m76-m79 && npm run test:m80 && npm run test:m81
       - name: Native V2 renderer validation
         run: npm run test:m14 && npm run test:m15
-      - name: CV workspace version history and restore validation
-        run: npm run test:cv-workspace-controller && npm run test:cv-workspace-browser
+      - name: Workspace persistence and mobile browser regression validation
+        run: npm run test:cv-workspace-controller && npm run test:cv-workspace-browser && npm run test:r7-skills-languages
